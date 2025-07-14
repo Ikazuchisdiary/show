@@ -1306,6 +1306,18 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
                 </div>`;
             }
             break;
+        case 'skipTurn':
+            html += `<div class="skill-param-row" style="color: #95a5a6;">
+                <label>効果:</label>
+                <span>${effect.description || 'デッキから除外'}</span>
+            </div>`;
+            break;
+        case 'resetCardTurn':
+            html += `<div class="skill-param-row" style="color: #3498db;">
+                <label>効果:</label>
+                <span>${effect.description || '山札リセット'}</span>
+            </div>`;
+            break;
         case 'conditional':
             if (effect.then || effect.else) {
                 html += `<div style="margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px;">
