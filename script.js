@@ -417,8 +417,16 @@ function onSkillLevelChange(slotNum) {
         for (const [key, value] of Object.entries(levelData)) {
             const inputId = `skill${slotNum}_${key}`;
             const input = document.getElementById(inputId);
-            if (input && value !== null) {
-                input.value = value;
+            if (input) {
+                if (value !== null) {
+                    input.value = value;
+                    input.style.backgroundColor = '';
+                    input.placeholder = '';
+                } else {
+                    input.value = '';
+                    input.style.backgroundColor = '#ffe4e1';
+                    input.placeholder = '不明';
+                }
             }
         }
     }

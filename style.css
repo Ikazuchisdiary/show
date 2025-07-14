@@ -158,3 +158,13 @@ button:hover {
 .toggle-log:hover {
     background-color: #1976D2;
 }
+
+/* Null value input styling */
+input[placeholder="不明"] {
+    font-style: italic;
+}
+
+input[placeholder="不明"]:focus {
+    background-color: #fff !important;
+    font-style: normal;
+}
