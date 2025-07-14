@@ -129,7 +129,17 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "timing": "beforeFeverStart",
+        "effects": [
+          {
+            "type": "voltageGain",
+            "value": 159,
+            "description": "ボルテージ159獲得 (Lv.1)"
+          }
+        ]
+      }
     },
     // 藤島慈
     "bdMegu": {
@@ -180,7 +190,17 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "timing": "afterLastTurn",
+        "effects": [
+          {
+            "type": "scoreGain",
+            "value": 1.9125,
+            "description": "スコア191.25%獲得 (Lv.1)"
+          }
+        ]
+      }
     },
     "kuonMegu": {
       "name": "Kuon Megu",
@@ -198,7 +218,17 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "timing": "beforeFeverStart",
+        "effects": [
+          {
+            "type": "scoreGain",
+            "value": 0.6825,
+            "description": "スコア68.25%獲得 (Lv.1)"
+          }
+        ]
+      }
     },
     // 日野下花帆
     "iDoMeKaho": {
@@ -229,7 +259,17 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "timing": "afterLastTurn",
+        "effects": [
+          {
+            "type": "scoreGain",
+            "value": 1.395,
+            "description": "スコア139.5%獲得 (Lv.1)"
+          }
+        ]
+      }
     },
     "kisekiKaho": {
       "name": "Kiseki Kaho",
@@ -258,7 +298,28 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "timing": "afterLastTurn",
+        "effects": [
+          {
+            "type": "scoreGain",
+            "value": 0.6825,
+            "description": "スコア68.25%獲得 (Lv.1)"
+          },
+          {
+            "type": "conditional",
+            "condition": "voltageLevel >= 4",
+            "then": [
+              {
+                "type": "scoreGain",
+                "value": 0.9555,
+                "description": "スコア95.55%獲得 (Lv.1)"
+              }
+            ]
+          }
+        ]
+      }
     },
     // 村野さやか
     "iDoMeSayaka": {
@@ -302,7 +363,28 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "timing": "beforeFeverStart",
+        "effects": [
+          {
+            "type": "scoreGain",
+            "value": 2.925,
+            "description": "スコア292.5%獲得 (Lv.1)"
+          },
+          {
+            "type": "conditional",
+            "condition": "mental < 99",
+            "then": [
+              {
+                "type": "voltagePenalty",
+                "value": 1000,
+                "description": "ボルテージ-1000"
+              }
+            ]
+          }
+        ]
+      }
     },
     "shinjitsuSayaka": {
       "name": "Shinjitsu Sayaka",
@@ -520,7 +602,17 @@ const gameData = {
           "value": 1.1625,
           "description": "スコア116.25%ブースト (Lv.1)"
         }
-      ]
+      ],
+      "centerSkill": {
+        "timing": "beforeFeverStart",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 0.72,
+            "description": "全員のアピール値72%上昇 (Lv.1)"
+          }
+        ]
+      }
     },
     "natsumekiRurino": {
       "name": "Natsumeki Rurino",
@@ -640,7 +732,17 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "timing": "beforeFirstTurn",
+        "effects": [
+          {
+            "type": "mentalReduction",
+            "value": 5,
+            "description": "最大メンタル5%減少 (Lv.1)"
+          }
+        ]
+      }
     },
     "linkFutureGin": {
       "name": "Link Future Gin",
@@ -728,7 +830,17 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "timing": "beforeFeverStart",
+        "effects": [
+          {
+            "type": "voltageGain",
+            "value": 116,
+            "description": "ボルテージ116獲得 (Lv.1)"
+          }
+        ]
+      }
     },
     // 安養寺姫芽
     "blastHime": {
@@ -759,7 +871,22 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "timing": "beforeFeverStart",
+        "effects": [
+          {
+            "type": "mentalReduction",
+            "value": 40,
+            "description": "最大メンタル40%減少"
+          },
+          {
+            "type": "scoreGain",
+            "value": 1.0875,
+            "description": "スコア108.75%獲得 (Lv.1)"
+          }
+        ]
+      }
     },
     // 桂城泉
     "tenchiIzumi": {
@@ -785,7 +912,17 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "timing": "beforeFirstTurn",
+        "effects": [
+          {
+            "type": "voltageGain",
+            "value": 116,
+            "description": "ボルテージ116獲得 (Lv.1)"
+          }
+        ]
+      }
     },
     // セラス 柳田 リリエンフェルト
     "bdCelestine": {
@@ -832,7 +969,17 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "timing": "afterLastTurn",
+        "effects": [
+          {
+            "type": "scoreGain",
+            "value": 1.395,
+            "description": "スコア139.5%獲得 (Lv.1)"
+          }
+        ]
+      }
     },
     "izayoiCelestine": {
       "name": "Izayoi Celestine",
@@ -871,7 +1018,17 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "timing": "beforeFeverStart",
+        "effects": [
+          {
+            "type": "voltageGain",
+            "value": 116,
+            "description": "ボルテージ116獲得 (Lv.1)"
+          }
+        ]
+      }
     },
     // 桂城泉＆セラス 柳田 リリエンフェルト
     "edeliedIzumiCelestine": {
