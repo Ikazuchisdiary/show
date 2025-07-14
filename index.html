@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スクショウ スコア計算機</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .card-selection {
+            margin-bottom: 20px;
+        }
+        .card-slot {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-slot label {
+            margin: 0;
+            min-width: 80px;
+        }
+        select {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+        #score {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2196F3;
+            margin: 10px 0;
+        }
+        #turnLog {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            display: none;
+        }
+        .toggle-log {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #2196F3;
+            font-size: 14px;
+        }
+        .toggle-log:hover {
+            background-color: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>スクショウ スコア計算機</h1>
+        
+        <div class="form-group">
+            <label for="appeal">アピール値:</label>
+            <input type="number" id="appeal" value="88146" min="0">
+        </div>
+        
+        <div class="form-group">
+            <label>楽曲選択:</label>
+            <select id="music" onchange="toggleMusicInput()">
+                <option value="i_do_me">I Do Me (11, 7, 5)</option>
+                <option value="custom">カスタム入力</option>
+            </select>
+        </div>
+        
+        <div id="customMusic" style="display: none;">
+            <div class="form-group">
+                <label>フィーバー前ターン数:</label>
+                <input type="number" id="beforeFever" value="11" min="0">
+            </div>
+            <div class="form-group">
+                <label>フィーバー中ターン数:</label>
+                <input type="number" id="duringFever" value="7" min="0">
+            </div>
+            <div class="form-group">
+                <label>フィーバー後ターン数:</label>
+                <input type="number" id="afterFever" value="5" min="0">
+            </div>
+        </div>
+        
+        <div class="card-selection">
+            <h3>カード選択（順番通りに）:</h3>
+            <div class="card-slot">
+                <label>カード1:</label>
+                <select id="card1">
+                    <option value="">未選択</option>
+                    <option value="sachi">Sachi</option>
+                    <option value="bdMegu">BD Megu</option>
+                    <option value="gingaKozu">Ginga Kozu</option>
+                    <option value="iDoMeSayaka">I Do Me Sayaka</option>
+                    <option value="iDoMeKaho">I Do Me Kaho</option>
+                    <option value="butoRuri">Buto Ruri</option>
+                </select>
+            </div>
+            <div class="card-slot">
+                <label>カード2:</label>
+                <select id="card2">
+                    <option value="">未選択</option>
+                    <option value="sachi">Sachi</option>
+                    <option value="bdMegu">BD Megu</option>
+                    <option value="gingaKozu">Ginga Kozu</option>
+                    <option value="iDoMeSayaka">I Do Me Sayaka</option>
+                    <option value="iDoMeKaho">I Do Me Kaho</option>
+                    <option value="butoRuri">Buto Ruri</option>
+                </select>
+            </div>
+            <div class="card-slot">
+                <label>カード3:</label>
+                <select id="card3">
+                    <option value="">未選択</option>
+                    <option value="sachi">Sachi</option>
+                    <option value="bdMegu">BD Megu</option>
+                    <option value="gingaKozu">Ginga Kozu</option>
+                    <option value="iDoMeSayaka">I Do Me Sayaka</option>
+                    <option value="iDoMeKaho">I Do Me Kaho</option>
+                    <option value="butoRuri">Buto Ruri</option>
+                </select>
+            </div>
+            <div class="card-slot">
+                <label>カード4:</label>
+                <select id="card4">
+                    <option value="">未選択</option>
+                    <option value="sachi">Sachi</option>
+                    <option value="bdMegu">BD Megu</option>
+                    <option value="gingaKozu">Ginga Kozu</option>
+                    <option value="iDoMeSayaka">I Do Me Sayaka</option>
+                    <option value="iDoMeKaho">I Do Me Kaho</option>
+                    <option value="butoRuri">Buto Ruri</option>
+                </select>
+            </div>
+            <div class="card-slot">
+                <label>カード5:</label>
+                <select id="card5">
+                    <option value="">未選択</option>
+                    <option value="sachi">Sachi</option>
+                    <option value="bdMegu">BD Megu</option>
+                    <option value="gingaKozu">Ginga Kozu</option>
+                    <option value="iDoMeSayaka">I Do Me Sayaka</option>
+                    <option value="iDoMeKaho">I Do Me Kaho</option>
+                    <option value="butoRuri">Buto Ruri</option>
+                </select>
+            </div>
+            <div class="card-slot">
+                <label>カード6:</label>
+                <select id="card6">
+                    <option value="">未選択</option>
+                    <option value="sachi">Sachi</option>
+                    <option value="bdMegu">BD Megu</option>
+                    <option value="gingaKozu">Ginga Kozu</option>
+                    <option value="iDoMeSayaka">I Do Me Sayaka</option>
+                    <option value="iDoMeKaho">I Do Me Kaho</option>
+                    <option value="butoRuri">Buto Ruri</option>
+                </select>
+            </div>
+        </div>
+        
+        <button onclick="calculate()">スコア計算</button>
+        
+        <div id="result">
+            <h2>計算結果</h2>
+            <div id="score"></div>
+            <button class="toggle-log" onclick="toggleLog()">詳細ログを表示</button>
+        </div>
+        
+        <div id="turnLog"></div>
+    </div>
+
+    <script>
+        // Music data
+        const musicData = {
+            "i_do_me": [11, 7, 5]
+        };
+
+        // Game class
+        class Game {
+            constructor(cards, appeal, music, verbose = false) {
+                this.score = 0;
+                this.scoreBoost = new Array(100).fill(0);
+                this.scoreBoostCount = 0;
+                this.voltagePt = 0;
+                this.voltageBoost = new Array(100).fill(0);
+                this.voltageBoostCount = 0;
+                this.turn = 0;
+                this.cards = cards;
+                this.cardTurn = 0;
+                this.mental = 100;
+                this.appeal = appeal;
+                this.music = music;
+                this.verbose = verbose;
+                this.log = "";
+            }
+
+            doGame() {
+                while (this.turn < this.music.reduce((a, b) => a + b, 0)) {
+                    this.turnUp();
+                }
+            }
+
+            turnUp() {
+                if (this.cardTurn >= this.cards.length) {
+                    this.cardTurn = 0;
+                }
+                if (this.verbose) {
+                    this.log += `turn ${this.turn + 1}\n`;
+                }
+                const card = this.cards[this.cardTurn];
+                card.do(this);
+            }
+
+            getVoltageLevel() {
+                const getSubVoltageLevel = () => {
+                    const voltageLevels = [0, 10, 30, 60, 100, 150, 210, 280, 360, 450, 550, 660, 780, 910, 1050, 1200, 1360, 1530, 1710, 1900];
+                    if (this.voltagePt < 1900) {
+                        for (let i = 0; i < voltageLevels.length; i++) {
+                            if (this.voltagePt < voltageLevels[i]) {
+                                return i;
+                            }
+                        }
+                    }
+                    return 19 + Math.floor((this.voltagePt - 1900) / 200);
+                };
+                
+                let voltage = getSubVoltageLevel();
+                if (this.music[0] + 1 <= this.turn && this.turn <= this.music[0] + this.music[1]) {
+                    voltage *= 2;
+                }
+                return voltage;
+            }
+
+            doScoreBoost(value, times = 1) {
+                for (let i = 0; i < times; i++) {
+                    this.scoreBoost[this.scoreBoostCount + i] += value;
+                }
+                if (this.verbose) {
+                    this.log += `score boost ${value}, reach ${this.scoreBoost[this.scoreBoostCount]}\n`;
+                }
+            }
+
+            doVoltageBoost(value, times = 1) {
+                for (let i = 0; i < times; i++) {
+                    this.voltageBoost[this.voltageBoostCount + i] += value;
+                }
+                if (this.verbose) {
+                    this.log += `voltage boost ${value}, reach ${this.voltageBoost[this.voltageBoostCount]}\n`;
+                }
+            }
+
+            getScore(value) {
+                const score = Math.floor(this.appeal * value * (1 + this.scoreBoost[this.scoreBoostCount]) * (1 + this.getVoltageLevel() / 10)) * 1.5;
+                this.score += score;
+                this.scoreBoostCount += 1;
+                if (this.verbose) {
+                    this.log += `get score ${score} = ${value} * ${this.appeal} * (1 + ${this.scoreBoost[this.scoreBoostCount - 1]}) * ${1 + this.getVoltageLevel() / 10} * 1.5\n`;
+                }
+            }
+
+            getVoltage(value) {
+                const voltagePt = Math.floor(value * (1 + this.voltageBoost[this.voltageBoostCount]));
+                this.voltagePt += voltagePt;
+                if (this.verbose) {
+                    this.log += `get voltage ${voltagePt} = ${value} * (1 + ${this.voltageBoost[this.voltageBoostCount]})\n`;
+                }
+                this.voltageBoostCount += 1;
+            }
+        }
+
+        // Base Card class
+        class Card {
+            constructor() {
+                this.count = 0;
+                this.name = "";
+            }
+
+            do(game) {
+                if (game.verbose) {
+                    game.log += `done ${this.name}\n`;
+                }
+                this.count += 1;
+                game.turn += 1;
+                game.cardTurn += 1;
+            }
+        }
+
+        // Card implementations
+        class Sachi extends Card {
+            constructor() {
+                super();
+                this.name = "sachi";
+            }
+
+            do(game) {
+                if (this.count === 3) {
+                    game.cardTurn += 1;
+                    return;
+                }
+                super.do(game);
+            }
+        }
+
+        class BdMegu extends Card {
+            constructor() {
+                super();
+                this.name = "bd megu";
+            }
+
+            do(game) {
+                game.doScoreBoost(1.2375);
+                game.doVoltageBoost(1.2375);
+                super.do(game);
+            }
+        }
+
+        class GingaKozu extends Card {
+            constructor() {
+                super();
+                this.name = "ginga kozu";
+            }
+
+            do(game) {
+                if (this.count <= 2) {
+                    game.doVoltageBoost(3.24);
+                    game.cardTurn = -1;
+                } else {
+                    game.doScoreBoost(3.24);
+                }
+                super.do(game);
+            }
+        }
+
+        class IDoMeSayaka extends Card {
+            constructor() {
+                super();
+                this.name = "i do me sayaka";
+            }
+
+            do(game) {
+                if (this.count <= 0) {
+                    game.doVoltageBoost(0.7875);
+                } else {
+                    game.doScoreBoost(2.43);
+                }
+                if (game.mental >= 100) {
+                    game.getVoltage(945);
+                } else {
+                    game.voltagePt -= 1000;
+                }
+                super.do(game);
+            }
+        }
+
+        class IDoMeKaho extends Card {
+            constructor() {
+                super();
+                this.name = "i do me kaho";
+            }
+
+            do(game) {
+                game.mental += 10;
+                if (game.mental >= 100) {
+                    game.getScore(11.34);
+                } else {
+                    game.voltagePt -= 1000;
+                }
+                super.do(game);
+            }
+        }
+
+        class ButoRuri extends Card {
+            constructor() {
+                super();
+                this.name = "buto ruri";
+            }
+
+            do(game) {
+                const voltageLevel = game.getVoltageLevel();
+                if (voltageLevel <= 8) {
+                    game.doVoltageBoost(3.2625);
+                }
+                if (voltageLevel >= 7) {
+                    game.doScoreBoost(4.35);
+                }
+                super.do(game);
+            }
+        }
+
+        // Card factory
+        function createCard(cardType) {
+            switch(cardType) {
+                case "sachi": return new Sachi();
+                case "bdMegu": return new BdMegu();
+                case "gingaKozu": return new GingaKozu();
+                case "iDoMeSayaka": return new IDoMeSayaka();
+                case "iDoMeKaho": return new IDoMeKaho();
+                case "butoRuri": return new ButoRuri();
+                default: return null;
+            }
+        }
+
+        // Toggle music input
+        function toggleMusicInput() {
+            const musicSelect = document.getElementById('music');
+            const customMusic = document.getElementById('customMusic');
+            if (musicSelect.value === 'custom') {
+                customMusic.style.display = 'block';
+            } else {
+                customMusic.style.display = 'none';
+            }
+        }
+
+        // Calculate function
+        function calculate() {
+            const appeal = parseInt(document.getElementById('appeal').value);
+            const musicKey = document.getElementById('music').value;
+            let music;
+            
+            if (musicKey === 'custom') {
+                music = [
+                    parseInt(document.getElementById('beforeFever').value),
+                    parseInt(document.getElementById('duringFever').value),
+                    parseInt(document.getElementById('afterFever').value)
+                ];
+            } else {
+                music = musicData[musicKey];
+            }
+            
+            const cards = [];
+            for (let i = 1; i <= 6; i++) {
+                const cardType = document.getElementById(`card${i}`).value;
+                if (cardType) {
+                    cards.push(createCard(cardType));
+                }
+            }
+            
+            if (cards.length === 0) {
+                alert('少なくとも1枚のカードを選択してください。');
+                return;
+            }
+            
+            const game = new Game(cards, appeal, music, true);
+            game.doGame();
+            
+            document.getElementById('score').textContent = game.score.toLocaleString();
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('turnLog').textContent = game.log;
+        }
+
+        // Toggle log display
+        function toggleLog() {
+            const log = document.getElementById('turnLog');
+            if (log.style.display === 'none' || log.style.display === '') {
+                log.style.display = 'block';
+                document.querySelector('.toggle-log').textContent = '詳細ログを隠す';
+            } else {
+                log.style.display = 'none';
+                document.querySelector('.toggle-log').textContent = '詳細ログを表示';
+            }
+        }
+
+        // Set default card selection to match the notebook example
+        window.onload = function() {
+            document.getElementById('card1').value = 'sachi';
+            document.getElementById('card2').value = 'bdMegu';
+            document.getElementById('card3').value = 'gingaKozu';
+            document.getElementById('card4').value = 'iDoMeSayaka';
+            document.getElementById('card5').value = 'iDoMeKaho';
+            document.getElementById('card6').value = 'butoRuri';
+        };
+    </script>
+</body>
+</html>
