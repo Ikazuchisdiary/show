@@ -3,7 +3,7 @@ const gameData = {
   "cards": {
     "sachi": {
       "name": "Sachi",
-      "displayName": "Sachi",
+      "displayName": "［蓮ノ空女学院スクールアイドルクラブ101期生］大賀美沙知",
       "effects": [
         {
           "type": "skipTurn",
@@ -14,7 +14,7 @@ const gameData = {
     },
     "bdMegu": {
       "name": "BD Megu",
-      "displayName": "BD Megu",
+      "displayName": "［18th Birthday］藤島慈",
       "effects": [
         {
           "type": "scoreBoost",
@@ -88,7 +88,7 @@ const gameData = {
     },
     "gingaKozu": {
       "name": "Ginga Kozu",
-      "displayName": "Ginga Kozu",
+      "displayName": "［輪廻の銀河へ］乙宗梢",
       "effects": [
         {
           "type": "conditional",
@@ -132,7 +132,7 @@ const gameData = {
     },
     "iDoMeSayaka": {
       "name": "I Do Me Sayaka",
-      "displayName": "I Do Me Sayaka",
+      "displayName": "［アイドゥーミー！］村野さやか",
       "effects": [
         {
           "type": "conditional",
@@ -190,7 +190,7 @@ const gameData = {
     },
     "iDoMeKaho": {
       "name": "I Do Me Kaho",
-      "displayName": "I Do Me Kaho",
+      "displayName": "［アイドゥーミー！］日野下花帆",
       "effects": [
         {
           "type": "mentalRecover",
@@ -235,7 +235,7 @@ const gameData = {
     },
     "butoRuri": {
       "name": "Buto Ruri",
-      "displayName": "Buto Ruri",
+      "displayName": "［悠久の舞踏会］大沢瑠璃乃",
       "effects": [
         {
           "type": "conditional",
@@ -279,7 +279,7 @@ const gameData = {
     },
     "butoGin": {
       "name": "Buto Gin",
-      "displayName": "Buto Gin",
+      "displayName": "［輝跡の舞踏会］百生吟子",
       "effects": [
         {
           "type": "scoreBoost",
