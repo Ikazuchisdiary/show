@@ -37,6 +37,8 @@ class Game {
         this.music = music;
         this.verbose = verbose;
         this.log = "";
+        this.logHtml = "";
+        this.currentTurnLog = [];
     }
 
     doGame() {
@@ -51,9 +53,29 @@ class Game {
         }
         if (this.verbose) {
             this.log += `turn ${this.turn + 1}\n`;
+            this.currentTurnLog = [];
+            const phase = this.getCurrentPhase();
+            this.currentTurnLog.push(`<div class="log-turn-header">ターン ${this.turn + 1} ${phase}</div>`);
         }
         const card = this.cards[this.cardTurn];
         card.do(this);
+        
+        if (this.verbose && this.currentTurnLog.length > 1) {
+            this.logHtml += `<div class="log-turn">${this.currentTurnLog.join('')}</div>`;
+        }
+    }
+    
+    getCurrentPhase() {
+        const beforeFever = this.music[0];
+        const duringFever = this.music[1];
+        
+        if (this.turn < beforeFever) {
+            return '<span style="color: #666;">[通常]</span>';
+        } else if (this.turn < beforeFever + duringFever) {
+            return '<span style="color: #ff6b6b; font-weight: bold;">[フィーバー]</span>';
+        } else {
+            return '<span style="color: #666;">[フィーバー後]</span>';
+        }
     }
 
     getVoltageLevel() {
@@ -82,6 +104,9 @@ class Game {
         }
         if (this.verbose) {
             this.log += `score boost ${value}, reach ${this.scoreBoost[this.scoreBoostCount]}\n`;
+            const percent = (value * 100).toFixed(2);
+            const total = (this.scoreBoost[this.scoreBoostCount] * 100).toFixed(2);
+            this.currentTurnLog.push(`<div class="log-action"><span class="log-score-boost">スコアブースト +${percent}% (合計: ${total}%)</span></div>`);
         }
     }
 
@@ -91,6 +116,9 @@ class Game {
         }
         if (this.verbose) {
             this.log += `voltage boost ${value}, reach ${this.voltageBoost[this.voltageBoostCount]}\n`;
+            const percent = (value * 100).toFixed(2);
+            const total = (this.voltageBoost[this.voltageBoostCount] * 100).toFixed(2);
+            this.currentTurnLog.push(`<div class="log-action"><span class="log-voltage-boost">ボルテージブースト +${percent}% (合計: ${total}%)</span></div>`);
         }
     }
 
@@ -100,6 +128,11 @@ class Game {
         this.scoreBoostCount += 1;
         if (this.verbose) {
             this.log += `get score ${score} = ${value} * ${this.appeal} * (1 + ${this.scoreBoost[this.scoreBoostCount - 1]}) * ${1 + this.getVoltageLevel() / 10} * 1.5\n`;
+            const voltageLevel = this.getVoltageLevel();
+            const scoreBoostPercent = (this.scoreBoost[this.scoreBoostCount - 1] * 100).toFixed(1);
+            const voltageLevelBonus = (voltageLevel / 10 * 100).toFixed(1);
+            this.currentTurnLog.push(`<div class="log-action"><span class="log-score-gain">スコア獲得: +${score.toLocaleString()}</span></div>`);
+            this.currentTurnLog.push(`<div class="log-action" style="font-size: 12px; color: #888;">　計算: ${value} × ${this.appeal} × (1 + ${scoreBoostPercent}%) × (1 + ${voltageLevelBonus}%) × 1.5</div>`);
         }
     }
 
@@ -108,6 +141,15 @@ class Game {
         this.voltagePt += voltagePt;
         if (this.verbose) {
             this.log += `get voltage ${voltagePt} = ${value} * (1 + ${this.voltageBoost[this.voltageBoostCount]})\n`;
+            const boostPercent = (this.voltageBoost[this.voltageBoostCount] * 100).toFixed(1);
+            const oldLevel = this.getVoltageLevel();
+            this.voltageBoostCount += 1;
+            const newLevel = this.getVoltageLevel();
+            this.voltageBoostCount -= 1;
+            this.currentTurnLog.push(`<div class="log-action"><span class="log-voltage-gain">ボルテージ獲得: +${voltagePt} (合計: ${this.voltagePt})</span></div>`);
+            if (oldLevel !== newLevel) {
+                this.currentTurnLog.push(`<div class="log-action" style="color: #e74c3c; font-weight: bold;">　→ ボルテージレベル ${oldLevel} → ${newLevel}</div>`);
+            }
         }
         this.voltageBoostCount += 1;
     }
@@ -123,6 +165,8 @@ class Card {
     do(game) {
         if (game.verbose) {
             game.log += `done ${this.name}\n`;
+            const cardName = this.displayName || this.name;
+            game.currentTurnLog.push(`<div class="log-action"><span class="log-card-name">${cardName}</span> を使用</div>`);
         }
         this.count += 1;
         game.turn += 1;
@@ -136,6 +180,7 @@ class GenericCard extends Card {
         super();
         this.cardKey = cardKey;
         this.name = cardConfig.name.toLowerCase();
+        this.displayName = cardConfig.displayName;
         this.config = cardConfig;
         this.skillValues = skillValues || {};
     }
@@ -150,6 +195,9 @@ class GenericCard extends Card {
             switch (effect.type) {
                 case 'skipTurn':
                     if (this.evaluateCondition(effect.condition, game)) {
+                        if (game.verbose) {
+                            game.currentTurnLog.push(`<div class="log-action log-skip">ターンスキップ (条件: ${effect.condition})</div>`);
+                        }
                         game.cardTurn += 1;
                         return;
                     }
@@ -181,18 +229,34 @@ class GenericCard extends Card {
                     
                 case 'voltagePenalty':
                     game.voltagePt -= effect.value;
+                    if (game.verbose) {
+                        game.currentTurnLog.push(`<div class="log-action" style="color: #e74c3c;">ボルテージペナルティ: -${effect.value}</div>`);
+                    }
                     break;
                     
                 case 'mentalRecover':
                     game.mental += effect.value;
+                    if (game.verbose) {
+                        game.currentTurnLog.push(`<div class="log-action log-mental">メンタル回復: +${effect.value} (合計: ${game.mental})</div>`);
+                    }
                     break;
                     
                 case 'resetCardTurn':
                     game.cardTurn = -1;
+                    if (game.verbose) {
+                        game.currentTurnLog.push(`<div class="log-action" style="color: #3498db;">カード順リセット</div>`);
+                    }
                     break;
                     
                 case 'conditional':
-                    if (this.evaluateCondition(effect.condition, game)) {
+                    const conditionMet = this.evaluateCondition(effect.condition, game);
+                    if (game.verbose) {
+                        const conditionText = this.formatCondition(effect.condition, game);
+                        const resultText = conditionMet ? '成立' : '不成立';
+                        const resultColor = conditionMet ? '#27ae60' : '#95a5a6';
+                        game.currentTurnLog.push(`<div class="log-action" style="color: ${resultColor};">条件判定: ${conditionText} → ${resultText}</div>`);
+                    }
+                    if (conditionMet) {
                         // Process "then" effects
                         this.processEffects(effect.then, game, `effect_${i}_then`);
                     } else if (effect.else) {
@@ -220,6 +284,20 @@ class GenericCard extends Card {
             console.error('Error evaluating condition:', condition, e);
             return false;
         }
+    }
+    
+    formatCondition(condition, game) {
+        let formatted = condition;
+        formatted = formatted.replace(/count/g, `使用回数(${this.count})`);
+        formatted = formatted.replace(/mental/g, `メンタル(${game.mental})`);
+        formatted = formatted.replace(/voltageLevel/g, `ボルテージレベル(${game.getVoltageLevel()})`);
+        formatted = formatted.replace(/turn/g, `ターン(${game.turn + 1})`);
+        formatted = formatted.replace(/===/g, '=');
+        formatted = formatted.replace(/<=/g, '以下');
+        formatted = formatted.replace(/>=/g, '以上');
+        formatted = formatted.replace(/</g, '未満');
+        formatted = formatted.replace(/>/g, '超');
+        return formatted;
     }
     
     processEffects(effects, game, prefix) {
@@ -254,10 +332,16 @@ class GenericCard extends Card {
                     
                 case 'voltagePenalty':
                     game.voltagePt -= effect.value;
+                    if (game.verbose) {
+                        game.currentTurnLog.push(`<div class="log-action" style="color: #e74c3c;">ボルテージペナルティ: -${effect.value}</div>`);
+                    }
                     break;
                     
                 case 'resetCardTurn':
                     game.cardTurn = -1;
+                    if (game.verbose) {
+                        game.currentTurnLog.push(`<div class="log-action" style="color: #3498db;">カード順リセット</div>`);
+                    }
                     break;
             }
         }
@@ -321,7 +405,14 @@ function calculate() {
     
     document.getElementById('score').textContent = game.score.toLocaleString();
     document.getElementById('result').style.display = 'block';
-    document.getElementById('turnLog').textContent = game.log;
+    
+    // Use HTML log if available, otherwise fall back to text log
+    const logElement = document.getElementById('turnLog');
+    if (game.logHtml) {
+        logElement.innerHTML = game.logHtml;
+    } else {
+        logElement.textContent = game.log;
+    }
 }
 
 // Toggle log display
@@ -422,7 +513,7 @@ function onCardChange(slotNum) {
         skillParams.style.display = 'block';
         
         // Update skill level options to show which have unknown values
-        updateSkillLevelOptions(slotNum, cardSelect.value);
+        updateSkillLevelOptions(slotNum);
         
         // Load default values for current skill level
         onSkillLevelChange(slotNum);
@@ -433,7 +524,7 @@ function onCardChange(slotNum) {
 }
 
 // Update skill level dropdown to show unknown values
-function updateSkillLevelOptions(slotNum, cardType) {
+function updateSkillLevelOptions(slotNum) {
     const skillSelect = document.getElementById(`skill${slotNum}`);
     
     // Since we're calculating values now, all levels are known
@@ -595,10 +686,12 @@ function calculateSkillValue(lv1Value, skillLevel, isPercentage = true) {
     const calculatedValue = lv1Value * multiplier;
     
     if (isPercentage) {
-        // For percentage values, truncate to 3 decimal places
-        return Math.floor(calculatedValue * 1000) / 1000;
+        // Round to avoid floating point errors, then truncate to 4 decimal places
+        // This fixes issues like 0.4125 * 3.0 = 1.2374999999999998
+        const rounded = Math.round(calculatedValue * 10000) / 10000;
+        return Math.floor(rounded * 10000) / 10000;
     } else {
-        // For voltage points, truncate to 1 decimal place (no decimal places as requested)
+        // For voltage points, truncate to integer
         return Math.floor(calculatedValue);
     }
 }
