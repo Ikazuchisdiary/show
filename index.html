@@ -576,6 +576,34 @@
                     }
                 }
                 
+                // Handle voltage gain
+                if (effects.voltageGain) {
+                    if (effects.voltageGain.type === 'turnBased') {
+                        // Base voltage (with current boost)
+                        const baseVoltage = this.skillValues.baseVoltage !== undefined ? parseInt(this.skillValues.baseVoltage) : effects.voltageGain.baseVoltage;
+                        game.getVoltage(baseVoltage);
+                        
+                        // Check turn condition for second voltage
+                        if (effects.voltageGain.turnCondition) {
+                            const turnCheck = effects.voltageGain.turnCondition.turn;
+                            const currentTurn = game.turn + 1; // turn is 0-indexed
+                            let matches = false;
+                            
+                            if (turnCheck.startsWith('>=')) {
+                                matches = currentTurn >= parseInt(turnCheck.substring(2));
+                            } else if (turnCheck.startsWith('>')) {
+                                matches = currentTurn > parseInt(turnCheck.substring(1));
+                            }
+                            
+                            if (matches) {
+                                // Second voltage (uses next boost count)
+                                const secondVoltage = this.skillValues.secondVoltage !== undefined ? parseInt(this.skillValues.secondVoltage) : effects.voltageGain.turnCondition.secondVoltage;
+                                game.getVoltage(secondVoltage);
+                            }
+                        }
+                    }
+                }
+                
                 super.do(game);
             }
         }
@@ -819,6 +847,22 @@
                             <input type="number" id="skill${slotNum}_voltageBoost_${condition.voltageLevel}" value="${condition.voltageBoost}" step="0.001">
                         </div>`;
                     }
+                }
+            }
+            
+            // Voltage gain
+            if (effects.voltageGain && effects.voltageGain.type === 'turnBased') {
+                hasParams = true;
+                html += `<div class="skill-param-row">
+                    <label>ボルテージ獲得:</label>
+                    <input type="number" id="skill${slotNum}_baseVoltage" value="${effects.voltageGain.baseVoltage}" step="1">
+                </div>`;
+                
+                if (effects.voltageGain.turnCondition) {
+                    html += `<div class="skill-param-row">
+                        <label>追加ボルテージ(${effects.voltageGain.turnCondition.turn}):</label>
+                        <input type="number" id="skill${slotNum}_secondVoltage" value="${effects.voltageGain.turnCondition.secondVoltage}" step="1">
+                    </div>`;
                 }
             }
             

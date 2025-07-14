@@ -118,6 +118,21 @@
         "voltageBoost": 2.5312,
         "description": "スコアとボルテージを253.12%ブースト（1回ずつ）"
       }
+    },
+    "lrTsuzuri": {
+      "name": "LR Tsuzuri",
+      "displayName": "LR Tsuzuri",
+      "effects": {
+        "voltageGain": {
+          "type": "turnBased",
+          "baseVoltage": 731,
+          "turnCondition": {
+            "turn": ">=10",
+            "secondVoltage": 1170,
+            "description": "ボルテージ731獲得、ターン10以上なら追加で1170獲得（ボルテージブーストは1回目のみ）"
+          }
+        }
+      }
     }
   },
   "music": {
