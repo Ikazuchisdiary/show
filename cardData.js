@@ -7,8 +7,8 @@ const gameData = {
       "effects": [
         {
           "type": "skipTurn",
-          "condition": "count === 3",
-          "description": "3回目の使用時にターンをスキップ"
+          "condition": "count >= 4",
+          "description": "4回目以降の使用時にターンをスキップ"
         }
       ]
     },
@@ -34,7 +34,7 @@ const gameData = {
       "effects": [
         {
           "type": "conditional",
-          "condition": "count <= 2",
+          "condition": "count <= 3",
           "then": [
             {
               "type": "voltageBoost",
@@ -62,7 +62,7 @@ const gameData = {
       "effects": [
         {
           "type": "conditional",
-          "condition": "count <= 0",
+          "condition": "count <= 1",
           "then": [
             {
               "type": "voltageBoost",
@@ -188,6 +188,291 @@ const gameData = {
               "type": "voltageGain",
               "value": 390,
               "description": "ボルテージ390獲得 (Lv.1)"
+            }
+          ]
+        }
+      ]
+    },
+    "bdCelestine": {
+      "name": "BD Celestine",
+      "displayName": "［16th Birthday］セラス 柳田 リリエンフェルト",
+      "effects": [
+        {
+          "type": "voltageBoost",
+          "value": 0.1815,
+          "description": "ボルテージ18.15%ブースト (Lv.1)"
+        },
+        {
+          "type": "skipTurn",
+          "condition": "count === 3",
+          "description": "3回目の使用時にターンをスキップ"
+        }
+      ]
+    },
+    "bdGin": {
+      "name": "BD Gin", 
+      "displayName": "［16th Birthday］百生吟子",
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 0.4125,
+          "description": "スコア41.25%ブースト (Lv.1)"
+        },
+        {
+          "type": "voltageBoost",
+          "value": 0.4125,
+          "description": "ボルテージ41.25%ブースト (Lv.1)"
+        }
+      ]
+    },
+    "bdRurino": {
+      "name": "BD Rurino",
+      "displayName": "［17th Birthday］大沢瑠璃乃",
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 0.4125,
+          "description": "スコア41.25%ブースト (Lv.1)"
+        },
+        {
+          "type": "voltageBoost",
+          "value": 0.4125,
+          "description": "ボルテージ41.25%ブースト (Lv.1)"
+        }
+      ]
+    },
+    "bdKozu": {
+      "name": "BD Kozu",
+      "displayName": "［18th Birthday］乙宗梢",
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 0.4125,
+          "description": "スコア41.25%ブースト (Lv.1)"
+        },
+        {
+          "type": "voltageBoost",
+          "value": 0.4125,
+          "description": "ボルテージ41.25%ブースト (Lv.1)"
+        }
+      ]
+    },
+    "angelMegu": {
+      "name": "Angel Megu",
+      "displayName": "［やっぱ天使！］藤島慈",
+      "effects": [
+        {
+          "type": "scoreGain",
+          "value": 1.0875,
+          "description": "スコア108.75%獲得 (Lv.1)"
+        },
+        {
+          "type": "conditional",
+          "condition": "turn >= 15",
+          "then": [
+            {
+              "type": "scoreBoost",
+              "value": 1.215,
+              "description": "スコア121.5%ブースト (Lv.1)"
+            }
+          ]
+        }
+      ]
+    },
+    "beProudKozu": {
+      "name": "Be Proud Kozu",
+      "displayName": "［be proud］乙宗梢",
+      "effects": [
+        {
+          "type": "voltageBoost",
+          "value": 0.375,
+          "description": "ボルテージ37.5%ブースト (Lv.1)"
+        },
+        {
+          "type": "resetCardTurn",
+          "description": "山札リセット"
+        }
+      ]
+    },
+    "edeliedIzumiCelestine": {
+      "name": "Edelied Izumi & Celestine",
+      "displayName": "［Edelied］桂城泉＆セラス 柳田 リリエンフェルト",
+      "effects": [
+        {
+          "type": "scoreGain",
+          "value": 2.106,
+          "description": "スコア210.6%獲得 (Lv.1)"
+        }
+      ]
+    },
+    "shinjitsuSayaka": {
+      "name": "Shinjitsu Sayaka",
+      "displayName": "［真実の舞踏会］村野さやか",
+      "effects": [
+        {
+          "type": "conditional",
+          "condition": "voltageLevel <= 8",
+          "then": [
+            {
+              "type": "voltageGain",
+              "value": 108,
+              "description": "ボルテージ108獲得 (Lv.1)"
+            }
+          ]
+        },
+        {
+          "type": "conditional",
+          "condition": "voltageLevel >= 7",
+          "then": [
+            {
+              "type": "scoreBoost",
+              "value": 1.86,
+              "description": "スコア186%ブースト (Lv.1)"
+            },
+            {
+              "type": "voltagePenalty",
+              "value": 50,
+              "description": "ボルテージ-50"
+            }
+          ]
+        }
+      ]
+    },
+    "kuonMegu": {
+      "name": "Kuon Megu",
+      "displayName": "［久遠の銀河へ］藤島慈",
+      "effects": [
+        {
+          "type": "scoreGain",
+          "value": 0.6825,
+          "description": "スコア68.25%獲得 (Lv.1)"
+        },
+        {
+          "type": "conditional",
+          "condition": "count >= 6",
+          "then": [
+            {
+              "type": "scoreGain",
+              "value": 0.9555,
+              "description": "スコア95.55%獲得 (Lv.1)"
+            }
+          ]
+        }
+      ]
+    },
+    "kisekiKaho": {
+      "name": "Kiseki Kaho",
+      "displayName": "［軌跡の舞踏会］日野下花帆",
+      "effects": [
+        {
+          "type": "conditional",
+          "condition": "voltageLevel <= 8",
+          "then": [
+            {
+              "type": "scoreBoost",
+              "value": 0.81,
+              "description": "スコア81%ブースト (Lv.1)"
+            }
+          ]
+        },
+        {
+          "type": "conditional",
+          "condition": "voltageLevel >= 7",
+          "then": [
+            {
+              "type": "scoreGain",
+              "value": 1.74,
+              "description": "スコア174%獲得 (Lv.1)"
+            }
+          ]
+        }
+      ]
+    },
+    "kisekiKozu": {
+      "name": "Kiseki Kozu",
+      "displayName": "［奇跡の舞踏会］乙宗梢",
+      "effects": [
+        {
+          "type": "conditional",
+          "condition": "voltageLevel <= 8",
+          "then": [
+            {
+              "type": "voltageBoost",
+              "value": 0.81,
+              "description": "ボルテージ81%ブースト (Lv.1)"
+            }
+          ]
+        },
+        {
+          "type": "conditional",
+          "condition": "voltageLevel >= 7",
+          "then": [
+            {
+              "type": "scoreBoost",
+              "value": 1.08,
+              "description": "スコア108%ブースト (Lv.1)"
+            }
+          ]
+        }
+      ]
+    },
+    "tenchiCelestine": {
+      "name": "Tenchi Celestine",
+      "displayName": "［天地黎明］セラス 柳田 リリエンフェルト",
+      "effects": [
+        {
+          "type": "conditional",
+          "condition": "count <= 1",
+          "then": [
+            {
+              "type": "voltageBoost",
+              "value": 2.325,
+              "description": "ボルテージ232.5%ブースト (Lv.1)"
+            }
+          ],
+          "else": [
+            {
+              "type": "scoreGain",
+              "value": 1.674,
+              "description": "スコア167.4%獲得 (Lv.1)"
+            }
+          ]
+        }
+      ]
+    },
+    "izayoiCelestine": {
+      "name": "Izayoi Celestine",
+      "displayName": "［十六夜セレーネ］セラス 柳田 リリエンフェルト",
+      "effects": [
+        {
+          "type": "conditional",
+          "condition": "voltageLevel <= 8",
+          "then": [
+            {
+              "type": "voltageGain",
+              "value": 81,
+              "description": "ボルテージ81獲得 (Lv.1)"
+            }
+          ]
+        },
+        {
+          "type": "conditional",
+          "condition": "voltageLevel >= 7",
+          "then": [
+            {
+              "type": "scoreBoost",
+              "value": 1.08,
+              "description": "スコア108%ブースト (Lv.1)"
+            }
+          ]
+        },
+        {
+          "type": "conditional",
+          "condition": "count <= 2",
+          "then": [
+            {
+              "type": "resetCardTurn",
+              "description": "山札リセット"
             }
           ]
         }
