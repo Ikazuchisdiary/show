@@ -3,136 +3,194 @@
     "sachi": {
       "name": "Sachi",
       "displayName": "Sachi",
-      "effects": {
-        "special": {
+      "effects": [
+        {
           "type": "skipTurn",
           "condition": "count === 3",
           "description": "3回目の使用時にターンをスキップ"
         }
-      }
+      ]
     },
     "bdMegu": {
       "name": "BD Megu",
       "displayName": "BD Megu",
-      "effects": {
-        "scoreBoost": 1.2375,
-        "voltageBoost": 1.2375,
-        "description": "スコアとボルテージを123.75%ブースト"
-      }
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 1.2375,
+          "description": "スコア123.75%ブースト"
+        },
+        {
+          "type": "voltageBoost",
+          "value": 1.2375,
+          "description": "ボルテージ123.75%ブースト"
+        }
+      ]
     },
     "gingaKozu": {
       "name": "Ginga Kozu",
       "displayName": "Ginga Kozu",
-      "effects": {
-        "conditional": {
-          "type": "countBased",
-          "conditions": [
+      "effects": [
+        {
+          "type": "conditional",
+          "condition": "count <= 2",
+          "then": [
             {
-              "count": "<=2",
-              "voltageBoost": 3.24,
-              "resetCardTurn": true,
-              "description": "最初の3回はボルテージ324%ブースト、カード順リセット"
+              "type": "voltageBoost",
+              "value": 3.24,
+              "description": "ボルテージ324%ブースト"
             },
             {
-              "count": ">2",
-              "scoreBoost": 3.24,
-              "description": "4回目以降はスコア324%ブースト"
+              "type": "resetCardTurn",
+              "description": "カード順リセット"
+            }
+          ],
+          "else": [
+            {
+              "type": "scoreBoost",
+              "value": 3.24,
+              "description": "スコア324%ブースト"
             }
           ]
         }
-      }
+      ]
     },
     "iDoMeSayaka": {
       "name": "I Do Me Sayaka",
       "displayName": "I Do Me Sayaka",
-      "effects": {
-        "conditional": {
-          "type": "countBased",
-          "conditions": [
+      "effects": [
+        {
+          "type": "conditional",
+          "condition": "count <= 0",
+          "then": [
             {
-              "count": "<=0",
-              "voltageBoost": 0.7875,
-              "description": "初回はボルテージ78.75%ブースト"
-            },
+              "type": "voltageBoost",
+              "value": 0.7875,
+              "description": "ボルテージ78.75%ブースト"
+            }
+          ],
+          "else": [
             {
-              "count": ">0",
-              "scoreBoost": 2.43,
-              "description": "2回目以降はスコア243%ブースト"
+              "type": "scoreBoost",
+              "value": 2.43,
+              "description": "スコア243%ブースト"
             }
           ]
         },
-        "mentalCheck": {
+        {
+          "type": "conditional",
           "condition": "mental >= 100",
-          "onSuccess": {
-            "voltage": 945
-          },
-          "onFail": {
-            "voltagePenalty": 1000
-          },
-          "description": "メンタル100以上でボルテージ945獲得、未満で-1000"
+          "then": [
+            {
+              "type": "voltageGain",
+              "value": 945,
+              "description": "ボルテージ945獲得"
+            }
+          ],
+          "else": [
+            {
+              "type": "voltagePenalty",
+              "value": 1000,
+              "description": "ボルテージ-1000"
+            }
+          ]
         }
-      }
+      ]
     },
     "iDoMeKaho": {
       "name": "I Do Me Kaho",
       "displayName": "I Do Me Kaho",
-      "effects": {
-        "mentalRecover": 10,
-        "mentalCheck": {
+      "effects": [
+        {
+          "type": "mentalRecover",
+          "value": 10,
+          "description": "メンタル+10"
+        },
+        {
+          "type": "conditional",
           "condition": "mental >= 100",
-          "onSuccess": {
-            "score": 11.34
-          },
-          "onFail": {
-            "voltagePenalty": 1000
-          },
-          "description": "メンタル+10、100以上でスコア11.34倍、未満で-1000"
+          "then": [
+            {
+              "type": "scoreGain",
+              "value": 11.34,
+              "description": "スコア11.34倍"
+            }
+          ],
+          "else": [
+            {
+              "type": "voltagePenalty",
+              "value": 1000,
+              "description": "ボルテージ-1000"
+            }
+          ]
         }
-      }
+      ]
     },
     "butoRuri": {
       "name": "Buto Ruri",
       "displayName": "Buto Ruri",
-      "effects": {
-        "voltageLevelCheck": {
-          "conditions": [
+      "effects": [
+        {
+          "type": "conditional",
+          "condition": "voltageLevel <= 8",
+          "then": [
             {
-              "voltageLevel": "<=8",
-              "voltageBoost": 3.2625,
-              "description": "ボルテージレベル8以下でボルテージ326.25%ブースト"
-            },
+              "type": "voltageBoost",
+              "value": 3.2625,
+              "description": "ボルテージ326.25%ブースト"
+            }
+          ]
+        },
+        {
+          "type": "conditional",
+          "condition": "voltageLevel >= 7",
+          "then": [
             {
-              "voltageLevel": ">=7",
-              "scoreBoost": 4.35,
-              "description": "ボルテージレベル7以上でスコア435%ブースト"
+              "type": "scoreBoost",
+              "value": 4.35,
+              "description": "スコア435%ブースト"
             }
           ]
         }
-      }
+      ]
     },
     "butoGin": {
       "name": "Buto Gin",
       "displayName": "Buto Gin",
-      "effects": {
-        "scoreBoost": 2.5312,
-        "voltageBoost": 2.5312,
-        "description": "スコアとボルテージを253.12%ブースト（1回ずつ）"
-      }
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 2.5312,
+          "description": "スコア253.12%ブースト"
+        },
+        {
+          "type": "voltageBoost",
+          "value": 2.5312,
+          "description": "ボルテージ253.12%ブースト"
+        }
+      ]
     },
     "lrTsuzuri": {
       "name": "LR Tsuzuri",
       "displayName": "LR Tsuzuri",
-      "effects": {
-        "voltageGain": {
-          "type": "turnBased",
-          "baseVoltage": 731,
-          "turnCondition": {
-            "turn": ">=10",
-            "secondVoltage": 1170,
-            "description": "ボルテージ731獲得、ターン10以上なら追加で1170獲得（ボルテージブーストは1回目のみ）"
-          }
+      "effects": [
+        {
+          "type": "voltageGain",
+          "value": 731,
+          "description": "ボルテージ731獲得"
+        },
+        {
+          "type": "conditional",
+          "condition": "turn >= 10",
+          "then": [
+            {
+              "type": "voltageGain",
+              "value": 1170,
+              "description": "ボルテージ1170獲得"
+            }
+          ]
         }
-      }
+      ]
     }
   },
   "music": {

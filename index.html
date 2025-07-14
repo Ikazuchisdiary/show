@@ -470,141 +470,124 @@
             do(game) {
                 const effects = this.config.effects;
                 
-                // Handle special effects
-                if (effects.special) {
-                    if (effects.special.type === 'skipTurn' && eval(effects.special.condition.replace('count', 'this.count'))) {
-                        game.cardTurn += 1;
-                        return;
-                    }
-                }
-                
-                // Handle simple boosts
-                if (effects.scoreBoost) {
-                    const value = this.skillValues.scoreBoost !== undefined ? parseFloat(this.skillValues.scoreBoost) : effects.scoreBoost;
-                    game.doScoreBoost(value);
-                }
-                if (effects.voltageBoost) {
-                    const value = this.skillValues.voltageBoost !== undefined ? parseFloat(this.skillValues.voltageBoost) : effects.voltageBoost;
-                    game.doVoltageBoost(value);
-                }
-                
-                // Handle conditional effects
-                if (effects.conditional) {
-                    if (effects.conditional.type === 'countBased') {
-                        for (const condition of effects.conditional.conditions) {
-                            const countCheck = condition.count;
-                            const currentCount = this.count;
-                            let matches = false;
+                // Process effects array sequentially
+                for (let i = 0; i < effects.length; i++) {
+                    const effect = effects[i];
+                    
+                    switch (effect.type) {
+                        case 'skipTurn':
+                            if (this.evaluateCondition(effect.condition, game)) {
+                                game.cardTurn += 1;
+                                return;
+                            }
+                            break;
                             
-                            if (countCheck.startsWith('<=')) {
-                                matches = currentCount <= parseInt(countCheck.substring(2));
-                            } else if (countCheck.startsWith('>=')) {
-                                matches = currentCount >= parseInt(countCheck.substring(2));
-                            } else if (countCheck.startsWith('>')) {
-                                matches = currentCount > parseInt(countCheck.substring(1));
-                            } else if (countCheck.startsWith('<')) {
-                                matches = currentCount < parseInt(countCheck.substring(1));
-                            } else if (countCheck.startsWith('===')) {
-                                matches = currentCount === parseInt(countCheck.substring(3));
-                            }
+                        case 'scoreBoost':
+                            const scoreBoostValue = this.skillValues[`effect_${i}_value`] !== undefined ? 
+                                parseFloat(this.skillValues[`effect_${i}_value`]) : effect.value;
+                            game.doScoreBoost(scoreBoostValue);
+                            break;
                             
-                            if (matches) {
-                                if (condition.scoreBoost) {
-                                    const key = `scoreBoost_${condition.count}`;
-                                    const value = this.skillValues[key] !== undefined ? parseFloat(this.skillValues[key]) : condition.scoreBoost;
-                                    game.doScoreBoost(value);
-                                }
-                                if (condition.voltageBoost) {
-                                    const key = `voltageBoost_${condition.count}`;
-                                    const value = this.skillValues[key] !== undefined ? parseFloat(this.skillValues[key]) : condition.voltageBoost;
-                                    game.doVoltageBoost(value);
-                                }
-                                if (condition.resetCardTurn) game.cardTurn = -1;
-                            }
-                        }
-                    }
-                }
-                
-                // Handle mental recovery
-                if (effects.mentalRecover) {
-                    game.mental += effects.mentalRecover;
-                }
-                
-                // Handle mental check
-                if (effects.mentalCheck) {
-                    if (game.mental >= 100) {
-                        if (effects.mentalCheck.onSuccess.score) {
-                            const value = this.skillValues.score !== undefined ? parseFloat(this.skillValues.score) : effects.mentalCheck.onSuccess.score;
-                            game.getScore(value);
-                        }
-                        if (effects.mentalCheck.onSuccess.voltage) {
-                            const value = this.skillValues.voltage !== undefined ? parseInt(this.skillValues.voltage) : effects.mentalCheck.onSuccess.voltage;
-                            game.getVoltage(value);
-                        }
-                    } else {
-                        if (effects.mentalCheck.onFail.voltagePenalty) {
-                            game.voltagePt -= effects.mentalCheck.onFail.voltagePenalty;
-                        }
-                    }
-                }
-                
-                // Handle voltage level check
-                if (effects.voltageLevelCheck) {
-                    const voltageLevel = game.getVoltageLevel();
-                    for (const condition of effects.voltageLevelCheck.conditions) {
-                        const levelCheck = condition.voltageLevel;
-                        let matches = false;
-                        
-                        if (levelCheck.startsWith('<=')) {
-                            matches = voltageLevel <= parseInt(levelCheck.substring(2));
-                        } else if (levelCheck.startsWith('>=')) {
-                            matches = voltageLevel >= parseInt(levelCheck.substring(2));
-                        }
-                        
-                        if (matches) {
-                            if (condition.scoreBoost) {
-                                const key = `scoreBoost_${condition.voltageLevel}`;
-                                const value = this.skillValues[key] !== undefined ? parseFloat(this.skillValues[key]) : condition.scoreBoost;
-                                game.doScoreBoost(value);
-                            }
-                            if (condition.voltageBoost) {
-                                const key = `voltageBoost_${condition.voltageLevel}`;
-                                const value = this.skillValues[key] !== undefined ? parseFloat(this.skillValues[key]) : condition.voltageBoost;
-                                game.doVoltageBoost(value);
-                            }
-                        }
-                    }
-                }
-                
-                // Handle voltage gain
-                if (effects.voltageGain) {
-                    if (effects.voltageGain.type === 'turnBased') {
-                        // Base voltage (with current boost)
-                        const baseVoltage = this.skillValues.baseVoltage !== undefined ? parseInt(this.skillValues.baseVoltage) : effects.voltageGain.baseVoltage;
-                        game.getVoltage(baseVoltage);
-                        
-                        // Check turn condition for second voltage
-                        if (effects.voltageGain.turnCondition) {
-                            const turnCheck = effects.voltageGain.turnCondition.turn;
-                            const currentTurn = game.turn + 1; // turn is 0-indexed
-                            let matches = false;
+                        case 'voltageBoost':
+                            const voltageBoostValue = this.skillValues[`effect_${i}_value`] !== undefined ? 
+                                parseFloat(this.skillValues[`effect_${i}_value`]) : effect.value;
+                            game.doVoltageBoost(voltageBoostValue);
+                            break;
                             
-                            if (turnCheck.startsWith('>=')) {
-                                matches = currentTurn >= parseInt(turnCheck.substring(2));
-                            } else if (turnCheck.startsWith('>')) {
-                                matches = currentTurn > parseInt(turnCheck.substring(1));
-                            }
+                        case 'scoreGain':
+                            const scoreGainValue = this.skillValues[`effect_${i}_value`] !== undefined ? 
+                                parseFloat(this.skillValues[`effect_${i}_value`]) : effect.value;
+                            game.getScore(scoreGainValue);
+                            break;
                             
-                            if (matches) {
-                                // Second voltage (uses next boost count)
-                                const secondVoltage = this.skillValues.secondVoltage !== undefined ? parseInt(this.skillValues.secondVoltage) : effects.voltageGain.turnCondition.secondVoltage;
-                                game.getVoltage(secondVoltage);
+                        case 'voltageGain':
+                            const voltageGainValue = this.skillValues[`effect_${i}_value`] !== undefined ? 
+                                parseInt(this.skillValues[`effect_${i}_value`]) : effect.value;
+                            game.getVoltage(voltageGainValue);
+                            break;
+                            
+                        case 'voltagePenalty':
+                            game.voltagePt -= effect.value;
+                            break;
+                            
+                        case 'mentalRecover':
+                            game.mental += effect.value;
+                            break;
+                            
+                        case 'resetCardTurn':
+                            game.cardTurn = -1;
+                            break;
+                            
+                        case 'conditional':
+                            if (this.evaluateCondition(effect.condition, game)) {
+                                // Process "then" effects
+                                this.processEffects(effect.then, game, `effect_${i}_then`);
+                            } else if (effect.else) {
+                                // Process "else" effects
+                                this.processEffects(effect.else, game, `effect_${i}_else`);
                             }
-                        }
+                            break;
                     }
                 }
                 
                 super.do(game);
+            }
+            
+            evaluateCondition(condition, game) {
+                // Replace variables in condition with actual values
+                let evalStr = condition;
+                evalStr = evalStr.replace(/count/g, this.count);
+                evalStr = evalStr.replace(/mental/g, game.mental);
+                evalStr = evalStr.replace(/voltageLevel/g, game.getVoltageLevel());
+                evalStr = evalStr.replace(/turn/g, game.turn + 1); // turn is 0-indexed
+                
+                try {
+                    return eval(evalStr);
+                } catch (e) {
+                    console.error('Error evaluating condition:', condition, e);
+                    return false;
+                }
+            }
+            
+            processEffects(effects, game, prefix) {
+                for (let j = 0; j < effects.length; j++) {
+                    const effect = effects[j];
+                    const key = `${prefix}_${j}_value`;
+                    
+                    switch (effect.type) {
+                        case 'scoreBoost':
+                            const scoreBoostValue = this.skillValues[key] !== undefined ? 
+                                parseFloat(this.skillValues[key]) : effect.value;
+                            game.doScoreBoost(scoreBoostValue);
+                            break;
+                            
+                        case 'voltageBoost':
+                            const voltageBoostValue = this.skillValues[key] !== undefined ? 
+                                parseFloat(this.skillValues[key]) : effect.value;
+                            game.doVoltageBoost(voltageBoostValue);
+                            break;
+                            
+                        case 'scoreGain':
+                            const scoreGainValue = this.skillValues[key] !== undefined ? 
+                                parseFloat(this.skillValues[key]) : effect.value;
+                            game.getScore(scoreGainValue);
+                            break;
+                            
+                        case 'voltageGain':
+                            const voltageGainValue = this.skillValues[key] !== undefined ? 
+                                parseInt(this.skillValues[key]) : effect.value;
+                            game.getVoltage(voltageGainValue);
+                            break;
+                            
+                        case 'voltagePenalty':
+                            game.voltagePt -= effect.value;
+                            break;
+                            
+                        case 'resetCardTurn':
+                            game.cardTurn = -1;
+                            break;
+                    }
+                }
             }
         }
 
@@ -772,97 +755,16 @@
             
             let html = '';
             const effects = card.effects;
-            
-            // Check if card has any skill parameters
             let hasParams = false;
             
-            // Simple boosts
-            if (effects.scoreBoost) {
-                hasParams = true;
-                html += `<div class="skill-param-row">
-                    <label>スコアブースト:</label>
-                    <input type="number" id="skill${slotNum}_scoreBoost" value="${effects.scoreBoost}" step="0.001">
-                </div>`;
-            }
-            if (effects.voltageBoost) {
-                hasParams = true;
-                html += `<div class="skill-param-row">
-                    <label>ボルテージブースト:</label>
-                    <input type="number" id="skill${slotNum}_voltageBoost" value="${effects.voltageBoost}" step="0.001">
-                </div>`;
-            }
-            
-            // Conditional effects
-            if (effects.conditional && effects.conditional.conditions) {
-                for (const condition of effects.conditional.conditions) {
-                    if (condition.scoreBoost) {
-                        hasParams = true;
-                        html += `<div class="skill-param-row">
-                            <label>スコアブースト(${condition.count}):</label>
-                            <input type="number" id="skill${slotNum}_scoreBoost_${condition.count}" value="${condition.scoreBoost}" step="0.001">
-                        </div>`;
-                    }
-                    if (condition.voltageBoost) {
-                        hasParams = true;
-                        html += `<div class="skill-param-row">
-                            <label>ボルテージブースト(${condition.count}):</label>
-                            <input type="number" id="skill${slotNum}_voltageBoost_${condition.count}" value="${condition.voltageBoost}" step="0.001">
-                        </div>`;
-                    }
-                }
-            }
-            
-            // Mental check values
-            if (effects.mentalCheck) {
-                if (effects.mentalCheck.onSuccess.score) {
-                    hasParams = true;
-                    html += `<div class="skill-param-row">
-                        <label>スコア倍率:</label>
-                        <input type="number" id="skill${slotNum}_score" value="${effects.mentalCheck.onSuccess.score}" step="0.01">
-                    </div>`;
-                }
-                if (effects.mentalCheck.onSuccess.voltage) {
-                    hasParams = true;
-                    html += `<div class="skill-param-row">
-                        <label>ボルテージ獲得:</label>
-                        <input type="number" id="skill${slotNum}_voltage" value="${effects.mentalCheck.onSuccess.voltage}" step="1">
-                    </div>`;
-                }
-            }
-            
-            // Voltage level check
-            if (effects.voltageLevelCheck && effects.voltageLevelCheck.conditions) {
-                for (const condition of effects.voltageLevelCheck.conditions) {
-                    if (condition.scoreBoost) {
-                        hasParams = true;
-                        html += `<div class="skill-param-row">
-                            <label>スコアブースト(${condition.voltageLevel}):</label>
-                            <input type="number" id="skill${slotNum}_scoreBoost_${condition.voltageLevel}" value="${condition.scoreBoost}" step="0.001">
-                        </div>`;
-                    }
-                    if (condition.voltageBoost) {
-                        hasParams = true;
-                        html += `<div class="skill-param-row">
-                            <label>ボルテージブースト(${condition.voltageLevel}):</label>
-                            <input type="number" id="skill${slotNum}_voltageBoost_${condition.voltageLevel}" value="${condition.voltageBoost}" step="0.001">
-                        </div>`;
-                    }
-                }
-            }
-            
-            // Voltage gain
-            if (effects.voltageGain && effects.voltageGain.type === 'turnBased') {
-                hasParams = true;
-                html += `<div class="skill-param-row">
-                    <label>ボルテージ獲得:</label>
-                    <input type="number" id="skill${slotNum}_baseVoltage" value="${effects.voltageGain.baseVoltage}" step="1">
-                </div>`;
+            // Process effects array
+            for (let i = 0; i < effects.length; i++) {
+                const effect = effects[i];
+                html += generateEffectInputs(effect, slotNum, i, '');
                 
-                if (effects.voltageGain.turnCondition) {
-                    html += `<div class="skill-param-row">
-                        <label>追加ボルテージ(${effects.voltageGain.turnCondition.turn}):</label>
-                        <input type="number" id="skill${slotNum}_secondVoltage" value="${effects.voltageGain.turnCondition.secondVoltage}" step="1">
-                    </div>`;
+                if (effect.value !== undefined || 
+                    (effect.type === 'conditional' && (effect.then || effect.else))) {
+                    hasParams = true;
                 }
             }
             
@@ -873,6 +775,69 @@
             }
             
             skillParams.innerHTML = html;
+        }
+        
+        // Generate input fields for effects
+        function generateEffectInputs(effect, slotNum, effectIndex, prefix) {
+            let html = '';
+            const inputId = prefix ? `skill${slotNum}_${prefix}_${effectIndex}_value` : `skill${slotNum}_effect_${effectIndex}_value`;
+            
+            switch (effect.type) {
+                case 'scoreBoost':
+                    html += `<div class="skill-param-row">
+                        <label>スコアブースト:</label>
+                        <input type="number" id="${inputId}" value="${effect.value}" step="0.001">
+                    </div>`;
+                    break;
+                    
+                case 'voltageBoost':
+                    html += `<div class="skill-param-row">
+                        <label>ボルテージブースト:</label>
+                        <input type="number" id="${inputId}" value="${effect.value}" step="0.001">
+                    </div>`;
+                    break;
+                    
+                case 'scoreGain':
+                    html += `<div class="skill-param-row">
+                        <label>スコア倍率:</label>
+                        <input type="number" id="${inputId}" value="${effect.value}" step="0.01">
+                    </div>`;
+                    break;
+                    
+                case 'voltageGain':
+                    html += `<div class="skill-param-row">
+                        <label>ボルテージ獲得:</label>
+                        <input type="number" id="${inputId}" value="${effect.value}" step="1">
+                    </div>`;
+                    break;
+                    
+                case 'conditional':
+                    html += `<div style="margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px;">
+                        <div style="font-weight: bold; margin-bottom: 5px;">条件: ${effect.condition}</div>`;
+                    
+                    if (effect.then) {
+                        html += '<div style="margin-left: 10px;">';
+                        html += '<div style="font-weight: bold; color: #2196F3;">条件成立時:</div>';
+                        for (let j = 0; j < effect.then.length; j++) {
+                            html += generateEffectInputs(effect.then[j], slotNum, j, `effect_${effectIndex}_then`);
+                        }
+                        html += '</div>';
+                    }
+                    
+                    if (effect.else) {
+                        html += '<div style="margin-left: 10px;">';
+                        html += '<div style="font-weight: bold; color: #f44336;">条件不成立時:</div>';
+                        for (let j = 0; j < effect.else.length; j++) {
+                            html += generateEffectInputs(effect.else[j], slotNum, j, `effect_${effectIndex}_else`);
+                        }
+                        html += '</div>';
+                    }
+                    
+                    html += '</div>';
+                    break;
+            }
+            
+            return html;
         }
         
         // Get skill values from inputs
