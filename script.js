@@ -1387,6 +1387,47 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
             }
             break;
             
+        case 'mentalRecover':
+            if (effect.value !== undefined) {
+                html += `<div class="skill-param-row" style="color: #27ae60;">
+                    <label>メンタル回復:</label>
+                    <span style="font-weight: bold;">+${effect.value}</span>
+                </div>`;
+            }
+            break;
+            
+        case 'mentalReduction':
+            if (effect.value !== undefined) {
+                html += `<div class="skill-param-row" style="color: #e74c3c;">
+                    <label>メンタル減少:</label>
+                    <span style="font-weight: bold;">-${effect.value}</span>
+                </div>`;
+            }
+            break;
+            
+        case 'voltagePenalty':
+            if (effect.value !== undefined) {
+                html += `<div class="skill-param-row" style="color: #e74c3c;">
+                    <label>ボルテージ減少:</label>
+                    <span style="font-weight: bold;">-${effect.value}</span>
+                </div>`;
+            }
+            break;
+            
+        case 'skipTurn':
+            html += `<div class="skill-param-row" style="color: #95a5a6;">
+                <label>効果:</label>
+                <span>${effect.description || 'ターンスキップ'}</span>
+            </div>`;
+            break;
+            
+        case 'resetCardTurn':
+            html += `<div class="skill-param-row" style="color: #3498db;">
+                <label>効果:</label>
+                <span>${effect.description || '山札リセット'}</span>
+            </div>`;
+            break;
+            
         case 'conditional':
             if (effect.then || effect.else) {
                 html += `<div style="margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px;">
