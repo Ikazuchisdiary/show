@@ -58,9 +58,14 @@ class Game {
             this.currentTurnLog.push(`<div class="log-turn-header">ターン ${this.turn + 1} ${phase}</div>`);
         }
         const card = this.cards[this.cardTurn];
-        card.do(this);
         
-        if (this.verbose && this.currentTurnLog.length > 1) {
+        // Store initial turn state to check if turn was skipped
+        const initialTurn = this.turn;
+        card.do(this);
+        const turnSkipped = this.turn === initialTurn;
+        
+        // Only create log entry if turn was not skipped
+        if (this.verbose && this.currentTurnLog.length > 1 && !turnSkipped) {
             this.logHtml += `<div class="log-turn">${this.currentTurnLog.join('')}</div>`;
         }
     }
@@ -165,8 +170,6 @@ class Card {
     do(game) {
         if (game.verbose) {
             game.log += `done ${this.name}\n`;
-            const cardName = this.displayName || this.name;
-            game.currentTurnLog.push(`<div class="log-action"><span class="log-card-name">${cardName}</span> を使用</div>`);
         }
         this.count += 1;
         game.turn += 1;
@@ -188,6 +191,12 @@ class GenericCard extends Card {
     do(game) {
         const effects = this.config.effects;
         
+        // Add card name at the top
+        if (game.verbose) {
+            const cardName = this.displayName || this.name;
+            game.currentTurnLog.push(`<div class="log-action"><span class="log-card-name">${cardName}</span></div>`);
+        }
+        
         // Process effects array sequentially
         for (let i = 0; i < effects.length; i++) {
             const effect = effects[i];
@@ -195,9 +204,7 @@ class GenericCard extends Card {
             switch (effect.type) {
                 case 'skipTurn':
                     if (this.evaluateCondition(effect.condition, game)) {
-                        if (game.verbose) {
-                            game.currentTurnLog.push(`<div class="log-action log-skip">ターンスキップ (条件: ${effect.condition})</div>`);
-                        }
+                        // Don't log skip action since we'll hide the entire turn
                         game.cardTurn += 1;
                         return;
                     }

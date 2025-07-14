@@ -197,8 +197,8 @@ const gameData = {
   "music": {
     "i_do_me": {
       "name": "アイドゥーミー",
-      "phases": [11, 7, 5],
-      "description": "フィーバー前: 11, フィーバー中: 7, フィーバー後: 5"
+      "phases": [12, 6, 5],
+      "description": "フィーバー前: 12, フィーバー中: 6, フィーバー後: 5"
     }
   }
 };
