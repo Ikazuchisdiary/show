@@ -86,10 +86,13 @@ class Game {
     getVoltageLevel() {
         const getSubVoltageLevel = () => {
             const voltageLevels = [0, 10, 30, 60, 100, 150, 210, 280, 360, 450, 550, 660, 780, 910, 1050, 1200, 1360, 1530, 1710, 1900];
+            if (this.voltagePt < 10) {
+                return 0;
+            }
             if (this.voltagePt < 1900) {
-                for (let i = 0; i < voltageLevels.length; i++) {
+                for (let i = 1; i < voltageLevels.length; i++) {
                     if (this.voltagePt < voltageLevels[i]) {
-                        return i;
+                        return i - 1;
                     }
                 }
             }
@@ -216,6 +219,15 @@ class GenericCard extends Card {
         // Increment count first for 1-indexed counting in conditions
         this.count += 1;
         
+        // Store turn start values for conditional evaluation
+        this.turnStartValues = {
+            mental: game.mental,
+            voltageLevel: game.getVoltageLevel(),
+            voltagePt: game.voltagePt,
+            turn: game.turn,
+            count: this.count
+        };
+        
         const effects = this.config.effects;
         
         // Add card name at the top
@@ -329,9 +341,18 @@ class GenericCard extends Card {
     }
     
     evaluateCondition(condition, game) {
-        // Replace variables in condition with actual values
+        // Use turn start values for evaluation
+        const values = this.turnStartValues || {
+            mental: game.mental,
+            voltageLevel: game.getVoltageLevel(),
+            voltagePt: game.voltagePt,
+            turn: game.turn,
+            count: this.count
+        };
+        
+        // Replace variables in condition with turn start values
         let evalStr = condition;
-        evalStr = evalStr.replace(/count/g, this.count);
+        evalStr = evalStr.replace(/count/g, values.count);
         
         // Special handling for fantasyGin mental condition
         if (this.cardKey === 'fantasyGin' && condition.includes('mental')) {
@@ -341,20 +362,20 @@ class GenericCard extends Card {
             
             // If we haven't exceeded the allowed reset count, allow deck reset
             // If we have exceeded it, prevent deck reset and set mental to 29
-            if (this.count <= resetCount) {
-                // Use actual mental value (should be 100, which triggers deck reset)
-                evalStr = evalStr.replace(/mental/g, game.mental);
+            if (values.count <= resetCount) {
+                // Use turn start mental value
+                evalStr = evalStr.replace(/mental/g, values.mental);
             } else {
                 // Set game.mental to 29 and prevent deck reset
                 game.mental = 29;
                 evalStr = evalStr.replace(/mental/g, '29');
             }
         } else {
-            evalStr = evalStr.replace(/mental/g, game.mental);
+            evalStr = evalStr.replace(/mental/g, values.mental);
         }
         
-        evalStr = evalStr.replace(/voltageLevel/g, game.getVoltageLevel());
-        evalStr = evalStr.replace(/turn/g, game.turn + 1); // turn is 0-indexed
+        evalStr = evalStr.replace(/voltageLevel/g, values.voltageLevel);
+        evalStr = evalStr.replace(/turn/g, values.turn + 1); // turn is 0-indexed
         
         try {
             return eval(evalStr);
@@ -367,11 +388,20 @@ class GenericCard extends Card {
     formatCondition(condition, game) {
         let formatted = condition;
         
-        // Replace variables with their actual values in parentheses
-        formatted = formatted.replace(/count/g, `${this.count}`);
-        formatted = formatted.replace(/mental/g, `${game.mental}`);
-        formatted = formatted.replace(/voltageLevel/g, `${game.getVoltageLevel()}`);
-        formatted = formatted.replace(/turn/g, `${game.turn + 1}`);
+        // Use turn start values for display
+        const values = this.turnStartValues || {
+            mental: game.mental,
+            voltageLevel: game.getVoltageLevel(),
+            voltagePt: game.voltagePt,
+            turn: game.turn,
+            count: this.count
+        };
+        
+        // Replace variables with their turn start values in parentheses
+        formatted = formatted.replace(/count/g, `${values.count}`);
+        formatted = formatted.replace(/mental/g, `${values.mental}`);
+        formatted = formatted.replace(/voltageLevel/g, `${values.voltageLevel}`);
+        formatted = formatted.replace(/turn/g, `${values.turn + 1}`);
         
         // Format the condition more naturally
         if (condition.includes('count')) {
