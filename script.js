@@ -202,13 +202,14 @@ class Card {
 
 // Generic card implementation using JSON data
 class GenericCard extends Card {
-    constructor(cardKey, cardConfig, skillValues) {
+    constructor(cardKey, cardConfig, skillValues, skillLevel) {
         super();
         this.cardKey = cardKey;
         this.name = cardConfig.name.toLowerCase();
         this.displayName = cardConfig.displayName;
         this.config = cardConfig;
         this.skillValues = skillValues || {};
+        this.skillLevel = skillLevel || 1;
     }
 
     do(game) {
@@ -229,7 +230,12 @@ class GenericCard extends Card {
             
             switch (effect.type) {
                 case 'skipTurn':
-                    if (this.evaluateCondition(effect.condition, game)) {
+                    const skipConditionMet = this.evaluateCondition(effect.condition, game);
+                    if (game.verbose) {
+                        const formattedCondition = this.formatCondition(effect.condition, game);
+                        game.currentTurnLog.push(`<div class="log-action" style="color: #666;">条件判定: ${formattedCondition} → ${skipConditionMet ? '条件成立（スキップ）' : '条件不成立'}</div>`);
+                    }
+                    if (skipConditionMet) {
                         // Don't log skip action since we'll hide the entire turn
                         game.cardTurn += 1;
                         return;
@@ -275,11 +281,21 @@ class GenericCard extends Card {
                     break;
                     
                 case 'mentalReduction':
-                    // Mental reduction by percentage, minimum 1
-                    const reduction = Math.floor(game.mental * (effect.value / 100));
+                    // Mental reduction - check if it's percentage or fixed value
+                    let reduction;
+                    let logMessage;
+                    if (effect.value >= 1) {
+                        // Fixed value reduction
+                        reduction = effect.value;
+                        logMessage = `メンタル${effect.value}減少`;
+                    } else {
+                        // Percentage reduction (for backward compatibility)
+                        reduction = Math.floor(game.mental * effect.value);
+                        logMessage = `メンタル${effect.value * 100}%減少`;
+                    }
                     game.mental = Math.max(1, game.mental - reduction);
                     if (game.verbose) {
-                        game.currentTurnLog.push(`<div class="log-action log-mental" style="color: #e74c3c;">メンタル${effect.value}%減少: -${reduction} (合計: ${game.mental})</div>`);
+                        game.currentTurnLog.push(`<div class="log-action log-mental" style="color: #e74c3c;">${logMessage}: -${reduction} (合計: ${game.mental})</div>`);
                     }
                     break;
                     
@@ -350,15 +366,42 @@ class GenericCard extends Card {
     
     formatCondition(condition, game) {
         let formatted = condition;
-        // Replace variables with their values first
-        formatted = formatted.replace(/count/g, `使用回数${this.count}`);
-        formatted = formatted.replace(/mental/g, `メンタル${game.mental}`);
-        formatted = formatted.replace(/voltageLevel/g, `ボルテージレベル${game.getVoltageLevel()}`);
-        formatted = formatted.replace(/turn/g, `ターン${game.turn + 1}`);
         
-        // Keep inequality symbols as is for clarity
-        formatted = formatted.replace(/===/g, '＝');
-        formatted = formatted.replace(/==/g, '＝');
+        // Replace variables with their actual values in parentheses
+        formatted = formatted.replace(/count/g, `${this.count}`);
+        formatted = formatted.replace(/mental/g, `${game.mental}`);
+        formatted = formatted.replace(/voltageLevel/g, `${game.getVoltageLevel()}`);
+        formatted = formatted.replace(/turn/g, `${game.turn + 1}`);
+        
+        // Format the condition more naturally
+        if (condition.includes('count')) {
+            if (condition.includes('>=')) {
+                const match = condition.match(/count\s*>=\s*(\d+)/);
+                if (match) {
+                    formatted = `使用回数(${this.count}) ≥ ${match[1]}`;
+                }
+            } else if (condition.includes('>')) {
+                const match = condition.match(/count\s*>\s*(\d+)/);
+                if (match) {
+                    formatted = `使用回数(${this.count}) > ${match[1]}`;
+                }
+            } else if (condition.includes('<=')) {
+                const match = condition.match(/count\s*<=\s*(\d+)/);
+                if (match) {
+                    formatted = `使用回数(${this.count}) ≤ ${match[1]}`;
+                }
+            } else if (condition.includes('<')) {
+                const match = condition.match(/count\s*<\s*(\d+)/);
+                if (match) {
+                    formatted = `使用回数(${this.count}) < ${match[1]}`;
+                }
+            } else if (condition.match(/count\s*===?\s*(\d+)/)) {
+                const match = condition.match(/count\s*===?\s*(\d+)/);
+                if (match) {
+                    formatted = `使用回数(${this.count}) = ${match[1]}`;
+                }
+            }
+        }
         
         return formatted;
     }
@@ -412,9 +455,9 @@ class GenericCard extends Card {
 }
 
 // Card factory
-function createCard(cardType, skillValues) {
+function createCard(cardType, skillValues, skillLevel) {
     if (!cardData[cardType]) return null;
-    return new GenericCard(cardType, cardData[cardType], skillValues);
+    return new GenericCard(cardType, cardData[cardType], skillValues, skillLevel);
 }
 
 // Toggle music input
@@ -455,7 +498,7 @@ function calculate() {
             
             // Merge user modifications with calculated values
             const finalValues = { ...calculatedValues, ...userModifiedValues };
-            cards.push(createCard(cardType, finalValues));
+            cards.push(createCard(cardType, finalValues, skillLevel));
         }
     }
     
@@ -781,14 +824,14 @@ function getCalculatedSkillValues(cardType, skillLevel) {
     // Process effects array
     for (let i = 0; i < card.effects.length; i++) {
         const effect = card.effects[i];
-        processEffectForSkillLevel(effect, `effect_${i}`, values, skillLevel);
+        processEffectForSkillLevel(effect, `effect_${i}`, values, skillLevel, cardType);
     }
     
     return values;
 }
 
 // Process effect to calculate skill values
-function processEffectForSkillLevel(effect, prefix, values, skillLevel) {
+function processEffectForSkillLevel(effect, prefix, values, skillLevel, cardType) {
     switch (effect.type) {
         case 'scoreBoost':
         case 'voltageBoost':
@@ -806,19 +849,24 @@ function processEffectForSkillLevel(effect, prefix, values, skillLevel) {
             
         case 'voltageGain':
             if (effect.value !== undefined) {
-                values[`${prefix}_value`] = calculateSkillValue(effect.value, skillLevel, false);
+                // Special handling for tenchiIzumi at skill level 14
+                if (cardType === 'tenchiIzumi' && skillLevel === 14 && effect.value === 139) {
+                    values[`${prefix}_value`] = 418;
+                } else {
+                    values[`${prefix}_value`] = calculateSkillValue(effect.value, skillLevel, false);
+                }
             }
             break;
             
         case 'conditional':
             if (effect.then) {
                 for (let j = 0; j < effect.then.length; j++) {
-                    processEffectForSkillLevel(effect.then[j], `${prefix}_then_${j}`, values, skillLevel);
+                    processEffectForSkillLevel(effect.then[j], `${prefix}_then_${j}`, values, skillLevel, cardType);
                 }
             }
             if (effect.else) {
                 for (let j = 0; j < effect.else.length; j++) {
-                    processEffectForSkillLevel(effect.else[j], `${prefix}_else_${j}`, values, skillLevel);
+                    processEffectForSkillLevel(effect.else[j], `${prefix}_else_${j}`, values, skillLevel, cardType);
                 }
             }
             break;

@@ -7,7 +7,7 @@ const gameData = {
       "effects": [
         {
           "type": "skipTurn",
-          "condition": "count >= 4",
+          "condition": "count > 3",
           "description": "4回目以降の使用時にターンをスキップ"
         }
       ]
@@ -215,7 +215,7 @@ const gameData = {
         },
         {
           "type": "skipTurn",
-          "condition": "count === 3",
+          "condition": "count > 3",
           "description": "3回目の使用時にターンをスキップ"
         }
       ]
@@ -505,6 +505,68 @@ const gameData = {
             {
               "type": "resetCardTurn",
               "description": "山札リセット"
+            }
+          ]
+        }
+      ]
+    },
+    "linkFutureGin": {
+      "name": "Link Future Gin",
+      "displayName": "［Link to the FUTURE］百生吟子",
+      "effects": [
+        {
+          "type": "mentalReduction",
+          "value": 10,
+          "description": "メンタル10減少"
+        },
+        {
+          "type": "skipTurn",
+          "condition": "count > 3",
+          "description": "3回使用後は除外"
+        }
+      ]
+    },
+    "tenchiIzumi": {
+      "name": "Tenchi Izumi",
+      "displayName": "［天地黎明］桂城泉",
+      "effects": [
+        {
+          "type": "conditional",
+          "condition": "count <= 1",
+          "then": [
+            {
+              "type": "scoreBoost",
+              "value": 2.325,
+              "description": "スコア232.5%ブースト (Lv.1)"
+            }
+          ],
+          "else": [
+            {
+              "type": "voltageGain",
+              "value": 139,
+              "description": "ボルテージ139獲得 (Lv.1)"
+            }
+          ]
+        }
+      ]
+    },
+    "joshoRurino": {
+      "name": "Josho Rurino",
+      "displayName": "［ジョーショーキリュー］大沢瑠璃乃",
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 0.7875,
+          "description": "スコア78.75%ブースト (Lv.1)"
+        },
+        {
+          "type": "conditional",
+          "condition": "mental >= 70",
+          "then": [
+            {
+              "type": "scoreBoost",
+              "value": 1.26,
+              "description": "スコア126%ブースト (Lv.1)"
             }
           ]
         }
