@@ -217,6 +217,10 @@ const gameData = {
           "type": "voltageBoost",
           "value": 0.1815,
           "description": "ボルテージ18.15%ブースト (Lv.1)"
+        },
+        {
+          "type": "resetCardTurn",
+          "description": "山札リセット"
         }
       ]
     },
