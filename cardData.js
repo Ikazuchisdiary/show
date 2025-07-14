@@ -1,8 +1,8 @@
 // Card and music data
 // Center skill timings:
-// - "beforeFirstTurn": 1ターン目の前
-// - "beforeFeverStart": フィーバーの最初のターンの前  
-// - "afterLastTurn": 最後のターンの後
+// - "beforeFirstTurn": ライブ開始時
+// - "beforeFeverStart": FEVER開始時
+// - "afterLastTurn": ライブ終了時
 const gameData = {
   "cards": {
     // 乙宗梢

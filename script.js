@@ -219,13 +219,13 @@ class Game {
                     let timingText = '';
                     switch (card.config.centerSkill.timing) {
                         case 'beforeFirstTurn':
-                            timingText = '1ターン目の前';
+                            timingText = 'ライブ開始時';
                             break;
                         case 'beforeFeverStart':
-                            timingText = 'フィーバー開始前';
+                            timingText = 'FEVER開始時';
                             break;
                         case 'afterLastTurn':
-                            timingText = '最後のターン後';
+                            timingText = 'ライブ終了時';
                             break;
                     }
                     this.currentTurnLog.push(`<div class="log-turn-header" style="background-color: #ff9800; color: white;">センタースキル発動 [${timingText}]</div>`);
