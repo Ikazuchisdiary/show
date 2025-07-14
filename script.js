@@ -2,6 +2,24 @@
 let cardData = {};
 let musicData = {};
 
+// Skill level multipliers (Lv.1 = 1.0x, Lv.2 = 1.1x, ..., Lv.14 = 3.0x)
+const SKILL_LEVEL_MULTIPLIERS = [
+    1.0,  // Lv.1
+    1.1,  // Lv.2
+    1.2,  // Lv.3
+    1.3,  // Lv.4
+    1.4,  // Lv.5
+    1.5,  // Lv.6
+    1.6,  // Lv.7
+    1.7,  // Lv.8
+    1.8,  // Lv.9
+    2.0,  // Lv.10
+    2.2,  // Lv.11
+    2.4,  // Lv.12
+    2.6,  // Lv.13
+    3.0   // Lv.14
+];
+
 // Game class
 class Game {
     constructor(cards, appeal, music, verbose = false) {
@@ -283,8 +301,13 @@ function calculate() {
     for (let i = 1; i <= 6; i++) {
         const cardType = document.getElementById(`card${i}`).value;
         if (cardType) {
-            const skillValues = getSkillValues(i);
-            cards.push(createCard(cardType, skillValues));
+            const skillLevel = parseInt(document.getElementById(`skill${i}`).value);
+            const userModifiedValues = getSkillValues(i);
+            const calculatedValues = getCalculatedSkillValues(cardType, skillLevel);
+            
+            // Merge user modifications with calculated values
+            const finalValues = { ...calculatedValues, ...userModifiedValues };
+            cards.push(createCard(cardType, finalValues));
         }
     }
     
@@ -405,28 +428,13 @@ function onCardChange(slotNum) {
 // Update skill level dropdown to show unknown values
 function updateSkillLevelOptions(slotNum, cardType) {
     const skillSelect = document.getElementById(`skill${slotNum}`);
-    const card = cardData[cardType];
     
-    if (!card || !card.skillLevels) return;
-    
-    // Update each option to show if it has unknown values
+    // Since we're calculating values now, all levels are known
     for (let level = 1; level <= 14; level++) {
         const option = skillSelect.querySelector(`option[value="${level}"]`);
         if (option) {
-            const levelData = card.skillLevels[level];
-            let hasNull = false;
-            
-            if (levelData) {
-                hasNull = Object.values(levelData).some(value => value === null);
-            }
-            
-            if (hasNull) {
-                option.textContent = `スキルLv${level} (一部不明)`;
-                option.style.color = '#ff6b6b';
-            } else {
-                option.textContent = `スキルLv${level}`;
-                option.style.color = '';
-            }
+            option.textContent = `スキルLv${level}`;
+            option.style.color = '';
         }
     }
 }
@@ -436,29 +444,21 @@ function onSkillLevelChange(slotNum) {
     const cardSelect = document.getElementById(`card${slotNum}`);
     const skillSelect = document.getElementById(`skill${slotNum}`);
     const cardType = cardSelect.value;
-    const skillLevel = skillSelect.value;
+    const skillLevel = parseInt(skillSelect.value);
     
     if (!cardType || !cardData[cardType]) return;
     
-    const card = cardData[cardType];
-    if (card.skillLevels && card.skillLevels[skillLevel]) {
-        const levelData = card.skillLevels[skillLevel];
-        
-        // Update all input values for this skill level
-        for (const [key, value] of Object.entries(levelData)) {
-            const inputId = `skill${slotNum}_${key}`;
-            const input = document.getElementById(inputId);
-            if (input) {
-                if (value !== null) {
-                    input.value = value;
-                    input.style.backgroundColor = '';
-                    input.placeholder = '';
-                } else {
-                    input.value = '';
-                    input.style.backgroundColor = '#ffe4e1';
-                    input.placeholder = '不明';
-                }
-            }
+    // Calculate values for this skill level
+    const calculatedValues = getCalculatedSkillValues(cardType, skillLevel);
+    
+    // Update all input values for this skill level
+    for (const [key, value] of Object.entries(calculatedValues)) {
+        const inputId = `skill${slotNum}_${key}`;
+        const input = document.getElementById(inputId);
+        if (input) {
+            input.value = value;
+            input.style.backgroundColor = '';
+            input.placeholder = '';
         }
     }
 }
@@ -580,6 +580,74 @@ function getSkillValues(slotNum) {
     });
     
     return values;
+}
+
+// Calculate skill value based on level and base value
+function calculateSkillValue(lv1Value, skillLevel, isPercentage = true) {
+    const multiplier = SKILL_LEVEL_MULTIPLIERS[skillLevel - 1];
+    const calculatedValue = lv1Value * multiplier;
+    
+    if (isPercentage) {
+        // For percentage values, truncate to 3 decimal places
+        return Math.floor(calculatedValue * 1000) / 1000;
+    } else {
+        // For voltage points, truncate to 1 decimal place (no decimal places as requested)
+        return Math.floor(calculatedValue);
+    }
+}
+
+// Get skill values for a card at a specific level
+function getCalculatedSkillValues(cardType, skillLevel) {
+    const card = cardData[cardType];
+    if (!card || !card.effects) return {};
+    
+    const values = {};
+    
+    // Process effects array
+    for (let i = 0; i < card.effects.length; i++) {
+        const effect = card.effects[i];
+        processEffectForSkillLevel(effect, `effect_${i}`, values, skillLevel);
+    }
+    
+    return values;
+}
+
+// Process effect to calculate skill values
+function processEffectForSkillLevel(effect, prefix, values, skillLevel) {
+    switch (effect.type) {
+        case 'scoreBoost':
+        case 'voltageBoost':
+            if (effect.value !== undefined) {
+                // effect.value is now the Lv.1 value
+                values[`${prefix}_value`] = calculateSkillValue(effect.value, skillLevel, true);
+            }
+            break;
+            
+        case 'scoreGain':
+            if (effect.value !== undefined) {
+                values[`${prefix}_value`] = calculateSkillValue(effect.value, skillLevel, true);
+            }
+            break;
+            
+        case 'voltageGain':
+            if (effect.value !== undefined) {
+                values[`${prefix}_value`] = calculateSkillValue(effect.value, skillLevel, false);
+            }
+            break;
+            
+        case 'conditional':
+            if (effect.then) {
+                for (let j = 0; j < effect.then.length; j++) {
+                    processEffectForSkillLevel(effect.then[j], `${prefix}_then_${j}`, values, skillLevel);
+                }
+            }
+            if (effect.else) {
+                for (let j = 0; j < effect.else.length; j++) {
+                    processEffectForSkillLevel(effect.else[j], `${prefix}_else_${j}`, values, skillLevel);
+                }
+            }
+            break;
+    }
 }
 
 // Initialize on page load

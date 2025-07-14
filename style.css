@@ -55,15 +55,18 @@ input[type="number"] {
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
+    flex-wrap: wrap;
 }
 
 .card-row label {
     margin: 0;
     min-width: 80px;
+    flex-shrink: 0;
 }
 
 select {
     flex: 1;
+    min-width: 150px;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -77,6 +80,7 @@ select {
     background-color: #fff;
     border-radius: 5px;
     border: 1px solid #e0e0e0;
+    overflow-x: auto;
 }
 
 .skill-param-row {
@@ -84,15 +88,18 @@ select {
     align-items: center;
     gap: 10px;
     margin-bottom: 5px;
+    flex-wrap: wrap;
 }
 
 .skill-param-row label {
     min-width: 120px;
     font-size: 14px;
+    flex-shrink: 0;
 }
 
 .skill-param-row input {
     flex: 1;
+    min-width: 100px;
     padding: 5px;
     border: 1px solid #ddd;
     border-radius: 3px;
@@ -100,7 +107,9 @@ select {
 }
 
 .skill-level-select {
-    width: 150px;
+    width: auto;
+    min-width: 120px;
+    max-width: 200px;
 }
 
 button {
