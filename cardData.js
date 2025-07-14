@@ -60,7 +60,7 @@ const gameData = {
         {
           "type": "skipTurn",
           "condition": "count > 6",
-          "description": "6回使用後は除外"
+          "description": "6回使用後はデッキから除外"
         },
         {
           "type": "voltageBoost",
@@ -111,7 +111,7 @@ const gameData = {
         {
           "type": "skipTurn",
           "condition": "count > 1",
-          "description": "1回使用後は除外"
+          "description": "1回使用後はデッキから除外"
         },
         {
           "type": "voltageGain",
@@ -636,7 +636,7 @@ const gameData = {
         {
           "type": "skipTurn",
           "condition": "count > 3",
-          "description": "3回使用後は除外"
+          "description": "3回使用後はデッキから除外"
         },
         {
           "type": "mentalRecover",
@@ -742,7 +742,7 @@ const gameData = {
         {
           "type": "skipTurn",
           "condition": "count > 3",
-          "description": "3回使用後は除外"
+          "description": "3回使用後はデッキから除外"
         },
         {
           "type": "mentalReduction",
@@ -923,7 +923,7 @@ const gameData = {
         {
           "type": "skipTurn",
           "condition": "count > 3",
-          "description": "3回目の使用時にターンをスキップ"
+          "description": "3回使用後はデッキから除外"
         },
         {
           "type": "voltageBoost",
@@ -1042,7 +1042,7 @@ const gameData = {
         {
           "type": "skipTurn",
           "condition": "count > 3",
-          "description": "4回目以降の使用時にターンをスキップ"
+          "description": "3回使用後はデッキから除外"
         }
       ]
     }
