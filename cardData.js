@@ -112,7 +112,23 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "skillLevels": {
+        "1": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
+        "2": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
+        "3": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
+        "4": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
+        "5": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
+        "6": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
+        "7": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
+        "8": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
+        "9": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
+        "10": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
+        "11": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
+        "12": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
+        "13": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
+        "14": { "effect_0_then_0_value": 3.24, "effect_0_else_0_value": 3.24 }
+      }
     },
     "iDoMeSayaka": {
       "name": "I Do Me Sayaka",
@@ -154,7 +170,23 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "skillLevels": {
+        "1": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
+        "2": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
+        "3": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
+        "4": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
+        "5": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
+        "6": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
+        "7": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
+        "8": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
+        "9": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
+        "10": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
+        "11": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
+        "12": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
+        "13": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
+        "14": { "effect_0_then_0_value": 0.7875, "effect_0_else_0_value": 2.43, "effect_1_then_0_value": 945 }
+      }
     },
     "iDoMeKaho": {
       "name": "I Do Me Kaho",
@@ -183,7 +215,23 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "skillLevels": {
+        "1": { "effect_1_then_0_value": null },
+        "2": { "effect_1_then_0_value": null },
+        "3": { "effect_1_then_0_value": null },
+        "4": { "effect_1_then_0_value": null },
+        "5": { "effect_1_then_0_value": null },
+        "6": { "effect_1_then_0_value": null },
+        "7": { "effect_1_then_0_value": null },
+        "8": { "effect_1_then_0_value": null },
+        "9": { "effect_1_then_0_value": null },
+        "10": { "effect_1_then_0_value": null },
+        "11": { "effect_1_then_0_value": null },
+        "12": { "effect_1_then_0_value": null },
+        "13": { "effect_1_then_0_value": null },
+        "14": { "effect_1_then_0_value": 11.34 }
+      }
     },
     "butoRuri": {
       "name": "Buto Ruri",
@@ -211,7 +259,23 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "skillLevels": {
+        "1": { "effect_0_then_0_value": null, "effect_1_then_0_value": null },
+        "2": { "effect_0_then_0_value": null, "effect_1_then_0_value": null },
+        "3": { "effect_0_then_0_value": null, "effect_1_then_0_value": null },
+        "4": { "effect_0_then_0_value": null, "effect_1_then_0_value": null },
+        "5": { "effect_0_then_0_value": null, "effect_1_then_0_value": null },
+        "6": { "effect_0_then_0_value": null, "effect_1_then_0_value": null },
+        "7": { "effect_0_then_0_value": null, "effect_1_then_0_value": null },
+        "8": { "effect_0_then_0_value": null, "effect_1_then_0_value": null },
+        "9": { "effect_0_then_0_value": null, "effect_1_then_0_value": null },
+        "10": { "effect_0_then_0_value": null, "effect_1_then_0_value": null },
+        "11": { "effect_0_then_0_value": null, "effect_1_then_0_value": null },
+        "12": { "effect_0_then_0_value": null, "effect_1_then_0_value": null },
+        "13": { "effect_0_then_0_value": null, "effect_1_then_0_value": null },
+        "14": { "effect_0_then_0_value": 3.2625, "effect_1_then_0_value": 4.35 }
+      }
     },
     "butoGin": {
       "name": "Buto Gin",
@@ -227,7 +291,23 @@ const gameData = {
           "value": 2.5312,
           "description": "ボルテージ253.12%ブースト"
         }
-      ]
+      ],
+      "skillLevels": {
+        "1": { "effect_0_value": null, "effect_1_value": null },
+        "2": { "effect_0_value": null, "effect_1_value": null },
+        "3": { "effect_0_value": null, "effect_1_value": null },
+        "4": { "effect_0_value": null, "effect_1_value": null },
+        "5": { "effect_0_value": null, "effect_1_value": null },
+        "6": { "effect_0_value": null, "effect_1_value": null },
+        "7": { "effect_0_value": null, "effect_1_value": null },
+        "8": { "effect_0_value": null, "effect_1_value": null },
+        "9": { "effect_0_value": null, "effect_1_value": null },
+        "10": { "effect_0_value": null, "effect_1_value": null },
+        "11": { "effect_0_value": null, "effect_1_value": null },
+        "12": { "effect_0_value": null, "effect_1_value": null },
+        "13": { "effect_0_value": null, "effect_1_value": null },
+        "14": { "effect_0_value": 2.5312, "effect_1_value": 2.5312 }
+      }
     },
     "lrTsuzuri": {
       "name": "LR Tsuzuri",
@@ -249,7 +329,23 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "skillLevels": {
+        "1": { "effect_0_value": null, "effect_1_then_0_value": null },
+        "2": { "effect_0_value": null, "effect_1_then_0_value": null },
+        "3": { "effect_0_value": null, "effect_1_then_0_value": null },
+        "4": { "effect_0_value": null, "effect_1_then_0_value": null },
+        "5": { "effect_0_value": null, "effect_1_then_0_value": null },
+        "6": { "effect_0_value": null, "effect_1_then_0_value": null },
+        "7": { "effect_0_value": null, "effect_1_then_0_value": null },
+        "8": { "effect_0_value": null, "effect_1_then_0_value": null },
+        "9": { "effect_0_value": null, "effect_1_then_0_value": null },
+        "10": { "effect_0_value": null, "effect_1_then_0_value": null },
+        "11": { "effect_0_value": null, "effect_1_then_0_value": null },
+        "12": { "effect_0_value": null, "effect_1_then_0_value": null },
+        "13": { "effect_0_value": null, "effect_1_then_0_value": null },
+        "14": { "effect_0_value": 731, "effect_1_then_0_value": 1170 }
+      }
     }
   },
   "music": {
