@@ -1283,17 +1283,17 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
             break;
         case 'voltagePenalty':
             if (effect.value !== undefined) {
-                html += `<div class="skill-param-row" style="color: #e74c3c;">
+                html += `<div class="skill-param-row">
                     <label>ボルテージ減少:</label>
-                    <span style="font-weight: bold;">-${effect.value}</span>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block;">-${effect.value}</span>
                 </div>`;
             }
             break;
         case 'mentalReduction':
             if (effect.value !== undefined) {
-                html += `<div class="skill-param-row" style="color: #e74c3c;">
+                html += `<div class="skill-param-row">
                     <label>${effect.description || 'メンタル減少'}:</label>
-                    <span style="font-weight: bold;">${effect.value}%</span>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block;">${effect.value}%</span>
                 </div>`;
             }
             break;
@@ -1307,15 +1307,15 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
             }
             break;
         case 'skipTurn':
-            html += `<div class="skill-param-row" style="color: #95a5a6;">
+            html += `<div class="skill-param-row">
                 <label>効果:</label>
-                <span>${effect.description || 'デッキから除外'}</span>
+                <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #f5f5f5; color: #666; display: inline-block;">${effect.description || 'デッキから除外'}</span>
             </div>`;
             break;
         case 'resetCardTurn':
-            html += `<div class="skill-param-row" style="color: #3498db;">
+            html += `<div class="skill-param-row">
                 <label>効果:</label>
-                <span>${effect.description || '山札リセット'}</span>
+                <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #e3f2fd; color: #1565c0; display: inline-block;">${effect.description || '山札リセット'}</span>
             </div>`;
             break;
         case 'conditional':
@@ -1401,42 +1401,42 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
             
         case 'mentalRecover':
             if (effect.value !== undefined) {
-                html += `<div class="skill-param-row" style="color: #27ae60;">
+                html += `<div class="skill-param-row">
                     <label>メンタル回復:</label>
-                    <span style="font-weight: bold;">+${effect.value}</span>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #e8f5e9; color: #2e7d32; font-weight: bold; display: inline-block;">+${effect.value}</span>
                 </div>`;
             }
             break;
             
         case 'mentalReduction':
             if (effect.value !== undefined) {
-                html += `<div class="skill-param-row" style="color: #e74c3c;">
+                html += `<div class="skill-param-row">
                     <label>メンタル減少:</label>
-                    <span style="font-weight: bold;">-${effect.value}</span>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block;">-${effect.value}</span>
                 </div>`;
             }
             break;
             
         case 'voltagePenalty':
             if (effect.value !== undefined) {
-                html += `<div class="skill-param-row" style="color: #e74c3c;">
+                html += `<div class="skill-param-row">
                     <label>ボルテージ減少:</label>
-                    <span style="font-weight: bold;">-${effect.value}</span>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block;">-${effect.value}</span>
                 </div>`;
             }
             break;
             
         case 'skipTurn':
-            html += `<div class="skill-param-row" style="color: #95a5a6;">
+            html += `<div class="skill-param-row">
                 <label>効果:</label>
-                <span>${effect.description || 'ターンスキップ'}</span>
+                <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #f5f5f5; color: #666; display: inline-block;">${effect.description || 'ターンスキップ'}</span>
             </div>`;
             break;
             
         case 'resetCardTurn':
-            html += `<div class="skill-param-row" style="color: #3498db;">
+            html += `<div class="skill-param-row">
                 <label>効果:</label>
-                <span>${effect.description || '山札リセット'}</span>
+                <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #e3f2fd; color: #1565c0; display: inline-block;">${effect.description || '山札リセット'}</span>
             </div>`;
             break;
             
