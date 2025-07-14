@@ -22,7 +22,7 @@ const SKILL_LEVEL_MULTIPLIERS = [
 
 // Game class
 class Game {
-    constructor(cards, appeal, music, verbose = false, centerCharacter = null) {
+    constructor(cards, appeal, music, verbose = false, centerCharacter = null, learningCorrection = 1.5) {
         this.score = 0;
         this.scoreBoost = new Array(100).fill(0);
         this.scoreBoostCount = 0;
@@ -36,6 +36,7 @@ class Game {
         this.appeal = appeal;
         this.music = music;
         this.verbose = verbose;
+        this.learningCorrection = learningCorrection;
         this.log = "";
         this.logHtml = "";
         this.currentTurnLog = [];
@@ -149,11 +150,11 @@ class Game {
     }
 
     getScore(value) {
-        const score = Math.floor(this.appeal * value * (1 + this.scoreBoost[this.scoreBoostCount]) * (1 + this.getVoltageLevel() / 10) * 1.5);
+        const score = Math.floor(this.appeal * value * (1 + this.scoreBoost[this.scoreBoostCount]) * (1 + this.getVoltageLevel() / 10) * this.learningCorrection);
         this.score += score;
         this.scoreBoostCount += 1;
         if (this.verbose) {
-            this.log += `get score ${score} = ${value} * ${this.appeal} * (1 + ${this.scoreBoost[this.scoreBoostCount - 1]}) * ${1 + this.getVoltageLevel() / 10} * 1.5\n`;
+            this.log += `get score ${score} = ${value} * ${this.appeal} * (1 + ${this.scoreBoost[this.scoreBoostCount - 1]}) * ${1 + this.getVoltageLevel() / 10} * ${this.learningCorrection}\n`;
             const voltageLevel = this.getVoltageLevel();
             const totalScoreBoostPercent = ((1 + this.scoreBoost[this.scoreBoostCount - 1]) * 100).toFixed(2);
             const totalVoltageLevelPercent = ((1 + voltageLevel / 10) * 100).toFixed(2);
@@ -169,7 +170,7 @@ class Game {
             calcHtml += '<span class="calc-operator">×</span>';
             calcHtml += `<span class="calc-value calc-voltage-level">${totalVoltageLevelPercent}%<span class="calc-label">Lv${voltageLevel}</span></span>`;
             calcHtml += '<span class="calc-operator">×</span>';
-            calcHtml += `<span class="calc-value calc-fever">1.5<span class="calc-label">ラーニング</span></span>`;
+            calcHtml += `<span class="calc-value calc-fever">${this.learningCorrection}<span class="calc-label">ラーニング</span></span>`;
             calcHtml += '</div>';
             
             this.currentTurnLog.push(calcHtml);
@@ -782,6 +783,7 @@ function calculate() {
     
     const appeal = parseInt(document.getElementById('appeal').value);
     const initialMental = parseInt(document.getElementById('mental').value);
+    const learningCorrection = parseFloat(document.getElementById('learningCorrection').value);
     const musicKey = document.getElementById('music').value;
     let music;
     let centerCharacter = null;
@@ -839,7 +841,7 @@ function calculate() {
         return;
     }
     
-    const game = new Game(cards, appeal, music, true, centerCharacter);
+    const game = new Game(cards, appeal, music, true, centerCharacter, learningCorrection);
     game.mental = initialMental; // Set initial mental value
     game.doGame();
     
