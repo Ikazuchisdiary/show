@@ -1607,6 +1607,7 @@ function saveCurrentState() {
     const state = {
         appeal: document.getElementById('appeal').value,
         mental: document.getElementById('mental').value,
+        learningCorrection: document.getElementById('learningCorrection').value,
         cards: []
     };
     
@@ -1729,9 +1730,10 @@ function loadStateForSong(musicKey) {
         const state = JSON.parse(savedState);
         console.log(`Parsed state for ${musicKey}`, state);
         
-        // Load appeal and mental
+        // Load appeal, mental, and learning correction
         document.getElementById('appeal').value = state.appeal || 88146;
         document.getElementById('mental').value = state.mental || 100;
+        document.getElementById('learningCorrection').value = state.learningCorrection || 1.5;
         
         // Load card selections
         for (let i = 1; i <= 6; i++) {
