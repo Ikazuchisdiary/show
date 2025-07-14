@@ -495,15 +495,26 @@ function toggleMusicInput() {
     const musicSelect = document.getElementById('music');
     const customMusic = document.getElementById('customMusic');
     
-    // Save current state before switching
-    saveCurrentState();
+    // Get previous music value to save its state
+    const previousMusic = musicSelect.getAttribute('data-previous-value') || 'i_do_me';
+    
+    // Save current state for the previous song
+    if (previousMusic !== 'custom') {
+        const tempMusicValue = musicSelect.value;
+        musicSelect.value = previousMusic;
+        saveCurrentState();
+        musicSelect.value = tempMusicValue;
+    }
+    
+    // Update previous value
+    musicSelect.setAttribute('data-previous-value', musicSelect.value);
     
     if (musicSelect.value === 'custom') {
         customMusic.style.display = 'block';
     } else {
         customMusic.style.display = 'none';
         // Load state for the selected song
-        loadStateForSong(musicSelect.value);
+        setTimeout(() => loadStateForSong(musicSelect.value), 50);
     }
 }
 
@@ -1079,18 +1090,27 @@ function saveCurrentState() {
     }
     
     // Save state for this specific song
-    localStorage.setItem(`sukushou_state_${musicKey}`, JSON.stringify(state));
+    const key = `sukushou_state_${musicKey}`;
+    localStorage.setItem(key, JSON.stringify(state));
+    console.log(`Saved state for ${musicKey}`, state);
 }
 
 // Load state from localStorage
 function loadStateForSong(musicKey) {
     if (musicKey === 'custom') return; // Don't load for custom music
     
-    const savedState = localStorage.getItem(`sukushou_state_${musicKey}`);
-    if (!savedState) return;
+    const key = `sukushou_state_${musicKey}`;
+    const savedState = localStorage.getItem(key);
+    console.log(`Loading state for ${musicKey}`, savedState);
+    
+    if (!savedState) {
+        console.log(`No saved state found for ${musicKey}`);
+        return;
+    }
     
     try {
         const state = JSON.parse(savedState);
+        console.log(`Parsed state for ${musicKey}`, state);
         
         // Load appeal and mental
         document.getElementById('appeal').value = state.appeal || 88146;
@@ -1150,6 +1170,18 @@ function setupAutoSave() {
     });
 }
 
+// Save state before page unload
+window.addEventListener('beforeunload', function(e) {
+    saveCurrentState();
+});
+
+// Also save on visibility change (mobile/tab switching)
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        saveCurrentState();
+    }
+});
+
 // Initialize on page load
 window.onload = function() {
     loadCardData();
@@ -1159,10 +1191,13 @@ window.onload = function() {
         setupSearchableSelect(i);
     }
     
-    // Setup auto-save
-    setupAutoSave();
-    
-    // Load state for default song
-    const defaultMusic = document.getElementById('music').value;
-    loadStateForSong(defaultMusic);
+    // Use setTimeout to ensure DOM is fully ready and card data is loaded
+    setTimeout(() => {
+        // Setup auto-save
+        setupAutoSave();
+        
+        // Load state for default song
+        const defaultMusic = document.getElementById('music').value;
+        loadStateForSong(defaultMusic);
+    }, 100);
 };
