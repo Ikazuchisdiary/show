@@ -311,7 +311,7 @@ const gameData = {
     },
     "lrTsuzuri": {
       "name": "LR Tsuzuri",
-      "displayName": "LR Tsuzuri",
+      "displayName": "［幸せのリボン］夕霧綴理",
       "effects": [
         {
           "type": "voltageGain",
@@ -350,7 +350,7 @@ const gameData = {
   },
   "music": {
     "i_do_me": {
-      "name": "I Do Me",
+      "name": "アイドゥーミー",
       "phases": [11, 7, 5],
       "description": "フィーバー前: 11, フィーバー中: 7, フィーバー後: 5"
     }
