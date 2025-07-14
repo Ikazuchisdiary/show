@@ -397,9 +397,16 @@ function setDefaultSelections() {
     document.getElementById('card5').value = 'iDoMeKaho';
     document.getElementById('card6').value = 'butoRuri';
     
-    // Trigger card change events to show skill options
+    // Trigger card change events to show skill options and update search inputs
     for (let i = 1; i <= 6; i++) {
         onCardChange(i);
+        // Update search input to show selected card name
+        const searchInput = document.getElementById(`cardSearch${i}`);
+        const selectElement = document.getElementById(`card${i}`);
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        if (selectedOption && selectedOption.value) {
+            searchInput.value = selectedOption.textContent;
+        }
     }
 }
 
@@ -650,7 +657,160 @@ function processEffectForSkillLevel(effect, prefix, values, skillLevel) {
     }
 }
 
+// Setup searchable select functionality
+function setupSearchableSelect(slotNum) {
+    const searchInput = document.getElementById(`cardSearch${slotNum}`);
+    const selectElement = document.getElementById(`card${slotNum}`);
+    const wrapper = searchInput.parentElement;
+    let isComposing = false;
+    
+    // Create custom dropdown
+    const dropdown = document.createElement('div');
+    dropdown.className = 'card-dropdown';
+    wrapper.appendChild(dropdown);
+    
+    // Create options in dropdown
+    function createDropdownOptions() {
+        dropdown.innerHTML = '';
+        for (let i = 0; i < selectElement.options.length; i++) {
+            const option = selectElement.options[i];
+            const div = document.createElement('div');
+            div.className = 'card-option';
+            div.textContent = option.textContent;
+            div.dataset.value = option.value;
+            div.dataset.index = i;
+            
+            if (option.value === selectElement.value) {
+                div.classList.add('selected');
+            }
+            
+            div.addEventListener('click', function() {
+                selectElement.value = this.dataset.value;
+                selectElement.dispatchEvent(new Event('change'));
+                wrapper.classList.remove('active');
+            });
+            
+            dropdown.appendChild(div);
+        }
+    }
+    
+    // Show current selection in search input
+    function updateSearchInput() {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        if (selectedOption && selectedOption.value) {
+            searchInput.value = selectedOption.textContent;
+        } else {
+            searchInput.value = '';
+        }
+    }
+    
+    // Track composition state for Japanese input
+    searchInput.addEventListener('compositionstart', function() {
+        isComposing = true;
+    });
+    
+    searchInput.addEventListener('compositionend', function() {
+        isComposing = false;
+        // Trigger filter after composition ends
+        this.dispatchEvent(new Event('input'));
+    });
+    
+    // Show dropdown on focus
+    searchInput.addEventListener('focus', function() {
+        wrapper.classList.add('active');
+        createDropdownOptions();
+        this.select();
+    });
+    
+    // Filter options based on search
+    searchInput.addEventListener('input', function() {
+        if (isComposing) return; // Don't filter during composition
+        
+        const searchTerm = this.value.toLowerCase();
+        const options = dropdown.querySelectorAll('.card-option');
+        let firstVisible = null;
+        
+        options.forEach(option => {
+            const optionText = option.textContent.toLowerCase();
+            if (optionText.includes(searchTerm) || !searchTerm) {
+                option.classList.remove('hidden');
+                if (!firstVisible) firstVisible = option;
+            } else {
+                option.classList.add('hidden');
+            }
+        });
+        
+        // Update selected visual state
+        options.forEach(opt => opt.classList.remove('selected'));
+        if (firstVisible) {
+            firstVisible.classList.add('selected');
+        }
+    });
+    
+    // Handle option selection
+    selectElement.addEventListener('change', function() {
+        updateSearchInput();
+        onCardChange(slotNum);
+    });
+    
+    // Close dropdown on click outside
+    document.addEventListener('click', function(e) {
+        if (!wrapper.contains(e.target)) {
+            wrapper.classList.remove('active');
+            updateSearchInput();
+        }
+    });
+    
+    // Handle keyboard navigation
+    searchInput.addEventListener('keydown', function(e) {
+        // Don't handle keyboard events during composition
+        if (isComposing) return;
+        
+        const visibleOptions = Array.from(dropdown.querySelectorAll('.card-option:not(.hidden)'));
+        
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            
+            let currentIndex = visibleOptions.findIndex(opt => opt.classList.contains('selected'));
+            if (currentIndex === -1) currentIndex = 0;
+            
+            let newIndex;
+            if (e.key === 'ArrowDown') {
+                newIndex = currentIndex + 1 < visibleOptions.length ? currentIndex + 1 : currentIndex;
+            } else {
+                newIndex = currentIndex > 0 ? currentIndex - 1 : 0;
+            }
+            
+            visibleOptions.forEach(opt => opt.classList.remove('selected'));
+            if (visibleOptions[newIndex]) {
+                visibleOptions[newIndex].classList.add('selected');
+                // Scroll into view if needed
+                visibleOptions[newIndex].scrollIntoView({ block: 'nearest' });
+            }
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            const selectedOption = dropdown.querySelector('.card-option.selected');
+            if (selectedOption) {
+                selectElement.value = selectedOption.dataset.value;
+                selectElement.dispatchEvent(new Event('change'));
+            }
+            wrapper.classList.remove('active');
+        } else if (e.key === 'Escape') {
+            wrapper.classList.remove('active');
+            updateSearchInput();
+        }
+    });
+    
+    // Initialize
+    updateSearchInput();
+}
+
 // Initialize on page load
 window.onload = function() {
     loadCardData();
+    
+    // Setup searchable selects for all card slots
+    for (let i = 1; i <= 6; i++) {
+        setupSearchableSelect(i);
+    }
 };

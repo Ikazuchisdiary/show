@@ -73,6 +73,69 @@ select {
     font-size: 16px;
 }
 
+.searchable-select-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+.card-search {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.card-search:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+.searchable-select-wrapper select {
+    display: none;
+}
+
+.card-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 10;
+}
+
+.searchable-select-wrapper.active .card-dropdown {
+    display: block;
+}
+
+.card-option {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.card-option:last-child {
+    border-bottom: none;
+}
+
+.card-option:hover,
+.card-option.selected {
+    background-color: #f0f0f0;
+}
+
+.card-option.hidden {
+    display: none;
+}
+
 .skill-params {
     display: none;
     margin-top: 10px;
