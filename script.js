@@ -97,7 +97,8 @@ class Game {
         };
         
         let voltage = getSubVoltageLevel();
-        if (this.music[0] + 1 <= this.turn && this.turn <= this.music[0] + this.music[1]) {
+        // Fever phase: turns are 0-indexed, so fever starts at this.music[0]
+        if (this.music[0] <= this.turn && this.turn < this.music[0] + this.music[1]) {
             voltage *= 2;
         }
         return voltage;
@@ -146,7 +147,6 @@ class Game {
         this.voltagePt += voltagePt;
         if (this.verbose) {
             this.log += `get voltage ${voltagePt} = ${value} * (1 + ${this.voltageBoost[this.voltageBoostCount]})\n`;
-            const boostPercent = (this.voltageBoost[this.voltageBoostCount] * 100).toFixed(1);
             const oldLevel = this.getVoltageLevel();
             this.voltageBoostCount += 1;
             const newLevel = this.getVoltageLevel();
