@@ -195,7 +195,6 @@ class Card {
         if (game.verbose) {
             game.log += `done ${this.name}\n`;
         }
-        this.count += 1;
         game.turn += 1;
         game.cardTurn += 1;
     }
@@ -213,6 +212,9 @@ class GenericCard extends Card {
     }
 
     do(game) {
+        // Increment count first for 1-indexed counting in conditions
+        this.count += 1;
+        
         const effects = this.config.effects;
         
         // Add card name at the top
@@ -305,7 +307,27 @@ class GenericCard extends Card {
         // Replace variables in condition with actual values
         let evalStr = condition;
         evalStr = evalStr.replace(/count/g, this.count);
-        evalStr = evalStr.replace(/mental/g, game.mental);
+        
+        // Special handling for fantasyGin mental condition
+        if (this.cardKey === 'fantasyGin' && condition.includes('mental')) {
+            // Get the number of deck resets allowed from skillValues
+            const resetCount = this.skillValues && this.skillValues.mentalThreshold ? 
+                parseInt(this.skillValues.mentalThreshold) : 999;
+            
+            // If we haven't exceeded the allowed reset count, allow deck reset
+            // If we have exceeded it, prevent deck reset and set mental to 29
+            if (this.count <= resetCount) {
+                // Use actual mental value (should be 100, which triggers deck reset)
+                evalStr = evalStr.replace(/mental/g, game.mental);
+            } else {
+                // Set game.mental to 29 and prevent deck reset
+                game.mental = 29;
+                evalStr = evalStr.replace(/mental/g, '29');
+            }
+        } else {
+            evalStr = evalStr.replace(/mental/g, game.mental);
+        }
+        
         evalStr = evalStr.replace(/voltageLevel/g, game.getVoltageLevel());
         evalStr = evalStr.replace(/turn/g, game.turn + 1); // turn is 0-indexed
         
@@ -319,15 +341,16 @@ class GenericCard extends Card {
     
     formatCondition(condition, game) {
         let formatted = condition;
-        formatted = formatted.replace(/count/g, `使用回数(${this.count})`);
-        formatted = formatted.replace(/mental/g, `メンタル(${game.mental})`);
-        formatted = formatted.replace(/voltageLevel/g, `ボルテージレベル(${game.getVoltageLevel()})`);
-        formatted = formatted.replace(/turn/g, `ターン(${game.turn + 1})`);
-        formatted = formatted.replace(/===/g, '=');
-        formatted = formatted.replace(/<=/g, '以下');
-        formatted = formatted.replace(/>=/g, '以上');
-        formatted = formatted.replace(/</g, '未満');
-        formatted = formatted.replace(/>/g, '超');
+        // Replace variables with their values first
+        formatted = formatted.replace(/count/g, `使用回数${this.count}`);
+        formatted = formatted.replace(/mental/g, `メンタル${game.mental}`);
+        formatted = formatted.replace(/voltageLevel/g, `ボルテージレベル${game.getVoltageLevel()}`);
+        formatted = formatted.replace(/turn/g, `ターン${game.turn + 1}`);
+        
+        // Keep inequality symbols as is for clarity
+        formatted = formatted.replace(/===/g, '＝');
+        formatted = formatted.replace(/==/g, '＝');
+        
         return formatted;
     }
     
@@ -399,6 +422,7 @@ function toggleMusicInput() {
 // Calculate function
 function calculate() {
     const appeal = parseInt(document.getElementById('appeal').value);
+    const initialMental = parseInt(document.getElementById('mental').value);
     const musicKey = document.getElementById('music').value;
     let music;
     
@@ -432,6 +456,7 @@ function calculate() {
     }
     
     const game = new Game(cards, appeal, music, true);
+    game.mental = initialMental; // Set initial mental value
     game.doGame();
     
     document.getElementById('score').textContent = game.score.toLocaleString();
@@ -610,6 +635,16 @@ function generateSkillParams(slotNum, cardType) {
             html += effectHtml;
             hasParams = true;
         }
+    }
+    
+    // Add special input for fantasyGin card
+    if (cardType === 'fantasyGin') {
+        html += `<div class="skill-param-row">
+            <label>何回デッキリセット？:</label>
+            <input type="number" id="skill${slotNum}_mentalThreshold" value="999" min="0" step="1">
+            <div style="color: #666; font-size: 12px; margin-top: 5px;">※ デッキリセットする回数を指定（0=リセットなし、999=常にリセット）</div>
+        </div>`;
+        hasParams = true;
     }
     
     // Hide params div if no parameters

@@ -477,6 +477,27 @@ const gameData = {
           ]
         }
       ]
+    },
+    "fantasyGin": {
+      "name": "Fantasy Gin",
+      "displayName": "［37.5℃のファンタジー］百生吟子",
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 0.5687,
+          "description": "スコア56.87%ブースト (Lv.1)"
+        },
+        {
+          "type": "conditional",
+          "condition": "mental >= 30",
+          "then": [
+            {
+              "type": "resetCardTurn",
+              "description": "山札リセット"
+            }
+          ]
+        }
+      ]
     }
   },
   "music": {
