@@ -1,0 +1,121 @@
+{
+  "cards": {
+    "sachi": {
+      "name": "Sachi",
+      "displayName": "Sachi",
+      "effects": {
+        "special": {
+          "type": "skipTurn",
+          "condition": "count === 3",
+          "description": "3回目の使用時にターンをスキップ"
+        }
+      }
+    },
+    "bdMegu": {
+      "name": "BD Megu",
+      "displayName": "BD Megu",
+      "effects": {
+        "scoreBoost": 1.2375,
+        "voltageBoost": 1.2375,
+        "description": "スコアとボルテージを123.75%ブースト"
+      }
+    },
+    "gingaKozu": {
+      "name": "Ginga Kozu",
+      "displayName": "Ginga Kozu",
+      "effects": {
+        "conditional": {
+          "type": "countBased",
+          "conditions": [
+            {
+              "count": "<=2",
+              "voltageBoost": 3.24,
+              "resetCardTurn": true,
+              "description": "最初の3回はボルテージ324%ブースト、カード順リセット"
+            },
+            {
+              "count": ">2",
+              "scoreBoost": 3.24,
+              "description": "4回目以降はスコア324%ブースト"
+            }
+          ]
+        }
+      }
+    },
+    "iDoMeSayaka": {
+      "name": "I Do Me Sayaka",
+      "displayName": "I Do Me Sayaka",
+      "effects": {
+        "conditional": {
+          "type": "countBased",
+          "conditions": [
+            {
+              "count": "<=0",
+              "voltageBoost": 0.7875,
+              "description": "初回はボルテージ78.75%ブースト"
+            },
+            {
+              "count": ">0",
+              "scoreBoost": 2.43,
+              "description": "2回目以降はスコア243%ブースト"
+            }
+          ]
+        },
+        "mentalCheck": {
+          "condition": "mental >= 100",
+          "onSuccess": {
+            "voltage": 945
+          },
+          "onFail": {
+            "voltagePenalty": 1000
+          },
+          "description": "メンタル100以上でボルテージ945獲得、未満で-1000"
+        }
+      }
+    },
+    "iDoMeKaho": {
+      "name": "I Do Me Kaho",
+      "displayName": "I Do Me Kaho",
+      "effects": {
+        "mentalRecover": 10,
+        "mentalCheck": {
+          "condition": "mental >= 100",
+          "onSuccess": {
+            "score": 11.34
+          },
+          "onFail": {
+            "voltagePenalty": 1000
+          },
+          "description": "メンタル+10、100以上でスコア11.34倍、未満で-1000"
+        }
+      }
+    },
+    "butoRuri": {
+      "name": "Buto Ruri",
+      "displayName": "Buto Ruri",
+      "effects": {
+        "voltageLevelCheck": {
+          "conditions": [
+            {
+              "voltageLevel": "<=8",
+              "voltageBoost": 3.2625,
+              "description": "ボルテージレベル8以下でボルテージ326.25%ブースト"
+            },
+            {
+              "voltageLevel": ">=7",
+              "scoreBoost": 4.35,
+              "description": "ボルテージレベル7以上でスコア435%ブースト"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "music": {
+    "i_do_me": {
+      "name": "I Do Me",
+      "phases": [11, 7, 5],
+      "description": "フィーバー前: 11, フィーバー中: 7, フィーバー後: 5"
+    }
+  }
+}

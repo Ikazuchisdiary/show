@@ -44,12 +44,18 @@
             margin-bottom: 20px;
         }
         .card-slot {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .card-row {
             display: flex;
             align-items: center;
             gap: 10px;
+            margin-bottom: 10px;
         }
-        .card-slot label {
+        .card-row label {
             margin: 0;
             min-width: 80px;
         }
@@ -59,6 +65,34 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
+        }
+        .skill-params {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+        .skill-param-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        .skill-param-row label {
+            min-width: 120px;
+            font-size: 14px;
+        }
+        .skill-param-row input {
+            flex: 1;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        .skill-level-select {
+            width: 120px;
         }
         button {
             width: 100%;
@@ -146,76 +180,154 @@
         <div class="card-selection">
             <h3>カード選択（順番通りに）:</h3>
             <div class="card-slot">
-                <label>カード1:</label>
-                <select id="card1">
-                    <option value="">未選択</option>
-                    <option value="sachi">Sachi</option>
-                    <option value="bdMegu">BD Megu</option>
-                    <option value="gingaKozu">Ginga Kozu</option>
-                    <option value="iDoMeSayaka">I Do Me Sayaka</option>
-                    <option value="iDoMeKaho">I Do Me Kaho</option>
-                    <option value="butoRuri">Buto Ruri</option>
-                </select>
+                <div class="card-row">
+                    <label>カード1:</label>
+                    <select id="card1" onchange="onCardChange(1)">
+                        <option value="">未選択</option>
+                    </select>
+                    <select id="skill1" class="skill-level-select" onchange="onSkillLevelChange(1)" style="display: none;">
+                        <option value="14">スキルLv14</option>
+                        <option value="13">スキルLv13</option>
+                        <option value="12">スキルLv12</option>
+                        <option value="11">スキルLv11</option>
+                        <option value="10">スキルLv10</option>
+                        <option value="9">スキルLv9</option>
+                        <option value="8">スキルLv8</option>
+                        <option value="7">スキルLv7</option>
+                        <option value="6">スキルLv6</option>
+                        <option value="5">スキルLv5</option>
+                        <option value="4">スキルLv4</option>
+                        <option value="3">スキルLv3</option>
+                        <option value="2">スキルLv2</option>
+                        <option value="1">スキルLv1</option>
+                    </select>
+                </div>
+                <div id="skillParams1" class="skill-params"></div>
             </div>
             <div class="card-slot">
-                <label>カード2:</label>
-                <select id="card2">
-                    <option value="">未選択</option>
-                    <option value="sachi">Sachi</option>
-                    <option value="bdMegu">BD Megu</option>
-                    <option value="gingaKozu">Ginga Kozu</option>
-                    <option value="iDoMeSayaka">I Do Me Sayaka</option>
-                    <option value="iDoMeKaho">I Do Me Kaho</option>
-                    <option value="butoRuri">Buto Ruri</option>
-                </select>
+                <div class="card-row">
+                    <label>カード2:</label>
+                    <select id="card2" onchange="onCardChange(2)">
+                        <option value="">未選択</option>
+                    </select>
+                    <select id="skill2" class="skill-level-select" onchange="onSkillLevelChange(2)" style="display: none;">
+                        <option value="14">スキルLv14</option>
+                        <option value="13">スキルLv13</option>
+                        <option value="12">スキルLv12</option>
+                        <option value="11">スキルLv11</option>
+                        <option value="10">スキルLv10</option>
+                        <option value="9">スキルLv9</option>
+                        <option value="8">スキルLv8</option>
+                        <option value="7">スキルLv7</option>
+                        <option value="6">スキルLv6</option>
+                        <option value="5">スキルLv5</option>
+                        <option value="4">スキルLv4</option>
+                        <option value="3">スキルLv3</option>
+                        <option value="2">スキルLv2</option>
+                        <option value="1">スキルLv1</option>
+                    </select>
+                </div>
+                <div id="skillParams2" class="skill-params"></div>
             </div>
             <div class="card-slot">
-                <label>カード3:</label>
-                <select id="card3">
-                    <option value="">未選択</option>
-                    <option value="sachi">Sachi</option>
-                    <option value="bdMegu">BD Megu</option>
-                    <option value="gingaKozu">Ginga Kozu</option>
-                    <option value="iDoMeSayaka">I Do Me Sayaka</option>
-                    <option value="iDoMeKaho">I Do Me Kaho</option>
-                    <option value="butoRuri">Buto Ruri</option>
-                </select>
+                <div class="card-row">
+                    <label>カード3:</label>
+                    <select id="card3" onchange="onCardChange(3)">
+                        <option value="">未選択</option>
+                    </select>
+                    <select id="skill3" class="skill-level-select" onchange="onSkillLevelChange(3)" style="display: none;">
+                        <option value="14">スキルLv14</option>
+                        <option value="13">スキルLv13</option>
+                        <option value="12">スキルLv12</option>
+                        <option value="11">スキルLv11</option>
+                        <option value="10">スキルLv10</option>
+                        <option value="9">スキルLv9</option>
+                        <option value="8">スキルLv8</option>
+                        <option value="7">スキルLv7</option>
+                        <option value="6">スキルLv6</option>
+                        <option value="5">スキルLv5</option>
+                        <option value="4">スキルLv4</option>
+                        <option value="3">スキルLv3</option>
+                        <option value="2">スキルLv2</option>
+                        <option value="1">スキルLv1</option>
+                    </select>
+                </div>
+                <div id="skillParams3" class="skill-params"></div>
             </div>
             <div class="card-slot">
-                <label>カード4:</label>
-                <select id="card4">
-                    <option value="">未選択</option>
-                    <option value="sachi">Sachi</option>
-                    <option value="bdMegu">BD Megu</option>
-                    <option value="gingaKozu">Ginga Kozu</option>
-                    <option value="iDoMeSayaka">I Do Me Sayaka</option>
-                    <option value="iDoMeKaho">I Do Me Kaho</option>
-                    <option value="butoRuri">Buto Ruri</option>
-                </select>
+                <div class="card-row">
+                    <label>カード4:</label>
+                    <select id="card4" onchange="onCardChange(4)">
+                        <option value="">未選択</option>
+                    </select>
+                    <select id="skill4" class="skill-level-select" onchange="onSkillLevelChange(4)" style="display: none;">
+                        <option value="14">スキルLv14</option>
+                        <option value="13">スキルLv13</option>
+                        <option value="12">スキルLv12</option>
+                        <option value="11">スキルLv11</option>
+                        <option value="10">スキルLv10</option>
+                        <option value="9">スキルLv9</option>
+                        <option value="8">スキルLv8</option>
+                        <option value="7">スキルLv7</option>
+                        <option value="6">スキルLv6</option>
+                        <option value="5">スキルLv5</option>
+                        <option value="4">スキルLv4</option>
+                        <option value="3">スキルLv3</option>
+                        <option value="2">スキルLv2</option>
+                        <option value="1">スキルLv1</option>
+                    </select>
+                </div>
+                <div id="skillParams4" class="skill-params"></div>
             </div>
             <div class="card-slot">
-                <label>カード5:</label>
-                <select id="card5">
-                    <option value="">未選択</option>
-                    <option value="sachi">Sachi</option>
-                    <option value="bdMegu">BD Megu</option>
-                    <option value="gingaKozu">Ginga Kozu</option>
-                    <option value="iDoMeSayaka">I Do Me Sayaka</option>
-                    <option value="iDoMeKaho">I Do Me Kaho</option>
-                    <option value="butoRuri">Buto Ruri</option>
-                </select>
+                <div class="card-row">
+                    <label>カード5:</label>
+                    <select id="card5" onchange="onCardChange(5)">
+                        <option value="">未選択</option>
+                    </select>
+                    <select id="skill5" class="skill-level-select" onchange="onSkillLevelChange(5)" style="display: none;">
+                        <option value="14">スキルLv14</option>
+                        <option value="13">スキルLv13</option>
+                        <option value="12">スキルLv12</option>
+                        <option value="11">スキルLv11</option>
+                        <option value="10">スキルLv10</option>
+                        <option value="9">スキルLv9</option>
+                        <option value="8">スキルLv8</option>
+                        <option value="7">スキルLv7</option>
+                        <option value="6">スキルLv6</option>
+                        <option value="5">スキルLv5</option>
+                        <option value="4">スキルLv4</option>
+                        <option value="3">スキルLv3</option>
+                        <option value="2">スキルLv2</option>
+                        <option value="1">スキルLv1</option>
+                    </select>
+                </div>
+                <div id="skillParams5" class="skill-params"></div>
             </div>
             <div class="card-slot">
-                <label>カード6:</label>
-                <select id="card6">
-                    <option value="">未選択</option>
-                    <option value="sachi">Sachi</option>
-                    <option value="bdMegu">BD Megu</option>
-                    <option value="gingaKozu">Ginga Kozu</option>
-                    <option value="iDoMeSayaka">I Do Me Sayaka</option>
-                    <option value="iDoMeKaho">I Do Me Kaho</option>
-                    <option value="butoRuri">Buto Ruri</option>
-                </select>
+                <div class="card-row">
+                    <label>カード6:</label>
+                    <select id="card6" onchange="onCardChange(6)">
+                        <option value="">未選択</option>
+                    </select>
+                    <select id="skill6" class="skill-level-select" onchange="onSkillLevelChange(6)" style="display: none;">
+                        <option value="14">スキルLv14</option>
+                        <option value="13">スキルLv13</option>
+                        <option value="12">スキルLv12</option>
+                        <option value="11">スキルLv11</option>
+                        <option value="10">スキルLv10</option>
+                        <option value="9">スキルLv9</option>
+                        <option value="8">スキルLv8</option>
+                        <option value="7">スキルLv7</option>
+                        <option value="6">スキルLv6</option>
+                        <option value="5">スキルLv5</option>
+                        <option value="4">スキルLv4</option>
+                        <option value="3">スキルLv3</option>
+                        <option value="2">スキルLv2</option>
+                        <option value="1">スキルLv1</option>
+                    </select>
+                </div>
+                <div id="skillParams6" class="skill-params"></div>
             </div>
         </div>
         
@@ -231,10 +343,9 @@
     </div>
 
     <script>
-        // Music data
-        const musicData = {
-            "i_do_me": [11, 7, 5]
-        };
+        // Global data loaded from JSON
+        let cardData = {};
+        let musicData = {};
 
         // Game class
         class Game {
@@ -346,119 +457,133 @@
             }
         }
 
-        // Card implementations
-        class Sachi extends Card {
-            constructor() {
+        // Generic card implementation using JSON data
+        class GenericCard extends Card {
+            constructor(cardKey, cardConfig, skillValues) {
                 super();
-                this.name = "sachi";
+                this.cardKey = cardKey;
+                this.name = cardConfig.name.toLowerCase();
+                this.config = cardConfig;
+                this.skillValues = skillValues || {};
             }
 
             do(game) {
-                if (this.count === 3) {
-                    game.cardTurn += 1;
-                    return;
+                const effects = this.config.effects;
+                
+                // Handle special effects
+                if (effects.special) {
+                    if (effects.special.type === 'skipTurn' && eval(effects.special.condition.replace('count', 'this.count'))) {
+                        game.cardTurn += 1;
+                        return;
+                    }
                 }
-                super.do(game);
-            }
-        }
-
-        class BdMegu extends Card {
-            constructor() {
-                super();
-                this.name = "bd megu";
-            }
-
-            do(game) {
-                game.doScoreBoost(1.2375);
-                game.doVoltageBoost(1.2375);
-                super.do(game);
-            }
-        }
-
-        class GingaKozu extends Card {
-            constructor() {
-                super();
-                this.name = "ginga kozu";
-            }
-
-            do(game) {
-                if (this.count <= 2) {
-                    game.doVoltageBoost(3.24);
-                    game.cardTurn = -1;
-                } else {
-                    game.doScoreBoost(3.24);
+                
+                // Handle simple boosts
+                if (effects.scoreBoost) {
+                    const value = this.skillValues.scoreBoost !== undefined ? parseFloat(this.skillValues.scoreBoost) : effects.scoreBoost;
+                    game.doScoreBoost(value);
                 }
-                super.do(game);
-            }
-        }
-
-        class IDoMeSayaka extends Card {
-            constructor() {
-                super();
-                this.name = "i do me sayaka";
-            }
-
-            do(game) {
-                if (this.count <= 0) {
-                    game.doVoltageBoost(0.7875);
-                } else {
-                    game.doScoreBoost(2.43);
+                if (effects.voltageBoost) {
+                    const value = this.skillValues.voltageBoost !== undefined ? parseFloat(this.skillValues.voltageBoost) : effects.voltageBoost;
+                    game.doVoltageBoost(value);
                 }
-                if (game.mental >= 100) {
-                    game.getVoltage(945);
-                } else {
-                    game.voltagePt -= 1000;
+                
+                // Handle conditional effects
+                if (effects.conditional) {
+                    if (effects.conditional.type === 'countBased') {
+                        for (const condition of effects.conditional.conditions) {
+                            const countCheck = condition.count;
+                            const currentCount = this.count;
+                            let matches = false;
+                            
+                            if (countCheck.startsWith('<=')) {
+                                matches = currentCount <= parseInt(countCheck.substring(2));
+                            } else if (countCheck.startsWith('>=')) {
+                                matches = currentCount >= parseInt(countCheck.substring(2));
+                            } else if (countCheck.startsWith('>')) {
+                                matches = currentCount > parseInt(countCheck.substring(1));
+                            } else if (countCheck.startsWith('<')) {
+                                matches = currentCount < parseInt(countCheck.substring(1));
+                            } else if (countCheck.startsWith('===')) {
+                                matches = currentCount === parseInt(countCheck.substring(3));
+                            }
+                            
+                            if (matches) {
+                                if (condition.scoreBoost) {
+                                    const key = `scoreBoost_${condition.count}`;
+                                    const value = this.skillValues[key] !== undefined ? parseFloat(this.skillValues[key]) : condition.scoreBoost;
+                                    game.doScoreBoost(value);
+                                }
+                                if (condition.voltageBoost) {
+                                    const key = `voltageBoost_${condition.count}`;
+                                    const value = this.skillValues[key] !== undefined ? parseFloat(this.skillValues[key]) : condition.voltageBoost;
+                                    game.doVoltageBoost(value);
+                                }
+                                if (condition.resetCardTurn) game.cardTurn = -1;
+                            }
+                        }
+                    }
                 }
-                super.do(game);
-            }
-        }
-
-        class IDoMeKaho extends Card {
-            constructor() {
-                super();
-                this.name = "i do me kaho";
-            }
-
-            do(game) {
-                game.mental += 10;
-                if (game.mental >= 100) {
-                    game.getScore(11.34);
-                } else {
-                    game.voltagePt -= 1000;
+                
+                // Handle mental recovery
+                if (effects.mentalRecover) {
+                    game.mental += effects.mentalRecover;
                 }
-                super.do(game);
-            }
-        }
-
-        class ButoRuri extends Card {
-            constructor() {
-                super();
-                this.name = "buto ruri";
-            }
-
-            do(game) {
-                const voltageLevel = game.getVoltageLevel();
-                if (voltageLevel <= 8) {
-                    game.doVoltageBoost(3.2625);
+                
+                // Handle mental check
+                if (effects.mentalCheck) {
+                    if (game.mental >= 100) {
+                        if (effects.mentalCheck.onSuccess.score) {
+                            const value = this.skillValues.score !== undefined ? parseFloat(this.skillValues.score) : effects.mentalCheck.onSuccess.score;
+                            game.getScore(value);
+                        }
+                        if (effects.mentalCheck.onSuccess.voltage) {
+                            const value = this.skillValues.voltage !== undefined ? parseInt(this.skillValues.voltage) : effects.mentalCheck.onSuccess.voltage;
+                            game.getVoltage(value);
+                        }
+                    } else {
+                        if (effects.mentalCheck.onFail.voltagePenalty) {
+                            game.voltagePt -= effects.mentalCheck.onFail.voltagePenalty;
+                        }
+                    }
                 }
-                if (voltageLevel >= 7) {
-                    game.doScoreBoost(4.35);
+                
+                // Handle voltage level check
+                if (effects.voltageLevelCheck) {
+                    const voltageLevel = game.getVoltageLevel();
+                    for (const condition of effects.voltageLevelCheck.conditions) {
+                        const levelCheck = condition.voltageLevel;
+                        let matches = false;
+                        
+                        if (levelCheck.startsWith('<=')) {
+                            matches = voltageLevel <= parseInt(levelCheck.substring(2));
+                        } else if (levelCheck.startsWith('>=')) {
+                            matches = voltageLevel >= parseInt(levelCheck.substring(2));
+                        }
+                        
+                        if (matches) {
+                            if (condition.scoreBoost) {
+                                const key = `scoreBoost_${condition.voltageLevel}`;
+                                const value = this.skillValues[key] !== undefined ? parseFloat(this.skillValues[key]) : condition.scoreBoost;
+                                game.doScoreBoost(value);
+                            }
+                            if (condition.voltageBoost) {
+                                const key = `voltageBoost_${condition.voltageLevel}`;
+                                const value = this.skillValues[key] !== undefined ? parseFloat(this.skillValues[key]) : condition.voltageBoost;
+                                game.doVoltageBoost(value);
+                            }
+                        }
+                    }
                 }
+                
                 super.do(game);
             }
         }
 
         // Card factory
-        function createCard(cardType) {
-            switch(cardType) {
-                case "sachi": return new Sachi();
-                case "bdMegu": return new BdMegu();
-                case "gingaKozu": return new GingaKozu();
-                case "iDoMeSayaka": return new IDoMeSayaka();
-                case "iDoMeKaho": return new IDoMeKaho();
-                case "butoRuri": return new ButoRuri();
-                default: return null;
-            }
+        function createCard(cardType, skillValues) {
+            if (!cardData[cardType]) return null;
+            return new GenericCard(cardType, cardData[cardType], skillValues);
         }
 
         // Toggle music input
@@ -485,14 +610,15 @@
                     parseInt(document.getElementById('afterFever').value)
                 ];
             } else {
-                music = musicData[musicKey];
+                music = musicData[musicKey].phases;
             }
             
             const cards = [];
             for (let i = 1; i <= 6; i++) {
                 const cardType = document.getElementById(`card${i}`).value;
                 if (cardType) {
-                    cards.push(createCard(cardType));
+                    const skillValues = getSkillValues(i);
+                    cards.push(createCard(cardType, skillValues));
                 }
             }
             
@@ -521,14 +647,185 @@
             }
         }
 
-        // Set default card selection to match the notebook example
-        window.onload = function() {
+        // Load card data from JSON
+        async function loadCardData() {
+            try {
+                const response = await fetch('cards.json');
+                const data = await response.json();
+                cardData = data.cards;
+                musicData = data.music;
+                
+                // Populate card dropdowns
+                populateCardDropdowns();
+                
+                // Populate music dropdown
+                populateMusicDropdown();
+                
+                // Set default selections
+                setDefaultSelections();
+            } catch (error) {
+                console.error('Failed to load card data:', error);
+                alert('カードデータの読み込みに失敗しました。');
+            }
+        }
+        
+        function populateCardDropdowns() {
+            for (let i = 1; i <= 6; i++) {
+                const select = document.getElementById(`card${i}`);
+                select.innerHTML = '<option value="">未選択</option>';
+                
+                for (const [key, card] of Object.entries(cardData)) {
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = card.displayName;
+                    select.appendChild(option);
+                }
+            }
+        }
+        
+        function populateMusicDropdown() {
+            const select = document.getElementById('music');
+            select.innerHTML = '';
+            
+            for (const [key, music] of Object.entries(musicData)) {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = `${music.name} (${music.phases.join(', ')})`;
+                select.appendChild(option);
+            }
+            
+            // Add custom option
+            const customOption = document.createElement('option');
+            customOption.value = 'custom';
+            customOption.textContent = 'カスタム入力';
+            select.appendChild(customOption);
+        }
+        
+        function setDefaultSelections() {
             document.getElementById('card1').value = 'sachi';
             document.getElementById('card2').value = 'bdMegu';
             document.getElementById('card3').value = 'gingaKozu';
             document.getElementById('card4').value = 'iDoMeSayaka';
             document.getElementById('card5').value = 'iDoMeKaho';
             document.getElementById('card6').value = 'butoRuri';
+        }
+        
+        // Handle card selection change
+        function onCardChange(slotNum) {
+            const cardSelect = document.getElementById(`card${slotNum}`);
+            const skillSelect = document.getElementById(`skill${slotNum}`);
+            const skillParams = document.getElementById(`skillParams${slotNum}`);
+            
+            if (cardSelect.value) {
+                skillSelect.style.display = 'inline-block';
+                generateSkillParams(slotNum, cardSelect.value);
+                skillParams.style.display = 'block';
+            } else {
+                skillSelect.style.display = 'none';
+                skillParams.style.display = 'none';
+            }
+        }
+        
+        // Handle skill level change
+        function onSkillLevelChange(slotNum) {
+            // Currently just uses manual input values
+        }
+        
+        // Generate skill parameter inputs
+        function generateSkillParams(slotNum, cardType) {
+            const skillParams = document.getElementById(`skillParams${slotNum}`);
+            const card = cardData[cardType];
+            if (!card) return;
+            
+            let html = '';
+            const effects = card.effects;
+            
+            // Simple boosts
+            if (effects.scoreBoost) {
+                html += `<div class="skill-param-row">
+                    <label>スコアブースト:</label>
+                    <input type="number" id="skill${slotNum}_scoreBoost" value="${effects.scoreBoost}" step="0.001">
+                </div>`;
+            }
+            if (effects.voltageBoost) {
+                html += `<div class="skill-param-row">
+                    <label>ボルテージブースト:</label>
+                    <input type="number" id="skill${slotNum}_voltageBoost" value="${effects.voltageBoost}" step="0.001">
+                </div>`;
+            }
+            
+            // Conditional effects
+            if (effects.conditional && effects.conditional.conditions) {
+                for (const condition of effects.conditional.conditions) {
+                    if (condition.scoreBoost) {
+                        html += `<div class="skill-param-row">
+                            <label>スコアブースト(${condition.count}):</label>
+                            <input type="number" id="skill${slotNum}_scoreBoost_${condition.count}" value="${condition.scoreBoost}" step="0.001">
+                        </div>`;
+                    }
+                    if (condition.voltageBoost) {
+                        html += `<div class="skill-param-row">
+                            <label>ボルテージブースト(${condition.count}):</label>
+                            <input type="number" id="skill${slotNum}_voltageBoost_${condition.count}" value="${condition.voltageBoost}" step="0.001">
+                        </div>`;
+                    }
+                }
+            }
+            
+            // Mental check values
+            if (effects.mentalCheck) {
+                if (effects.mentalCheck.onSuccess.score) {
+                    html += `<div class="skill-param-row">
+                        <label>スコア倍率:</label>
+                        <input type="number" id="skill${slotNum}_score" value="${effects.mentalCheck.onSuccess.score}" step="0.01">
+                    </div>`;
+                }
+                if (effects.mentalCheck.onSuccess.voltage) {
+                    html += `<div class="skill-param-row">
+                        <label>ボルテージ獲得:</label>
+                        <input type="number" id="skill${slotNum}_voltage" value="${effects.mentalCheck.onSuccess.voltage}" step="1">
+                    </div>`;
+                }
+            }
+            
+            // Voltage level check
+            if (effects.voltageLevelCheck && effects.voltageLevelCheck.conditions) {
+                for (const condition of effects.voltageLevelCheck.conditions) {
+                    if (condition.scoreBoost) {
+                        html += `<div class="skill-param-row">
+                            <label>スコアブースト(${condition.voltageLevel}):</label>
+                            <input type="number" id="skill${slotNum}_scoreBoost_${condition.voltageLevel}" value="${condition.scoreBoost}" step="0.001">
+                        </div>`;
+                    }
+                    if (condition.voltageBoost) {
+                        html += `<div class="skill-param-row">
+                            <label>ボルテージブースト(${condition.voltageLevel}):</label>
+                            <input type="number" id="skill${slotNum}_voltageBoost_${condition.voltageLevel}" value="${condition.voltageBoost}" step="0.001">
+                        </div>`;
+                    }
+                }
+            }
+            
+            skillParams.innerHTML = html;
+        }
+        
+        // Get skill values from inputs
+        function getSkillValues(slotNum) {
+            const values = {};
+            const inputs = document.querySelectorAll(`#skillParams${slotNum} input`);
+            
+            inputs.forEach(input => {
+                const id = input.id;
+                const key = id.replace(`skill${slotNum}_`, '');
+                values[key] = input.value;
+            });
+            
+            return values;
+        }
+        
+        // Initialize on page load
+        window.onload = function() {
+            loadCardData();
         };
     </script>
 </body>
