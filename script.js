@@ -1111,10 +1111,10 @@ function saveCardSkillLevel(cardType, skillLevel) {
 
 // Load skill level for a specific card type
 function loadCardSkillLevel(cardType) {
-    if (!cardType) return 1;
+    if (!cardType) return 14;
     const key = `sukushou_card_skill_${cardType}`;
     const savedLevel = localStorage.getItem(key);
-    return savedLevel ? parseInt(savedLevel) : 1;
+    return savedLevel ? parseInt(savedLevel) : 14;
 }
 
 // Load state from localStorage
