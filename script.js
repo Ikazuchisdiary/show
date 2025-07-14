@@ -494,10 +494,16 @@ function createCard(cardType, skillValues, skillLevel) {
 function toggleMusicInput() {
     const musicSelect = document.getElementById('music');
     const customMusic = document.getElementById('customMusic');
+    
+    // Save current state before switching
+    saveCurrentState();
+    
     if (musicSelect.value === 'custom') {
         customMusic.style.display = 'block';
     } else {
         customMusic.style.display = 'none';
+        // Load state for the selected song
+        loadStateForSong(musicSelect.value);
     }
 }
 
@@ -1051,6 +1057,99 @@ function setupSearchableSelect(slotNum) {
     updateSearchInput();
 }
 
+// Save current state to localStorage
+function saveCurrentState() {
+    const musicKey = document.getElementById('music').value;
+    if (musicKey === 'custom') return; // Don't save custom music states
+    
+    const state = {
+        appeal: document.getElementById('appeal').value,
+        mental: document.getElementById('mental').value,
+        cards: []
+    };
+    
+    // Save card selections and skill values
+    for (let i = 1; i <= 6; i++) {
+        const cardData = {
+            card: document.getElementById(`card${i}`).value,
+            skillLevel: document.getElementById(`skill${i}`).value,
+            skillValues: getSkillValues(i)
+        };
+        state.cards.push(cardData);
+    }
+    
+    // Save state for this specific song
+    localStorage.setItem(`sukushou_state_${musicKey}`, JSON.stringify(state));
+}
+
+// Load state from localStorage
+function loadStateForSong(musicKey) {
+    if (musicKey === 'custom') return; // Don't load for custom music
+    
+    const savedState = localStorage.getItem(`sukushou_state_${musicKey}`);
+    if (!savedState) return;
+    
+    try {
+        const state = JSON.parse(savedState);
+        
+        // Load appeal and mental
+        document.getElementById('appeal').value = state.appeal || 88146;
+        document.getElementById('mental').value = state.mental || 100;
+        
+        // Load card selections
+        for (let i = 1; i <= 6; i++) {
+            const cardData = state.cards[i - 1];
+            if (cardData) {
+                // Set card selection
+                document.getElementById(`card${i}`).value = cardData.card || '';
+                
+                // Trigger card change to show skill options
+                onCardChange(i);
+                
+                // Set skill level
+                if (cardData.skillLevel) {
+                    document.getElementById(`skill${i}`).value = cardData.skillLevel;
+                }
+                
+                // Trigger skill level change
+                onSkillLevelChange(i);
+                
+                // Load custom skill values
+                if (cardData.skillValues) {
+                    for (const [key, value] of Object.entries(cardData.skillValues)) {
+                        const input = document.getElementById(`skill${i}_${key}`);
+                        if (input) {
+                            input.value = value;
+                        }
+                    }
+                }
+                
+                // Update search input display
+                const searchInput = document.getElementById(`cardSearch${i}`);
+                const selectElement = document.getElementById(`card${i}`);
+                const selectedOption = selectElement.options[selectElement.selectedIndex];
+                if (selectedOption && selectedOption.value) {
+                    searchInput.value = selectedOption.textContent;
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Error loading saved state:', e);
+    }
+}
+
+// Setup auto-save on input changes
+function setupAutoSave() {
+    // Save on any input change
+    const inputs = document.querySelectorAll('input[type="number"], select');
+    inputs.forEach(input => {
+        input.addEventListener('change', () => {
+            // Small delay to ensure all related changes are complete
+            setTimeout(saveCurrentState, 100);
+        });
+    });
+}
+
 // Initialize on page load
 window.onload = function() {
     loadCardData();
@@ -1059,4 +1158,11 @@ window.onload = function() {
     for (let i = 1; i <= 6; i++) {
         setupSearchableSelect(i);
     }
+    
+    // Setup auto-save
+    setupAutoSave();
+    
+    // Load state for default song
+    const defaultMusic = document.getElementById('music').value;
+    loadStateForSong(defaultMusic);
 };

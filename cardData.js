@@ -302,6 +302,11 @@ const gameData = {
         {
           "type": "resetCardTurn",
           "description": "山札リセット"
+        },
+        {
+          "type": "skipTurn",
+          "condition": "count > 6",
+          "description": "6回使用後は除外"
         }
       ]
     },
