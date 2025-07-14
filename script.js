@@ -304,9 +304,9 @@ class Game {
                 
                 if (this.verbose) {
                     const conditionText = this.formatCenterSkillCondition(effect.condition);
-                    const resultText = conditionMet ? '成立' : '不成立';
+                    const resultText = conditionMet ? '条件成立' : '条件不成立';
                     const resultColor = conditionMet ? '#27ae60' : '#95a5a6';
-                    this.currentTurnLog.push(`<div class="log-action" style="color: ${resultColor};">条件判定: ${conditionText} → ${resultText}</div>`);
+                    this.currentTurnLog.push(`<div class="log-action" style="color: ${resultColor};">${conditionText} → ${resultText}</div>`);
                 }
                 
                 if (conditionMet) {
@@ -456,10 +456,7 @@ class GenericCard extends Card {
                     const skipConditionMet = this.evaluateCondition(effect.condition, game);
                     if (game.verbose) {
                         const conditionInfo = this.formatCondition(effect.condition, game);
-                        if (conditionInfo.description) {
-                            game.currentTurnLog.push(`<div class="log-action" style="color: #999; font-size: 12px;">${conditionInfo.description}</div>`);
-                        }
-                        game.currentTurnLog.push(`<div class="log-action" style="color: #666;">条件判定: ${conditionInfo.formatted} → ${skipConditionMet ? '条件成立（スキップ）' : '条件不成立'}</div>`);
+                        game.currentTurnLog.push(`<div class="log-action" style="color: #666;">${conditionInfo.formatted} → ${skipConditionMet ? '条件成立（スキップ）' : '条件不成立'}</div>`);
                     }
                     if (skipConditionMet) {
                         // Don't log skip action since we'll hide the entire turn
@@ -536,12 +533,9 @@ class GenericCard extends Card {
                     const conditionMet = this.evaluateCondition(effect.condition, game);
                     if (game.verbose) {
                         const conditionInfo = this.formatCondition(effect.condition, game);
-                        if (conditionInfo.description) {
-                            game.currentTurnLog.push(`<div class="log-action" style="color: #999; font-size: 12px;">${conditionInfo.description}</div>`);
-                        }
-                        const resultText = conditionMet ? '成立' : '不成立';
+                        const resultText = conditionMet ? '条件成立' : '条件不成立';
                         const resultColor = conditionMet ? '#27ae60' : '#95a5a6';
-                        game.currentTurnLog.push(`<div class="log-action" style="color: ${resultColor};">条件判定: ${conditionInfo.formatted} → ${resultText}</div>`);
+                        game.currentTurnLog.push(`<div class="log-action" style="color: ${resultColor};">${conditionInfo.formatted} → ${resultText}</div>`);
                     }
                     if (conditionMet) {
                         // Process "then" effects
