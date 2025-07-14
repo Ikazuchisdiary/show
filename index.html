@@ -404,7 +404,7 @@
             }
 
             doScoreBoost(value, times = 1) {
-                for (let i = 0; i < times; i++) {
+                for (let i = 0;i < times; i++) {
                     this.scoreBoost[this.scoreBoostCount + i] += value;
                 }
                 if (this.verbose) {
@@ -745,14 +745,19 @@
             let html = '';
             const effects = card.effects;
             
+            // Check if card has any skill parameters
+            let hasParams = false;
+            
             // Simple boosts
             if (effects.scoreBoost) {
+                hasParams = true;
                 html += `<div class="skill-param-row">
                     <label>スコアブースト:</label>
                     <input type="number" id="skill${slotNum}_scoreBoost" value="${effects.scoreBoost}" step="0.001">
                 </div>`;
             }
             if (effects.voltageBoost) {
+                hasParams = true;
                 html += `<div class="skill-param-row">
                     <label>ボルテージブースト:</label>
                     <input type="number" id="skill${slotNum}_voltageBoost" value="${effects.voltageBoost}" step="0.001">
@@ -763,12 +768,14 @@
             if (effects.conditional && effects.conditional.conditions) {
                 for (const condition of effects.conditional.conditions) {
                     if (condition.scoreBoost) {
+                        hasParams = true;
                         html += `<div class="skill-param-row">
                             <label>スコアブースト(${condition.count}):</label>
                             <input type="number" id="skill${slotNum}_scoreBoost_${condition.count}" value="${condition.scoreBoost}" step="0.001">
                         </div>`;
                     }
                     if (condition.voltageBoost) {
+                        hasParams = true;
                         html += `<div class="skill-param-row">
                             <label>ボルテージブースト(${condition.count}):</label>
                             <input type="number" id="skill${slotNum}_voltageBoost_${condition.count}" value="${condition.voltageBoost}" step="0.001">
@@ -780,12 +787,14 @@
             // Mental check values
             if (effects.mentalCheck) {
                 if (effects.mentalCheck.onSuccess.score) {
+                    hasParams = true;
                     html += `<div class="skill-param-row">
                         <label>スコア倍率:</label>
                         <input type="number" id="skill${slotNum}_score" value="${effects.mentalCheck.onSuccess.score}" step="0.01">
                     </div>`;
                 }
                 if (effects.mentalCheck.onSuccess.voltage) {
+                    hasParams = true;
                     html += `<div class="skill-param-row">
                         <label>ボルテージ獲得:</label>
                         <input type="number" id="skill${slotNum}_voltage" value="${effects.mentalCheck.onSuccess.voltage}" step="1">
@@ -797,18 +806,26 @@
             if (effects.voltageLevelCheck && effects.voltageLevelCheck.conditions) {
                 for (const condition of effects.voltageLevelCheck.conditions) {
                     if (condition.scoreBoost) {
+                        hasParams = true;
                         html += `<div class="skill-param-row">
                             <label>スコアブースト(${condition.voltageLevel}):</label>
                             <input type="number" id="skill${slotNum}_scoreBoost_${condition.voltageLevel}" value="${condition.scoreBoost}" step="0.001">
                         </div>`;
                     }
                     if (condition.voltageBoost) {
+                        hasParams = true;
                         html += `<div class="skill-param-row">
                             <label>ボルテージブースト(${condition.voltageLevel}):</label>
                             <input type="number" id="skill${slotNum}_voltageBoost_${condition.voltageLevel}" value="${condition.voltageBoost}" step="0.001">
                         </div>`;
                     }
                 }
+            }
+            
+            // Hide params div if no parameters
+            if (!hasParams) {
+                skillParams.style.display = 'none';
+                html = '<div style="color: #666; font-size: 14px;">このカードには調整可能なパラメータがありません</div>';
             }
             
             skillParams.innerHTML = html;
