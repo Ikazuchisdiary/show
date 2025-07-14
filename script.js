@@ -640,15 +640,15 @@ class GenericCard extends Card {
             if (condition.match(/mental\s*>=\s*(\d+)/)) {
                 const match = condition.match(/mental\s*>=\s*(\d+)/);
                 description = `メンタルが${match[1]}%以上か`;
-                formatted = `メンタル(${values.mental}) ≥ ${match[1]}`;
+                formatted = `メンタル(${values.mental}%) ≥ ${match[1]}%`;
             } else if (condition.match(/mental\s*<=\s*(\d+)/)) {
                 const match = condition.match(/mental\s*<=\s*(\d+)/);
                 description = `メンタルが${match[1]}%以下か`;
-                formatted = `メンタル(${values.mental}) ≤ ${match[1]}`;
+                formatted = `メンタル(${values.mental}%) ≤ ${match[1]}%`;
             } else if (condition.match(/mental\s*<\s*(\d+)/)) {
                 const match = condition.match(/mental\s*<\s*(\d+)/);
                 description = `メンタルが${match[1]}%未満か`;
-                formatted = `メンタル(${values.mental}) < ${match[1]}`;
+                formatted = `メンタル(${values.mental}%) < ${match[1]}%`;
             }
         } else if (condition.includes('voltageLevel')) {
             if (condition.match(/voltageLevel\s*>=\s*(\d+)/)) {
@@ -1303,7 +1303,7 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
             if (effect.value !== undefined) {
                 html += `<div class="skill-param-row">
                     <label>ボルテージ減少:</label>
-                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">-${effect.value}</span>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">-${effect.value}</span>
                 </div>`;
             }
             break;
@@ -1311,7 +1311,7 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
             if (effect.value !== undefined) {
                 html += `<div class="skill-param-row">
                     <label>${effect.description || 'メンタル減少'}:</label>
-                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">${effect.value}%</span>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">${effect.value}%</span>
                 </div>`;
             }
             break;
@@ -1421,7 +1421,7 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
             if (effect.value !== undefined) {
                 html += `<div class="skill-param-row">
                     <label>メンタル回復:</label>
-                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #e8f5e9; color: #2e7d32; font-weight: bold; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">+${effect.value}</span>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #e8f5e9; color: #2e7d32; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">+${effect.value}</span>
                 </div>`;
             }
             break;
@@ -1430,7 +1430,7 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
             if (effect.value !== undefined) {
                 html += `<div class="skill-param-row">
                     <label>メンタル減少:</label>
-                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">-${effect.value}</span>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">-${effect.value}</span>
                 </div>`;
             }
             break;
@@ -1439,7 +1439,7 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
             if (effect.value !== undefined) {
                 html += `<div class="skill-param-row">
                     <label>ボルテージ減少:</label>
-                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">-${effect.value}</span>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">-${effect.value}</span>
                 </div>`;
             }
             break;
@@ -1544,13 +1544,13 @@ function formatConditionForDisplay(condition) {
         formatted = `ターン > ${turnNum}`;
     } else if (formatted.match(/mental\s*>=\s*(\d+)/)) {
         const match = formatted.match(/mental\s*>=\s*(\d+)/);
-        formatted = `メンタル ≥ ${match[1]}`;
+        formatted = `メンタル ≥ ${match[1]}%`;
     } else if (formatted.match(/mental\s*<=\s*(\d+)/)) {
         const match = formatted.match(/mental\s*<=\s*(\d+)/);
-        formatted = `メンタル ≤ ${match[1]}`;
+        formatted = `メンタル ≤ ${match[1]}%`;
     } else if (formatted.match(/mental\s*<\s*(\d+)/)) {
         const match = formatted.match(/mental\s*<\s*(\d+)/);
-        formatted = `メンタル < ${match[1]}`;
+        formatted = `メンタル < ${match[1]}%`;
     } else if (formatted.match(/voltageLevel\s*>=\s*(\d+)/)) {
         const match = formatted.match(/voltageLevel\s*>=\s*(\d+)/);
         formatted = `ボルテージLv ≥ ${match[1]}`;

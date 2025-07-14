@@ -155,7 +155,8 @@ select {
 }
 
 .skill-param-row label {
-    min-width: 120px;
+    min-width: 150px;
+    width: 150px;
     font-size: 14px;
     flex-shrink: 0;
 }
