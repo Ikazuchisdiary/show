@@ -708,6 +708,11 @@
             document.getElementById('card4').value = 'iDoMeSayaka';
             document.getElementById('card5').value = 'iDoMeKaho';
             document.getElementById('card6').value = 'butoRuri';
+            
+            // Trigger card change events to show skill options
+            for (let i = 1; i <= 6; i++) {
+                onCardChange(i);
+            }
         }
         
         // Handle card selection change
