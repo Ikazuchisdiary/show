@@ -805,6 +805,16 @@ const gameData = {
       "name": "アイドゥーミー",
       "phases": [12, 6, 5],
       "description": "フィーバー前: 12, フィーバー中: 6, フィーバー後: 5"
+    },
+    "hello_new_dream": {
+      "name": "Hello, new dream!",
+      "phases": [12, 8, 5],
+      "description": "フィーバー前: 12, フィーバー中: 8, フィーバー後: 5"
+    },
+    "izayoi_serene": {
+      "name": "十六夜セレーネ",
+      "phases": [13, 6, 4],
+      "description": "フィーバー前: 13, フィーバー中: 6, フィーバー後: 4"
     }
   }
 };
