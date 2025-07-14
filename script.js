@@ -455,8 +455,11 @@ class GenericCard extends Card {
                 case 'skipTurn':
                     const skipConditionMet = this.evaluateCondition(effect.condition, game);
                     if (game.verbose) {
-                        const formattedCondition = this.formatCondition(effect.condition, game);
-                        game.currentTurnLog.push(`<div class="log-action" style="color: #666;">条件判定: ${formattedCondition} → ${skipConditionMet ? '条件成立（スキップ）' : '条件不成立'}</div>`);
+                        const conditionInfo = this.formatCondition(effect.condition, game);
+                        if (conditionInfo.description) {
+                            game.currentTurnLog.push(`<div class="log-action" style="color: #999; font-size: 12px;">${conditionInfo.description}</div>`);
+                        }
+                        game.currentTurnLog.push(`<div class="log-action" style="color: #666;">条件判定: ${conditionInfo.formatted} → ${skipConditionMet ? '条件成立（スキップ）' : '条件不成立'}</div>`);
                     }
                     if (skipConditionMet) {
                         // Don't log skip action since we'll hide the entire turn
@@ -532,10 +535,13 @@ class GenericCard extends Card {
                 case 'conditional':
                     const conditionMet = this.evaluateCondition(effect.condition, game);
                     if (game.verbose) {
-                        const conditionText = this.formatCondition(effect.condition, game);
+                        const conditionInfo = this.formatCondition(effect.condition, game);
+                        if (conditionInfo.description) {
+                            game.currentTurnLog.push(`<div class="log-action" style="color: #999; font-size: 12px;">${conditionInfo.description}</div>`);
+                        }
                         const resultText = conditionMet ? '成立' : '不成立';
                         const resultColor = conditionMet ? '#27ae60' : '#95a5a6';
-                        game.currentTurnLog.push(`<div class="log-action" style="color: ${resultColor};">条件判定: ${conditionText} → ${resultText}</div>`);
+                        game.currentTurnLog.push(`<div class="log-action" style="color: ${resultColor};">条件判定: ${conditionInfo.formatted} → ${resultText}</div>`);
                     }
                     if (conditionMet) {
                         // Process "then" effects
@@ -614,37 +620,55 @@ class GenericCard extends Card {
         formatted = formatted.replace(/voltageLevel/g, `${values.voltageLevel}`);
         formatted = formatted.replace(/turn/g, `${values.turn + 1}`);
         
-        // Format the condition more naturally
+        // Create a description of what's being checked
+        let description = '';
         if (condition.includes('count')) {
-            if (condition.includes('>=')) {
-                const match = condition.match(/count\s*>=\s*(\d+)/);
-                if (match) {
-                    formatted = `使用回数(${this.count}) ≥ ${match[1]}`;
-                }
-            } else if (condition.includes('>')) {
+            if (condition.match(/count\s*>\s*(\d+)/)) {
                 const match = condition.match(/count\s*>\s*(\d+)/);
-                if (match) {
-                    formatted = `使用回数(${this.count}) > ${match[1]}`;
-                }
-            } else if (condition.includes('<=')) {
+                description = `${this.displayName}の使用回数が${match[1]}回を超えているか`;
+                formatted = `使用回数(${this.count}) > ${match[1]}`;
+            } else if (condition.match(/count\s*>=\s*(\d+)/)) {
+                const match = condition.match(/count\s*>=\s*(\d+)/);
+                description = `${this.displayName}の使用回数が${match[1]}回以上か`;
+                formatted = `使用回数(${this.count}) ≥ ${match[1]}`;
+            } else if (condition.match(/count\s*<=\s*(\d+)/)) {
                 const match = condition.match(/count\s*<=\s*(\d+)/);
-                if (match) {
-                    formatted = `使用回数(${this.count}) ≤ ${match[1]}`;
-                }
-            } else if (condition.includes('<')) {
-                const match = condition.match(/count\s*<\s*(\d+)/);
-                if (match) {
-                    formatted = `使用回数(${this.count}) < ${match[1]}`;
-                }
-            } else if (condition.match(/count\s*===?\s*(\d+)/)) {
-                const match = condition.match(/count\s*===?\s*(\d+)/);
-                if (match) {
-                    formatted = `使用回数(${this.count}) = ${match[1]}`;
-                }
+                description = `${this.displayName}の使用回数が${match[1]}回以下か`;
+                formatted = `使用回数(${this.count}) ≤ ${match[1]}`;
+            }
+        } else if (condition.includes('turn')) {
+            if (condition.match(/turn\s*>=\s*(\d+)/)) {
+                const match = condition.match(/turn\s*>=\s*(\d+)/);
+                description = `${parseInt(match[1]) + 1}ターン目以降か`;
+                formatted = `ターン(${values.turn + 1}) ≥ ${parseInt(match[1]) + 1}`;
+            }
+        } else if (condition.includes('mental')) {
+            if (condition.match(/mental\s*>=\s*(\d+)/)) {
+                const match = condition.match(/mental\s*>=\s*(\d+)/);
+                description = `メンタルが${match[1]}%以上か`;
+                formatted = `メンタル(${values.mental}) ≥ ${match[1]}`;
+            } else if (condition.match(/mental\s*<=\s*(\d+)/)) {
+                const match = condition.match(/mental\s*<=\s*(\d+)/);
+                description = `メンタルが${match[1]}%以下か`;
+                formatted = `メンタル(${values.mental}) ≤ ${match[1]}`;
+            } else if (condition.match(/mental\s*<\s*(\d+)/)) {
+                const match = condition.match(/mental\s*<\s*(\d+)/);
+                description = `メンタルが${match[1]}%未満か`;
+                formatted = `メンタル(${values.mental}) < ${match[1]}`;
+            }
+        } else if (condition.includes('voltageLevel')) {
+            if (condition.match(/voltageLevel\s*>=\s*(\d+)/)) {
+                const match = condition.match(/voltageLevel\s*>=\s*(\d+)/);
+                description = `ボルテージレベルが${match[1]}以上か`;
+                formatted = `ボルテージLv(${values.voltageLevel}) ≥ ${match[1]}`;
+            } else if (condition.match(/voltageLevel\s*<=\s*(\d+)/)) {
+                const match = condition.match(/voltageLevel\s*<=\s*(\d+)/);
+                description = `ボルテージレベルが${match[1]}以下か`;
+                formatted = `ボルテージLv(${values.voltageLevel}) ≤ ${match[1]}`;
             }
         }
         
-        return formatted;
+        return { formatted, description };
     }
     
     processEffects(effects, game, prefix) {
@@ -1249,8 +1273,8 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
             if (effect.value !== undefined) {
                 const calculatedValue = calculateSkillValue(effect.value, skillLevel, true);
                 html += `<div class="skill-param-row">
-                    <label>スコア獲得:</label>
-                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001">
+                    <label>スコア獲得倍率:</label>
+                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001" style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px;">
                 </div>`;
             }
             break;
@@ -1259,7 +1283,7 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
                 const calculatedValue = calculateSkillValue(effect.value, skillLevel, true);
                 html += `<div class="skill-param-row">
                     <label>スコアブースト:</label>
-                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001">
+                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001" style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px;">
                 </div>`;
             }
             break;
@@ -1268,7 +1292,7 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
                 const calculatedValue = calculateSkillValue(effect.value, skillLevel, false);
                 html += `<div class="skill-param-row">
                     <label>ボルテージ獲得:</label>
-                    <input type="number" id="${inputId}" value="${Math.floor(calculatedValue)}" step="1">
+                    <input type="number" id="${inputId}" value="${Math.floor(calculatedValue)}" step="1" style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px;">
                 </div>`;
             }
             break;
@@ -1277,7 +1301,7 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
                 const calculatedValue = calculateSkillValue(effect.value, skillLevel, true);
                 html += `<div class="skill-param-row">
                     <label>ボルテージブースト:</label>
-                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001">
+                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001" style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px;">
                 </div>`;
             }
             break;
@@ -1285,7 +1309,7 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
             if (effect.value !== undefined) {
                 html += `<div class="skill-param-row">
                     <label>ボルテージ減少:</label>
-                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block;">-${effect.value}</span>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">-${effect.value}</span>
                 </div>`;
             }
             break;
@@ -1293,7 +1317,7 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
             if (effect.value !== undefined) {
                 html += `<div class="skill-param-row">
                     <label>${effect.description || 'メンタル減少'}:</label>
-                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block;">${effect.value}%</span>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">${effect.value}%</span>
                 </div>`;
             }
             break;
@@ -1302,26 +1326,26 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
                 const calculatedValue = calculateSkillValue(effect.value, skillLevel, true);
                 html += `<div class="skill-param-row">
                     <label>アピール値上昇:</label>
-                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001">
+                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001" style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px;">
                 </div>`;
             }
             break;
         case 'skipTurn':
             html += `<div class="skill-param-row">
                 <label>効果:</label>
-                <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #f5f5f5; color: #666; display: inline-block;">${effect.description || 'デッキから除外'}</span>
+                <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #f5f5f5; color: #666; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">${effect.description || 'デッキから除外'}</span>
             </div>`;
             break;
         case 'resetCardTurn':
             html += `<div class="skill-param-row">
                 <label>効果:</label>
-                <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #e3f2fd; color: #1565c0; display: inline-block;">${effect.description || '山札リセット'}</span>
+                <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #e3f2fd; color: #1565c0; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">${effect.description || '山札リセット'}</span>
             </div>`;
             break;
         case 'conditional':
             if (effect.then || effect.else) {
                 html += `<div style="margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px;">
-                    <div style="font-weight: bold; margin-bottom: 5px;">条件: ${effect.condition}</div>`;
+                    <div style="font-weight: bold; margin-bottom: 5px;">条件: ${formatConditionForDisplay(effect.condition)}</div>`;
                 
                 if (effect.then) {
                     html += '<div style="margin-left: 10px;">';
@@ -1364,7 +1388,7 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
                 const calculatedValue = calculateSkillValue(effect.value, skillLevel, true);
                 html += `<div class="skill-param-row">
                     <label>スコアブースト:</label>
-                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001">
+                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001" style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px;">
                 </div>`;
             }
             break;
@@ -1374,7 +1398,7 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
                 const calculatedValue = calculateSkillValue(effect.value, skillLevel, true);
                 html += `<div class="skill-param-row">
                     <label>ボルテージブースト:</label>
-                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001">
+                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001" style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px;">
                 </div>`;
             }
             break;
@@ -1383,8 +1407,8 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
             if (effect.value !== undefined) {
                 const calculatedValue = calculateSkillValue(effect.value, skillLevel, true);
                 html += `<div class="skill-param-row">
-                    <label>スコア倍率:</label>
-                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.01">
+                    <label>スコア獲得倍率:</label>
+                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.01" style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px;">
                 </div>`;
             }
             break;
@@ -1394,7 +1418,7 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
                 const calculatedValue = calculateSkillValue(effect.value, skillLevel, false);
                 html += `<div class="skill-param-row">
                     <label>ボルテージ獲得:</label>
-                    <input type="number" id="${inputId}" value="${Math.floor(calculatedValue)}" step="1">
+                    <input type="number" id="${inputId}" value="${Math.floor(calculatedValue)}" step="1" style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px;">
                 </div>`;
             }
             break;
@@ -1403,7 +1427,7 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
             if (effect.value !== undefined) {
                 html += `<div class="skill-param-row">
                     <label>メンタル回復:</label>
-                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #e8f5e9; color: #2e7d32; font-weight: bold; display: inline-block;">+${effect.value}</span>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #e8f5e9; color: #2e7d32; font-weight: bold; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">+${effect.value}</span>
                 </div>`;
             }
             break;
@@ -1412,7 +1436,7 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
             if (effect.value !== undefined) {
                 html += `<div class="skill-param-row">
                     <label>メンタル減少:</label>
-                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block;">-${effect.value}</span>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">-${effect.value}</span>
                 </div>`;
             }
             break;
@@ -1421,7 +1445,7 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
             if (effect.value !== undefined) {
                 html += `<div class="skill-param-row">
                     <label>ボルテージ減少:</label>
-                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block;">-${effect.value}</span>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #ffebee; color: #c62828; font-weight: bold; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">-${effect.value}</span>
                 </div>`;
             }
             break;
@@ -1429,21 +1453,21 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
         case 'skipTurn':
             html += `<div class="skill-param-row">
                 <label>効果:</label>
-                <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #f5f5f5; color: #666; display: inline-block;">${effect.description || 'ターンスキップ'}</span>
+                <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #f5f5f5; color: #666; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">${effect.description || 'ターンスキップ'}</span>
             </div>`;
             break;
             
         case 'resetCardTurn':
             html += `<div class="skill-param-row">
                 <label>効果:</label>
-                <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #e3f2fd; color: #1565c0; display: inline-block;">${effect.description || '山札リセット'}</span>
+                <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #e3f2fd; color: #1565c0; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">${effect.description || '山札リセット'}</span>
             </div>`;
             break;
             
         case 'conditional':
             if (effect.then || effect.else) {
                 html += `<div style="margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px;">
-                    <div style="font-weight: bold; margin-bottom: 5px;">条件: ${effect.condition}</div>`;
+                    <div style="font-weight: bold; margin-bottom: 5px;">条件: ${formatConditionForDisplay(effect.condition)}</div>`;
                 
                 if (effect.then) {
                     html += '<div style="margin-left: 10px;">';
@@ -1497,6 +1521,49 @@ function getCenterSkillValues(slotNum) {
     });
     
     return values;
+}
+
+// Format condition for user-friendly display
+function formatConditionForDisplay(condition) {
+    let formatted = condition;
+    
+    // Match patterns and create proper Japanese
+    if (formatted.match(/count\s*>\s*(\d+)/)) {
+        const match = formatted.match(/count\s*>\s*(\d+)/);
+        formatted = `使用回数が${match[1]}回を超える`;
+    } else if (formatted.match(/count\s*>=\s*(\d+)/)) {
+        const match = formatted.match(/count\s*>=\s*(\d+)/);
+        formatted = `使用回数が${match[1]}回以上`;
+    } else if (formatted.match(/count\s*<=\s*(\d+)/)) {
+        const match = formatted.match(/count\s*<=\s*(\d+)/);
+        formatted = `使用回数が${match[1]}回以下`;
+    } else if (formatted.match(/count\s*<\s*(\d+)/)) {
+        const match = formatted.match(/count\s*<\s*(\d+)/);
+        formatted = `使用回数が${match[1]}回未満`;
+    } else if (formatted.match(/turn\s*>=\s*(\d+)/)) {
+        const match = formatted.match(/turn\s*>=\s*(\d+)/);
+        formatted = `${match[1]}ターン目以降`;
+    } else if (formatted.match(/turn\s*>\s*(\d+)/)) {
+        const match = formatted.match(/turn\s*>\s*(\d+)/);
+        formatted = `${match[1]}ターン目より後`;
+    } else if (formatted.match(/mental\s*>=\s*(\d+)/)) {
+        const match = formatted.match(/mental\s*>=\s*(\d+)/);
+        formatted = `メンタルが${match[1]}%以上`;
+    } else if (formatted.match(/mental\s*<=\s*(\d+)/)) {
+        const match = formatted.match(/mental\s*<=\s*(\d+)/);
+        formatted = `メンタルが${match[1]}%以下`;
+    } else if (formatted.match(/mental\s*<\s*(\d+)/)) {
+        const match = formatted.match(/mental\s*<\s*(\d+)/);
+        formatted = `メンタルが${match[1]}%未満`;
+    } else if (formatted.match(/voltageLevel\s*>=\s*(\d+)/)) {
+        const match = formatted.match(/voltageLevel\s*>=\s*(\d+)/);
+        formatted = `ボルテージレベルが${match[1]}以上`;
+    } else if (formatted.match(/voltageLevel\s*<=\s*(\d+)/)) {
+        const match = formatted.match(/voltageLevel\s*<=\s*(\d+)/);
+        formatted = `ボルテージレベルが${match[1]}以下`;
+    }
+    
+    return formatted;
 }
 
 // Calculate skill value based on level and base value
