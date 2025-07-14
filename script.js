@@ -392,11 +392,43 @@ function onCardChange(slotNum) {
         generateSkillParams(slotNum, cardSelect.value);
         skillParams.style.display = 'block';
         
+        // Update skill level options to show which have unknown values
+        updateSkillLevelOptions(slotNum, cardSelect.value);
+        
         // Load default values for current skill level
         onSkillLevelChange(slotNum);
     } else {
         skillSelect.style.display = 'none';
         skillParams.style.display = 'none';
+    }
+}
+
+// Update skill level dropdown to show unknown values
+function updateSkillLevelOptions(slotNum, cardType) {
+    const skillSelect = document.getElementById(`skill${slotNum}`);
+    const card = cardData[cardType];
+    
+    if (!card || !card.skillLevels) return;
+    
+    // Update each option to show if it has unknown values
+    for (let level = 1; level <= 14; level++) {
+        const option = skillSelect.querySelector(`option[value="${level}"]`);
+        if (option) {
+            const levelData = card.skillLevels[level];
+            let hasNull = false;
+            
+            if (levelData) {
+                hasNull = Object.values(levelData).some(value => value === null);
+            }
+            
+            if (hasNull) {
+                option.textContent = `スキルLv${level} (一部不明)`;
+                option.style.color = '#ff6b6b';
+            } else {
+                option.textContent = `スキルLv${level}`;
+                option.style.color = '';
+            }
+        }
     }
 }
 
@@ -456,6 +488,9 @@ function generateSkillParams(slotNum, cardType) {
     if (!hasParams) {
         skillParams.style.display = 'none';
         html = '<div style="color: #666; font-size: 14px;">このカードには調整可能なパラメータがありません</div>';
+    } else {
+        // Add help text about manual input
+        html = '<div style="color: #666; font-size: 12px; margin-bottom: 10px;">※ 数値は手動で変更可能です。不明な値は自由に入力してください。</div>' + html;
     }
     
     skillParams.innerHTML = html;
