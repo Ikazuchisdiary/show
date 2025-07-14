@@ -274,6 +274,30 @@ class Game {
                 this.doVoltageBoost(voltageBoostValue);
                 break;
                 
+            case 'voltagePenalty':
+                this.voltagePt = Math.max(0, this.voltagePt - effect.value);
+                if (this.verbose) {
+                    this.currentTurnLog.push(`<div class="log-action"><span style="color: #e74c3c;">ボルテージ-${effect.value} (残り: ${this.voltagePt})</span></div>`);
+                }
+                break;
+                
+            case 'mentalReduction':
+                const reduction = Math.floor(this.mental * effect.value / 100);
+                this.mental = Math.max(0, this.mental - reduction);
+                if (this.verbose) {
+                    this.currentTurnLog.push(`<div class="log-action"><span style="color: #e74c3c;">メンタル${effect.value}%減少 → ${this.mental}%</span></div>`);
+                }
+                break;
+                
+            case 'appealBoost':
+                const appealBoostValue = centerSkillValues[key] !== undefined ? 
+                    parseFloat(centerSkillValues[key]) : effect.value;
+                this.appeal = Math.floor(this.appeal * (1 + appealBoostValue));
+                if (this.verbose) {
+                    this.currentTurnLog.push(`<div class="log-action"><span style="color: #2196F3;">アピール値${Math.round(appealBoostValue * 100)}%上昇 → ${this.appeal}</span></div>`);
+                }
+                break;
+                
             case 'conditional':
                 // Evaluate condition using current game state
                 const conditionMet = this.evaluateCenterSkillCondition(effect.condition);
@@ -1253,6 +1277,31 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
                 const calculatedValue = calculateSkillValue(effect.value, skillLevel, true);
                 html += `<div class="skill-param-row">
                     <label>ボルテージブースト:</label>
+                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001">
+                </div>`;
+            }
+            break;
+        case 'voltagePenalty':
+            if (effect.value !== undefined) {
+                html += `<div class="skill-param-row" style="color: #e74c3c;">
+                    <label>ボルテージ減少:</label>
+                    <span style="font-weight: bold;">-${effect.value}</span>
+                </div>`;
+            }
+            break;
+        case 'mentalReduction':
+            if (effect.value !== undefined) {
+                html += `<div class="skill-param-row" style="color: #e74c3c;">
+                    <label>${effect.description || 'メンタル減少'}:</label>
+                    <span style="font-weight: bold;">${effect.value}%</span>
+                </div>`;
+            }
+            break;
+        case 'appealBoost':
+            if (effect.value !== undefined) {
+                const calculatedValue = calculateSkillValue(effect.value, skillLevel, true);
+                html += `<div class="skill-param-row">
+                    <label>アピール値上昇:</label>
                     <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001">
                 </div>`;
             }
