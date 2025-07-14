@@ -377,3 +377,35 @@ input[placeholder="不明"]:focus {
     color: #d32f2f;
     font-weight: bold;
 }
+
+/* Center character styling */
+.card-slot.center-character {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    border: 2px solid #ff9800;
+    box-shadow: 0 0 10px rgba(255, 152, 0, 0.3);
+}
+
+.card-slot.center-character .card-row label {
+    color: #e65100;
+    font-weight: bold;
+}
+
+.center-skill-info {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: rgba(255, 152, 0, 0.1);
+    border-radius: 5px;
+    border-left: 3px solid #ff9800;
+    font-size: 13px;
+}
+
+.center-skill-info .skill-name {
+    font-weight: bold;
+    color: #e65100;
+    margin-bottom: 3px;
+}
+
+.center-skill-info .skill-description {
+    color: #666;
+    font-size: 12px;
+}

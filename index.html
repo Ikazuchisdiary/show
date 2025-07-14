@@ -37,6 +37,10 @@
             </select>
         </div>
         
+        <div id="centerCharacterDisplay" style="margin-top: 10px; padding: 10px; background-color: #e3f2fd; border-radius: 5px; display: none;">
+            <strong>センター:</strong> <span id="centerCharacterName"></span>
+        </div>
+        
         <div id="customMusic" style="display: none;">
             <div class="form-group">
                 <label>フィーバー前ターン数:</label>
@@ -49,6 +53,25 @@
             <div class="form-group">
                 <label>フィーバー後ターン数:</label>
                 <input type="number" id="afterFever" value="5" min="0">
+            </div>
+            <div class="form-group">
+                <label>センターキャラクター:</label>
+                <select id="customCenterCharacter">
+                    <option value="">なし</option>
+                    <option value="大賀美沙知">大賀美沙知</option>
+                    <option value="藤島慈">藤島慈</option>
+                    <option value="乙宗梢">乙宗梢</option>
+                    <option value="村野さやか">村野さやか</option>
+                    <option value="日野下花帆">日野下花帆</option>
+                    <option value="大沢瑠璃乃">大沢瑠璃乃</option>
+                    <option value="百生吟子">百生吟子</option>
+                    <option value="夕霧綴理">夕霧綴理</option>
+                    <option value="セラス 柳田 リリエンフェルト">セラス 柳田 リリエンフェルト</option>
+                    <option value="桂城泉">桂城泉</option>
+                    <option value="桂城泉＆セラス 柳田 リリエンフェルト">桂城泉＆セラス 柳田 リリエンフェルト</option>
+                    <option value="徒町小鈴">徒町小鈴</option>
+                    <option value="安養寺姫芽">安養寺姫芽</option>
+                </select>
             </div>
             <div class="form-group" style="margin-top: 15px; display: flex; gap: 10px;">
                 <input type="text" id="customMusicName" placeholder="カスタム楽曲名を入力" style="flex: 1;">

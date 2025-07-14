@@ -22,7 +22,7 @@ const SKILL_LEVEL_MULTIPLIERS = [
 
 // Game class
 class Game {
-    constructor(cards, appeal, music, verbose = false) {
+    constructor(cards, appeal, music, verbose = false, centerCharacter = null) {
         this.score = 0;
         this.scoreBoost = new Array(100).fill(0);
         this.scoreBoostCount = 0;
@@ -39,12 +39,29 @@ class Game {
         this.log = "";
         this.logHtml = "";
         this.currentTurnLog = [];
+        this.centerCharacter = centerCharacter;
+        this.centerSkillActivated = {
+            beforeFirstTurn: false,
+            beforeFeverStart: false,
+            afterLastTurn: false
+        };
     }
 
     doGame() {
+        // Check for beforeFirstTurn center skills
+        this.activateCenterSkills('beforeFirstTurn');
+        
         while (this.turn < this.music.reduce((a, b) => a + b, 0)) {
+            // Check for beforeFeverStart center skills
+            if (this.turn === this.music[0] && !this.centerSkillActivated.beforeFeverStart) {
+                this.activateCenterSkills('beforeFeverStart');
+            }
+            
             this.turnUp();
         }
+        
+        // Check for afterLastTurn center skills
+        this.activateCenterSkills('afterLastTurn');
     }
 
     turnUp() {
@@ -185,6 +202,173 @@ class Game {
         }
         this.voltageBoostCount += 1;
     }
+    
+    activateCenterSkills(timing) {
+        if (!this.centerCharacter || this.centerSkillActivated[timing]) return;
+        
+        // Find cards with matching character and center skill for this timing
+        for (const card of this.cards) {
+            if (card.config && card.config.character === this.centerCharacter && 
+                card.config.centerSkill && card.config.centerSkill.timing === timing) {
+                
+                this.centerSkillActivated[timing] = true;
+                
+                if (this.verbose) {
+                    this.currentTurnLog = [];
+                    let timingText = '';
+                    switch (card.config.centerSkill.timing) {
+                        case 'beforeFirstTurn':
+                            timingText = '1ターン目の前';
+                            break;
+                        case 'beforeFeverStart':
+                            timingText = 'フィーバー開始前';
+                            break;
+                        case 'afterLastTurn':
+                            timingText = '最後のターン後';
+                            break;
+                    }
+                    this.currentTurnLog.push(`<div class="log-turn-header" style="background-color: #ff9800; color: white;">センタースキル発動 [${timingText}]</div>`);
+                    this.currentTurnLog.push(`<div class="log-action"><span class="log-card-name">${card.displayName}</span></div>`);
+                }
+                
+                // Process center skill effects
+                const centerSkill = card.config.centerSkill;
+                for (let i = 0; i < centerSkill.effects.length; i++) {
+                    this.processCenterSkillEffect(centerSkill.effects[i], card.centerSkillLevel, card.centerSkillValues, i);
+                }
+                
+                if (this.verbose) {
+                    this.logHtml += `<div class="log-turn">${this.currentTurnLog.join('')}</div>`;
+                }
+                break; // Only activate first matching center skill
+            }
+        }
+    }
+    
+    processCenterSkillEffect(effect, skillLevel, centerSkillValues, effectIndex = 0, prefix = '') {
+        const key = prefix ? `${prefix}_${effectIndex}_value` : `effect_${effectIndex}_value`;
+        
+        switch (effect.type) {
+            case 'scoreGain':
+                const scoreValue = centerSkillValues[key] !== undefined ? 
+                    parseFloat(centerSkillValues[key]) : effect.value;
+                this.getScore(scoreValue);
+                break;
+                
+            case 'scoreBoost':
+                const boostValue = centerSkillValues[key] !== undefined ? 
+                    parseFloat(centerSkillValues[key]) : effect.value;
+                this.doScoreBoost(boostValue);
+                break;
+                
+            case 'voltageGain':
+                const voltageValue = centerSkillValues[key] !== undefined ? 
+                    parseInt(centerSkillValues[key]) : effect.value;
+                this.getVoltage(voltageValue);
+                break;
+                
+            case 'voltageBoost':
+                const voltageBoostValue = centerSkillValues[key] !== undefined ? 
+                    parseFloat(centerSkillValues[key]) : effect.value;
+                this.doVoltageBoost(voltageBoostValue);
+                break;
+                
+            case 'conditional':
+                // Evaluate condition using current game state
+                const conditionMet = this.evaluateCenterSkillCondition(effect.condition);
+                
+                if (this.verbose) {
+                    const conditionText = this.formatCenterSkillCondition(effect.condition);
+                    const resultText = conditionMet ? '成立' : '不成立';
+                    const resultColor = conditionMet ? '#27ae60' : '#95a5a6';
+                    this.currentTurnLog.push(`<div class="log-action" style="color: ${resultColor};">条件判定: ${conditionText} → ${resultText}</div>`);
+                }
+                
+                if (conditionMet) {
+                    if (effect.then) {
+                        for (let i = 0; i < effect.then.length; i++) {
+                            const thenPrefix = prefix ? `${prefix}_then` : 'then';
+                            this.processCenterSkillEffect(effect.then[i], skillLevel, centerSkillValues, i, thenPrefix);
+                        }
+                    }
+                } else if (effect.else) {
+                    for (let i = 0; i < effect.else.length; i++) {
+                        const elsePrefix = prefix ? `${prefix}_else` : 'else';
+                        this.processCenterSkillEffect(effect.else[i], skillLevel, centerSkillValues, i, elsePrefix);
+                    }
+                }
+                break;
+        }
+    }
+    
+    calculateCenterSkillValue(baseValue, skillLevel, isPercentage) {
+        const multiplier = SKILL_LEVEL_MULTIPLIERS[skillLevel - 1];
+        const calculatedValue = baseValue * multiplier;
+        
+        if (isPercentage) {
+            const rounded = Math.round(calculatedValue * 10000) / 10000;
+            return Math.floor(rounded * 10000) / 10000;
+        } else {
+            return Math.floor(calculatedValue);
+        }
+    }
+    
+    evaluateCenterSkillCondition(condition) {
+        // Similar to card evaluateCondition but using current game state
+        const parts = condition.split(/\s*(<=|>=|<|>|===|==|!=)\s*/);
+        if (parts.length !== 3) return false;
+        
+        const [leftExpr, operator, rightExpr] = parts;
+        const leftValue = this.evaluateCenterSkillExpression(leftExpr);
+        const rightValue = this.evaluateCenterSkillExpression(rightExpr);
+        
+        switch (operator) {
+            case '<=': return leftValue <= rightValue;
+            case '>=': return leftValue >= rightValue;
+            case '<': return leftValue < rightValue;
+            case '>': return leftValue > rightValue;
+            case '===':
+            case '==': return leftValue == rightValue;
+            case '!=': return leftValue != rightValue;
+            default: return false;
+        }
+    }
+    
+    evaluateCenterSkillExpression(expr) {
+        const trimmed = expr.trim();
+        
+        // Check for game state properties
+        switch (trimmed) {
+            case 'mental': return this.mental;
+            case 'voltageLevel': return this.getVoltageLevel();
+            case 'voltagePt': return this.voltagePt;
+            case 'turn': return this.turn;
+            default:
+                // Try to parse as number
+                const num = parseFloat(trimmed);
+                return isNaN(num) ? 0 : num;
+        }
+    }
+    
+    formatCenterSkillCondition(condition) {
+        // Format condition for display (match regular skill formatting)
+        let formatted = condition;
+        
+        // Replace variables with actual values
+        const replacements = {
+            'mental': this.mental,
+            'voltageLevel': this.getVoltageLevel(), 
+            'voltagePt': this.voltagePt,
+            'turn': this.turn
+        };
+        
+        for (const [key, value] of Object.entries(replacements)) {
+            const regex = new RegExp(`\\b${key}\\b`, 'g');
+            formatted = formatted.replace(regex, value);
+        }
+        
+        return formatted;
+    }
 }
 
 // Base Card class
@@ -205,7 +389,7 @@ class Card {
 
 // Generic card implementation using JSON data
 class GenericCard extends Card {
-    constructor(cardKey, cardConfig, skillValues, skillLevel) {
+    constructor(cardKey, cardConfig, skillValues, skillLevel, centerSkillLevel, centerSkillValues) {
         super();
         this.cardKey = cardKey;
         this.name = cardConfig.name.toLowerCase();
@@ -213,6 +397,8 @@ class GenericCard extends Card {
         this.config = cardConfig;
         this.skillValues = skillValues || {};
         this.skillLevel = skillLevel || 1;
+        this.centerSkillLevel = centerSkillLevel || skillLevel || 1;
+        this.centerSkillValues = centerSkillValues || {};
     }
 
     do(game) {
@@ -485,9 +671,9 @@ class GenericCard extends Card {
 }
 
 // Card factory
-function createCard(cardType, skillValues, skillLevel) {
+function createCard(cardType, skillValues, skillLevel, centerSkillLevel, centerSkillValues) {
     if (!cardData[cardType]) return null;
-    return new GenericCard(cardType, cardData[cardType], skillValues, skillLevel);
+    return new GenericCard(cardType, cardData[cardType], skillValues, skillLevel, centerSkillLevel, centerSkillValues);
 }
 
 // Toggle music input
@@ -506,16 +692,19 @@ function toggleMusicInput() {
         musicSelect.value = tempMusicValue;
     }
     
-    // If switching to custom, store the previous song's phase values
+    // If switching to custom, store the previous song's phase values and center
     if (musicSelect.value === 'custom' && previousMusic !== 'custom') {
         let previousPhases;
+        let previousCenter;
         if (musicData[previousMusic]) {
             previousPhases = musicData[previousMusic].phases;
+            previousCenter = musicData[previousMusic].centerCharacter;
         } else {
             // Check custom music list
             const customList = getCustomMusicList();
             if (customList[previousMusic]) {
                 previousPhases = customList[previousMusic].phases;
+                previousCenter = customList[previousMusic].centerCharacter;
             }
         }
         
@@ -524,18 +713,61 @@ function toggleMusicInput() {
             document.getElementById('duringFever').value = previousPhases[1];
             document.getElementById('afterFever').value = previousPhases[2];
         }
+        
+        // Set center character
+        const centerSelect = document.getElementById('customCenterCharacter');
+        if (centerSelect && previousCenter) {
+            centerSelect.value = previousCenter;
+        }
     }
     
     // Update previous value
     musicSelect.setAttribute('data-previous-value', musicSelect.value);
     
+    // Update center character display
+    const centerDisplay = document.getElementById('centerCharacterDisplay');
+    const centerNameSpan = document.getElementById('centerCharacterName');
+    
     if (musicSelect.value === 'custom') {
         customMusic.style.display = 'block';
+        
+        // Update center display based on custom center character selection
+        const customCenterSelect = document.getElementById('customCenterCharacter');
+        if (customCenterSelect && customCenterSelect.value) {
+            centerDisplay.style.display = 'block';
+            centerNameSpan.textContent = customCenterSelect.value;
+        } else {
+            centerDisplay.style.display = 'none';
+        }
+        
         updateSavedCustomMusicDisplay();
     } else {
         customMusic.style.display = 'none';
+        
+        // Show center character if available
+        let centerCharacter = null;
+        if (musicData[musicSelect.value]) {
+            centerCharacter = musicData[musicSelect.value].centerCharacter;
+        } else {
+            const customList = getCustomMusicList();
+            if (customList[musicSelect.value]) {
+                centerCharacter = customList[musicSelect.value].centerCharacter;
+            }
+        }
+        
+        if (centerCharacter) {
+            centerDisplay.style.display = 'block';
+            centerNameSpan.textContent = centerCharacter;
+        } else {
+            centerDisplay.style.display = 'none';
+        }
+        
         // Load state for the selected song
-        setTimeout(() => loadStateForSong(musicSelect.value), 50);
+        setTimeout(() => {
+            loadStateForSong(musicSelect.value);
+            // Update center character highlighting after loading state
+            updateCenterCharacterHighlight();
+        }, 50);
     }
 }
 
@@ -552,6 +784,7 @@ function calculate() {
     const initialMental = parseInt(document.getElementById('mental').value);
     const musicKey = document.getElementById('music').value;
     let music;
+    let centerCharacter = null;
     
     if (musicKey === 'custom') {
         music = [
@@ -559,13 +792,16 @@ function calculate() {
             parseInt(document.getElementById('duringFever').value),
             parseInt(document.getElementById('afterFever').value)
         ];
+        centerCharacter = document.getElementById('customCenterCharacter').value || null;
     } else if (musicData[musicKey]) {
         music = musicData[musicKey].phases;
+        centerCharacter = musicData[musicKey].centerCharacter || null;
     } else {
         // Check custom music list
         const customList = getCustomMusicList();
         if (customList[musicKey]) {
             music = customList[musicKey].phases;
+            centerCharacter = customList[musicKey].centerCharacter || null;
         } else {
             alert('楽曲が見つかりません。');
             return;
@@ -582,7 +818,19 @@ function calculate() {
             
             // Merge user modifications with calculated values
             const finalValues = { ...calculatedValues, ...userModifiedValues };
-            cards.push(createCard(cardType, finalValues, skillLevel));
+            
+            // Check if this is the center character and get center skill level and values
+            let centerSkillLevel = skillLevel;
+            let centerSkillValues = {};
+            if (cardData[cardType] && cardData[cardType].character === centerCharacter) {
+                const centerSkillSelect = document.getElementById(`centerSkillLevel${i}`);
+                if (centerSkillSelect) {
+                    centerSkillLevel = parseInt(centerSkillSelect.value) || skillLevel;
+                }
+                centerSkillValues = getCenterSkillValues(i);
+            }
+            
+            cards.push(createCard(cardType, finalValues, skillLevel, centerSkillLevel, centerSkillValues));
         }
     }
     
@@ -591,7 +839,7 @@ function calculate() {
         return;
     }
     
-    const game = new Game(cards, appeal, music, true);
+    const game = new Game(cards, appeal, music, true, centerCharacter);
     game.mental = initialMental; // Set initial mental value
     game.doGame();
     
@@ -680,6 +928,9 @@ function setDefaultSelections() {
     
     // Check for duplicate characters in default selection
     updateDuplicateCharacterHighlight();
+    
+    // Update center character highlighting for default selection
+    updateCenterCharacterHighlight();
 }
 
 // Check for duplicate characters and return list of slot numbers with duplicates
@@ -726,6 +977,98 @@ function updateDuplicateCharacterHighlight() {
     });
 }
 
+// Update center character highlighting and display center skills
+function updateCenterCharacterHighlight() {
+    const musicSelect = document.getElementById('music');
+    let centerCharacter = null;
+    
+    // Get center character for current music
+    if (musicSelect.value !== 'custom') {
+        if (musicData[musicSelect.value]) {
+            centerCharacter = musicData[musicSelect.value].centerCharacter;
+        } else {
+            const customList = getCustomMusicList();
+            if (customList[musicSelect.value]) {
+                centerCharacter = customList[musicSelect.value].centerCharacter;
+            }
+        }
+    }
+    
+    // Update highlighting for all slots
+    for (let i = 1; i <= 6; i++) {
+        const slot = document.querySelector(`.card-slot[data-slot="${i}"]`);
+        const cardValue = document.getElementById(`card${i}`).value;
+        
+        // Remove existing center skill info
+        const existingInfo = slot.querySelector('.center-skill-info');
+        if (existingInfo) {
+            existingInfo.remove();
+        }
+        
+        // Check if this card matches center character
+        if (centerCharacter && cardValue && cardData[cardValue] && 
+            cardData[cardValue].character === centerCharacter) {
+            slot.classList.add('center-character');
+            
+            // Always add center skill level selection for center characters
+            const skillLevel = parseInt(document.getElementById(`skill${i}`).value) || 1;
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'center-skill-info';
+            
+            // Add center skill level selector
+            const savedLevel = loadCardCenterSkillLevel(cardValue);
+            let centerSkillHtml = `
+                <div class="skill-param-row">
+                    <label>センタースキルLv:</label>
+                    <select id="centerSkillLevel${i}" class="skill-level-select" onchange="onCenterSkillLevelChange(${i})">
+            `;
+            
+            for (let level = 14; level >= 1; level--) {
+                const selected = level === savedLevel ? 'selected' : '';
+                centerSkillHtml += `<option value="${level}" ${selected}>Lv${level}</option>`;
+            }
+            
+            centerSkillHtml += `</select></div>`;
+            
+            // Add center skill parameters if card has center skill
+            if (cardData[cardValue].centerSkill) {
+                const centerSkill = cardData[cardValue].centerSkill;
+                // Use saved center skill level
+                const savedCenterSkillLevel = loadCardCenterSkillLevel(cardValue);
+                
+                // Generate center skill parameters similar to regular skills
+                let hasParams = false;
+                for (let j = 0; j < centerSkill.effects.length; j++) {
+                    const effect = centerSkill.effects[j];
+                    const effectHtml = generateCenterSkillEffectInputs(effect, i, j, '', savedCenterSkillLevel);
+                    if (effectHtml) {
+                        centerSkillHtml += effectHtml;
+                        hasParams = true;
+                    }
+                }
+                
+                if (!hasParams) {
+                    centerSkillHtml += '<div style="color: #666; font-size: 14px;">このセンタースキルには調整可能なパラメータがありません</div>';
+                }
+            } else {
+                centerSkillHtml += `
+                    <div style="color: #999; font-size: 14px;">
+                        センタースキルは未実装です
+                    </div>
+                `;
+            }
+            
+            infoDiv.innerHTML = centerSkillHtml;
+            
+            // Insert after skill params
+            const skillParams = document.getElementById(`skillParams${i}`);
+            skillParams.parentNode.insertBefore(infoDiv, skillParams.nextSibling);
+        } else {
+            slot.classList.remove('center-character');
+        }
+    }
+}
+
 // Handle card selection change
 function onCardChange(slotNum) {
     const cardSelect = document.getElementById(`card${slotNum}`);
@@ -753,6 +1096,9 @@ function onCardChange(slotNum) {
     
     // Check for duplicate characters
     updateDuplicateCharacterHighlight();
+    
+    // Update center character highlighting
+    updateCenterCharacterHighlight();
 }
 
 // Update skill level dropdown to show unknown values
@@ -794,13 +1140,22 @@ function onSkillLevelChange(slotNum) {
             input.placeholder = '';
         }
     }
+    
+    // Update center skill display when skill level changes
+    updateCenterCharacterHighlight();
 }
 
 // Generate skill parameter inputs
-function generateSkillParams(slotNum, cardType) {
+function generateSkillParams(slotNum, cardType, skillLevel = null) {
     const skillParams = document.getElementById(`skillParams${slotNum}`);
     const card = cardData[cardType];
     if (!card) return;
+    
+    // Get skill level if not provided
+    if (skillLevel === null) {
+        const skillSelect = document.getElementById(`skill${slotNum}`);
+        skillLevel = parseInt(skillSelect?.value) || loadCardSkillLevel(cardType);
+    }
     
     let html = '';
     const effects = card.effects;
@@ -809,7 +1164,7 @@ function generateSkillParams(slotNum, cardType) {
     // Process effects array
     for (let i = 0; i < effects.length; i++) {
         const effect = effects[i];
-        const effectHtml = generateEffectInputs(effect, slotNum, i, '');
+        const effectHtml = generateEffectInputs(effect, slotNum, i, '', skillLevel);
         if (effectHtml) {
             html += effectHtml;
             hasParams = true;
@@ -837,44 +1192,125 @@ function generateSkillParams(slotNum, cardType) {
     skillParams.innerHTML = html;
 }
 
+// Generate input fields for center skill effects
+function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel = 14) {
+    let html = '';
+    const inputId = prefix ? `centerSkill${slotNum}_${prefix}_${effectIndex}_value` : `centerSkill${slotNum}_effect_${effectIndex}_value`;
+    
+    switch (effect.type) {
+        case 'scoreGain':
+            if (effect.value !== undefined) {
+                const calculatedValue = calculateSkillValue(effect.value, skillLevel, true);
+                html += `<div class="skill-param-row">
+                    <label>スコア獲得:</label>
+                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001">
+                </div>`;
+            }
+            break;
+        case 'scoreBoost':
+            if (effect.value !== undefined) {
+                const calculatedValue = calculateSkillValue(effect.value, skillLevel, true);
+                html += `<div class="skill-param-row">
+                    <label>スコアブースト:</label>
+                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001">
+                </div>`;
+            }
+            break;
+        case 'voltageGain':
+            if (effect.value !== undefined) {
+                const calculatedValue = calculateSkillValue(effect.value, skillLevel, false);
+                html += `<div class="skill-param-row">
+                    <label>ボルテージ獲得:</label>
+                    <input type="number" id="${inputId}" value="${Math.floor(calculatedValue)}" step="1">
+                </div>`;
+            }
+            break;
+        case 'voltageBoost':
+            if (effect.value !== undefined) {
+                const calculatedValue = calculateSkillValue(effect.value, skillLevel, true);
+                html += `<div class="skill-param-row">
+                    <label>ボルテージブースト:</label>
+                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001">
+                </div>`;
+            }
+            break;
+        case 'conditional':
+            if (effect.then || effect.else) {
+                html += `<div style="margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px;">
+                    <div style="font-weight: bold; margin-bottom: 5px;">条件: ${effect.condition}</div>`;
+                
+                if (effect.then) {
+                    html += '<div style="margin-left: 10px;">';
+                    html += '<div style="font-weight: bold; color: #2196F3;">条件成立時:</div>';
+                    for (let i = 0; i < effect.then.length; i++) {
+                        const thenEffect = effect.then[i];
+                        const thenPrefix = prefix ? `${prefix}_then` : 'then';
+                        html += generateCenterSkillEffectInputs(thenEffect, slotNum, i, thenPrefix, skillLevel);
+                    }
+                    html += '</div>';
+                }
+                
+                if (effect.else && effect.else.length > 0) {
+                    html += '<div style="margin-left: 10px;">';
+                    html += '<div style="font-weight: bold; color: #f44336;">条件不成立時:</div>';
+                    for (let i = 0; i < effect.else.length; i++) {
+                        const elseEffect = effect.else[i];
+                        const elsePrefix = prefix ? `${prefix}_else` : 'else';
+                        html += generateCenterSkillEffectInputs(elseEffect, slotNum, i, elsePrefix, skillLevel);
+                    }
+                    html += '</div>';
+                }
+                
+                html += '</div>';
+            }
+            break;
+    }
+    
+    return html;
+}
+
 // Generate input fields for effects
-function generateEffectInputs(effect, slotNum, effectIndex, prefix) {
+function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel = 14) {
     let html = '';
     const inputId = prefix ? `skill${slotNum}_${prefix}_${effectIndex}_value` : `skill${slotNum}_effect_${effectIndex}_value`;
     
     switch (effect.type) {
         case 'scoreBoost':
             if (effect.value !== undefined) {
+                const calculatedValue = calculateSkillValue(effect.value, skillLevel, true);
                 html += `<div class="skill-param-row">
                     <label>スコアブースト:</label>
-                    <input type="number" id="${inputId}" value="${effect.value}" step="0.001">
+                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001">
                 </div>`;
             }
             break;
             
         case 'voltageBoost':
             if (effect.value !== undefined) {
+                const calculatedValue = calculateSkillValue(effect.value, skillLevel, true);
                 html += `<div class="skill-param-row">
                     <label>ボルテージブースト:</label>
-                    <input type="number" id="${inputId}" value="${effect.value}" step="0.001">
+                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001">
                 </div>`;
             }
             break;
             
         case 'scoreGain':
             if (effect.value !== undefined) {
+                const calculatedValue = calculateSkillValue(effect.value, skillLevel, true);
                 html += `<div class="skill-param-row">
                     <label>スコア倍率:</label>
-                    <input type="number" id="${inputId}" value="${effect.value}" step="0.01">
+                    <input type="number" id="${inputId}" value="${calculatedValue}" step="0.01">
                 </div>`;
             }
             break;
             
         case 'voltageGain':
             if (effect.value !== undefined) {
+                const calculatedValue = calculateSkillValue(effect.value, skillLevel, false);
                 html += `<div class="skill-param-row">
                     <label>ボルテージ獲得:</label>
-                    <input type="number" id="${inputId}" value="${effect.value}" step="1">
+                    <input type="number" id="${inputId}" value="${Math.floor(calculatedValue)}" step="1">
                 </div>`;
             }
             break;
@@ -888,16 +1324,16 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix) {
                     html += '<div style="margin-left: 10px;">';
                     html += '<div style="font-weight: bold; color: #2196F3;">条件成立時:</div>';
                     for (let j = 0; j < effect.then.length; j++) {
-                        html += generateEffectInputs(effect.then[j], slotNum, j, `effect_${effectIndex}_then`);
+                        html += generateEffectInputs(effect.then[j], slotNum, j, `effect_${effectIndex}_then`, skillLevel);
                     }
                     html += '</div>';
                 }
                 
-                if (effect.else) {
+                if (effect.else && effect.else.length > 0) {
                     html += '<div style="margin-left: 10px;">';
                     html += '<div style="font-weight: bold; color: #f44336;">条件不成立時:</div>';
                     for (let j = 0; j < effect.else.length; j++) {
-                        html += generateEffectInputs(effect.else[j], slotNum, j, `effect_${effectIndex}_else`);
+                        html += generateEffectInputs(effect.else[j], slotNum, j, `effect_${effectIndex}_else`, skillLevel);
                     }
                     html += '</div>';
                 }
@@ -918,6 +1354,20 @@ function getSkillValues(slotNum) {
     inputs.forEach(input => {
         const id = input.id;
         const key = id.replace(`skill${slotNum}_`, '');
+        values[key] = input.value;
+    });
+    
+    return values;
+}
+
+// Get center skill values from input fields
+function getCenterSkillValues(slotNum) {
+    const values = {};
+    const inputs = document.querySelectorAll(`.card-slot[data-slot="${slotNum}"] .center-skill-info input[type="number"]`);
+    
+    inputs.forEach(input => {
+        const id = input.id;
+        const key = id.replace(`centerSkill${slotNum}_`, '');
         values[key] = input.value;
     });
     
@@ -1189,6 +1639,77 @@ function loadCardSkillLevel(cardType) {
     return savedLevel ? parseInt(savedLevel) : 14;
 }
 
+// Save center skill level for a specific card type
+function saveCardCenterSkillLevel(cardType, skillLevel) {
+    if (!cardType) return;
+    const key = `sukushou_card_center_skill_${cardType}`;
+    localStorage.setItem(key, skillLevel);
+}
+
+// Load center skill level for a specific card type
+function loadCardCenterSkillLevel(cardType) {
+    if (!cardType) return 14;
+    const key = `sukushou_card_center_skill_${cardType}`;
+    const savedLevel = localStorage.getItem(key);
+    return savedLevel ? parseInt(savedLevel) : 14;
+}
+
+// Handle center skill level change
+function onCenterSkillLevelChange(slotNum) {
+    const cardSelect = document.getElementById(`card${slotNum}`);
+    const centerSkillSelect = document.getElementById(`centerSkillLevel${slotNum}`);
+    const cardType = cardSelect.value;
+    const centerSkillLevel = parseInt(centerSkillSelect.value);
+    
+    if (!cardType || !cardData[cardType]) return;
+    
+    // Save center skill level for this card
+    saveCardCenterSkillLevel(cardType, centerSkillLevel);
+    
+    // Update center skill parameter values based on new level
+    if (cardData[cardType].centerSkill) {
+        updateCenterSkillValues(slotNum, cardData[cardType].centerSkill, centerSkillLevel);
+    }
+}
+
+// Update center skill input values based on skill level
+function updateCenterSkillValues(slotNum, centerSkill, skillLevel) {
+    const updateEffectValues = (effect, effectIndex, prefix) => {
+        const inputId = prefix ? `centerSkill${slotNum}_${prefix}_${effectIndex}_value` : `centerSkill${slotNum}_effect_${effectIndex}_value`;
+        const input = document.getElementById(inputId);
+        
+        if (input && effect.value !== undefined) {
+            const isVoltage = effect.type === 'voltageGain';
+            const calculatedValue = calculateSkillValue(effect.value, skillLevel, !isVoltage);
+            // Set value directly like regular skills
+            input.value = isVoltage ? Math.floor(calculatedValue) : calculatedValue;
+            input.style.backgroundColor = '';
+            input.placeholder = '';
+        }
+        
+        // Handle conditional effects recursively
+        if (effect.type === 'conditional') {
+            if (effect.then) {
+                effect.then.forEach((thenEffect, i) => {
+                    const thenPrefix = prefix ? `${prefix}_then` : 'then';
+                    updateEffectValues(thenEffect, i, thenPrefix);
+                });
+            }
+            if (effect.else) {
+                effect.else.forEach((elseEffect, i) => {
+                    const elsePrefix = prefix ? `${prefix}_else` : 'else';
+                    updateEffectValues(elseEffect, i, elsePrefix);
+                });
+            }
+        }
+    };
+    
+    // Update all effect values
+    centerSkill.effects.forEach((effect, index) => {
+        updateEffectValues(effect, index, '');
+    });
+}
+
 // Load state from localStorage
 function loadStateForSong(musicKey) {
     if (musicKey === 'custom') return; // Don't load for custom music
@@ -1247,6 +1768,9 @@ function loadStateForSong(musicKey) {
         
         // Check for duplicate characters after loading
         updateDuplicateCharacterHighlight();
+        
+        // Update center character highlighting after loading
+        updateCenterCharacterHighlight();
     } catch (e) {
         console.error('Error loading saved state:', e);
     }
@@ -1387,6 +1911,9 @@ function swapCards(fromSlot, toSlot) {
     // Check for duplicate characters after swap
     updateDuplicateCharacterHighlight();
     
+    // Update center character highlighting after swap
+    updateCenterCharacterHighlight();
+    
     // Save the new state
     setTimeout(saveCurrentState, 100);
 }
@@ -1403,6 +1930,28 @@ window.onload = function() {
     // Setup drag and drop
     setupDragAndDrop();
     
+    // Add event listener for custom center character changes
+    const customCenterSelect = document.getElementById('customCenterCharacter');
+    if (customCenterSelect) {
+        customCenterSelect.addEventListener('change', function() {
+            const musicSelect = document.getElementById('music');
+            if (musicSelect.value === 'custom') {
+                const centerDisplay = document.getElementById('centerCharacterDisplay');
+                const centerNameSpan = document.getElementById('centerCharacterName');
+                
+                if (this.value) {
+                    centerDisplay.style.display = 'block';
+                    centerNameSpan.textContent = this.value;
+                } else {
+                    centerDisplay.style.display = 'none';
+                }
+                
+                // Update center character highlighting
+                updateCenterCharacterHighlight();
+            }
+        });
+    }
+    
     // Use setTimeout to ensure DOM is fully ready and card data is loaded
     setTimeout(() => {
         // Setup auto-save
@@ -1411,6 +1960,9 @@ window.onload = function() {
         // Load state for default song
         const defaultMusic = document.getElementById('music').value;
         loadStateForSong(defaultMusic);
+        
+        // Show center character for default song
+        toggleMusicInput();
     }, 100);
 };
 
@@ -1437,6 +1989,8 @@ function saveCustomMusic() {
         parseInt(document.getElementById('afterFever').value)
     ];
     
+    const centerCharacter = document.getElementById('customCenterCharacter').value;
+    
     // Generate a unique key for this custom music
     const key = 'custom_' + Date.now();
     
@@ -1445,6 +1999,7 @@ function saveCustomMusic() {
     customList[key] = {
         name: name,
         phases: phases,
+        centerCharacter: centerCharacter || null,
         description: `フィーバー前: ${phases[0]}, フィーバー中: ${phases[1]}, フィーバー後: ${phases[2]}`
     };
     saveCustomMusicList(customList);

@@ -1,4 +1,8 @@
 // Card and music data
+// Center skill timings:
+// - "beforeFirstTurn": 1ターン目の前
+// - "beforeFeverStart": フィーバーの最初のターンの前  
+// - "afterLastTurn": 最後のターンの後
 const gameData = {
   "cards": {
     "sachi": {
@@ -28,7 +32,17 @@ const gameData = {
           "value": 0.4125,
           "description": "ボルテージ41.25%ブースト (Lv.1)"
         }
-      ]
+      ],
+      "centerSkill": {
+        "timing": "beforeFeverStart",
+        "effects": [
+          {
+            "type": "scoreGain",
+            "value": 1.2276,
+            "description": "スコア122.76%獲得 (Lv.1)"
+          }
+        ]
+      }
     },
     "gingaKozu": {
       "name": "Ginga Kozu",
@@ -377,7 +391,28 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "timing": "beforeFeverStart",
+        "effects": [
+          {
+            "type": "voltageGain",
+            "value": 65,
+            "description": "ボルテージ65獲得 (Lv.1)"
+          },
+          {
+            "type": "conditional",
+            "condition": "mental >= 50",
+            "then": [
+              {
+                "type": "voltageGain",
+                "value": 79,
+                "description": "ボルテージ79獲得 (Lv.1)"
+              }
+            ]
+          }
+        ]
+      }
     },
     "kuonMegu": {
       "name": "Kuon Megu",
@@ -856,17 +891,20 @@ const gameData = {
     "i_do_me": {
       "name": "アイドゥーミー",
       "phases": [12, 6, 5],
-      "description": "フィーバー前: 12, フィーバー中: 6, フィーバー後: 5"
+      "description": "フィーバー前: 12, フィーバー中: 6, フィーバー後: 5",
+      "centerCharacter": "大沢瑠璃乃"
     },
     "hello_new_dream": {
       "name": "Hello, new dream!",
       "phases": [12, 8, 5],
-      "description": "フィーバー前: 12, フィーバー中: 8, フィーバー後: 5"
+      "description": "フィーバー前: 12, フィーバー中: 8, フィーバー後: 5",
+      "centerCharacter": "村野さやか"
     },
     "izayoi_serene": {
       "name": "十六夜セレーネ",
       "phases": [13, 6, 4],
-      "description": "フィーバー前: 13, フィーバー中: 6, フィーバー後: 4"
+      "description": "フィーバー前: 13, フィーバー中: 6, フィーバー後: 4",
+      "centerCharacter": "セラス 柳田 リリエンフェルト"
     }
   }
 };
