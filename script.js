@@ -506,6 +506,14 @@ function toggleMusicInput() {
         musicSelect.value = tempMusicValue;
     }
     
+    // If switching to custom, store the previous song's phase values
+    if (musicSelect.value === 'custom' && previousMusic !== 'custom' && musicData[previousMusic]) {
+        const previousPhases = musicData[previousMusic].phases;
+        document.getElementById('beforeFever').value = previousPhases[0];
+        document.getElementById('duringFever').value = previousPhases[1];
+        document.getElementById('afterFever').value = previousPhases[2];
+    }
+    
     // Update previous value
     musicSelect.setAttribute('data-previous-value', musicSelect.value);
     
