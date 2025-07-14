@@ -313,13 +313,12 @@ function toggleLog() {
     }
 }
 
-// Load card data from JSON
-async function loadCardData() {
+// Load card data from global variable
+function loadCardData() {
     try {
-        const response = await fetch('cards.json');
-        const data = await response.json();
-        cardData = data.cards;
-        musicData = data.music;
+        // Use data from cardData.js
+        cardData = gameData.cards;
+        musicData = gameData.music;
         
         // Populate card dropdowns
         populateCardDropdowns();
