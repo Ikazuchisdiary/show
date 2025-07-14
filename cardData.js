@@ -209,14 +209,14 @@ const gameData = {
       "displayName": "［16th Birthday］セラス 柳田 リリエンフェルト",
       "effects": [
         {
-          "type": "voltageBoost",
-          "value": 0.1815,
-          "description": "ボルテージ18.15%ブースト (Lv.1)"
-        },
-        {
           "type": "skipTurn",
           "condition": "count > 3",
           "description": "3回目の使用時にターンをスキップ"
+        },
+        {
+          "type": "voltageBoost",
+          "value": 0.1815,
+          "description": "ボルテージ18.15%ブースト (Lv.1)"
         }
       ]
     },
@@ -295,6 +295,11 @@ const gameData = {
       "displayName": "［be proud］乙宗梢",
       "effects": [
         {
+          "type": "skipTurn",
+          "condition": "count > 6",
+          "description": "6回使用後は除外"
+        },
+        {
           "type": "voltageBoost",
           "value": 0.375,
           "description": "ボルテージ37.5%ブースト (Lv.1)"
@@ -302,11 +307,6 @@ const gameData = {
         {
           "type": "resetCardTurn",
           "description": "山札リセット"
-        },
-        {
-          "type": "skipTurn",
-          "condition": "count > 6",
-          "description": "6回使用後は除外"
         }
       ]
     },
@@ -515,14 +515,14 @@ const gameData = {
       "displayName": "［Link to the FUTURE］百生吟子",
       "effects": [
         {
-          "type": "mentalReduction",
-          "value": 10,
-          "description": "メンタル10減少"
-        },
-        {
           "type": "skipTurn",
           "condition": "count > 3",
           "description": "3回使用後は除外"
+        },
+        {
+          "type": "mentalReduction",
+          "value": 10,
+          "description": "メンタル10減少"
         }
       ]
     },
@@ -782,6 +782,11 @@ const gameData = {
       "displayName": "［アイドゥーミー！］大沢瑠璃乃",
       "effects": [
         {
+          "type": "skipTurn",
+          "condition": "count > 3",
+          "description": "3回使用後は除外"
+        },
+        {
           "type": "mentalRecover",
           "value": 10,
           "description": "メンタル+10"
@@ -796,11 +801,6 @@ const gameData = {
               "description": "ボルテージ-1000"
             }
           ]
-        },
-        {
-          "type": "skipTurn",
-          "condition": "count > 3",
-          "description": "3回使用後は除外"
         }
       ]
     }
