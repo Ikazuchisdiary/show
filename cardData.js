@@ -354,18 +354,13 @@ const gameData = {
       "displayName": "［久遠の銀河へ］藤島慈",
       "effects": [
         {
-          "type": "scoreGain",
-          "value": 0.6825,
-          "description": "スコア68.25%獲得 (Lv.1)"
-        },
-        {
           "type": "conditional",
-          "condition": "count >= 6",
+          "condition": "count >= 10",
           "then": [
             {
               "type": "scoreGain",
-              "value": 0.9555,
-              "description": "スコア95.55%獲得 (Lv.1)"
+              "value": 1.74,
+              "description": "スコア174%獲得 (Lv.1)"
             }
           ]
         }
@@ -567,6 +562,101 @@ const gameData = {
               "type": "scoreBoost",
               "value": 1.26,
               "description": "スコア126%ブースト (Lv.1)"
+            }
+          ]
+        }
+      ]
+    },
+    "seiranGin": {
+      "name": "Seiran Gin",
+      "displayName": "［青嵐の鯉流し］百生吟子",
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 1.5937,
+          "description": "スコア159.37%ブースト (Lv.1)"
+        }
+      ]
+    },
+    "reflectionGin": {
+      "name": "Reflection Gin",
+      "displayName": "［Reflection in the mirror］百生吟子",
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 1.1625,
+          "description": "スコア116.25%ブースト (Lv.1)"
+        }
+      ]
+    },
+    "dreamGin": {
+      "name": "Dream Gin",
+      "displayName": "［Dream Believers］百生吟子",
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 0.9062,
+          "description": "スコア90.62%ブースト (Lv.1)"
+        }
+      ]
+    },
+    "aimaiKosuzu": {
+      "name": "Aimai Kosuzu",
+      "displayName": "［アイマイメーデー］徒町小鈴",
+      "effects": [
+        {
+          "type": "voltageGain",
+          "value": 67,
+          "description": "ボルテージ67獲得 (Lv.1)"
+        },
+        {
+          "type": "conditional",
+          "condition": "mental >= 30",
+          "then": [
+            {
+              "type": "mentalReduction",
+              "value": 25,
+              "description": "メンタル25減少"
+            }
+          ]
+        },
+        {
+          "type": "conditional",
+          "condition": "mental <= 25",
+          "then": [
+            {
+              "type": "voltageGain",
+              "value": 145,
+              "description": "ボルテージ145獲得 (Lv.1)"
+            }
+          ]
+        }
+      ]
+    },
+    "blastHime": {
+      "name": "Blast Hime",
+      "displayName": "［BLAST!!］安養寺姫芽",
+      "effects": [
+        {
+          "type": "conditional",
+          "condition": "mental >= 30",
+          "then": [
+            {
+              "type": "mentalReduction",
+              "value": 20,
+              "description": "メンタル20減少"
+            },
+            {
+              "type": "scoreBoost",
+              "value": 0.2475,
+              "description": "スコア24.75%ブースト (Lv.1)"
+            }
+          ],
+          "else": [
+            {
+              "type": "scoreGain",
+              "value": 3.06,
+              "description": "スコア306%獲得 (Lv.1)"
             }
           ]
         }
