@@ -602,17 +602,7 @@ const gameData = {
           "value": 1.1625,
           "description": "スコア116.25%ブースト (Lv.1)"
         }
-      ],
-      "centerSkill": {
-        "timing": "beforeFeverStart",
-        "effects": [
-          {
-            "type": "appealBoost",
-            "value": 0.72,
-            "description": "全員のアピール値72%上昇 (Lv.1)"
-          }
-        ]
-      }
+      ]
     },
     "natsumekiRurino": {
       "name": "Natsumeki Rurino",

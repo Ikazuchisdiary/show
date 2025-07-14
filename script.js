@@ -979,20 +979,26 @@ function updateDuplicateCharacterHighlight() {
     });
 }
 
+// Wrapper function to update card highlighting when center character changes
+function updateCardHighlighting() {
+    updateCenterCharacterHighlight();
+}
+
 // Update center character highlighting and display center skills
 function updateCenterCharacterHighlight() {
     const musicSelect = document.getElementById('music');
     let centerCharacter = null;
     
     // Get center character for current music
-    if (musicSelect.value !== 'custom') {
-        if (musicData[musicSelect.value]) {
-            centerCharacter = musicData[musicSelect.value].centerCharacter;
-        } else {
-            const customList = getCustomMusicList();
-            if (customList[musicSelect.value]) {
-                centerCharacter = customList[musicSelect.value].centerCharacter;
-            }
+    if (musicSelect.value === 'custom') {
+        // For custom music, check the customCenterCharacter select
+        centerCharacter = document.getElementById('customCenterCharacter').value || null;
+    } else if (musicData[musicSelect.value]) {
+        centerCharacter = musicData[musicSelect.value].centerCharacter;
+    } else {
+        const customList = getCustomMusicList();
+        if (customList[musicSelect.value]) {
+            centerCharacter = customList[musicSelect.value].centerCharacter;
         }
     }
     
@@ -1013,7 +1019,6 @@ function updateCenterCharacterHighlight() {
             slot.classList.add('center-character');
             
             // Always add center skill level selection for center characters
-            const skillLevel = parseInt(document.getElementById(`skill${i}`).value) || 1;
             const infoDiv = document.createElement('div');
             infoDiv.className = 'center-skill-info';
             
