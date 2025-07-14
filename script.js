@@ -1043,6 +1043,22 @@ function updateCenterCharacterHighlight() {
                 // Use saved center skill level
                 const savedCenterSkillLevel = loadCardCenterSkillLevel(cardValue);
                 
+                // Add timing display
+                let timingText = '';
+                switch (centerSkill.timing) {
+                    case 'beforeFirstTurn':
+                        timingText = 'ライブ開始時';
+                        break;
+                    case 'beforeFeverStart':
+                        timingText = 'FEVER開始時';
+                        break;
+                    case 'afterLastTurn':
+                        timingText = 'ライブ終了時';
+                        break;
+                }
+                
+                centerSkillHtml += `<div style="color: #ff9800; font-weight: bold; font-size: 14px; margin: 5px 0;">発動: ${timingText}</div>`;
+                
                 // Generate center skill parameters similar to regular skills
                 let hasParams = false;
                 for (let j = 0; j < centerSkill.effects.length; j++) {
