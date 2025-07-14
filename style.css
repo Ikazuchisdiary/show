@@ -349,3 +349,20 @@ input[placeholder="不明"]:focus {
     background-color: #fff !important;
     font-style: normal;
 }
+
+/* Drag and drop styles */
+.card-slot {
+    cursor: move;
+    transition: all 0.3s ease;
+}
+
+.card-slot.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+.card-slot.drag-over {
+    background-color: #e3f2fd;
+    border: 2px dashed #2196F3;
+    border-radius: 8px;
+}

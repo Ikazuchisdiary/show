@@ -667,6 +667,10 @@ function onCardChange(slotNum) {
         generateSkillParams(slotNum, cardSelect.value);
         skillParams.style.display = 'block';
         
+        // Load saved skill level for this card
+        const savedSkillLevel = loadCardSkillLevel(cardSelect.value);
+        skillSelect.value = savedSkillLevel;
+        
         // Update skill level options to show which have unknown values
         updateSkillLevelOptions(slotNum);
         
@@ -700,6 +704,9 @@ function onSkillLevelChange(slotNum) {
     const skillLevel = parseInt(skillSelect.value);
     
     if (!cardType || !cardData[cardType]) return;
+    
+    // Save skill level for this card
+    saveCardSkillLevel(cardType, skillLevel);
     
     // Calculate values for this skill level
     const calculatedValues = getCalculatedSkillValues(cardType, skillLevel);
@@ -1079,11 +1086,11 @@ function saveCurrentState() {
         cards: []
     };
     
-    // Save card selections and skill values
+    // Save card selections and skill values (but not skill level)
     for (let i = 1; i <= 6; i++) {
         const cardData = {
             card: document.getElementById(`card${i}`).value,
-            skillLevel: document.getElementById(`skill${i}`).value,
+            // Don't save skillLevel here - it will be saved separately per card
             skillValues: getSkillValues(i)
         };
         state.cards.push(cardData);
@@ -1093,6 +1100,21 @@ function saveCurrentState() {
     const key = `sukushou_state_${musicKey}`;
     localStorage.setItem(key, JSON.stringify(state));
     console.log(`Saved state for ${musicKey}`, state);
+}
+
+// Save skill level for a specific card type
+function saveCardSkillLevel(cardType, skillLevel) {
+    if (!cardType) return;
+    const key = `sukushou_card_skill_${cardType}`;
+    localStorage.setItem(key, skillLevel);
+}
+
+// Load skill level for a specific card type
+function loadCardSkillLevel(cardType) {
+    if (!cardType) return 1;
+    const key = `sukushou_card_skill_${cardType}`;
+    const savedLevel = localStorage.getItem(key);
+    return savedLevel ? parseInt(savedLevel) : 1;
 }
 
 // Load state from localStorage
@@ -1123,13 +1145,10 @@ function loadStateForSong(musicKey) {
                 // Set card selection
                 document.getElementById(`card${i}`).value = cardData.card || '';
                 
-                // Trigger card change to show skill options
+                // Trigger card change to show skill options (this will load the saved skill level)
                 onCardChange(i);
                 
-                // Set skill level
-                if (cardData.skillLevel) {
-                    document.getElementById(`skill${i}`).value = cardData.skillLevel;
-                }
+                // Don't load skill level from song state anymore - it's loaded per card
                 
                 // Trigger skill level change
                 onSkillLevelChange(i);
@@ -1171,7 +1190,7 @@ function setupAutoSave() {
 }
 
 // Save state before page unload
-window.addEventListener('beforeunload', function(e) {
+window.addEventListener('beforeunload', function() {
     saveCurrentState();
 });
 
@@ -1182,6 +1201,118 @@ document.addEventListener('visibilitychange', function() {
     }
 });
 
+// Drag and drop functionality
+let draggedElement = null;
+
+function setupDragAndDrop() {
+    const cardSlots = document.querySelectorAll('.card-slot');
+    
+    cardSlots.forEach(slot => {
+        slot.addEventListener('dragstart', handleDragStart);
+        slot.addEventListener('dragover', handleDragOver);
+        slot.addEventListener('drop', handleDrop);
+        slot.addEventListener('dragend', handleDragEnd);
+        slot.addEventListener('dragenter', handleDragEnter);
+        slot.addEventListener('dragleave', handleDragLeave);
+    });
+}
+
+function handleDragStart(e) {
+    draggedElement = this;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
+}
+
+function handleDragOver(e) {
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+    e.dataTransfer.dropEffect = 'move';
+    return false;
+}
+
+function handleDragEnter() {
+    if (this !== draggedElement) {
+        this.classList.add('drag-over');
+    }
+}
+
+function handleDragLeave() {
+    this.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation();
+    }
+    
+    if (draggedElement !== this) {
+        // Swap the card data
+        swapCards(draggedElement, this);
+    }
+    
+    return false;
+}
+
+function handleDragEnd() {
+    const cardSlots = document.querySelectorAll('.card-slot');
+    cardSlots.forEach(slot => {
+        slot.classList.remove('dragging');
+        slot.classList.remove('drag-over');
+    });
+}
+
+function swapCards(fromSlot, toSlot) {
+    const fromSlotNum = fromSlot.getAttribute('data-slot');
+    const toSlotNum = toSlot.getAttribute('data-slot');
+    
+    // Get current values
+    const fromCard = document.getElementById(`card${fromSlotNum}`).value;
+    const fromSkill = document.getElementById(`skill${fromSlotNum}`).value;
+    const fromSkillValues = getSkillValues(fromSlotNum);
+    const fromSearchValue = document.getElementById(`cardSearch${fromSlotNum}`).value;
+    
+    const toCard = document.getElementById(`card${toSlotNum}`).value;
+    const toSkill = document.getElementById(`skill${toSlotNum}`).value;
+    const toSkillValues = getSkillValues(toSlotNum);
+    const toSearchValue = document.getElementById(`cardSearch${toSlotNum}`).value;
+    
+    // Swap card selections
+    document.getElementById(`card${fromSlotNum}`).value = toCard;
+    document.getElementById(`card${toSlotNum}`).value = fromCard;
+    
+    // Trigger card changes to update UI
+    onCardChange(fromSlotNum);
+    onCardChange(toSlotNum);
+    
+    // Restore skill levels
+    document.getElementById(`skill${fromSlotNum}`).value = toSkill;
+    document.getElementById(`skill${toSlotNum}`).value = fromSkill;
+    
+    // Trigger skill level changes
+    onSkillLevelChange(fromSlotNum);
+    onSkillLevelChange(toSlotNum);
+    
+    // Restore custom skill values
+    for (const [key, value] of Object.entries(toSkillValues)) {
+        const input = document.getElementById(`skill${fromSlotNum}_${key}`);
+        if (input) input.value = value;
+    }
+    
+    for (const [key, value] of Object.entries(fromSkillValues)) {
+        const input = document.getElementById(`skill${toSlotNum}_${key}`);
+        if (input) input.value = value;
+    }
+    
+    // Update search inputs
+    document.getElementById(`cardSearch${fromSlotNum}`).value = toSearchValue;
+    document.getElementById(`cardSearch${toSlotNum}`).value = fromSearchValue;
+    
+    // Save the new state
+    setTimeout(saveCurrentState, 100);
+}
+
 // Initialize on page load
 window.onload = function() {
     loadCardData();
@@ -1190,6 +1321,9 @@ window.onload = function() {
     for (let i = 1; i <= 6; i++) {
         setupSearchableSelect(i);
     }
+    
+    // Setup drag and drop
+    setupDragAndDrop();
     
     // Use setTimeout to ensure DOM is fully ready and card data is loaded
     setTimeout(() => {
