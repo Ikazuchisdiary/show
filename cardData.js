@@ -69,16 +69,16 @@ const gameData = {
           "effect_1_value": 0.825
         },
         "11": {
-          "effect_0_value": null,
-          "effect_1_value": null
+          "effect_0_value": 90.75,
+          "effect_1_value": 90.75
         },
         "12": {
-          "effect_0_value": null,
-          "effect_1_value": null
+          "effect_0_value": 0.99,
+          "effect_1_value": 0.99
         },
         "13": {
-          "effect_0_value": null,
-          "effect_1_value": null
+          "effect_0_value": 1.0725,
+          "effect_1_value": 1.0725
         },
         "14": {
           "effect_0_value": 1.2375,
@@ -114,19 +114,19 @@ const gameData = {
         }
       ],
       "skillLevels": {
-        "1": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
-        "2": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
-        "3": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
-        "4": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
-        "5": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
-        "6": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
-        "7": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
-        "8": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
-        "9": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
-        "10": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
-        "11": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
-        "12": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
-        "13": { "effect_0_then_0_value": null, "effect_0_else_0_value": null },
+        "1": { "effect_0_then_0_value": 1.08, "effect_0_else_0_value": 1.08 },
+        "2": { "effect_0_then_0_value": 1.188, "effect_0_else_0_value": 1.188 },
+        "3": { "effect_0_then_0_value": 1.296, "effect_0_else_0_value": 1.296 },
+        "4": { "effect_0_then_0_value": 1.404, "effect_0_else_0_value": 1.404 },
+        "5": { "effect_0_then_0_value": 1.512, "effect_0_else_0_value": 1.512 },
+        "6": { "effect_0_then_0_value": 1.62, "effect_0_else_0_value": 1.62 },
+        "7": { "effect_0_then_0_value": 1.728, "effect_0_else_0_value": 1.728 },
+        "8": { "effect_0_then_0_value": 1.836, "effect_0_else_0_value": 1.836 },
+        "9": { "effect_0_then_0_value": 1.944, "effect_0_else_0_value": 1.944 },
+        "10": { "effect_0_then_0_value": 2.16, "effect_0_else_0_value": 2.16 },
+        "11": { "effect_0_then_0_value": 2.376, "effect_0_else_0_value": 2.376 },
+        "12": { "effect_0_then_0_value": 2.592, "effect_0_else_0_value": 2.592 },
+        "13": { "effect_0_then_0_value": 2.808, "effect_0_else_0_value": 2.808 },
         "14": { "effect_0_then_0_value": 3.24, "effect_0_else_0_value": 3.24 }
       }
     },
@@ -172,16 +172,16 @@ const gameData = {
         }
       ],
       "skillLevels": {
-        "1": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
-        "2": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
-        "3": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
-        "4": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
-        "5": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
-        "6": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
-        "7": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
-        "8": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
-        "9": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
-        "10": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
+        "1": { "effect_0_then_0_value": 0.2625, "effect_0_else_0_value": 0.81, "effect_1_then_0_value": 315 },
+        "2": { "effect_0_then_0_value": 0.2887, "effect_0_else_0_value": 0.891, "effect_1_then_0_value": 346 },
+        "3": { "effect_0_then_0_value": 0.315, "effect_0_else_0_value": 0.972, "effect_1_then_0_value": 378 },
+        "4": { "effect_0_then_0_value": 0.3412, "effect_0_else_0_value": 1.053, "effect_1_then_0_value": 409 },
+        "5": { "effect_0_then_0_value": 0.3675, "effect_0_else_0_value": 1.134, "effect_1_then_0_value": 441 },
+        "6": { "effect_0_then_0_value": 0.3937, "effect_0_else_0_value": 1.215, "effect_1_then_0_value": 472 },
+        "7": { "effect_0_then_0_value": 0.42, "effect_0_else_0_value": 1.296, "effect_1_then_0_value": 504 },
+        "8": { "effect_0_then_0_value": 0.4462, "effect_0_else_0_value": 1.377, "effect_1_then_0_value": 535 },
+        "9": { "effect_0_then_0_value": 0.4725, "effect_0_else_0_value": 1.458, "effect_1_then_0_value": 567 },
+        "10": { "effect_0_then_0_value": 0.525, "effect_0_else_0_value": 1.62, "effect_1_then_0_value": 630 },
         "11": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
         "12": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
         "13": { "effect_0_then_0_value": null, "effect_0_else_0_value": null, "effect_1_then_0_value": null },
@@ -217,19 +217,19 @@ const gameData = {
         }
       ],
       "skillLevels": {
-        "1": { "effect_1_then_0_value": null },
-        "2": { "effect_1_then_0_value": null },
-        "3": { "effect_1_then_0_value": null },
-        "4": { "effect_1_then_0_value": null },
-        "5": { "effect_1_then_0_value": null },
-        "6": { "effect_1_then_0_value": null },
-        "7": { "effect_1_then_0_value": null },
-        "8": { "effect_1_then_0_value": null },
-        "9": { "effect_1_then_0_value": null },
-        "10": { "effect_1_then_0_value": null },
+        "1": { "effect_1_then_0_value": 3.78 },
+        "2": { "effect_1_then_0_value": 4.158 },
+        "3": { "effect_1_then_0_value": 4.536 },
+        "4": { "effect_1_then_0_value": 4.914 },
+        "5": { "effect_1_then_0_value": 5.292 },
+        "6": { "effect_1_then_0_value": 5.67 },
+        "7": { "effect_1_then_0_value": 6.048 },
+        "8": { "effect_1_then_0_value": 6.426 },
+        "9": { "effect_1_then_0_value": 6.804 },
+        "10": { "effect_1_then_0_value": 7.56},
         "11": { "effect_1_then_0_value": null },
         "12": { "effect_1_then_0_value": null },
-        "13": { "effect_1_then_0_value": null },
+        "13": { "effect_1_then_0_value": 9.828 },
         "14": { "effect_1_then_0_value": 11.34 }
       }
     },
