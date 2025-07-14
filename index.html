@@ -12,7 +12,8 @@
         
         <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #ffeaa7;">
             <p style="margin: 0; color: #856404; font-size: 14px;">
-                ※ APは無限にあって足りなくならない前提です。足りなくなる場合は楽曲のタイミングと回数を調整してください。
+                ※ APが足りない場合は楽曲「カスタム入力」を使うと良いです。<br>
+                ※ スキルの数値がわずかにずれているかもしれません。その時は手動で入力してください。
             </p>
         </div>
         
@@ -49,6 +50,11 @@
                 <label>フィーバー後ターン数:</label>
                 <input type="number" id="afterFever" value="5" min="0">
             </div>
+            <div class="form-group" style="margin-top: 15px; display: flex; gap: 10px;">
+                <input type="text" id="customMusicName" placeholder="カスタム楽曲名を入力" style="flex: 1;">
+                <button onclick="saveCustomMusic()" style="width: auto; padding: 10px 20px; background-color: #2196F3;">保存</button>
+            </div>
+            <div id="savedCustomMusic" style="margin-top: 10px;"></div>
         </div>
         
         <div class="card-selection">

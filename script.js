@@ -507,11 +507,23 @@ function toggleMusicInput() {
     }
     
     // If switching to custom, store the previous song's phase values
-    if (musicSelect.value === 'custom' && previousMusic !== 'custom' && musicData[previousMusic]) {
-        const previousPhases = musicData[previousMusic].phases;
-        document.getElementById('beforeFever').value = previousPhases[0];
-        document.getElementById('duringFever').value = previousPhases[1];
-        document.getElementById('afterFever').value = previousPhases[2];
+    if (musicSelect.value === 'custom' && previousMusic !== 'custom') {
+        let previousPhases;
+        if (musicData[previousMusic]) {
+            previousPhases = musicData[previousMusic].phases;
+        } else {
+            // Check custom music list
+            const customList = getCustomMusicList();
+            if (customList[previousMusic]) {
+                previousPhases = customList[previousMusic].phases;
+            }
+        }
+        
+        if (previousPhases) {
+            document.getElementById('beforeFever').value = previousPhases[0];
+            document.getElementById('duringFever').value = previousPhases[1];
+            document.getElementById('afterFever').value = previousPhases[2];
+        }
     }
     
     // Update previous value
@@ -519,6 +531,7 @@ function toggleMusicInput() {
     
     if (musicSelect.value === 'custom') {
         customMusic.style.display = 'block';
+        updateSavedCustomMusicDisplay();
     } else {
         customMusic.style.display = 'none';
         // Load state for the selected song
@@ -539,8 +552,17 @@ function calculate() {
             parseInt(document.getElementById('duringFever').value),
             parseInt(document.getElementById('afterFever').value)
         ];
-    } else {
+    } else if (musicData[musicKey]) {
         music = musicData[musicKey].phases;
+    } else {
+        // Check custom music list
+        const customList = getCustomMusicList();
+        if (customList[musicKey]) {
+            music = customList[musicKey].phases;
+        } else {
+            alert('楽曲が見つかりません。');
+            return;
+        }
     }
     
     const cards = [];
@@ -626,21 +648,7 @@ function populateCardDropdowns() {
 }
 
 function populateMusicDropdown() {
-    const select = document.getElementById('music');
-    select.innerHTML = '';
-    
-    for (const [key, music] of Object.entries(musicData)) {
-        const option = document.createElement('option');
-        option.value = key;
-        option.textContent = `${music.name} (${music.phases.join(', ')})`;
-        select.appendChild(option);
-    }
-    
-    // Add custom option
-    const customOption = document.createElement('option');
-    customOption.value = 'custom';
-    customOption.textContent = 'カスタム入力';
-    select.appendChild(customOption);
+    updateMusicDropdown();
 }
 
 function setDefaultSelections() {
@@ -756,7 +764,7 @@ function generateSkillParams(slotNum, cardType) {
         html += `<div class="skill-param-row">
             <label>何回デッキリセット？:</label>
             <input type="number" id="skill${slotNum}_mentalThreshold" value="999" min="0" step="1">
-            <div style="color: #666; font-size: 12px; margin-top: 5px;">※ デッキリセットする回数を指定（0=リセットなし、999=常にリセット）</div>
+            <div style="color: #666; font-size: 12px; margin-top: 5px;">デッキリセットする回数を指定（0=リセットなし、999=常にリセット）</div>
         </div>`;
         hasParams = true;
     }
@@ -766,8 +774,7 @@ function generateSkillParams(slotNum, cardType) {
         skillParams.style.display = 'none';
         html = '<div style="color: #666; font-size: 14px;">このカードには調整可能なパラメータがありません</div>';
     } else {
-        // Add help text about manual input
-        html = '<div style="color: #666; font-size: 12px; margin-bottom: 10px;">※ 数値は手動で変更可能です。不明な値は自由に入力してください。</div>' + html;
+        // Don't add any help text
     }
     
     skillParams.innerHTML = html;
@@ -1343,3 +1350,136 @@ window.onload = function() {
         loadStateForSong(defaultMusic);
     }, 100);
 };
+
+// Custom music management functions
+function getCustomMusicList() {
+    const savedList = localStorage.getItem('sukushou_custom_music_list');
+    return savedList ? JSON.parse(savedList) : {};
+}
+
+function saveCustomMusicList(list) {
+    localStorage.setItem('sukushou_custom_music_list', JSON.stringify(list));
+}
+
+function saveCustomMusic() {
+    const name = document.getElementById('customMusicName').value.trim();
+    if (!name) {
+        alert('カスタム楽曲名を入力してください。');
+        return;
+    }
+    
+    const phases = [
+        parseInt(document.getElementById('beforeFever').value),
+        parseInt(document.getElementById('duringFever').value),
+        parseInt(document.getElementById('afterFever').value)
+    ];
+    
+    // Generate a unique key for this custom music
+    const key = 'custom_' + Date.now();
+    
+    // Save to custom music list
+    const customList = getCustomMusicList();
+    customList[key] = {
+        name: name,
+        phases: phases,
+        description: `フィーバー前: ${phases[0]}, フィーバー中: ${phases[1]}, フィーバー後: ${phases[2]}`
+    };
+    saveCustomMusicList(customList);
+    
+    // Update the music dropdown
+    updateMusicDropdown();
+    
+    // Select the newly saved custom music
+    document.getElementById('music').value = key;
+    toggleMusicInput();
+    
+    // Clear the name input
+    document.getElementById('customMusicName').value = '';
+    
+    alert(`「${name}」を保存しました。`);
+}
+
+function deleteCustomMusic(key) {
+    const customList = getCustomMusicList();
+    const name = customList[key].name;
+    
+    if (confirm(`「${name}」を削除しますか？`)) {
+        delete customList[key];
+        saveCustomMusicList(customList);
+        
+        // Also delete any saved state for this music
+        localStorage.removeItem(`sukushou_state_${key}`);
+        
+        // Update the dropdown
+        updateMusicDropdown();
+        
+        // If the deleted music was selected, switch to default
+        if (document.getElementById('music').value === key) {
+            document.getElementById('music').value = 'i_do_me';
+            toggleMusicInput();
+        }
+    }
+}
+
+function updateMusicDropdown() {
+    const select = document.getElementById('music');
+    const currentValue = select.value;
+    
+    // Clear and rebuild options
+    select.innerHTML = '';
+    
+    // Add default music options
+    for (const [key, music] of Object.entries(musicData)) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = `${music.name} (${music.phases.join(', ')})`;
+        select.appendChild(option);
+    }
+    
+    // Add saved custom music
+    const customList = getCustomMusicList();
+    for (const [key, music] of Object.entries(customList)) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = `${music.name} (${music.phases.join(', ')})`;
+        select.appendChild(option);
+    }
+    
+    // Add custom input option
+    const customOption = document.createElement('option');
+    customOption.value = 'custom';
+    customOption.textContent = 'カスタム入力';
+    select.appendChild(customOption);
+    
+    // Restore selection if it still exists
+    if (Array.from(select.options).some(opt => opt.value === currentValue)) {
+        select.value = currentValue;
+    }
+    
+    // Update saved custom music display
+    updateSavedCustomMusicDisplay();
+}
+
+function updateSavedCustomMusicDisplay() {
+    const container = document.getElementById('savedCustomMusic');
+    const customList = getCustomMusicList();
+    const entries = Object.entries(customList);
+    
+    if (entries.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    let html = '<div style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 5px;">';
+    html += '<div style="font-weight: bold; margin-bottom: 5px;">保存済みカスタム楽曲:</div>';
+    
+    entries.forEach(([key, music]) => {
+        html += `<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px 0; padding: 5px; background: white; border-radius: 3px;">`;
+        html += `<span>${music.name} (${music.phases.join(', ')})</span>`;
+        html += `<button onclick="deleteCustomMusic('${key}')" style="width: auto; padding: 5px 10px; background-color: #f44336; font-size: 12px;">削除</button>`;
+        html += `</div>`;
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+}
