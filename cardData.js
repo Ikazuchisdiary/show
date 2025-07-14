@@ -160,14 +160,25 @@ const gameData = {
       "displayName": "［輝跡の舞踏会］百生吟子",
       "effects": [
         {
-          "type": "scoreBoost",
-          "value": 0.8437,
-          "description": "スコア84.37%ブースト (Lv.1)"
+          "type": "conditional",
+          "condition": "mental <= 10",
+          "then": [
+            {
+              "type": "scoreBoost",
+              "value": 0.8437,
+              "description": "スコア84.37%ブースト (Lv.1)"
+            },
+            {
+              "type": "voltageBoost",
+              "value": 0.8437,
+              "description": "ボルテージ84.37%ブースト (Lv.1)"
+            }
+          ]
         },
         {
-          "type": "voltageBoost",
-          "value": 0.8437,
-          "description": "ボルテージ84.37%ブースト (Lv.1)"
+          "type": "mentalReduction",
+          "value": 50,
+          "description": "メンタル50%減少"
         }
       ]
     },

@@ -274,6 +274,15 @@ class GenericCard extends Card {
                     }
                     break;
                     
+                case 'mentalReduction':
+                    // Mental reduction by percentage, minimum 1
+                    const reduction = Math.floor(game.mental * (effect.value / 100));
+                    game.mental = Math.max(1, game.mental - reduction);
+                    if (game.verbose) {
+                        game.currentTurnLog.push(`<div class="log-action log-mental" style="color: #e74c3c;">メンタル${effect.value}%減少: -${reduction} (合計: ${game.mental})</div>`);
+                    }
+                    break;
+                    
                 case 'resetCardTurn':
                     game.cardTurn = -1;
                     if (game.verbose) {
