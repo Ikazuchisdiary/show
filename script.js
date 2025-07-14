@@ -129,16 +129,30 @@ class Game {
     }
 
     getScore(value) {
-        const score = Math.floor(this.appeal * value * (1 + this.scoreBoost[this.scoreBoostCount]) * (1 + this.getVoltageLevel() / 10)) * 1.5;
+        const score = Math.floor(this.appeal * value * (1 + this.scoreBoost[this.scoreBoostCount]) * (1 + this.getVoltageLevel() / 10) * 1.5);
         this.score += score;
         this.scoreBoostCount += 1;
         if (this.verbose) {
             this.log += `get score ${score} = ${value} * ${this.appeal} * (1 + ${this.scoreBoost[this.scoreBoostCount - 1]}) * ${1 + this.getVoltageLevel() / 10} * 1.5\n`;
             const voltageLevel = this.getVoltageLevel();
-            const scoreBoostPercent = (this.scoreBoost[this.scoreBoostCount - 1] * 100).toFixed(1);
-            const voltageLevelBonus = (voltageLevel / 10 * 100).toFixed(1);
+            const totalScoreBoostPercent = ((1 + this.scoreBoost[this.scoreBoostCount - 1]) * 100).toFixed(2);
+            const totalVoltageLevelPercent = ((1 + voltageLevel / 10) * 100).toFixed(2);
             this.currentTurnLog.push(`<div class="log-action"><span class="log-score-gain">スコア獲得: +${score.toLocaleString()}</span></div>`);
-            this.currentTurnLog.push(`<div class="log-action" style="font-size: 12px; color: #888;">　計算: ${value} × ${this.appeal} × (1 + ${scoreBoostPercent}%) × (1 + ${voltageLevelBonus}%) × 1.5</div>`);
+            
+            // Build calculation display with labels
+            let calcHtml = '<div class="log-calculation">';
+            calcHtml += `<span class="calc-value calc-base">${value}<span class="calc-label">倍率</span></span>`;
+            calcHtml += '<span class="calc-operator">×</span>';
+            calcHtml += `<span class="calc-value calc-appeal">${this.appeal.toLocaleString()}<span class="calc-label">アピール</span></span>`;
+            calcHtml += '<span class="calc-operator">×</span>';
+            calcHtml += `<span class="calc-value calc-score-boost">${totalScoreBoostPercent}%<span class="calc-label">ブースト</span></span>`;
+            calcHtml += '<span class="calc-operator">×</span>';
+            calcHtml += `<span class="calc-value calc-voltage-level">${totalVoltageLevelPercent}%<span class="calc-label">Lv${voltageLevel}</span></span>`;
+            calcHtml += '<span class="calc-operator">×</span>';
+            calcHtml += `<span class="calc-value calc-fever">1.5<span class="calc-label">ラーニング</span></span>`;
+            calcHtml += '</div>';
+            
+            this.currentTurnLog.push(calcHtml);
         }
     }
 
@@ -147,11 +161,21 @@ class Game {
         this.voltagePt += voltagePt;
         if (this.verbose) {
             this.log += `get voltage ${voltagePt} = ${value} * (1 + ${this.voltageBoost[this.voltageBoostCount]})\n`;
+            const totalBoostPercent = ((1 + this.voltageBoost[this.voltageBoostCount]) * 100).toFixed(2);
             const oldLevel = this.getVoltageLevel();
             this.voltageBoostCount += 1;
             const newLevel = this.getVoltageLevel();
             this.voltageBoostCount -= 1;
             this.currentTurnLog.push(`<div class="log-action"><span class="log-voltage-gain">ボルテージ獲得: +${voltagePt} (合計: ${this.voltagePt})</span></div>`);
+            
+            // Build voltage calculation display
+            let calcHtml = '<div class="log-calculation">';
+            calcHtml += `<span class="calc-value calc-base">${value}<span class="calc-label">基本値</span></span>`;
+            calcHtml += '<span class="calc-operator">×</span>';
+            calcHtml += `<span class="calc-value calc-voltage-level">${totalBoostPercent}%<span class="calc-label">ブースト</span></span>`;
+            calcHtml += '</div>';
+            
+            this.currentTurnLog.push(calcHtml);
             if (oldLevel !== newLevel) {
                 this.currentTurnLog.push(`<div class="log-action" style="color: #e74c3c; font-weight: bold;">　→ ボルテージレベル ${oldLevel} → ${newLevel}</div>`);
             }
