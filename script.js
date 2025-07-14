@@ -541,6 +541,13 @@ function toggleMusicInput() {
 
 // Calculate function
 function calculate() {
+    // Check for duplicate characters first
+    const duplicateSlots = checkDuplicateCharacters();
+    if (duplicateSlots.size > 0) {
+        alert('同じキャラクターのカードが複数選択されています。\nキャラクターの重複を解消してから計算してください。');
+        return;
+    }
+    
     const appeal = parseInt(document.getElementById('appeal').value);
     const initialMental = parseInt(document.getElementById('mental').value);
     const musicKey = document.getElementById('music').value;
@@ -670,6 +677,53 @@ function setDefaultSelections() {
             searchInput.value = selectedOption.textContent;
         }
     }
+    
+    // Check for duplicate characters in default selection
+    updateDuplicateCharacterHighlight();
+}
+
+// Check for duplicate characters and return list of slot numbers with duplicates
+function checkDuplicateCharacters() {
+    const characterSlots = {};
+    const duplicateSlots = new Set();
+    
+    // Build a map of character to slot numbers
+    for (let i = 1; i <= 6; i++) {
+        const cardValue = document.getElementById(`card${i}`).value;
+        if (cardValue && cardData[cardValue]) {
+            const character = cardData[cardValue].character;
+            if (!characterSlots[character]) {
+                characterSlots[character] = [];
+            }
+            characterSlots[character].push(i);
+        }
+    }
+    
+    // Find slots with duplicate characters
+    for (const [character, slots] of Object.entries(characterSlots)) {
+        if (slots.length > 1) {
+            slots.forEach(slot => duplicateSlots.add(slot));
+        }
+    }
+    
+    return duplicateSlots;
+}
+
+// Update visual feedback for duplicate characters
+function updateDuplicateCharacterHighlight() {
+    const duplicateSlots = checkDuplicateCharacters();
+    
+    // Reset all slots
+    for (let i = 1; i <= 6; i++) {
+        const slot = document.querySelector(`.card-slot[data-slot="${i}"]`);
+        slot.classList.remove('duplicate-character');
+    }
+    
+    // Highlight duplicate slots
+    duplicateSlots.forEach(slotNum => {
+        const slot = document.querySelector(`.card-slot[data-slot="${slotNum}"]`);
+        slot.classList.add('duplicate-character');
+    });
 }
 
 // Handle card selection change
@@ -696,6 +750,9 @@ function onCardChange(slotNum) {
         skillSelect.style.display = 'none';
         skillParams.style.display = 'none';
     }
+    
+    // Check for duplicate characters
+    updateDuplicateCharacterHighlight();
 }
 
 // Update skill level dropdown to show unknown values
@@ -1187,6 +1244,9 @@ function loadStateForSong(musicKey) {
                 }
             }
         }
+        
+        // Check for duplicate characters after loading
+        updateDuplicateCharacterHighlight();
     } catch (e) {
         console.error('Error loading saved state:', e);
     }
@@ -1323,6 +1383,9 @@ function swapCards(fromSlot, toSlot) {
     // Update search inputs
     document.getElementById(`cardSearch${fromSlotNum}`).value = toSearchValue;
     document.getElementById(`cardSearch${toSlotNum}`).value = fromSearchValue;
+    
+    // Check for duplicate characters after swap
+    updateDuplicateCharacterHighlight();
     
     // Save the new state
     setTimeout(saveCurrentState, 100);

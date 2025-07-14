@@ -366,3 +366,14 @@ input[placeholder="不明"]:focus {
     border: 2px dashed #2196F3;
     border-radius: 8px;
 }
+
+/* Duplicate character warning */
+.card-slot.duplicate-character {
+    background-color: #ffebee !important;
+    border: 2px solid #f44336;
+}
+
+.card-slot.duplicate-character .card-row label {
+    color: #d32f2f;
+    font-weight: bold;
+}
