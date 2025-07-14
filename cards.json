@@ -25,7 +25,65 @@
           "value": 1.2375,
           "description": "ボルテージ123.75%ブースト"
         }
-      ]
+      ],
+      "skillLevels": {
+        "1": {
+          "effect_0_value": 0.4125,
+          "effect_1_value": 0.4125
+        },
+        "2": {
+          "effect_0_value": 0.4537,
+          "effect_1_value": 0.4537
+        },
+        "3": {
+          "effect_0_value": 0.495,
+          "effect_1_value": 0.495
+        },
+        "4": {
+          "effect_0_value": 0.5362,
+          "effect_1_value": 0.5362
+        },
+        "5": {
+          "effect_0_value": 0.5775,
+          "effect_1_value": 0.5775
+        },
+        "6": {
+          "effect_0_value": 0.6187,
+          "effect_1_value": 0.6187
+        },
+        "7": {
+          "effect_0_value": 0.66,
+          "effect_1_value": 0.66
+        },
+        "8": {
+          "effect_0_value": 0.7012,
+          "effect_1_value": 0.7012
+        },
+        "9": {
+          "effect_0_value": 0.7425,
+          "effect_1_value": 0.7425
+        },
+        "10": {
+          "effect_0_value": 0.825,
+          "effect_1_value": 0.825
+        },
+        "11": {
+          "effect_0_value": null,
+          "effect_1_value": null
+        },
+        "12": {
+          "effect_0_value": null,
+          "effect_1_value": null
+        },
+        "13": {
+          "effect_0_value": null,
+          "effect_1_value": null
+        },
+        "14": {
+          "effect_0_value": 1.2375,
+          "effect_1_value": 1.2375
+        }
+      }
     },
     "gingaKozu": {
       "name": "Ginga Kozu",

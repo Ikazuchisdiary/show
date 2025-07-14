@@ -736,6 +736,9 @@
                 skillSelect.style.display = 'inline-block';
                 generateSkillParams(slotNum, cardSelect.value);
                 skillParams.style.display = 'block';
+                
+                // Load default values for current skill level
+                onSkillLevelChange(slotNum);
             } else {
                 skillSelect.style.display = 'none';
                 skillParams.style.display = 'none';
@@ -744,7 +747,26 @@
         
         // Handle skill level change
         function onSkillLevelChange(slotNum) {
-            // Currently just uses manual input values
+            const cardSelect = document.getElementById(`card${slotNum}`);
+            const skillSelect = document.getElementById(`skill${slotNum}`);
+            const cardType = cardSelect.value;
+            const skillLevel = skillSelect.value;
+            
+            if (!cardType || !cardData[cardType]) return;
+            
+            const card = cardData[cardType];
+            if (card.skillLevels && card.skillLevels[skillLevel]) {
+                const levelData = card.skillLevels[skillLevel];
+                
+                // Update all input values for this skill level
+                for (const [key, value] of Object.entries(levelData)) {
+                    const inputId = `skill${slotNum}_${key}`;
+                    const input = document.getElementById(inputId);
+                    if (input && value !== null) {
+                        input.value = value;
+                    }
+                }
+            }
         }
         
         // Generate skill parameter inputs
