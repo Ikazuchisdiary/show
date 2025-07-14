@@ -355,7 +355,7 @@ const gameData = {
       "effects": [
         {
           "type": "conditional",
-          "condition": "count >= 10",
+          "condition": "turn >= 10",
           "then": [
             {
               "type": "scoreGain",
@@ -659,6 +659,143 @@ const gameData = {
               "description": "スコア306%獲得 (Lv.1)"
             }
           ]
+        }
+      ]
+    },
+    "momijidaniRurino": {
+      "name": "Momijidani Rurino",
+      "displayName": "［紅葉乃舞姫］大沢瑠璃乃",
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 0.5687,
+          "description": "スコア56.87%ブースト (Lv.1)"
+        },
+        {
+          "type": "conditional",
+          "condition": "mental >= 70",
+          "then": [
+            {
+              "type": "scoreBoost",
+              "value": 0.91,
+              "description": "スコア91%ブースト (Lv.1)"
+            }
+          ]
+        }
+      ]
+    },
+    "fanfareRurino": {
+      "name": "Fanfare Rurino",
+      "displayName": "［ファンファーレ！！！］大沢瑠璃乃",
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 0.4687,
+          "description": "スコア46.87%ブースト (Lv.1)"
+        },
+        {
+          "type": "conditional",
+          "condition": "mental >= 70",
+          "then": [
+            {
+              "type": "scoreBoost",
+              "value": 0.75,
+              "description": "スコア75%ブースト (Lv.1)"
+            }
+          ]
+        }
+      ]
+    },
+    "linkFutureRurino": {
+      "name": "Link Future Rurino",
+      "displayName": "［Link to the FUTURE］大沢瑠璃乃",
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 0.375,
+          "description": "スコア37.5%ブースト (Lv.1)"
+        },
+        {
+          "type": "conditional",
+          "condition": "mental >= 50",
+          "then": [
+            {
+              "type": "scoreBoost",
+              "value": 0.4025,
+              "description": "スコア40.25%ブースト (Lv.1)"
+            }
+          ]
+        }
+      ]
+    },
+    "identityRurino": {
+      "name": "Identity Rurino",
+      "displayName": "［アイデンティティ］大沢瑠璃乃",
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 1.5937,
+          "description": "スコアブースト効果159.37%上昇 (Lv.1)"
+        }
+      ]
+    },
+    "yoursEverRurino": {
+      "name": "Yours Ever Rurino",
+      "displayName": "［yours ever］大沢瑠璃乃",
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 1.1625,
+          "description": "スコア116.25%ブースト (Lv.1)"
+        }
+      ]
+    },
+    "natsumekiRurino": {
+      "name": "Natsumeki Rurino",
+      "displayName": "［夏めきペイン］大沢瑠璃乃",
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 0.9062,
+          "description": "スコア90.62%ブースト (Lv.1)"
+        }
+      ]
+    },
+    "dreamRurino": {
+      "name": "Dream Rurino",
+      "displayName": "［Dream Believers］大沢瑠璃乃",
+      "effects": [
+        {
+          "type": "scoreBoost",
+          "value": 0.675,
+          "description": "スコア67.5%ブースト (Lv.1)"
+        }
+      ]
+    },
+    "iDoMeRurino": {
+      "name": "I Do Me Rurino",
+      "displayName": "［アイドゥーミー！］大沢瑠璃乃",
+      "effects": [
+        {
+          "type": "mentalRecover",
+          "value": 10,
+          "description": "メンタル+10"
+        },
+        {
+          "type": "conditional",
+          "condition": "mental <= 99",
+          "then": [
+            {
+              "type": "voltagePenalty",
+              "value": 1000,
+              "description": "ボルテージ-1000"
+            }
+          ]
+        },
+        {
+          "type": "skipTurn",
+          "condition": "count > 3",
+          "description": "3回使用後は除外"
         }
       ]
     }
