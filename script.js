@@ -437,10 +437,9 @@ function generateSkillParams(slotNum, cardType) {
     // Process effects array
     for (let i = 0; i < effects.length; i++) {
         const effect = effects[i];
-        html += generateEffectInputs(effect, slotNum, i, '');
-        
-        if (effect.value !== undefined || 
-            (effect.type === 'conditional' && (effect.then || effect.else))) {
+        const effectHtml = generateEffectInputs(effect, slotNum, i, '');
+        if (effectHtml) {
+            html += effectHtml;
             hasParams = true;
         }
     }
@@ -461,56 +460,66 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix) {
     
     switch (effect.type) {
         case 'scoreBoost':
-            html += `<div class="skill-param-row">
-                <label>スコアブースト:</label>
-                <input type="number" id="${inputId}" value="${effect.value}" step="0.001">
-            </div>`;
+            if (effect.value !== undefined) {
+                html += `<div class="skill-param-row">
+                    <label>スコアブースト:</label>
+                    <input type="number" id="${inputId}" value="${effect.value}" step="0.001">
+                </div>`;
+            }
             break;
             
         case 'voltageBoost':
-            html += `<div class="skill-param-row">
-                <label>ボルテージブースト:</label>
-                <input type="number" id="${inputId}" value="${effect.value}" step="0.001">
-            </div>`;
+            if (effect.value !== undefined) {
+                html += `<div class="skill-param-row">
+                    <label>ボルテージブースト:</label>
+                    <input type="number" id="${inputId}" value="${effect.value}" step="0.001">
+                </div>`;
+            }
             break;
             
         case 'scoreGain':
-            html += `<div class="skill-param-row">
-                <label>スコア倍率:</label>
-                <input type="number" id="${inputId}" value="${effect.value}" step="0.01">
-            </div>`;
+            if (effect.value !== undefined) {
+                html += `<div class="skill-param-row">
+                    <label>スコア倍率:</label>
+                    <input type="number" id="${inputId}" value="${effect.value}" step="0.01">
+                </div>`;
+            }
             break;
             
         case 'voltageGain':
-            html += `<div class="skill-param-row">
-                <label>ボルテージ獲得:</label>
-                <input type="number" id="${inputId}" value="${effect.value}" step="1">
-            </div>`;
+            if (effect.value !== undefined) {
+                html += `<div class="skill-param-row">
+                    <label>ボルテージ獲得:</label>
+                    <input type="number" id="${inputId}" value="${effect.value}" step="1">
+                </div>`;
+            }
             break;
             
         case 'conditional':
-            html += `<div style="margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px;">
-                <div style="font-weight: bold; margin-bottom: 5px;">条件: ${effect.condition}</div>`;
-            
-            if (effect.then) {
-                html += '<div style="margin-left: 10px;">';
-                html += '<div style="font-weight: bold; color: #2196F3;">条件成立時:</div>';
-                for (let j = 0; j < effect.then.length; j++) {
-                    html += generateEffectInputs(effect.then[j], slotNum, j, `effect_${effectIndex}_then`);
+            if (effect.then || effect.else) {
+                html += `<div style="margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px;">
+                    <div style="font-weight: bold; margin-bottom: 5px;">条件: ${effect.condition}</div>`;
+                
+                if (effect.then) {
+                    html += '<div style="margin-left: 10px;">';
+                    html += '<div style="font-weight: bold; color: #2196F3;">条件成立時:</div>';
+                    for (let j = 0; j < effect.then.length; j++) {
+                        html += generateEffectInputs(effect.then[j], slotNum, j, `effect_${effectIndex}_then`);
+                    }
+                    html += '</div>';
                 }
+                
+                if (effect.else) {
+                    html += '<div style="margin-left: 10px;">';
+                    html += '<div style="font-weight: bold; color: #f44336;">条件不成立時:</div>';
+                    for (let j = 0; j < effect.else.length; j++) {
+                        html += generateEffectInputs(effect.else[j], slotNum, j, `effect_${effectIndex}_else`);
+                    }
+                    html += '</div>';
+                }
+                
                 html += '</div>';
             }
-            
-            if (effect.else) {
-                html += '<div style="margin-left: 10px;">';
-                html += '<div style="font-weight: bold; color: #f44336;">条件不成立時:</div>';
-                for (let j = 0; j < effect.else.length; j++) {
-                    html += generateEffectInputs(effect.else[j], slotNum, j, `effect_${effectIndex}_else`);
-                }
-                html += '</div>';
-            }
-            
-            html += '</div>';
             break;
     }
     
