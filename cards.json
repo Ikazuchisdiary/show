@@ -109,6 +109,15 @@
           ]
         }
       }
+    },
+    "butoGin": {
+      "name": "Buto Gin",
+      "displayName": "Buto Gin",
+      "effects": {
+        "scoreBoost": 2.5312,
+        "voltageBoost": 2.5312,
+        "description": "スコアとボルテージを253.12%ブースト（1回ずつ）"
+      }
     }
   },
   "music": {
