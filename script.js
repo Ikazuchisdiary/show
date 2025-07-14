@@ -1521,40 +1521,42 @@ function getCenterSkillValues(slotNum) {
 function formatConditionForDisplay(condition) {
     let formatted = condition;
     
-    // Match patterns and create proper Japanese
+    // Match patterns and format like log entries
     if (formatted.match(/count\s*>\s*(\d+)/)) {
         const match = formatted.match(/count\s*>\s*(\d+)/);
-        formatted = `使用回数が${match[1]}回を超える`;
+        formatted = `使用回数 > ${match[1]}`;
     } else if (formatted.match(/count\s*>=\s*(\d+)/)) {
         const match = formatted.match(/count\s*>=\s*(\d+)/);
-        formatted = `使用回数が${match[1]}回以上`;
+        formatted = `使用回数 ≥ ${match[1]}`;
     } else if (formatted.match(/count\s*<=\s*(\d+)/)) {
         const match = formatted.match(/count\s*<=\s*(\d+)/);
-        formatted = `使用回数が${match[1]}回以下`;
+        formatted = `使用回数 ≤ ${match[1]}`;
     } else if (formatted.match(/count\s*<\s*(\d+)/)) {
         const match = formatted.match(/count\s*<\s*(\d+)/);
-        formatted = `使用回数が${match[1]}回未満`;
+        formatted = `使用回数 < ${match[1]}`;
     } else if (formatted.match(/turn\s*>=\s*(\d+)/)) {
         const match = formatted.match(/turn\s*>=\s*(\d+)/);
-        formatted = `${match[1]}ターン目以降`;
+        const turnNum = parseInt(match[1]) + 1;
+        formatted = `ターン ≥ ${turnNum}`;
     } else if (formatted.match(/turn\s*>\s*(\d+)/)) {
         const match = formatted.match(/turn\s*>\s*(\d+)/);
-        formatted = `${match[1]}ターン目より後`;
+        const turnNum = parseInt(match[1]) + 1;
+        formatted = `ターン > ${turnNum}`;
     } else if (formatted.match(/mental\s*>=\s*(\d+)/)) {
         const match = formatted.match(/mental\s*>=\s*(\d+)/);
-        formatted = `メンタルが${match[1]}%以上`;
+        formatted = `メンタル ≥ ${match[1]}`;
     } else if (formatted.match(/mental\s*<=\s*(\d+)/)) {
         const match = formatted.match(/mental\s*<=\s*(\d+)/);
-        formatted = `メンタルが${match[1]}%以下`;
+        formatted = `メンタル ≤ ${match[1]}`;
     } else if (formatted.match(/mental\s*<\s*(\d+)/)) {
         const match = formatted.match(/mental\s*<\s*(\d+)/);
-        formatted = `メンタルが${match[1]}%未満`;
+        formatted = `メンタル < ${match[1]}`;
     } else if (formatted.match(/voltageLevel\s*>=\s*(\d+)/)) {
         const match = formatted.match(/voltageLevel\s*>=\s*(\d+)/);
-        formatted = `ボルテージレベルが${match[1]}以上`;
+        formatted = `ボルテージLv ≥ ${match[1]}`;
     } else if (formatted.match(/voltageLevel\s*<=\s*(\d+)/)) {
         const match = formatted.match(/voltageLevel\s*<=\s*(\d+)/);
-        formatted = `ボルテージレベルが${match[1]}以下`;
+        formatted = `ボルテージLv ≤ ${match[1]}`;
     }
     
     return formatted;
