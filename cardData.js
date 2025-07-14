@@ -187,6 +187,11 @@ const gameData = {
       "displayName": "［幸せのリボン］夕霧綴理",
       "effects": [
         {
+          "type": "skipTurn",
+          "condition": "count > 1",
+          "description": "1回使用後は除外"
+        },
+        {
           "type": "voltageGain",
           "value": 243,
           "description": "ボルテージ243獲得 (Lv.1)"
