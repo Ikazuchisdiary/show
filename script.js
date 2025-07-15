@@ -2198,17 +2198,25 @@ document.addEventListener('visibilitychange', function() {
 
 // Drag and drop functionality
 let draggedElement = null;
+let touchItem = null;
+let touchOffset = {x: 0, y: 0};
 
 function setupDragAndDrop() {
     const cardSlots = document.querySelectorAll('.card-slot');
     
     cardSlots.forEach(slot => {
+        // Standard drag and drop for desktop
         slot.addEventListener('dragstart', handleDragStart);
         slot.addEventListener('dragover', handleDragOver);
         slot.addEventListener('drop', handleDrop);
         slot.addEventListener('dragend', handleDragEnd);
         slot.addEventListener('dragenter', handleDragEnter);
         slot.addEventListener('dragleave', handleDragLeave);
+        
+        // Touch events for mobile
+        slot.addEventListener('touchstart', handleTouchStart, {passive: false});
+        slot.addEventListener('touchmove', handleTouchMove, {passive: false});
+        slot.addEventListener('touchend', handleTouchEnd, {passive: false});
     });
 }
 
@@ -2664,3 +2672,107 @@ document.addEventListener('click', function(event) {
         document.querySelector('.music-select-display')?.classList.remove('active');
     }
 });
+
+// Touch event handlers for mobile
+function handleTouchStart(e) {
+    // Only prevent default on iOS to avoid affecting other platforms
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+        e.preventDefault();
+    }
+    
+    const touch = e.touches[0];
+    touchItem = this;
+    
+    const rect = this.getBoundingClientRect();
+    touchOffset.x = touch.clientX - rect.left;
+    touchOffset.y = touch.clientY - rect.top;
+    
+    this.classList.add('dragging');
+    
+    // Add a clone for visual feedback
+    const clone = this.cloneNode(true);
+    clone.id = 'drag-clone';
+    clone.style.position = 'fixed';
+    clone.style.zIndex = '9999';
+    clone.style.opacity = '0.8';
+    clone.style.pointerEvents = 'none';
+    clone.style.width = rect.width + 'px';
+    clone.style.left = (touch.clientX - touchOffset.x) + 'px';
+    clone.style.top = (touch.clientY - touchOffset.y) + 'px';
+    document.body.appendChild(clone);
+}
+
+function handleTouchMove(e) {
+    // Prevent scrolling and text selection on iOS
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+        e.preventDefault();
+    }
+    
+    if (!touchItem) return;
+    
+    const touch = e.touches[0];
+    const clone = document.getElementById('drag-clone');
+    
+    if (clone) {
+        clone.style.left = (touch.clientX - touchOffset.x) + 'px';
+        clone.style.top = (touch.clientY - touchOffset.y) + 'px';
+    }
+    
+    // Find element under touch point
+    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    const slotBelow = elementBelow?.closest('.card-slot');
+    
+    // Clear previous indicators
+    document.querySelectorAll('.card-slot').forEach(slot => {
+        slot.classList.remove('drop-before', 'drop-after');
+    });
+    
+    if (slotBelow && slotBelow !== touchItem) {
+        const rect = slotBelow.getBoundingClientRect();
+        const midpoint = rect.top + rect.height / 2;
+        
+        if (touch.clientY < midpoint) {
+            slotBelow.classList.add('drop-before');
+        } else {
+            slotBelow.classList.add('drop-after');
+        }
+    }
+}
+
+function handleTouchEnd(e) {
+    // Prevent default to stop any text selection on iOS
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+        e.preventDefault();
+    }
+    
+    if (!touchItem) return;
+    
+    const touch = e.changedTouches[0];
+    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    const slotBelow = elementBelow?.closest('.card-slot');
+    
+    // Remove clone
+    const clone = document.getElementById('drag-clone');
+    if (clone) {
+        clone.remove();
+    }
+    
+    // Clear all visual indicators
+    document.querySelectorAll('.card-slot').forEach(slot => {
+        slot.classList.remove('dragging', 'drop-before', 'drop-after');
+    });
+    
+    // Perform the drop
+    if (slotBelow && slotBelow !== touchItem) {
+        const rect = slotBelow.getBoundingClientRect();
+        const midpoint = rect.top + rect.height / 2;
+        const insertBefore = touch.clientY < midpoint;
+        
+        insertCard(touchItem, slotBelow, insertBefore);
+    }
+    
+    touchItem = null;
+}
