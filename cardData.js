@@ -386,6 +386,39 @@ const gameData = {
         ]
       }
     },
+    "dolphinSayaka": {
+      "name": "Dolphin Sayaka",
+      "displayName": "［ドルフィン〰ビーチ］村野さやか",
+      "character": "村野さやか",
+      "effects": [
+        {
+          "type": "voltageGain",
+          "value": 37,
+          "description": "ボルテージ37獲得 (Lv.1)"
+        },
+        {
+          "type": "conditional",
+          "condition": "mental >= 50",
+          "then": [
+            {
+              "type": "voltageGain",
+              "value": 40,
+              "description": "ボルテージ40獲得 (Lv.1)"
+            }
+          ]
+        }
+      ],
+      "centerSkill": {
+        "timing": "beforeFirstTurn",
+        "effects": [
+          {
+            "type": "voltageGain",
+            "value": 116,
+            "description": "ボルテージ116獲得 (Lv.1)"
+          }
+        ]
+      }
+    },
     "shinjitsuSayaka": {
       "name": "Shinjitsu Sayaka",
       "displayName": "［真実の舞踏会］村野さやか",
