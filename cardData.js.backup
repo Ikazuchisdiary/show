@@ -1,5 +1,4 @@
 // Card and music data
-// All skill values are stored as Lv.10 values
 // Center skill timings:
 // - "beforeFirstTurn": ライブ開始時
 // - "beforeFeverStart": FEVER開始時
@@ -18,8 +17,8 @@ const gameData = {
           "then": [
             {
               "type": "voltageBoost",
-              "value": 2.16,
-              "description": "ボルテージ216%ブースト (Lv.10)"
+              "value": 1.08,
+              "description": "ボルテージ108%ブースト (Lv.1)"
             },
             {
               "type": "resetCardTurn",
@@ -29,8 +28,8 @@ const gameData = {
           "else": [
             {
               "type": "scoreBoost",
-              "value": 2.16,
-              "description": "スコア216%ブースト (Lv.10)"
+              "value": 1.08,
+              "description": "スコア108%ブースト (Lv.1)"
             }
           ]
         }
@@ -43,13 +42,13 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 0.825,
-          "description": "スコア82.5%ブースト (Lv.10)"
+          "value": 0.4125,
+          "description": "スコア41.25%ブースト (Lv.1)"
         },
         {
           "type": "voltageBoost",
-          "value": 0.825,
-          "description": "ボルテージ82.5%ブースト (Lv.10)"
+          "value": 0.4125,
+          "description": "ボルテージ41.25%ブースト (Lv.1)"
         }
       ]
     },
@@ -65,8 +64,8 @@ const gameData = {
         },
         {
           "type": "voltageBoost",
-          "value": 0.75,
-          "description": "ボルテージ75%ブースト (Lv.10)"
+          "value": 0.375,
+          "description": "ボルテージ37.5%ブースト (Lv.1)"
         },
         {
           "type": "resetCardTurn",
@@ -85,8 +84,8 @@ const gameData = {
           "then": [
             {
               "type": "voltageBoost",
-              "value": 1.62,
-              "description": "ボルテージ162%ブースト (Lv.10)"
+              "value": 0.81,
+              "description": "ボルテージ81%ブースト (Lv.1)"
             }
           ]
         },
@@ -96,8 +95,8 @@ const gameData = {
           "then": [
             {
               "type": "scoreBoost",
-              "value": 2.16,
-              "description": "スコア216%ブースト (Lv.10)"
+              "value": 1.08,
+              "description": "スコア108%ブースト (Lv.1)"
             }
           ]
         }
@@ -116,8 +115,8 @@ const gameData = {
         },
         {
           "type": "voltageGain",
-          "value": 487,
-          "description": "ボルテージ487獲得 (Lv.10)"
+          "value": 243,
+          "description": "ボルテージ243獲得 (Lv.1)"
         },
         {
           "type": "conditional",
@@ -125,8 +124,8 @@ const gameData = {
           "then": [
             {
               "type": "voltageGain",
-              "value": 780,
-              "description": "ボルテージ780獲得 (Lv.10)"
+              "value": 390,
+              "description": "ボルテージ390獲得 (Lv.1)"
             }
           ]
         }
@@ -136,8 +135,8 @@ const gameData = {
         "effects": [
           {
             "type": "voltageGain",
-            "value": 318,
-            "description": "ボルテージ318獲得 (Lv.10)"
+            "value": 159,
+            "description": "ボルテージ159獲得 (Lv.1)"
           }
         ]
       }
@@ -150,13 +149,13 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 0.825,
-          "description": "スコア82.5%ブースト (Lv.10)"
+          "value": 0.4125,
+          "description": "スコア41.25%ブースト (Lv.1)"
         },
         {
           "type": "voltageBoost",
-          "value": 0.825,
-          "description": "ボルテージ82.5%ブースト (Lv.10)"
+          "value": 0.4125,
+          "description": "ボルテージ41.25%ブースト (Lv.1)"
         }
       ],
       "centerSkill": {
@@ -164,8 +163,8 @@ const gameData = {
         "effects": [
           {
             "type": "scoreGain",
-            "value": 2.4552,
-            "description": "スコア245.52%獲得 (Lv.10)"
+            "value": 1.2276,
+            "description": "スコア122.76%獲得 (Lv.1)"
           }
         ]
       }
@@ -177,8 +176,8 @@ const gameData = {
       "effects": [
         {
           "type": "scoreGain",
-          "value": 2.175,
-          "description": "スコア217.5%獲得 (Lv.10)"
+          "value": 1.0875,
+          "description": "スコア108.75%獲得 (Lv.1)"
         },
         {
           "type": "conditional",
@@ -186,8 +185,8 @@ const gameData = {
           "then": [
             {
               "type": "scoreBoost",
-              "value": 4.86,
-              "description": "スコア486%ブースト (Lv.10)"
+              "value": 1.215,
+              "description": "スコア121.5%ブースト (Lv.1)"
             }
           ]
         }
@@ -197,8 +196,8 @@ const gameData = {
         "effects": [
           {
             "type": "scoreGain",
-            "value": 3.825,
-            "description": "スコア382.5%獲得 (Lv.10)"
+            "value": 1.9125,
+            "description": "スコア191.25%獲得 (Lv.1)"
           }
         ]
       }
@@ -214,8 +213,8 @@ const gameData = {
           "then": [
             {
               "type": "scoreGain",
-              "value": 3.48,
-              "description": "スコア348%獲得 (Lv.10)"
+              "value": 1.74,
+              "description": "スコア174%獲得 (Lv.1)"
             }
           ]
         }
@@ -225,19 +224,8 @@ const gameData = {
         "effects": [
           {
             "type": "scoreGain",
-            "value": 1.365,
-            "description": "スコア136.5%獲得 (Lv.10)"
-          },
-          {
-            "type": "conditional",
-            "condition": "turn >= 6",
-            "then": [
-              {
-                "type": "scoreGain",
-                "value": 1.911,
-                "description": "スコア191.1%獲得 (Lv.10)"
-              }
-            ]
+            "value": 0.6825,
+            "description": "スコア68.25%獲得 (Lv.1)"
           }
         ]
       }
@@ -259,8 +247,8 @@ const gameData = {
           "then": [
             {
               "type": "scoreGain",
-              "value": 7.56,
-              "description": "スコア756%獲得 (Lv.10)"
+              "value": 3.78,
+              "description": "スコア3.78倍 (Lv.1)"
             }
           ],
           "else": [
@@ -277,8 +265,8 @@ const gameData = {
         "effects": [
           {
             "type": "scoreGain",
-            "value": 2.79,
-            "description": "スコア279%獲得 (Lv.10)"
+            "value": 1.395,
+            "description": "スコア139.5%獲得 (Lv.1)"
           }
         ]
       }
@@ -294,8 +282,8 @@ const gameData = {
           "then": [
             {
               "type": "scoreBoost",
-              "value": 1.62,
-              "description": "スコア162%ブースト (Lv.10)"
+              "value": 0.81,
+              "description": "スコア81%ブースト (Lv.1)"
             }
           ]
         },
@@ -305,8 +293,8 @@ const gameData = {
           "then": [
             {
               "type": "scoreGain",
-              "value": 3.48,
-              "description": "スコア348%獲得 (Lv.10)"
+              "value": 1.74,
+              "description": "スコア174%獲得 (Lv.1)"
             }
           ]
         }
@@ -316,8 +304,8 @@ const gameData = {
         "effects": [
           {
             "type": "scoreGain",
-            "value": 1.365,
-            "description": "スコア136.5%獲得 (Lv.10)"
+            "value": 0.6825,
+            "description": "スコア68.25%獲得 (Lv.1)"
           },
           {
             "type": "conditional",
@@ -325,8 +313,8 @@ const gameData = {
             "then": [
               {
                 "type": "scoreGain",
-                "value": 1.911,
-                "description": "スコア191.1%獲得 (Lv.10)"
+                "value": 0.9555,
+                "description": "スコア95.55%獲得 (Lv.1)"
               }
             ]
           }
@@ -345,15 +333,15 @@ const gameData = {
           "then": [
             {
               "type": "voltageBoost",
-              "value": 1.05,
-              "description": "ボルテージ105%ブースト (Lv.10)"
+              "value": 0.2625,
+              "description": "ボルテージ26.25%ブースト (Lv.1)"
             }
           ],
           "else": [
             {
               "type": "scoreBoost",
-              "value": 1.62,
-              "description": "スコア162%ブースト (Lv.10)"
+              "value": 0.81,
+              "description": "スコア81%ブースト (Lv.1)"
             }
           ]
         },
@@ -364,7 +352,7 @@ const gameData = {
             {
               "type": "voltageGain",
               "value": 315,
-              "description": "ボルテージ630獲得 (Lv.10)"
+              "description": "ボルテージ315獲得 (Lv.1)"
             }
           ],
           "else": [
@@ -381,8 +369,8 @@ const gameData = {
         "effects": [
           {
             "type": "scoreGain",
-            "value": 5.85,
-            "description": "スコア585%獲得 (Lv.10)"
+            "value": 2.925,
+            "description": "スコア292.5%獲得 (Lv.1)"
           },
           {
             "type": "conditional",
@@ -405,8 +393,8 @@ const gameData = {
       "effects": [
         {
           "type": "voltageGain",
-          "value": 75,
-          "description": "ボルテージ75獲得 (Lv.10)"
+          "value": 37,
+          "description": "ボルテージ37獲得 (Lv.1)"
         },
         {
           "type": "conditional",
@@ -414,8 +402,8 @@ const gameData = {
           "then": [
             {
               "type": "voltageGain",
-              "value": 80,
-              "description": "ボルテージ80獲得 (Lv.10)"
+              "value": 40,
+              "description": "ボルテージ40獲得 (Lv.1)"
             }
           ]
         }
@@ -425,8 +413,8 @@ const gameData = {
         "effects": [
           {
             "type": "voltageGain",
-            "value": 232,
-            "description": "ボルテージ232獲得 (Lv.10)"
+            "value": 116,
+            "description": "ボルテージ116獲得 (Lv.1)"
           }
         ]
       }
@@ -442,8 +430,8 @@ const gameData = {
           "then": [
             {
               "type": "voltageGain",
-              "value": 216,
-              "description": "ボルテージ216獲得 (Lv.10)"
+              "value": 108,
+              "description": "ボルテージ108獲得 (Lv.1)"
             }
           ]
         },
@@ -453,8 +441,8 @@ const gameData = {
           "then": [
             {
               "type": "scoreBoost",
-              "value": 3.72,
-              "description": "スコア372%ブースト (Lv.10)"
+              "value": 1.86,
+              "description": "スコア186%ブースト (Lv.1)"
             },
             {
               "type": "voltagePenalty",
@@ -469,8 +457,8 @@ const gameData = {
         "effects": [
           {
             "type": "voltageGain",
-            "value": 130,
-            "description": "ボルテージ130獲得 (Lv.10)"
+            "value": 65,
+            "description": "ボルテージ65獲得 (Lv.1)"
           },
           {
             "type": "conditional",
@@ -478,8 +466,8 @@ const gameData = {
             "then": [
               {
                 "type": "voltageGain",
-                "value": 158,
-                "description": "ボルテージ158獲得 (Lv.10)"
+                "value": 79,
+                "description": "ボルテージ79獲得 (Lv.1)"
               }
             ]
           }
@@ -498,8 +486,8 @@ const gameData = {
           "then": [
             {
               "type": "voltageBoost",
-              "value": 2.175,
-              "description": "ボルテージ217.5%ブースト (Lv.10)"
+              "value": 1.0875,
+              "description": "ボルテージ108.75%ブースト (Lv.1)"
             }
           ]
         },
@@ -509,8 +497,8 @@ const gameData = {
           "then": [
             {
               "type": "scoreBoost",
-              "value": 2.9,
-              "description": "スコア290%ブースト (Lv.10)"
+              "value": 1.45,
+              "description": "スコア145%ブースト (Lv.1)"
             }
           ]
         }
@@ -523,13 +511,13 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 0.825,
-          "description": "スコア82.5%ブースト (Lv.10)"
+          "value": 0.4125,
+          "description": "スコア41.25%ブースト (Lv.1)"
         },
         {
           "type": "voltageBoost",
-          "value": 0.825,
-          "description": "ボルテージ82.5%ブースト (Lv.10)"
+          "value": 0.4125,
+          "description": "ボルテージ41.25%ブースト (Lv.1)"
         }
       ]
     },
@@ -540,8 +528,8 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 3.15,
-          "description": "スコア315%ブースト (Lv.10)"
+          "value": 0.7875,
+          "description": "スコア78.75%ブースト (Lv.1)"
         },
         {
           "type": "conditional",
@@ -549,8 +537,8 @@ const gameData = {
           "then": [
             {
               "type": "scoreBoost",
-              "value": 2.52,
-              "description": "スコア252%ブースト (Lv.10)"
+              "value": 1.26,
+              "description": "スコア126%ブースト (Lv.1)"
             }
           ]
         }
@@ -563,8 +551,8 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 1.1375,
-          "description": "スコア113.75%ブースト (Lv.10)"
+          "value": 0.5687,
+          "description": "スコア56.87%ブースト (Lv.1)"
         },
         {
           "type": "conditional",
@@ -572,8 +560,8 @@ const gameData = {
           "then": [
             {
               "type": "scoreBoost",
-              "value": 3.64,
-              "description": "スコア364%ブースト (Lv.10)"
+              "value": 0.91,
+              "description": "スコア91%ブースト (Lv.1)"
             }
           ]
         }
@@ -586,8 +574,8 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 0.9375,
-          "description": "スコア93.75%ブースト (Lv.10)"
+          "value": 0.4687,
+          "description": "スコア46.87%ブースト (Lv.1)"
         },
         {
           "type": "conditional",
@@ -595,8 +583,8 @@ const gameData = {
           "then": [
             {
               "type": "scoreBoost",
-              "value": 3.0,
-              "description": "スコア300%ブースト (Lv.10)"
+              "value": 0.75,
+              "description": "スコア75%ブースト (Lv.1)"
             }
           ]
         }
@@ -609,8 +597,8 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 0.75,
-          "description": "スコア75%ブースト (Lv.10)"
+          "value": 0.375,
+          "description": "スコア37.5%ブースト (Lv.1)"
         },
         {
           "type": "conditional",
@@ -618,8 +606,8 @@ const gameData = {
           "then": [
             {
               "type": "scoreBoost",
-              "value": 1.61,
-              "description": "スコア161%ブースト (Lv.10)"
+              "value": 0.4025,
+              "description": "スコア40.25%ブースト (Lv.1)"
             }
           ]
         }
@@ -632,8 +620,8 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 3.1875,
-          "description": "スコアブースト効果318.75%上昇 (Lv.10)"
+          "value": 1.5937,
+          "description": "スコアブースト効果159.37%上昇 (Lv.1)"
         }
       ]
     },
@@ -644,8 +632,8 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 2.325,
-          "description": "スコア232.5%ブースト (Lv.10)"
+          "value": 1.1625,
+          "description": "スコア116.25%ブースト (Lv.1)"
         }
       ]
     },
@@ -656,8 +644,8 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 1.8125,
-          "description": "スコア181.25%ブースト (Lv.10)"
+          "value": 0.9062,
+          "description": "スコア90.62%ブースト (Lv.1)"
         }
       ]
     },
@@ -668,8 +656,8 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 1.35,
-          "description": "スコア135%ブースト (Lv.10)"
+          "value": 0.675,
+          "description": "スコア67.5%ブースト (Lv.1)"
         }
       ]
     },
@@ -713,13 +701,13 @@ const gameData = {
           "then": [
             {
               "type": "scoreBoost",
-              "value": 1.6875,
-              "description": "スコア168.75%ブースト (Lv.10)"
+              "value": 0.8437,
+              "description": "スコア84.37%ブースト (Lv.1)"
             },
             {
               "type": "voltageBoost",
-              "value": 1.6875,
-              "description": "ボルテージ168.75%ブースト (Lv.10)"
+              "value": 0.8437,
+              "description": "ボルテージ84.37%ブースト (Lv.1)"
             }
           ]
         },
@@ -737,13 +725,13 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 0.825,
-          "description": "スコア82.5%ブースト (Lv.10)"
+          "value": 0.4125,
+          "description": "スコア41.25%ブースト (Lv.1)"
         },
         {
           "type": "voltageBoost",
-          "value": 0.825,
-          "description": "ボルテージ82.5%ブースト (Lv.10)"
+          "value": 0.4125,
+          "description": "ボルテージ41.25%ブースト (Lv.1)"
         }
       ]
     },
@@ -754,8 +742,8 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 1.1375,
-          "description": "スコア113.75%ブースト (Lv.10)"
+          "value": 0.5687,
+          "description": "スコア56.87%ブースト (Lv.1)"
         },
         {
           "type": "conditional",
@@ -774,7 +762,7 @@ const gameData = {
           {
             "type": "mentalReduction",
             "value": 5,
-            "description": "最大メンタル5%減少 (Lv.10)"
+            "description": "最大メンタル5%減少 (Lv.1)"
           }
         ]
       }
@@ -803,8 +791,8 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 3.1875,
-          "description": "スコア318.75%ブースト (Lv.10)"
+          "value": 1.5937,
+          "description": "スコア159.37%ブースト (Lv.1)"
         }
       ]
     },
@@ -815,8 +803,8 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 2.325,
-          "description": "スコア232.5%ブースト (Lv.10)"
+          "value": 1.1625,
+          "description": "スコア116.25%ブースト (Lv.1)"
         }
       ]
     },
@@ -827,8 +815,8 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 1.8125,
-          "description": "スコア181.25%ブースト (Lv.10)"
+          "value": 0.9062,
+          "description": "スコア90.62%ブースト (Lv.1)"
         }
       ]
     },
@@ -840,8 +828,8 @@ const gameData = {
       "effects": [
         {
           "type": "voltageGain",
-          "value": 134,
-          "description": "ボルテージ134獲得 (Lv.10)"
+          "value": 67,
+          "description": "ボルテージ67獲得 (Lv.1)"
         },
         {
           "type": "conditional",
@@ -860,8 +848,8 @@ const gameData = {
           "then": [
             {
               "type": "voltageGain",
-              "value": 290,
-              "description": "ボルテージ290獲得 (Lv.10)"
+              "value": 145,
+              "description": "ボルテージ145獲得 (Lv.1)"
             }
           ]
         }
@@ -871,8 +859,8 @@ const gameData = {
         "effects": [
           {
             "type": "voltageGain",
-            "value": 232,
-            "description": "ボルテージ232獲得 (Lv.10)"
+            "value": 116,
+            "description": "ボルテージ116獲得 (Lv.1)"
           }
         ]
       }
@@ -894,15 +882,15 @@ const gameData = {
             },
             {
               "type": "scoreBoost",
-              "value": 0.99,
-              "description": "スコア99%ブースト (Lv.10)"
+              "value": 0.2475,
+              "description": "スコア24.75%ブースト (Lv.1)"
             }
           ],
           "else": [
             {
               "type": "scoreGain",
-              "value": 6.12,
-              "description": "スコア612%獲得 (Lv.10)"
+              "value": 3.06,
+              "description": "スコア306%獲得 (Lv.1)"
             }
           ]
         }
@@ -917,8 +905,8 @@ const gameData = {
           },
           {
             "type": "scoreGain",
-            "value": 2.175,
-            "description": "スコア217.5%獲得 (Lv.10)"
+            "value": 1.0875,
+            "description": "スコア108.75%獲得 (Lv.1)"
           }
         ]
       }
@@ -935,15 +923,15 @@ const gameData = {
           "then": [
             {
               "type": "scoreBoost",
-              "value": 4.65,
-              "description": "スコア465%ブースト (Lv.10)"
+              "value": 2.325,
+              "description": "スコア232.5%ブースト (Lv.1)"
             }
           ],
           "else": [
             {
               "type": "voltageGain",
-              "value": 279,
-              "description": "ボルテージ279獲得 (Lv.10)"
+              "value": 139,
+              "description": "ボルテージ139獲得 (Lv.1)"
             }
           ]
         }
@@ -953,8 +941,8 @@ const gameData = {
         "effects": [
           {
             "type": "voltageGain",
-            "value": 232,
-            "description": "ボルテージ232獲得 (Lv.10)"
+            "value": 116,
+            "description": "ボルテージ116獲得 (Lv.1)"
           }
         ]
       }
@@ -972,8 +960,8 @@ const gameData = {
         },
         {
           "type": "voltageBoost",
-          "value": 0.726,
-          "description": "ボルテージ72.6%ブースト (Lv.10)"
+          "value": 0.1815,
+          "description": "ボルテージ18.15%ブースト (Lv.1)"
         },
         {
           "type": "resetCardTurn",
@@ -992,15 +980,15 @@ const gameData = {
           "then": [
             {
               "type": "voltageBoost",
-              "value": 4.65,
-              "description": "ボルテージ465%ブースト (Lv.10)"
+              "value": 2.325,
+              "description": "ボルテージ232.5%ブースト (Lv.1)"
             }
           ],
           "else": [
             {
               "type": "scoreGain",
-              "value": 3.348,
-              "description": "スコア334.8%獲得 (Lv.10)"
+              "value": 1.674,
+              "description": "スコア167.4%獲得 (Lv.1)"
             }
           ]
         }
@@ -1010,8 +998,8 @@ const gameData = {
         "effects": [
           {
             "type": "scoreGain",
-            "value": 2.79,
-            "description": "スコア279%獲得 (Lv.10)"
+            "value": 1.395,
+            "description": "スコア139.5%獲得 (Lv.1)"
           }
         ]
       }
@@ -1027,8 +1015,8 @@ const gameData = {
           "then": [
             {
               "type": "voltageGain",
-              "value": 162,
-              "description": "ボルテージ162獲得 (Lv.10)"
+              "value": 81,
+              "description": "ボルテージ81獲得 (Lv.1)"
             }
           ]
         },
@@ -1038,8 +1026,8 @@ const gameData = {
           "then": [
             {
               "type": "scoreBoost",
-              "value": 2.16,
-              "description": "スコア216%ブースト (Lv.10)"
+              "value": 1.08,
+              "description": "スコア108%ブースト (Lv.1)"
             }
           ]
         },
@@ -1059,8 +1047,8 @@ const gameData = {
         "effects": [
           {
             "type": "voltageGain",
-            "value": 232,
-            "description": "ボルテージ232獲得 (Lv.10)"
+            "value": 116,
+            "description": "ボルテージ116獲得 (Lv.1)"
           }
         ]
       }
@@ -1073,8 +1061,8 @@ const gameData = {
       "effects": [
         {
           "type": "scoreGain",
-          "value": 4.212,
-          "description": "スコア421.2%獲得 (Lv.10)"
+          "value": 2.106,
+          "description": "スコア210.6%獲得 (Lv.1)"
         }
       ]
     },
