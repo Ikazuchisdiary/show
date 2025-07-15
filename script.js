@@ -1327,7 +1327,7 @@ function updateCenterCharacterHighlight() {
             } else {
                 centerSkillHtml += `
                     <div style="color: #999; font-size: 14px;">
-                        センタースキルは未実装です
+                        このカードはスコアに影響するセンタースキルを持っていません
                     </div>
                 `;
             }
