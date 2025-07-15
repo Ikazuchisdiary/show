@@ -963,7 +963,7 @@ function toggleMusicInput() {
     const previousMusic = musicSelect.getAttribute('data-previous-value') || 'i_do_me';
     
     // Save current state for the previous song
-    if (previousMusic !== 'custom') {
+    if (previousMusic !== 'custom' && previousMusic !== musicSelect.value) {
         const tempMusicValue = musicSelect.value;
         musicSelect.value = previousMusic;
         saveCurrentState();
@@ -1026,7 +1026,7 @@ function calculate() {
         return;
     }
     
-    const appeal = parseNumberWithoutCommas(document.getElementById('appeal').value);
+    const appeal = parseInt(document.getElementById('appeal').value) || 0;
     const initialMental = parseInt(document.getElementById('mental').value);
     const learningCorrection = parseFloat(document.getElementById('learningCorrection').value);
     const musicKey = document.getElementById('music').value;
@@ -2317,15 +2317,6 @@ function swapCards(fromSlot, toSlot) {
     setTimeout(saveCurrentState, 100);
 }
 
-// Format number with commas
-function formatNumberWithCommas(num) {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-// Parse number removing commas
-function parseNumberWithoutCommas(str) {
-    return parseInt(str.replace(/,/g, '')) || 0;
-}
 
 // Close notice banner
 function closeNotice() {
@@ -2347,18 +2338,6 @@ window.onload = function() {
     // Setup drag and drop
     setupDragAndDrop();
     
-    // Setup appeal value formatting
-    const appealInput = document.getElementById('appeal');
-    appealInput.value = formatNumberWithCommas(appealInput.value);
-    
-    appealInput.addEventListener('focus', function() {
-        this.value = this.value.replace(/,/g, '');
-    });
-    
-    appealInput.addEventListener('blur', function() {
-        const value = parseNumberWithoutCommas(this.value);
-        this.value = formatNumberWithCommas(value);
-    });
     
     // Add event listener for custom center character changes
     const customCenterSelect = document.getElementById('customCenterCharacter');
