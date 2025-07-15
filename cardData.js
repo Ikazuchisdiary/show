@@ -1209,8 +1209,8 @@ const gameData = {
     },
     "on_your_mark_104": {
       "name": "On your mark（104期Ver.）",
-      "phases": [17, 8, 6],
-      "description": "フィーバー前: 17, フィーバー中: 8, フィーバー後: 6",
+      "phases": [10, 5, 4],
+      "description": "フィーバー前: 10, フィーバー中: 5, フィーバー後: 4",
       "centerCharacter": "夕霧綴理"
     },
     "preserved_roses": {
