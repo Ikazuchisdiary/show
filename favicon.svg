@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Background -->
+  <rect width="64" height="64" rx="12" fill="#4A90E2"/>
+  
+  <!-- Screen frame -->
+  <rect x="10" y="10" width="44" height="44" rx="4" fill="#ffffff" stroke="#2C5AA0" stroke-width="2"/>
+  
+  <!-- Music note -->
+  <g transform="translate(32, 32)">
+    <path d="M-8,-12 L-8,8 Q-12,10 -12,6 Q-12,2 -8,4 L-8,-12 L8,-8 L8,4 Q4,6 4,2 Q4,-2 8,0 L8,-8 L-8,-12 Z" 
+          fill="#FF6B6B" stroke="#D84848" stroke-width="1"/>
+  </g>
+  
+  <!-- Star accents -->
+  <path d="M 48,16 L 49.5,19 L 52.5,19.5 L 50,22 L 50.5,25 L 48,23.5 L 45.5,25 L 46,22 L 43.5,19.5 L 46.5,19 Z" 
+        fill="#FFD93D" stroke="#FFC107" stroke-width="0.5"/>
+  
+  <path d="M 16,48 L 17.5,51 L 20.5,51.5 L 18,54 L 18.5,57 L 16,55.5 L 13.5,57 L 14,54 L 11.5,51.5 L 14.5,51 Z" 
+        fill="#FFD93D" stroke="#FFC107" stroke-width="0.5"/>
+</svg>
