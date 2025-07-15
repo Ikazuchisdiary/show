@@ -1110,6 +1110,36 @@ const gameData = {
       "phases": [13, 6, 4],
       "description": "フィーバー前: 13, フィーバー中: 6, フィーバー後: 4",
       "centerCharacter": "セラス 柳田 リリエンフェルト"
+    },
+    "retrofuture": {
+      "name": "Retrofuture",
+      "phases": [19, 9, 0],
+      "description": "フィーバー前: 19, フィーバー中: 9, フィーバー後: 0",
+      "centerCharacter": "セラス 柳田 リリエンフェルト"
+    },
+    "edelied": {
+      "name": "Edelied",
+      "phases": [11, 3, 4],
+      "description": "フィーバー前: 11, フィーバー中: 3, フィーバー後: 4",
+      "centerCharacter": "桂城泉"
+    },
+    "chirikonkan": {
+      "name": "チリコンカン",
+      "phases": [10, 5, 4],
+      "description": "フィーバー前: 10, フィーバー中: 5, フィーバー後: 4",
+      "centerCharacter": "桂城泉"
+    },
+    "rinbu_revolution": {
+      "name": "輪舞-revolution",
+      "phases": [15, 5, 0],
+      "description": "フィーバー前: 15, フィーバー中: 5, フィーバー後: 0",
+      "centerCharacter": "セラス 柳田 リリエンフェルト"
+    },
+    "aozora_jumping_heart": {
+      "name": "青空Jumping Heart",
+      "phases": [10, 4, 4],
+      "description": "フィーバー前: 10, フィーバー中: 4, フィーバー後: 4",
+      "centerCharacter": "安養寺姫芽"
     }
   }
 };
