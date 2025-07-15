@@ -25,9 +25,20 @@ h1 {
 
 label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     font-weight: bold;
     color: #555;
+}
+
+/* Custom music input specific styles */
+#customMusic .form-group {
+    margin-bottom: 16px;
+}
+
+#customMusic .form-group label {
+    font-size: 14px;
+    color: #666;
+    font-weight: 600;
 }
 
 input[type="number"] {
@@ -37,6 +48,169 @@ input[type="number"] {
     border-radius: 5px;
     font-size: 16px;
     box-sizing: border-box;
+}
+
+/* Custom music section */
+.custom-music-section {
+    margin-top: 20px;
+}
+
+.custom-music-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.custom-music-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 15px 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.custom-music-header h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+}
+
+.phase-inputs-section {
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.section-label {
+    font-size: 13px;
+    color: #666;
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.phase-inputs-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.phase-input-group {
+    text-align: center;
+}
+
+.phase-input-group label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.phase-input-group input[type="number"] {
+    width: 70px;
+    text-align: center;
+    padding: 10px 8px;
+    font-size: 18px;
+    font-weight: 600;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.phase-input-group input[type="number"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+    transform: scale(1.05);
+}
+
+.phase-input-group.fever label {
+    color: #ff6b6b;
+    font-weight: 600;
+}
+
+.phase-input-group.fever input {
+    border-color: #ffe0e0;
+    background: #fff5f5;
+}
+
+.phase-input-group.fever input:focus {
+    border-color: #ff6b6b;
+}
+
+.phase-separator {
+    font-size: 20px;
+    color: #ccc;
+    font-weight: 300;
+}
+
+.custom-music-settings {
+    padding: 20px;
+}
+
+.setting-row {
+    margin-bottom: 15px;
+}
+
+.setting-label {
+    display: block;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.setting-row select {
+    width: 100%;
+    max-width: 350px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+}
+
+.save-music-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.save-music-row input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.save-button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 16px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: auto;
+    width: auto;
+}
+
+.save-button:hover {
+    background: #45a049;
+    transform: translateY(-1px);
+}
+
+.save-icon {
+    font-size: 14px;
 }
 
 .card-selection {
@@ -62,6 +236,25 @@ input[type="number"] {
     margin: 0;
     min-width: 80px;
     flex-shrink: 0;
+}
+
+.card-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px !important;
+    height: 24px;
+    min-width: 24px !important;
+    background: white;
+    color: #333;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1.5px solid #ddd;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    position: relative;
+    margin-right: 12px;
+    transition: all 0.2s ease;
 }
 
 select {
@@ -159,6 +352,9 @@ select {
     width: 150px;
     font-size: 14px;
     flex-shrink: 0;
+    line-height: 32px;
+    margin: 0;
+    padding: 0;
 }
 
 .skill-param-row input {
@@ -174,8 +370,28 @@ select {
 
 .skill-level-select {
     width: auto;
-    min-width: 120px;
-    max-width: 200px;
+    min-width: 60px;
+    max-width: 80px;
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    background-color: #f8f8f8;
+    color: #333;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.skill-level-select:hover {
+    background-color: #fff;
+    border-color: #bbb;
+}
+
+.skill-level-select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    background-color: #fff;
 }
 
 button {
@@ -184,14 +400,45 @@ button {
     background-color: #4CAF50;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 18px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(76, 175, 80, 0.2);
+    position: relative;
+    overflow: hidden;
 }
 
 button:hover {
     background-color: #45a049;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+}
+
+/* Primary calculate button */
+button[onclick="calculate()"] {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    font-size: 20px;
+    padding: 18px;
+    margin-top: 20px;
+}
+
+/* Secondary buttons */
+button.secondary {
+    background-color: #2196F3;
+    font-size: 14px;
+    padding: 10px 20px;
+    width: auto;
+}
+
+button.secondary:hover {
+    background-color: #1976D2;
 }
 
 #result {
@@ -229,13 +476,42 @@ button:hover {
     background-color: white;
     border-radius: 5px;
     border-left: 3px solid #4CAF50;
+    position: relative;
 }
 
 .log-turn-header {
     font-weight: bold;
     color: #333;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.log-turn-header .log-card-name {
+    font-weight: bold;
+    color: #2196F3;
+    font-size: 13px;
+}
+
+.turn-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 6px;
+    background: #f0f0f0;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 4px;
+}
+
+.fever-icon {
     font-size: 16px;
+    margin-left: 4px;
 }
 
 .log-card-name {
@@ -244,8 +520,7 @@ button:hover {
 }
 
 .log-action {
-    margin: 2px 0;
-    padding-left: 20px;
+    margin: 2px 0 2px 20px;
     color: #666;
 }
 
@@ -310,8 +585,20 @@ button:hover {
     color: #ff6b6b;
 }
 
+.log-score-boost::before {
+    content: '📈';
+    margin-right: 4px;
+    font-size: 12px;
+}
+
 .log-voltage-boost {
     color: #f39c12;
+}
+
+.log-voltage-boost::before {
+    content: '⚡';
+    margin-right: 4px;
+    font-size: 12px;
 }
 
 .log-score-gain {
@@ -319,17 +606,138 @@ button:hover {
     font-weight: bold;
 }
 
+.log-score-gain::before {
+    content: '💎';
+    margin-right: 4px;
+    font-size: 12px;
+}
+
 .log-voltage-gain {
     color: #e74c3c;
+}
+
+.log-voltage-gain::before {
+    content: '🔋';
+    margin-right: 4px;
+    font-size: 12px;
 }
 
 .log-mental {
     color: #9b59b6;
 }
 
+.log-mental::before {
+    content: '💜';
+    margin-right: 4px;
+    font-size: 12px;
+}
+
 .log-skip {
     color: #95a5a6;
     font-style: italic;
+}
+
+/* Boost action vertical layout */
+.log-boost-action {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.boost-values {
+    padding-left: 16px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+/* Score boost value styling */
+.log-score-boost + .boost-values {
+    color: #ff6b6b;
+}
+
+/* Voltage boost value styling */
+.log-voltage-boost + .boost-values {
+    color: #f39c12;
+}
+
+/* Score gain value styling */
+.score-gain-values {
+    padding-left: 16px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #27ae60;
+}
+
+
+
+/* Condition logging styles */
+.log-condition-success,
+.log-condition-fail,
+.log-condition-skip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0 4px 20px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    max-width: fit-content;
+}
+
+.log-condition-success {
+    background: #e8f5e9;
+    border: 1px solid #c8e6c9;
+}
+
+.log-condition-fail {
+    background: #f5f5f5;
+    border: 1px solid #e0e0e0;
+}
+
+.log-condition-skip {
+    background: #fef5e7;
+    border: 1px solid #ffecb3;
+}
+
+.condition-text {
+    color: #555;
+    font-size: 11px;
+}
+
+.condition-arrow {
+    color: #999;
+    font-size: 14px;
+}
+
+.condition-result {
+    font-weight: 600;
+    white-space: nowrap;
+    font-size: 11px;
+}
+
+.log-condition-success .condition-result {
+    color: #2e7d32;
+}
+
+.log-condition-fail .condition-result {
+    color: #757575;
+}
+
+.log-condition-skip .condition-result {
+    color: #f57c00;
+}
+
+/* Indent effects that follow conditions */
+.conditional-effects {
+    margin-left: 35px;
+    padding-left: 12px;
+    border-left: 2px solid #e0e0e0;
+    position: relative;
+}
+
+.conditional-effects .log-action {
+    margin-bottom: 2px;
+    margin-left: 0;
 }
 
 .toggle-log {
@@ -357,17 +765,47 @@ input[placeholder="不明"]:focus {
 .card-slot {
     cursor: move;
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .card-slot.dragging {
-    opacity: 0.5;
-    transform: scale(0.95);
+    opacity: 0.3;
+    transform: scale(0.98);
+    background: #f5f5f5;
+}
+
+.card-slot.dragging::after {
+    content: 'ドラッグ中...';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #999;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .card-slot.drag-over {
-    background-color: #e3f2fd;
-    border: 2px dashed #2196F3;
+    background-color: #e8f5e9;
+    border: 2px dashed #4CAF50;
     border-radius: 8px;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+.card-slot.drag-over::before {
+    content: '↓ ここにドロップ';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #4CAF50;
+    font-size: 12px;
+    font-weight: bold;
+    background: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* Duplicate character warning */
@@ -381,6 +819,31 @@ input[placeholder="不明"]:focus {
     font-weight: bold;
 }
 
+.card-slot.duplicate-character .card-number {
+    background: #ffebee;
+    color: #d32f2f;
+    border-color: #f44336;
+}
+
+/* Ensure duplicate styling takes precedence over center character styling */
+.card-slot.center-character.duplicate-character {
+    background-color: #ffebee !important;
+    background: #ffebee !important;
+    border: 2px solid #f44336;
+    box-shadow: none;
+}
+
+.card-slot.center-character.duplicate-character .card-row label {
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+.card-slot.center-character.duplicate-character .card-number {
+    background: #ffebee !important;
+    color: #d32f2f !important;
+    border-color: #f44336 !important;
+}
+
 /* Center character styling */
 .card-slot.center-character {
     background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
@@ -391,6 +854,13 @@ input[placeholder="不明"]:focus {
 .card-slot.center-character .card-row label {
     color: #e65100;
     font-weight: bold;
+}
+
+.card-slot.center-character .card-number {
+    background: #fff8e1;
+    color: #e65100;
+    border-color: #ff9800;
+    font-weight: 700;
 }
 
 .center-skill-info {
@@ -411,4 +881,177 @@ input[placeholder="不明"]:focus {
 .center-skill-info .skill-description {
     color: #666;
     font-size: 12px;
+}
+
+/* Saved custom music styles */
+.saved-music-container {
+    margin-top: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+}
+
+.saved-music-header {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.saved-music-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 10px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s ease;
+}
+
+.saved-music-item:hover {
+    border-color: #4CAF50;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.saved-music-item:last-child {
+    margin-bottom: 0;
+}
+
+.saved-music-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.saved-music-name {
+    font-weight: 500;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.saved-music-phases {
+    font-size: 13px;
+    color: #666;
+    background: #f0f0f0;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.saved-music-center {
+    font-size: 12px;
+    color: #ff9800;
+    font-weight: 600;
+    background: #fff8e1;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid #ffd54f;
+}
+
+.center-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: #ff9800;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 4px;
+}
+
+.delete-button {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    padding: 0;
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-button:hover {
+    background: #d32f2f;
+    transform: scale(1.1);
+}
+
+/* Notice banner styles */
+.notice-banner {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    border: 1px solid #ffd54f;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.notice-banner.hidden {
+    display: none;
+}
+
+.notice-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex: 1;
+}
+
+.notice-icon {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.notice-text {
+    flex: 1;
+}
+
+.notice-text p {
+    margin: 0;
+    color: #6d4c41;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.notice-text p:not(:last-child) {
+    margin-bottom: 4px;
+}
+
+.notice-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: #8d6e63;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: none;
+}
+
+.notice-close:hover {
+    color: #5d4037;
+    transform: scale(1.2);
+    background: transparent;
+    box-shadow: none;
 }

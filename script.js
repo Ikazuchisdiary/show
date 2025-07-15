@@ -69,21 +69,41 @@ class Game {
         if (this.cardTurn >= this.cards.length) {
             this.cardTurn = 0;
         }
-        if (this.verbose) {
-            this.log += `turn ${this.turn + 1}\n`;
-            this.currentTurnLog = [];
-            const phase = this.getCurrentPhase();
-            this.currentTurnLog.push(`<div class="log-turn-header">ターン ${this.turn + 1} ${phase}</div>`);
-        }
         const card = this.cards[this.cardTurn];
         
         // Store initial turn state to check if turn was skipped
         const initialTurn = this.turn;
+        const initialCardTurn = this.cardTurn;
+        
+        // Check if card will be skipped before creating log
+        let willBeSkipped = false;
+        if (card.config && card.config.effects) {
+            for (const effect of card.config.effects) {
+                if (effect.type === 'skipTurn' && card.evaluateCondition) {
+                    // Increment count temporarily to check condition
+                    card.count++;
+                    willBeSkipped = card.evaluateCondition(effect.condition, this);
+                    card.count--;
+                    if (willBeSkipped) break;
+                }
+            }
+        }
+        
+        // Only create log header if card won't be skipped
+        if (this.verbose && !willBeSkipped) {
+            this.log += `turn ${this.turn + 1}\n`;
+            this.currentTurnLog = [];
+            const phase = this.getCurrentPhase();
+            const cardName = card.displayName || card.name;
+            this.currentTurnLog.push(`<div class="log-turn-header"><span class="turn-number">${this.turn + 1}</span> ${phase} <span class="log-card-name">${cardName}</span></div>`);
+        }
+        
         card.do(this);
         const turnSkipped = this.turn === initialTurn;
+        const cardSkipped = this.cardTurn > initialCardTurn && turnSkipped;
         
-        // Only create log entry if turn was not skipped
-        if (this.verbose && this.currentTurnLog.length > 1 && !turnSkipped) {
+        // Create log entry only if we have content and card wasn't skipped
+        if (this.verbose && this.currentTurnLog.length > 0 && !willBeSkipped) {
             this.logHtml += `<div class="log-turn">${this.currentTurnLog.join('')}</div>`;
         }
     }
@@ -92,13 +112,10 @@ class Game {
         const beforeFever = this.music[0];
         const duringFever = this.music[1];
         
-        if (this.turn < beforeFever) {
-            return '<span style="color: #666;">[通常]</span>';
-        } else if (this.turn < beforeFever + duringFever) {
-            return '<span style="color: #ff6b6b; font-weight: bold;">[フィーバー]</span>';
-        } else {
-            return '<span style="color: #666;">[フィーバー後]</span>';
+        if (this.turn >= beforeFever && this.turn < beforeFever + duringFever) {
+            return '<span class="fever-icon">🔥</span>';
         }
+        return '';
     }
 
     getVoltageLevel() {
@@ -133,7 +150,7 @@ class Game {
             this.log += `score boost ${value}, reach ${this.scoreBoost[this.scoreBoostCount]}\n`;
             const percent = (value * 100).toFixed(2);
             const total = (this.scoreBoost[this.scoreBoostCount] * 100).toFixed(2);
-            this.currentTurnLog.push(`<div class="log-action"><span class="log-score-boost">スコアブースト +${percent}% (合計: ${total}%)</span></div>`);
+            this.currentTurnLog.push(`<div class="log-action log-boost-action"><div class="log-score-boost">スコアブースト</div><div class="boost-values">+${percent}% → ${total}%</div></div>`);
         }
     }
 
@@ -145,7 +162,7 @@ class Game {
             this.log += `voltage boost ${value}, reach ${this.voltageBoost[this.voltageBoostCount]}\n`;
             const percent = (value * 100).toFixed(2);
             const total = (this.voltageBoost[this.voltageBoostCount] * 100).toFixed(2);
-            this.currentTurnLog.push(`<div class="log-action"><span class="log-voltage-boost">ボルテージブースト +${percent}% (合計: ${total}%)</span></div>`);
+            this.currentTurnLog.push(`<div class="log-action log-boost-action"><div class="log-voltage-boost">ボルテージブースト</div><div class="boost-values">+${percent}% → ${total}%</div></div>`);
         }
     }
 
@@ -158,7 +175,7 @@ class Game {
             const voltageLevel = this.getVoltageLevel();
             const totalScoreBoostPercent = ((1 + this.scoreBoost[this.scoreBoostCount - 1]) * 100).toFixed(2);
             const totalVoltageLevelPercent = ((1 + voltageLevel / 10) * 100).toFixed(2);
-            this.currentTurnLog.push(`<div class="log-action"><span class="log-score-gain">スコア獲得: +${score.toLocaleString()}</span></div>`);
+            this.currentTurnLog.push(`<div class="log-action log-boost-action"><div class="log-score-gain">スコア獲得</div><div class="score-gain-values">+${score.toLocaleString()} → ${this.score.toLocaleString()}</div></div>`);
             
             // Build calculation display with labels
             let calcHtml = '<div class="log-calculation">';
@@ -187,7 +204,7 @@ class Game {
             this.voltageBoostCount += 1;
             const newLevel = this.getVoltageLevel();
             this.voltageBoostCount -= 1;
-            this.currentTurnLog.push(`<div class="log-action"><span class="log-voltage-gain">ボルテージ獲得: +${voltagePt} (合計: ${this.voltagePt})</span></div>`);
+            this.currentTurnLog.push(`<div class="log-action"><span class="log-voltage-gain">ボルテージ獲得: +${voltagePt} → ${this.voltagePt}</span></div>`);
             
             // Build voltage calculation display
             let calcHtml = '<div class="log-calculation">';
@@ -304,9 +321,19 @@ class Game {
                 
                 if (this.verbose) {
                     const conditionText = this.formatCenterSkillCondition(effect.condition);
-                    const resultText = conditionMet ? '条件成立' : '条件不成立';
-                    const resultColor = conditionMet ? '#27ae60' : '#95a5a6';
-                    this.currentTurnLog.push(`<div class="log-action" style="color: ${resultColor};">${conditionText} → ${resultText}</div>`);
+                    if (conditionMet) {
+                        this.currentTurnLog.push(`<div class="log-condition-success">
+                            <span class="condition-text">${conditionText}</span>
+                            <span class="condition-arrow">→</span>
+                            <span class="condition-result">成立 ✓</span>
+                        </div>`);
+                    } else {
+                        this.currentTurnLog.push(`<div class="log-condition-fail">
+                            <span class="condition-text">${conditionText}</span>
+                            <span class="condition-arrow">→</span>
+                            <span class="condition-result">不成立 ✗</span>
+                        </div>`);
+                    }
                 }
                 
                 if (conditionMet) {
@@ -441,12 +468,6 @@ class GenericCard extends Card {
         
         const effects = this.config.effects;
         
-        // Add card name at the top
-        if (game.verbose) {
-            const cardName = this.displayName || this.name;
-            game.currentTurnLog.push(`<div class="log-action"><span class="log-card-name">${cardName}</span></div>`);
-        }
-        
         // Process effects array sequentially
         for (let i = 0; i < effects.length; i++) {
             const effect = effects[i];
@@ -454,12 +475,28 @@ class GenericCard extends Card {
             switch (effect.type) {
                 case 'skipTurn':
                     const skipConditionMet = this.evaluateCondition(effect.condition, game);
-                    if (game.verbose) {
-                        const conditionInfo = this.formatCondition(effect.condition, game);
-                        game.currentTurnLog.push(`<div class="log-action" style="color: #666;">${conditionInfo.formatted} → ${skipConditionMet ? '条件成立（スキップ）' : '条件不成立'}</div>`);
+                    
+                    // Check if this is the last use before removal
+                    let isLastUseBeforeRemoval = false;
+                    if (effect.condition.includes('count >')) {
+                        const match = effect.condition.match(/count\s*>\s*(\d+)/);
+                        if (match) {
+                            const threshold = parseInt(match[1]);
+                            isLastUseBeforeRemoval = this.count === threshold;
+                        }
                     }
+                    
+                    if (game.verbose && isLastUseBeforeRemoval) {
+                        game.currentTurnLog.push(`<div class="log-condition-skip">
+                            <span class="condition-result">デッキから除外 🚫</span>
+                        </div>`);
+                    }
+                    
                     if (skipConditionMet) {
-                        // Don't log skip action since we'll hide the entire turn
+                        // Clear the log since we won't show this turn
+                        if (game.verbose) {
+                            game.currentTurnLog = [];
+                        }
                         game.cardTurn += 1;
                         return;
                     }
@@ -499,7 +536,7 @@ class GenericCard extends Card {
                 case 'mentalRecover':
                     game.mental += effect.value;
                     if (game.verbose) {
-                        game.currentTurnLog.push(`<div class="log-action log-mental">メンタル回復: +${effect.value} (合計: ${game.mental})</div>`);
+                        game.currentTurnLog.push(`<div class="log-action log-mental">メンタル回復: +${effect.value} → ${game.mental}%</div>`);
                     }
                     break;
                     
@@ -518,7 +555,7 @@ class GenericCard extends Card {
                     }
                     game.mental = Math.max(1, game.mental - reduction);
                     if (game.verbose) {
-                        game.currentTurnLog.push(`<div class="log-action log-mental" style="color: #e74c3c;">${logMessage}: -${reduction} (合計: ${game.mental})</div>`);
+                        game.currentTurnLog.push(`<div class="log-action log-mental" style="color: #e74c3c;">${logMessage}: -${reduction} → ${game.mental}%</div>`);
                     }
                     break;
                     
@@ -533,16 +570,38 @@ class GenericCard extends Card {
                     const conditionMet = this.evaluateCondition(effect.condition, game);
                     if (game.verbose) {
                         const conditionInfo = this.formatCondition(effect.condition, game);
-                        const resultText = conditionMet ? '条件成立' : '条件不成立';
-                        const resultColor = conditionMet ? '#27ae60' : '#95a5a6';
-                        game.currentTurnLog.push(`<div class="log-action" style="color: ${resultColor};">${conditionInfo.formatted} → ${resultText}</div>`);
+                        if (conditionMet) {
+                            game.currentTurnLog.push(`<div class="log-condition-success">
+                                <span class="condition-text">${conditionInfo.formatted}</span>
+                                <span class="condition-arrow">→</span>
+                                <span class="condition-result">成立 ✓</span>
+                            </div>`);
+                        } else {
+                            game.currentTurnLog.push(`<div class="log-condition-fail">
+                                <span class="condition-text">${conditionInfo.formatted}</span>
+                                <span class="condition-arrow">→</span>
+                                <span class="condition-result">不成立 ✗</span>
+                            </div>`);
+                        }
                     }
                     if (conditionMet) {
                         // Process "then" effects
+                        if (game.verbose) {
+                            game.currentTurnLog.push(`<div class="conditional-effects">`);
+                        }
                         this.processEffects(effect.then, game, `effect_${i}_then`);
+                        if (game.verbose) {
+                            game.currentTurnLog.push(`</div>`);
+                        }
                     } else if (effect.else) {
                         // Process "else" effects
+                        if (game.verbose) {
+                            game.currentTurnLog.push(`<div class="conditional-effects">`);
+                        }
                         this.processEffects(effect.else, game, `effect_${i}_else`);
+                        if (game.verbose) {
+                            game.currentTurnLog.push(`</div>`);
+                        }
                     }
                     break;
             }
@@ -823,7 +882,7 @@ function calculate() {
         return;
     }
     
-    const appeal = parseInt(document.getElementById('appeal').value);
+    const appeal = parseNumberWithoutCommas(document.getElementById('appeal').value);
     const initialMental = parseInt(document.getElementById('mental').value);
     const learningCorrection = parseFloat(document.getElementById('learningCorrection').value);
     const musicKey = document.getElementById('music').value;
@@ -970,11 +1029,11 @@ function setDefaultSelections() {
         }
     }
     
-    // Check for duplicate characters in default selection
-    updateDuplicateCharacterHighlight();
-    
     // Update center character highlighting for default selection
     updateCenterCharacterHighlight();
+    
+    // Check for duplicate characters in default selection
+    updateDuplicateCharacterHighlight();
 }
 
 // Check for duplicate characters and return list of slot numbers with duplicates
@@ -995,7 +1054,7 @@ function checkDuplicateCharacters() {
     }
     
     // Find slots with duplicate characters
-    for (const [character, slots] of Object.entries(characterSlots)) {
+    for (const slots of Object.values(characterSlots)) {
         if (slots.length > 1) {
             slots.forEach(slot => duplicateSlots.add(slot));
         }
@@ -1011,19 +1070,24 @@ function updateDuplicateCharacterHighlight() {
     // Reset all slots
     for (let i = 1; i <= 6; i++) {
         const slot = document.querySelector(`.card-slot[data-slot="${i}"]`);
-        slot.classList.remove('duplicate-character');
+        if (slot) {
+            slot.classList.remove('duplicate-character');
+        }
     }
     
     // Highlight duplicate slots
     duplicateSlots.forEach(slotNum => {
         const slot = document.querySelector(`.card-slot[data-slot="${slotNum}"]`);
-        slot.classList.add('duplicate-character');
+        if (slot) {
+            slot.classList.add('duplicate-character');
+        }
     });
 }
 
 // Wrapper function to update card highlighting when center character changes
 function updateCardHighlighting() {
     updateCenterCharacterHighlight();
+    updateDuplicateCharacterHighlight();
 }
 
 // Update center character highlighting and display center skills
@@ -1067,17 +1131,18 @@ function updateCenterCharacterHighlight() {
             // Add center skill level selector
             const savedLevel = loadCardCenterSkillLevel(cardValue);
             let centerSkillHtml = `
-                <div class="skill-param-row">
-                    <label>センタースキルLv:</label>
-                    <select id="centerSkillLevel${i}" class="skill-level-select" onchange="onCenterSkillLevelChange(${i})">
+                <div class="skill-param-row" style="align-items: flex-start; margin-bottom: 10px;">
+                    <span style="display: inline-flex; align-items: center; gap: 8px;">
+                        <span style="color: #ff9800; font-weight: bold; font-size: 13px;">センタースキル</span>
+                        <select id="centerSkillLevel${i}" class="skill-level-select" onchange="onCenterSkillLevelChange(${i})">
             `;
             
             for (let level = 14; level >= 1; level--) {
                 const selected = level === savedLevel ? 'selected' : '';
-                centerSkillHtml += `<option value="${level}" ${selected}>Lv${level}</option>`;
+                centerSkillHtml += `<option value="${level}" ${selected}>Lv.${level}</option>`;
             }
             
-            centerSkillHtml += `</select></div>`;
+            centerSkillHtml += `</select></span></div>`;
             
             // Add center skill parameters if card has center skill
             if (cardData[cardValue].centerSkill) {
@@ -1099,7 +1164,7 @@ function updateCenterCharacterHighlight() {
                         break;
                 }
                 
-                centerSkillHtml += `<div style="color: #ff9800; font-weight: bold; font-size: 14px; margin: 5px 0;">発動: ${timingText}</div>`;
+                centerSkillHtml += `<div style="color: #ff9800; font-weight: bold; font-size: 14px; margin: 5px 0;">⚡ ${timingText}</div>`;
                 
                 // Generate center skill parameters similar to regular skills
                 let hasParams = false;
@@ -1159,11 +1224,11 @@ function onCardChange(slotNum) {
         skillParams.style.display = 'none';
     }
     
-    // Check for duplicate characters
-    updateDuplicateCharacterHighlight();
-    
-    // Update center character highlighting
+    // Update center character highlighting first
     updateCenterCharacterHighlight();
+    
+    // Then check for duplicate characters (needs to know center character)
+    updateDuplicateCharacterHighlight();
 }
 
 // Update skill level dropdown to show unknown values
@@ -1174,7 +1239,7 @@ function updateSkillLevelOptions(slotNum) {
     for (let level = 1; level <= 14; level++) {
         const option = skillSelect.querySelector(`option[value="${level}"]`);
         if (option) {
-            option.textContent = `スキルLv${level}`;
+            option.textContent = `Lv.${level}`;
             option.style.color = '';
         }
     }
@@ -1339,11 +1404,11 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
         case 'conditional':
             if (effect.then || effect.else) {
                 html += `<div style="margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px;">
-                    <div style="font-weight: bold; margin-bottom: 5px;">条件: ${formatConditionForDisplay(effect.condition)}</div>`;
+                    <div style="font-weight: bold; margin-bottom: 5px;">${formatConditionForDisplay(effect.condition)}</div>`;
                 
                 if (effect.then) {
-                    html += '<div style="margin-left: 10px;">';
-                    html += '<div style="font-weight: bold; color: #2196F3;">条件成立時:</div>';
+                    html += '<div>';
+                    html += '<div style="font-weight: bold; color: #2196F3; margin-top: 5px;">▶ 成立時</div>';
                     for (let i = 0; i < effect.then.length; i++) {
                         const thenEffect = effect.then[i];
                         const thenPrefix = prefix ? `${prefix}_then` : 'then';
@@ -1353,8 +1418,8 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
                 }
                 
                 if (effect.else && effect.else.length > 0) {
-                    html += '<div style="margin-left: 10px;">';
-                    html += '<div style="font-weight: bold; color: #f44336;">条件不成立時:</div>';
+                    html += '<div>';
+                    html += '<div style="font-weight: bold; color: #f44336; margin-top: 5px;">▶ 不成立時</div>';
                     for (let i = 0; i < effect.else.length; i++) {
                         const elseEffect = effect.else[i];
                         const elsePrefix = prefix ? `${prefix}_else` : 'else';
@@ -1461,11 +1526,11 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
         case 'conditional':
             if (effect.then || effect.else) {
                 html += `<div style="margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px;">
-                    <div style="font-weight: bold; margin-bottom: 5px;">条件: ${formatConditionForDisplay(effect.condition)}</div>`;
+                    <div style="font-weight: bold; margin-bottom: 5px;">${formatConditionForDisplay(effect.condition)}</div>`;
                 
                 if (effect.then) {
-                    html += '<div style="margin-left: 10px;">';
-                    html += '<div style="font-weight: bold; color: #2196F3;">条件成立時:</div>';
+                    html += '<div>';
+                    html += '<div style="font-weight: bold; color: #2196F3;">▶ 成立時</div>';
                     for (let j = 0; j < effect.then.length; j++) {
                         html += generateEffectInputs(effect.then[j], slotNum, j, `effect_${effectIndex}_then`, skillLevel);
                     }
@@ -1473,8 +1538,8 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
                 }
                 
                 if (effect.else && effect.else.length > 0) {
-                    html += '<div style="margin-left: 10px;">';
-                    html += '<div style="font-weight: bold; color: #f44336;">条件不成立時:</div>';
+                    html += '<div style="margin-top: 5px;">';
+                    html += '<div style="font-weight: bold; color: #f44336;">▶ 不成立時</div>';
                     for (let j = 0; j < effect.else.length; j++) {
                         html += generateEffectInputs(effect.else[j], slotNum, j, `effect_${effectIndex}_else`, skillLevel);
                     }
@@ -1956,11 +2021,11 @@ function loadStateForSong(musicKey) {
             }
         }
         
-        // Check for duplicate characters after loading
-        updateDuplicateCharacterHighlight();
-        
         // Update center character highlighting after loading
         updateCenterCharacterHighlight();
+        
+        // Check for duplicate characters after loading
+        updateDuplicateCharacterHighlight();
     } catch (e) {
         console.error('Error loading saved state:', e);
     }
@@ -2098,14 +2163,32 @@ function swapCards(fromSlot, toSlot) {
     document.getElementById(`cardSearch${fromSlotNum}`).value = toSearchValue;
     document.getElementById(`cardSearch${toSlotNum}`).value = fromSearchValue;
     
-    // Check for duplicate characters after swap
-    updateDuplicateCharacterHighlight();
-    
     // Update center character highlighting after swap
     updateCenterCharacterHighlight();
     
+    // Check for duplicate characters after swap
+    updateDuplicateCharacterHighlight();
+    
     // Save the new state
     setTimeout(saveCurrentState, 100);
+}
+
+// Format number with commas
+function formatNumberWithCommas(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// Parse number removing commas
+function parseNumberWithoutCommas(str) {
+    return parseInt(str.replace(/,/g, '')) || 0;
+}
+
+// Close notice banner
+function closeNotice() {
+    const banner = document.getElementById('noticeBanner');
+    banner.classList.add('hidden');
+    // Save preference
+    localStorage.setItem('noticeHidden', 'true');
 }
 
 // Initialize on page load
@@ -2119,6 +2202,19 @@ window.onload = function() {
     
     // Setup drag and drop
     setupDragAndDrop();
+    
+    // Setup appeal value formatting
+    const appealInput = document.getElementById('appeal');
+    appealInput.value = formatNumberWithCommas(appealInput.value);
+    
+    appealInput.addEventListener('focus', function() {
+        this.value = this.value.replace(/,/g, '');
+    });
+    
+    appealInput.addEventListener('blur', function() {
+        const value = parseNumberWithoutCommas(this.value);
+        this.value = formatNumberWithCommas(value);
+    });
     
     // Add event listener for custom center character changes
     const customCenterSelect = document.getElementById('customCenterCharacter');
@@ -2153,6 +2249,14 @@ window.onload = function() {
         
         // Show center character for default song
         toggleMusicInput();
+        
+        // Check if notice should be hidden
+        if (localStorage.getItem('noticeHidden') === 'true') {
+            const banner = document.getElementById('noticeBanner');
+            if (banner) {
+                banner.classList.add('hidden');
+            }
+        }
     }, 100);
 };
 
@@ -2203,8 +2307,6 @@ function saveCustomMusic() {
     
     // Clear the name input
     document.getElementById('customMusicName').value = '';
-    
-    alert(`「${name}」を保存しました。`);
 }
 
 function deleteCustomMusic(key) {
@@ -2278,13 +2380,34 @@ function updateSavedCustomMusicDisplay() {
         return;
     }
     
-    let html = '<div style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 5px;">';
-    html += '<div style="font-weight: bold; margin-bottom: 5px;">保存済みカスタム楽曲:</div>';
+    let html = '<div class="saved-music-container">';
+    html += '<div class="saved-music-header">保存済みカスタム楽曲</div>';
     
     entries.forEach(([key, music]) => {
-        html += `<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px 0; padding: 5px; background: white; border-radius: 3px;">`;
-        html += `<span>${music.name} (${music.phases.join(', ')})</span>`;
-        html += `<button onclick="deleteCustomMusic('${key}')" style="width: auto; padding: 5px 10px; background-color: #f44336; font-size: 12px;">削除</button>`;
+        html += `<div class="saved-music-item">`;
+        html += `<div class="saved-music-info">`;
+        html += `<span class="saved-music-name">${music.name}</span>`;
+        html += `<span class="saved-music-phases">${music.phases[0]}-${music.phases[1]}-${music.phases[2]}</span>`;
+        if (music.centerCharacter) {
+            // Extract first name (given name) only
+            const firstNameMap = {
+                '乙宗梢': '梢',
+                '夕霧綴理': '綴理',
+                '藤島慈': '慈',
+                '日野下花帆': '花帆',
+                '村野さやか': 'さやか',
+                '大沢瑠璃乃': '瑠璃乃',
+                '百生吟子': '吟子',
+                '徒町小鈴': '小鈴',
+                '安養寺姫芽': '姫芽',
+                '桂城泉': '泉',
+                'セラス 柳田 リリエンフェルト': 'セラス'
+            };
+            const firstName = firstNameMap[music.centerCharacter] || music.centerCharacter;
+            html += `<span class="saved-music-center">${firstName}</span>`;
+        }
+        html += `</div>`;
+        html += `<button onclick="deleteCustomMusic('${key}')" class="delete-button">×</button>`;
         html += `</div>`;
     });
     

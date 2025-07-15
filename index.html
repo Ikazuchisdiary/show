@@ -10,11 +10,15 @@
     <div class="container">
         <h1>スクショウ スコア計算機</h1>
         
-        <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #ffeaa7;">
-            <p style="margin: 0; color: #856404; font-size: 14px;">
-                ※ APが足りない場合は楽曲「カスタム入力」を使うと良いです。<br>
-                ※ スキルの数値がわずかにずれているかもしれません。その時は手動で入力してください。
-            </p>
+        <div class="notice-banner" id="noticeBanner">
+            <div class="notice-content">
+                <div class="notice-icon">💡</div>
+                <div class="notice-text">
+                    <p>APが足りない場合は楽曲「カスタム入力」を使うと良いです。</p>
+                    <p>スキルの数値がわずかにずれているかもしれません。その時は手動で入力してください。</p>
+                </div>
+            </div>
+            <button class="notice-close" onclick="closeNotice()">×</button>
         </div>
         
         <div class="form-group">
@@ -24,7 +28,7 @@
         
         <div class="form-group">
             <label for="learningCorrection">ラーニング補正:</label>
-            <input type="number" id="learningCorrection" value="1.5" min="0" step="0.1">
+            <input type="number" id="learningCorrection" value="1.5" min="0" step="0.01">
         </div>
         
         <div class="form-group">
@@ -42,6 +46,64 @@
             </select>
         </div>
         
+        <div id="customMusic" class="custom-music-section" style="display: none;">
+            <div class="custom-music-card">
+                <div class="custom-music-header">
+                    <h3>カスタム楽曲設定</h3>
+                </div>
+                
+                <div class="phase-inputs-section">
+                    <div class="section-label">ターン数設定</div>
+                    <div class="phase-inputs-container">
+                        <div class="phase-input-group">
+                            <label>フィーバー前</label>
+                            <input type="number" id="beforeFever" value="11" min="0">
+                        </div>
+                        <div class="phase-separator">→</div>
+                        <div class="phase-input-group fever">
+                            <label>フィーバー中</label>
+                            <input type="number" id="duringFever" value="7" min="0">
+                        </div>
+                        <div class="phase-separator">→</div>
+                        <div class="phase-input-group">
+                            <label>フィーバー後</label>
+                            <input type="number" id="afterFever" value="5" min="0">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="custom-music-settings">
+                    <div class="setting-row">
+                        <label class="setting-label">センターキャラクター</label>
+                        <select id="customCenterCharacter" onchange="updateCardHighlighting()">
+                            <option value="">なし</option>
+                            <option value="乙宗梢">乙宗梢</option>
+                            <option value="夕霧綴理">夕霧綴理</option>
+                            <option value="藤島慈">藤島慈</option>
+                            <option value="日野下花帆">日野下花帆</option>
+                            <option value="村野さやか">村野さやか</option>
+                            <option value="大沢瑠璃乃">大沢瑠璃乃</option>
+                            <option value="百生吟子">百生吟子</option>
+                            <option value="徒町小鈴">徒町小鈴</option>
+                            <option value="安養寺姫芽">安養寺姫芽</option>
+                            <option value="桂城泉">桂城泉</option>
+                            <option value="セラス 柳田 リリエンフェルト">セラス 柳田 リリエンフェルト</option>
+                        </select>
+                    </div>
+                    
+                    <div class="save-music-row">
+                        <input type="text" id="customMusicName" placeholder="カスタム楽曲名を入力">
+                        <button onclick="saveCustomMusic()" class="save-button">
+                            <span class="save-icon">💾</span>
+                            保存
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="savedCustomMusic"></div>
+        </div>
+        
         <div id="centerCharacterDisplay" style="margin-top: 15px; padding: 15px; background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-radius: 8px; border: 2px solid #ff9800; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: none;">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <div style="background-color: #ff9800; color: white; padding: 4px 12px; border-radius: 4px; font-weight: bold; font-size: 14px;">センター</div>
@@ -49,48 +111,10 @@
             </div>
         </div>
         
-        <div id="customMusic" style="display: none;">
-            <div class="form-group">
-                <label>フィーバー前ターン数:</label>
-                <input type="number" id="beforeFever" value="11" min="0">
-            </div>
-            <div class="form-group">
-                <label>フィーバー中ターン数:</label>
-                <input type="number" id="duringFever" value="7" min="0">
-            </div>
-            <div class="form-group">
-                <label>フィーバー後ターン数:</label>
-                <input type="number" id="afterFever" value="5" min="0">
-            </div>
-            <div class="form-group">
-                <label>センターキャラクター:</label>
-                <select id="customCenterCharacter" onchange="updateCardHighlighting()">
-                    <option value="">なし</option>
-                    <option value="乙宗梢">乙宗梢</option>
-                    <option value="夕霧綴理">夕霧綴理</option>
-                    <option value="藤島慈">藤島慈</option>
-                    <option value="日野下花帆">日野下花帆</option>
-                    <option value="村野さやか">村野さやか</option>
-                    <option value="大沢瑠璃乃">大沢瑠璃乃</option>
-                    <option value="百生吟子">百生吟子</option>
-                    <option value="徒町小鈴">徒町小鈴</option>
-                    <option value="安養寺姫芽">安養寺姫芽</option>
-                    <option value="桂城泉">桂城泉</option>
-                    <option value="セラス 柳田 リリエンフェルト">セラス 柳田 リリエンフェルト</option>
-                </select>
-            </div>
-            <div class="form-group" style="margin-top: 15px; display: flex; gap: 10px;">
-                <input type="text" id="customMusicName" placeholder="カスタム楽曲名を入力" style="flex: 1;">
-                <button onclick="saveCustomMusic()" style="width: auto; padding: 10px 20px; background-color: #2196F3;">保存</button>
-            </div>
-            <div id="savedCustomMusic" style="margin-top: 10px;"></div>
-        </div>
-        
         <div class="card-selection">
-            <h3>カード選択（順番通りに）:</h3>
             <div class="card-slot" draggable="true" data-slot="1">
                 <div class="card-row">
-                    <label>カード1:</label>
+                    <label class="card-number">1</label>
                     <div class="searchable-select-wrapper">
                         <input type="text" id="cardSearch1" class="card-search" placeholder="カード名で検索..." autocomplete="off">
                         <select id="card1" onchange="onCardChange(1)">
@@ -98,27 +122,27 @@
                         </select>
                     </div>
                     <select id="skill1" class="skill-level-select" onchange="onSkillLevelChange(1)" style="display: none;">
-                        <option value="14">スキルLv14</option>
-                        <option value="13">スキルLv13</option>
-                        <option value="12">スキルLv12</option>
-                        <option value="11">スキルLv11</option>
-                        <option value="10">スキルLv10</option>
-                        <option value="9">スキルLv9</option>
-                        <option value="8">スキルLv8</option>
-                        <option value="7">スキルLv7</option>
-                        <option value="6">スキルLv6</option>
-                        <option value="5">スキルLv5</option>
-                        <option value="4">スキルLv4</option>
-                        <option value="3">スキルLv3</option>
-                        <option value="2">スキルLv2</option>
-                        <option value="1">スキルLv1</option>
+                        <option value="14">Lv.14</option>
+                        <option value="13">Lv.13</option>
+                        <option value="12">Lv.12</option>
+                        <option value="11">Lv.11</option>
+                        <option value="10">Lv.10</option>
+                        <option value="9">Lv.9</option>
+                        <option value="8">Lv.8</option>
+                        <option value="7">Lv.7</option>
+                        <option value="6">Lv.6</option>
+                        <option value="5">Lv.5</option>
+                        <option value="4">Lv.4</option>
+                        <option value="3">Lv.3</option>
+                        <option value="2">Lv.2</option>
+                        <option value="1">Lv.1</option>
                     </select>
                 </div>
                 <div id="skillParams1" class="skill-params"></div>
             </div>
             <div class="card-slot" draggable="true" data-slot="2">
                 <div class="card-row">
-                    <label>カード2:</label>
+                    <label class="card-number">2</label>
                     <div class="searchable-select-wrapper">
                         <input type="text" id="cardSearch2" class="card-search" placeholder="カード名で検索..." autocomplete="off">
                         <select id="card2" onchange="onCardChange(2)">
@@ -126,27 +150,27 @@
                         </select>
                     </div>
                     <select id="skill2" class="skill-level-select" onchange="onSkillLevelChange(2)" style="display: none;">
-                        <option value="14">スキルLv14</option>
-                        <option value="13">スキルLv13</option>
-                        <option value="12">スキルLv12</option>
-                        <option value="11">スキルLv11</option>
-                        <option value="10">スキルLv10</option>
-                        <option value="9">スキルLv9</option>
-                        <option value="8">スキルLv8</option>
-                        <option value="7">スキルLv7</option>
-                        <option value="6">スキルLv6</option>
-                        <option value="5">スキルLv5</option>
-                        <option value="4">スキルLv4</option>
-                        <option value="3">スキルLv3</option>
-                        <option value="2">スキルLv2</option>
-                        <option value="1">スキルLv1</option>
+                        <option value="14">Lv.14</option>
+                        <option value="13">Lv.13</option>
+                        <option value="12">Lv.12</option>
+                        <option value="11">Lv.11</option>
+                        <option value="10">Lv.10</option>
+                        <option value="9">Lv.9</option>
+                        <option value="8">Lv.8</option>
+                        <option value="7">Lv.7</option>
+                        <option value="6">Lv.6</option>
+                        <option value="5">Lv.5</option>
+                        <option value="4">Lv.4</option>
+                        <option value="3">Lv.3</option>
+                        <option value="2">Lv.2</option>
+                        <option value="1">Lv.1</option>
                     </select>
                 </div>
                 <div id="skillParams2" class="skill-params"></div>
             </div>
             <div class="card-slot" draggable="true" data-slot="3">
                 <div class="card-row">
-                    <label>カード3:</label>
+                    <label class="card-number">3</label>
                     <div class="searchable-select-wrapper">
                         <input type="text" id="cardSearch3" class="card-search" placeholder="カード名で検索..." autocomplete="off">
                         <select id="card3" onchange="onCardChange(3)">
@@ -154,27 +178,27 @@
                         </select>
                     </div>
                     <select id="skill3" class="skill-level-select" onchange="onSkillLevelChange(3)" style="display: none;">
-                        <option value="14">スキルLv14</option>
-                        <option value="13">スキルLv13</option>
-                        <option value="12">スキルLv12</option>
-                        <option value="11">スキルLv11</option>
-                        <option value="10">スキルLv10</option>
-                        <option value="9">スキルLv9</option>
-                        <option value="8">スキルLv8</option>
-                        <option value="7">スキルLv7</option>
-                        <option value="6">スキルLv6</option>
-                        <option value="5">スキルLv5</option>
-                        <option value="4">スキルLv4</option>
-                        <option value="3">スキルLv3</option>
-                        <option value="2">スキルLv2</option>
-                        <option value="1">スキルLv1</option>
+                        <option value="14">Lv.14</option>
+                        <option value="13">Lv.13</option>
+                        <option value="12">Lv.12</option>
+                        <option value="11">Lv.11</option>
+                        <option value="10">Lv.10</option>
+                        <option value="9">Lv.9</option>
+                        <option value="8">Lv.8</option>
+                        <option value="7">Lv.7</option>
+                        <option value="6">Lv.6</option>
+                        <option value="5">Lv.5</option>
+                        <option value="4">Lv.4</option>
+                        <option value="3">Lv.3</option>
+                        <option value="2">Lv.2</option>
+                        <option value="1">Lv.1</option>
                     </select>
                 </div>
                 <div id="skillParams3" class="skill-params"></div>
             </div>
             <div class="card-slot" draggable="true" data-slot="4">
                 <div class="card-row">
-                    <label>カード4:</label>
+                    <label class="card-number">4</label>
                     <div class="searchable-select-wrapper">
                         <input type="text" id="cardSearch4" class="card-search" placeholder="カード名で検索..." autocomplete="off">
                         <select id="card4" onchange="onCardChange(4)">
@@ -182,27 +206,27 @@
                         </select>
                     </div>
                     <select id="skill4" class="skill-level-select" onchange="onSkillLevelChange(4)" style="display: none;">
-                        <option value="14">スキルLv14</option>
-                        <option value="13">スキルLv13</option>
-                        <option value="12">スキルLv12</option>
-                        <option value="11">スキルLv11</option>
-                        <option value="10">スキルLv10</option>
-                        <option value="9">スキルLv9</option>
-                        <option value="8">スキルLv8</option>
-                        <option value="7">スキルLv7</option>
-                        <option value="6">スキルLv6</option>
-                        <option value="5">スキルLv5</option>
-                        <option value="4">スキルLv4</option>
-                        <option value="3">スキルLv3</option>
-                        <option value="2">スキルLv2</option>
-                        <option value="1">スキルLv1</option>
+                        <option value="14">Lv.14</option>
+                        <option value="13">Lv.13</option>
+                        <option value="12">Lv.12</option>
+                        <option value="11">Lv.11</option>
+                        <option value="10">Lv.10</option>
+                        <option value="9">Lv.9</option>
+                        <option value="8">Lv.8</option>
+                        <option value="7">Lv.7</option>
+                        <option value="6">Lv.6</option>
+                        <option value="5">Lv.5</option>
+                        <option value="4">Lv.4</option>
+                        <option value="3">Lv.3</option>
+                        <option value="2">Lv.2</option>
+                        <option value="1">Lv.1</option>
                     </select>
                 </div>
                 <div id="skillParams4" class="skill-params"></div>
             </div>
             <div class="card-slot" draggable="true" data-slot="5">
                 <div class="card-row">
-                    <label>カード5:</label>
+                    <label class="card-number">5</label>
                     <div class="searchable-select-wrapper">
                         <input type="text" id="cardSearch5" class="card-search" placeholder="カード名で検索..." autocomplete="off">
                         <select id="card5" onchange="onCardChange(5)">
@@ -210,27 +234,27 @@
                         </select>
                     </div>
                     <select id="skill5" class="skill-level-select" onchange="onSkillLevelChange(5)" style="display: none;">
-                        <option value="14">スキルLv14</option>
-                        <option value="13">スキルLv13</option>
-                        <option value="12">スキルLv12</option>
-                        <option value="11">スキルLv11</option>
-                        <option value="10">スキルLv10</option>
-                        <option value="9">スキルLv9</option>
-                        <option value="8">スキルLv8</option>
-                        <option value="7">スキルLv7</option>
-                        <option value="6">スキルLv6</option>
-                        <option value="5">スキルLv5</option>
-                        <option value="4">スキルLv4</option>
-                        <option value="3">スキルLv3</option>
-                        <option value="2">スキルLv2</option>
-                        <option value="1">スキルLv1</option>
+                        <option value="14">Lv.14</option>
+                        <option value="13">Lv.13</option>
+                        <option value="12">Lv.12</option>
+                        <option value="11">Lv.11</option>
+                        <option value="10">Lv.10</option>
+                        <option value="9">Lv.9</option>
+                        <option value="8">Lv.8</option>
+                        <option value="7">Lv.7</option>
+                        <option value="6">Lv.6</option>
+                        <option value="5">Lv.5</option>
+                        <option value="4">Lv.4</option>
+                        <option value="3">Lv.3</option>
+                        <option value="2">Lv.2</option>
+                        <option value="1">Lv.1</option>
                     </select>
                 </div>
                 <div id="skillParams5" class="skill-params"></div>
             </div>
             <div class="card-slot" draggable="true" data-slot="6">
                 <div class="card-row">
-                    <label>カード6:</label>
+                    <label class="card-number">6</label>
                     <div class="searchable-select-wrapper">
                         <input type="text" id="cardSearch6" class="card-search" placeholder="カード名で検索..." autocomplete="off">
                         <select id="card6" onchange="onCardChange(6)">
@@ -238,20 +262,20 @@
                         </select>
                     </div>
                     <select id="skill6" class="skill-level-select" onchange="onSkillLevelChange(6)" style="display: none;">
-                        <option value="14">スキルLv14</option>
-                        <option value="13">スキルLv13</option>
-                        <option value="12">スキルLv12</option>
-                        <option value="11">スキルLv11</option>
-                        <option value="10">スキルLv10</option>
-                        <option value="9">スキルLv9</option>
-                        <option value="8">スキルLv8</option>
-                        <option value="7">スキルLv7</option>
-                        <option value="6">スキルLv6</option>
-                        <option value="5">スキルLv5</option>
-                        <option value="4">スキルLv4</option>
-                        <option value="3">スキルLv3</option>
-                        <option value="2">スキルLv2</option>
-                        <option value="1">スキルLv1</option>
+                        <option value="14">Lv.14</option>
+                        <option value="13">Lv.13</option>
+                        <option value="12">Lv.12</option>
+                        <option value="11">Lv.11</option>
+                        <option value="10">Lv.10</option>
+                        <option value="9">Lv.9</option>
+                        <option value="8">Lv.8</option>
+                        <option value="7">Lv.7</option>
+                        <option value="6">Lv.6</option>
+                        <option value="5">Lv.5</option>
+                        <option value="4">Lv.4</option>
+                        <option value="3">Lv.3</option>
+                        <option value="2">Lv.2</option>
+                        <option value="1">Lv.1</option>
                     </select>
                 </div>
                 <div id="skillParams6" class="skill-params"></div>
