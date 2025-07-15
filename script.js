@@ -689,8 +689,8 @@ class GenericCard extends Card {
         } else if (condition.includes('turn')) {
             if (condition.match(/turn\s*>=\s*(\d+)/)) {
                 const match = condition.match(/turn\s*>=\s*(\d+)/);
-                description = `${parseInt(match[1]) + 1}ターン目以降か`;
-                formatted = `ターン(${values.turn + 1}) ≥ ${parseInt(match[1]) + 1}`;
+                description = `${match[1]}ターン目以降か`;
+                formatted = `ターン(${values.turn + 1}) ≥ ${match[1]}`;
             }
         } else if (condition.includes('mental')) {
             if (condition.match(/mental\s*>=\s*(\d+)/)) {
