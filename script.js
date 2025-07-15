@@ -1772,13 +1772,17 @@ function formatConditionForDisplay(condition) {
 }
 
 // Calculate skill value based on level and base value
+// Now using Lv.10 value as base: actualValue = (lv10Value / 2) * multiplier
 function calculateSkillValue(lv1Value, skillLevel, isPercentage = true) {
+    // Convert Lv.1 value to Lv.10 value first
+    const lv10Value = lv1Value * 2.0;
+    
+    // Then apply the multiplier from Lv.10
     const multiplier = SKILL_LEVEL_MULTIPLIERS[skillLevel - 1];
-    const calculatedValue = lv1Value * multiplier;
+    const calculatedValue = (lv10Value / 2) * multiplier;
     
     if (isPercentage) {
         // Round to avoid floating point errors, then truncate to 4 decimal places
-        // This fixes issues like 0.4125 * 3.0 = 1.2374999999999998
         const rounded = Math.round(calculatedValue * 10000) / 10000;
         return Math.floor(rounded * 10000) / 10000;
     } else {
