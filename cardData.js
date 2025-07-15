@@ -345,8 +345,8 @@ const gameData = {
           "then": [
             {
               "type": "voltageBoost",
-              "value": 1.05,
-              "description": "ボルテージ105%ブースト (Lv.10)"
+              "value": 0.525,
+              "description": "ボルテージ52.5%ブースト (Lv.10)"
             }
           ],
           "else": [
@@ -363,7 +363,7 @@ const gameData = {
           "then": [
             {
               "type": "voltageGain",
-              "value": 315,
+              "value": 630,
               "description": "ボルテージ630獲得 (Lv.10)"
             }
           ],
