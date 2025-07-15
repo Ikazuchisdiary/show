@@ -1824,12 +1824,7 @@ function processEffectForSkillLevel(effect, prefix, values, skillLevel, cardType
             
         case 'voltageGain':
             if (effect.value !== undefined) {
-                // Special handling for tenchiIzumi at skill level 14
-                if (cardType === 'tenchiIzumi' && skillLevel === 14 && effect.value === 139) {
-                    values[`${prefix}_value`] = 418;
-                } else {
-                    values[`${prefix}_value`] = calculateSkillValue(effect.value, skillLevel, false);
-                }
+                values[`${prefix}_value`] = calculateSkillValue(effect.value, skillLevel, false);
             }
             break;
             
