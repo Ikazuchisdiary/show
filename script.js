@@ -2200,6 +2200,9 @@ document.addEventListener('visibilitychange', function() {
 let draggedElement = null;
 let touchItem = null;
 let touchOffset = {x: 0, y: 0};
+let longPressTimer = null;
+let touchStartPos = {x: 0, y: 0};
+let isDragging = false;
 
 function setupDragAndDrop() {
     const cardSlots = document.querySelectorAll('.card-slot');
@@ -2676,37 +2679,67 @@ document.addEventListener('click', function(event) {
 
 // Touch event handlers for mobile
 function handleTouchStart(e) {
-    // Only prevent default on iOS to avoid affecting other platforms
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    if (isIOS) {
-        e.preventDefault();
-    }
-    
     const touch = e.touches[0];
     touchItem = this;
+    touchStartPos.x = touch.clientX;
+    touchStartPos.y = touch.clientY;
+    isDragging = false;
     
     const rect = this.getBoundingClientRect();
     touchOffset.x = touch.clientX - rect.left;
     touchOffset.y = touch.clientY - rect.top;
     
-    this.classList.add('dragging');
-    
-    // Add a clone for visual feedback
-    const clone = this.cloneNode(true);
-    clone.id = 'drag-clone';
-    clone.style.position = 'fixed';
-    clone.style.zIndex = '9999';
-    clone.style.opacity = '0.9';
-    clone.style.pointerEvents = 'none';
-    clone.style.width = rect.width + 'px';
-    clone.style.left = (touch.clientX - touchOffset.x) + 'px';
-    clone.style.top = (touch.clientY - touchOffset.y) + 'px';
-    clone.style.backgroundColor = '#ffffff';
-    clone.classList.remove('dragging'); // Remove dragging class from clone
-    document.body.appendChild(clone);
+    // Start long press timer (500ms)
+    longPressTimer = setTimeout(() => {
+        // Only prevent default on iOS to avoid affecting other platforms
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+            e.preventDefault();
+        }
+        
+        isDragging = true;
+        touchItem.classList.add('dragging');
+        
+        // Add a clone for visual feedback
+        const clone = touchItem.cloneNode(true);
+        clone.id = 'drag-clone';
+        clone.style.position = 'fixed';
+        clone.style.zIndex = '9999';
+        clone.style.opacity = '0.9';
+        clone.style.pointerEvents = 'none';
+        clone.style.width = rect.width + 'px';
+        clone.style.left = (touch.clientX - touchOffset.x) + 'px';
+        clone.style.top = (touch.clientY - touchOffset.y) + 'px';
+        clone.style.backgroundColor = '#ffffff';
+        clone.classList.remove('dragging'); // Remove dragging class from clone
+        document.body.appendChild(clone);
+        
+        // Haptic feedback for supported devices
+        if (navigator.vibrate) {
+            navigator.vibrate(50);
+        }
+    }, 500);
 }
 
 function handleTouchMove(e) {
+    const touch = e.touches[0];
+    
+    // Cancel long press if moved too much before timer
+    if (!isDragging && longPressTimer) {
+        const moveDistance = Math.sqrt(
+            Math.pow(touch.clientX - touchStartPos.x, 2) + 
+            Math.pow(touch.clientY - touchStartPos.y, 2)
+        );
+        
+        if (moveDistance > 10) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+        }
+    }
+    
+    // Only handle drag if long press was triggered
+    if (!isDragging) return;
+    
     // Prevent scrolling and text selection on iOS
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     if (isIOS) {
@@ -2715,7 +2748,6 @@ function handleTouchMove(e) {
     
     if (!touchItem) return;
     
-    const touch = e.touches[0];
     const clone = document.getElementById('drag-clone');
     
     if (clone) {
@@ -2745,43 +2777,56 @@ function handleTouchMove(e) {
 }
 
 function handleTouchEnd(e) {
-    // Prevent default to stop any text selection on iOS
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    if (isIOS) {
-        e.preventDefault();
+    // Clear long press timer
+    if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
     }
     
-    // Always remove clone first
+    // Only process if dragging was active
+    if (isDragging) {
+        // Prevent default to stop any text selection on iOS
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+            e.preventDefault();
+        }
+        
+        const touch = e.changedTouches[0];
+        const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+        const slotBelow = elementBelow?.closest('.card-slot');
+        
+        // Perform the drop
+        if (slotBelow && slotBelow !== touchItem && touchItem) {
+            const rect = slotBelow.getBoundingClientRect();
+            const midpoint = rect.top + rect.height / 2;
+            const insertBefore = touch.clientY < midpoint;
+            
+            insertCard(touchItem, slotBelow, insertBefore);
+        }
+    }
+    
+    // Always clean up
     const clone = document.getElementById('drag-clone');
     if (clone) {
         clone.remove();
     }
     
-    // Clear all visual indicators immediately
+    // Clear all visual indicators
     document.querySelectorAll('.card-slot').forEach(slot => {
         slot.classList.remove('dragging', 'drop-before', 'drop-after');
     });
     
-    if (!touchItem) return;
-    
-    const touch = e.changedTouches[0];
-    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-    const slotBelow = elementBelow?.closest('.card-slot');
-    
-    // Perform the drop
-    if (slotBelow && slotBelow !== touchItem) {
-        const rect = slotBelow.getBoundingClientRect();
-        const midpoint = rect.top + rect.height / 2;
-        const insertBefore = touch.clientY < midpoint;
-        
-        insertCard(touchItem, slotBelow, insertBefore);
-    }
-    
     touchItem = null;
+    isDragging = false;
 }
 
 function handleTouchCancel() {
     // Clean up if touch is cancelled
+    if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+    }
+    
     const clone = document.getElementById('drag-clone');
     if (clone) {
         clone.remove();
@@ -2792,4 +2837,5 @@ function handleTouchCancel() {
     });
     
     touchItem = null;
+    isDragging = false;
 }
