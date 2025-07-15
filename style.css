@@ -83,6 +83,33 @@ body {
     .music-info-section .section-content {
         padding: 15px;
     }
+    
+    /* Enhanced drag hint for mobile */
+    .drag-hint {
+        margin: 10px 0;
+        padding: 12px;
+        font-size: 14px;
+        background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+        border: 2px dashed #4CAF50;
+    }
+    
+    .drag-hint-icon {
+        font-size: 20px;
+    }
+    
+    /* Make card numbers more prominent on mobile */
+    .card-number {
+        width: 36px !important;
+        height: 36px;
+        min-width: 36px !important;
+        border: 2px solid #4CAF50;
+        background: #f0f8ff;
+    }
+    
+    .card-number::before {
+        font-size: 12px;
+        color: #4CAF50;
+    }
 }
 
 h1 {
@@ -578,19 +605,40 @@ input[type="number"] {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px !important;
-    height: 24px;
-    min-width: 24px !important;
+    width: 32px !important;
+    height: 32px;
+    min-width: 32px !important;
     background: white;
-    color: #333;
+    color: #666;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     border-radius: 6px;
-    border: 1.5px solid #ddd;
+    border: 2px solid #e0e0e0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     position: relative;
     margin-right: 12px;
     transition: all 0.2s ease;
+    cursor: grab;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.card-number::before {
+    content: '⋮⋮';
+    position: absolute;
+    font-size: 10px;
+    color: #bbb;
+    letter-spacing: -2px;
+    pointer-events: none;
+}
+
+.card-slot:hover .card-number {
+    background: #f8f9fa;
+    border-color: #4CAF50;
+    transform: scale(1.05);
+}
+
+.card-slot.dragging .card-number {
+    cursor: grabbing;
 }
 
 select {
@@ -1097,6 +1145,62 @@ input[placeholder="不明"]:focus {
     font-style: normal;
 }
 
+/* Drag hint */
+.drag-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 15px 0;
+    padding: 10px;
+    background: #f0f8ff;
+    border-radius: 6px;
+    border: 1px dashed #4CAF50;
+    color: #4CAF50;
+    font-size: 13px;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.drag-hint-icon {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.drag-hint-text {
+    color: #666;
+}
+
+/* Show appropriate text based on device */
+.drag-hint-text.mobile {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .drag-hint-text.desktop {
+        display: none;
+    }
+    
+    .drag-hint-text.mobile {
+        display: inline;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hide hint after user has dragged once */
+body.has-dragged .drag-hint {
+    display: none;
+}
+
 /* Drag and drop styles */
 .card-slot {
     cursor: move;
@@ -1105,43 +1209,54 @@ input[placeholder="不明"]:focus {
 }
 
 .card-slot.dragging {
-    opacity: 0.3;
-    transform: scale(0.98);
+    opacity: 0.5;
+    transform: scale(0.95);
     background: #f5f5f5;
 }
 
-.card-slot.dragging::after {
-    content: 'ドラッグ中...';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #999;
-    font-size: 14px;
-    font-weight: 500;
-}
-
 .card-slot.drag-over {
-    background-color: #e8f5e9;
-    border: 2px dashed #4CAF50;
-    border-radius: 8px;
-    transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+    background-color: #f0f8ff;
+    transform: scale(1.01);
 }
 
-.card-slot.drag-over::before {
-    content: '↓ ここにドロップ';
+/* Drop position indicators */
+.card-slot.drop-before::before {
+    content: '';
     position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #4CAF50;
-    font-size: 12px;
-    font-weight: bold;
-    background: white;
-    padding: 2px 8px;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    top: -5px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #4CAF50;
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+    z-index: 10;
+    animation: pulse 0.5s ease-in-out infinite;
+}
+
+.card-slot.drop-after::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #4CAF50;
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+    z-index: 10;
+    animation: pulse 0.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scaleX(0.95);
+    }
 }
 
 /* Duplicate character warning */

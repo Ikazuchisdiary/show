@@ -2220,6 +2220,9 @@ function handleDragStart(e) {
     this.classList.add('dragging');
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', this.innerHTML);
+    
+    // Hide drag hint after first drag
+    document.body.classList.add('has-dragged');
 }
 
 function handleDragOver(e) {
@@ -2227,6 +2230,19 @@ function handleDragOver(e) {
         e.preventDefault();
     }
     e.dataTransfer.dropEffect = 'move';
+    
+    // Visual feedback for drop position
+    const rect = this.getBoundingClientRect();
+    const midpoint = rect.top + rect.height / 2;
+    
+    if (e.clientY < midpoint) {
+        this.classList.add('drop-before');
+        this.classList.remove('drop-after');
+    } else {
+        this.classList.add('drop-after');
+        this.classList.remove('drop-before');
+    }
+    
     return false;
 }
 
@@ -2238,6 +2254,8 @@ function handleDragEnter() {
 
 function handleDragLeave() {
     this.classList.remove('drag-over');
+    this.classList.remove('drop-before');
+    this.classList.remove('drop-after');
 }
 
 function handleDrop(e) {
@@ -2246,8 +2264,12 @@ function handleDrop(e) {
     }
     
     if (draggedElement !== this) {
-        // Swap the card data
-        swapCards(draggedElement, this);
+        const rect = this.getBoundingClientRect();
+        const midpoint = rect.top + rect.height / 2;
+        const insertBefore = e.clientY < midpoint;
+        
+        // Insert the card at the drop position
+        insertCard(draggedElement, this, insertBefore);
     }
     
     return false;
@@ -2258,9 +2280,81 @@ function handleDragEnd() {
     cardSlots.forEach(slot => {
         slot.classList.remove('dragging');
         slot.classList.remove('drag-over');
+        slot.classList.remove('drop-before');
+        slot.classList.remove('drop-after');
     });
 }
 
+function insertCard(fromSlot, toSlot, insertBefore) {
+    const fromSlotNum = parseInt(fromSlot.getAttribute('data-slot'));
+    const toSlotNum = parseInt(toSlot.getAttribute('data-slot'));
+    
+    // Don't do anything if dragging to the same position
+    if (fromSlotNum === toSlotNum || 
+        (insertBefore && fromSlotNum === toSlotNum - 1) ||
+        (!insertBefore && fromSlotNum === toSlotNum + 1)) {
+        return;
+    }
+    
+    // Store all card data
+    const cardData = [];
+    for (let i = 1; i <= 6; i++) {
+        cardData.push({
+            card: document.getElementById(`card${i}`).value,
+            skill: document.getElementById(`skill${i}`).value,
+            skillValues: getSkillValues(i),
+            searchValue: document.getElementById(`cardSearch${i}`).value
+        });
+    }
+    
+    // Remove the dragged card data
+    const draggedData = cardData.splice(fromSlotNum - 1, 1)[0];
+    
+    // Calculate new insert position
+    let insertPos = toSlotNum - 1;
+    if (!insertBefore) {
+        insertPos++;
+    }
+    if (fromSlotNum < toSlotNum) {
+        insertPos--;
+    }
+    
+    // Insert at new position
+    cardData.splice(insertPos, 0, draggedData);
+    
+    // Apply the new order
+    for (let i = 0; i < cardData.length; i++) {
+        const data = cardData[i];
+        const slotNum = i + 1;
+        
+        document.getElementById(`card${slotNum}`).value = data.card;
+        document.getElementById(`cardSearch${slotNum}`).value = data.searchValue;
+        
+        // Trigger card change to update skill displays
+        onCardChange(slotNum);
+        
+        // Restore skill level
+        document.getElementById(`skill${slotNum}`).value = data.skill;
+        
+        // Trigger skill level change
+        onSkillLevelChange(slotNum);
+        
+        // Restore custom skill values
+        for (const [key, value] of Object.entries(data.skillValues)) {
+            const input = document.getElementById(`skill${slotNum}_${key}`);
+            if (input) input.value = value;
+        }
+    }
+    
+    // Check for duplicate characters
+    updateCenterCharacterHighlight();
+    updateDuplicateCharacterHighlight();
+    
+    // Save the new state
+    setTimeout(saveCurrentState, 100);
+}
+
+// Keep old swapCards function for compatibility
 function swapCards(fromSlot, toSlot) {
     const fromSlotNum = fromSlot.getAttribute('data-slot');
     const toSlotNum = toSlot.getAttribute('data-slot');
