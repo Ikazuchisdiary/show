@@ -1742,12 +1742,10 @@ function formatConditionForDisplay(condition) {
         formatted = `使用回数 < ${match[1]}`;
     } else if (formatted.match(/turn\s*>=\s*(\d+)/)) {
         const match = formatted.match(/turn\s*>=\s*(\d+)/);
-        const turnNum = parseInt(match[1]) + 1;
-        formatted = `ターン ≥ ${turnNum}`;
+        formatted = `ターン ≥ ${match[1]}`;
     } else if (formatted.match(/turn\s*>\s*(\d+)/)) {
         const match = formatted.match(/turn\s*>\s*(\d+)/);
-        const turnNum = parseInt(match[1]) + 1;
-        formatted = `ターン > ${turnNum}`;
+        formatted = `ターン > ${match[1]}`;
     } else if (formatted.match(/mental\s*>=\s*(\d+)/)) {
         const match = formatted.match(/mental\s*>=\s*(\d+)/);
         formatted = `メンタル ≥ ${match[1]}%`;
