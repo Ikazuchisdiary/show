@@ -121,7 +121,7 @@ const gameData = {
         },
         {
           "type": "conditional",
-          "condition": "skillCount >= 10",
+          "condition": "turn >= 10",
           "then": [
             {
               "type": "voltageGain",
