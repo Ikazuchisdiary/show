@@ -778,6 +778,182 @@ function createCard(cardType, skillValues, skillLevel, centerSkillLevel, centerS
     return new GenericCard(cardType, cardData[cardType], skillValues, skillLevel, centerSkillLevel, centerSkillValues);
 }
 
+// Toggle music dropdown
+function toggleMusicDropdown() {
+    const dropdown = document.getElementById('musicDropdown');
+    const display = document.querySelector('.music-select-display');
+    const searchInput = document.getElementById('musicSearchInput');
+    
+    if (dropdown.classList.contains('show')) {
+        dropdown.classList.remove('show');
+        display.classList.remove('active');
+    } else {
+        dropdown.classList.add('show');
+        display.classList.add('active');
+        // Clear search and show all items
+        if (searchInput) {
+            searchInput.value = '';
+            filterMusicDropdown();
+            // Focus search input
+            searchInput.focus();
+        }
+    }
+}
+
+// Filter music dropdown
+function filterMusicDropdown() {
+    const searchInput = document.getElementById('musicSearchInput');
+    const searchTerm = searchInput.value.toLowerCase();
+    const items = document.querySelectorAll('.music-dropdown-item');
+    let hasVisibleItems = false;
+    
+    items.forEach(item => {
+        const title = item.querySelector('.music-title')?.textContent.toLowerCase() || '';
+        const centerName = item.querySelector('.center-name')?.textContent.toLowerCase() || '';
+        const customDesc = item.querySelector('.custom-description')?.textContent.toLowerCase() || '';
+        
+        if (title.includes(searchTerm) || centerName.includes(searchTerm) || customDesc.includes(searchTerm)) {
+            item.style.display = '';
+            hasVisibleItems = true;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    
+    // Show/hide no results message
+    let noResultsEl = document.querySelector('.music-no-results');
+    if (!hasVisibleItems) {
+        if (!noResultsEl) {
+            const container = document.querySelector('.music-dropdown-items');
+            noResultsEl = document.createElement('div');
+            noResultsEl.className = 'music-no-results';
+            noResultsEl.textContent = '検索結果がありません';
+            container.appendChild(noResultsEl);
+        }
+        noResultsEl.style.display = 'block';
+    } else if (noResultsEl) {
+        noResultsEl.style.display = 'none';
+    }
+}
+
+// Select music function
+function selectMusic(value) {
+    const musicSelect = document.getElementById('music');
+    musicSelect.value = value;
+    
+    // Update dropdown display
+    updateMusicDisplay(value);
+    
+    // Update visual selection
+    document.querySelectorAll('.music-dropdown-item').forEach(item => {
+        item.classList.remove('selected');
+    });
+    document.querySelector(`.music-dropdown-item[data-value="${value}"]`)?.classList.add('selected');
+    
+    // Close dropdown
+    document.getElementById('musicDropdown').classList.remove('show');
+    document.querySelector('.music-select-display').classList.remove('active');
+    
+    toggleMusicInput();
+}
+
+// Update music display
+function updateMusicDisplay(value) {
+    const titleEl = document.querySelector('.music-select-title');
+    const infoEl = document.querySelector('.music-select-info');
+    
+    if (value === 'custom') {
+        titleEl.textContent = 'カスタム入力';
+        infoEl.textContent = '楽曲データを自由に設定';
+    } else if (musicData[value]) {
+        const music = musicData[value];
+        titleEl.textContent = music.name;
+        infoEl.textContent = `${music.phases[0]}-${music.phases[1]}-${music.phases[2]} • ${music.centerCharacter}`;
+    } else {
+        // Check custom music list
+        const customList = getCustomMusicList();
+        if (customList[value]) {
+            const music = customList[value];
+            titleEl.textContent = music.name;
+            infoEl.textContent = `${music.phases[0]}-${music.phases[1]}-${music.phases[2]}${music.centerCharacter ? ' • ' + music.centerCharacter : ''}`;
+        }
+    }
+}
+
+// Rebuild music dropdown with custom songs
+function rebuildMusicDropdown() {
+    const dropdownItems = document.querySelector('.music-dropdown-items');
+    if (!dropdownItems) return;
+    
+    // Clear existing items except the search container
+    const existingItems = dropdownItems.querySelectorAll('.music-dropdown-item');
+    existingItems.forEach(item => item.remove());
+    
+    // Add default music options
+    for (const [key, music] of Object.entries(musicData)) {
+        const item = createMusicDropdownItem(key, music);
+        dropdownItems.appendChild(item);
+    }
+    
+    // Add saved custom music
+    const customList = getCustomMusicList();
+    for (const [key, music] of Object.entries(customList)) {
+        const item = createMusicDropdownItem(key, music);
+        dropdownItems.appendChild(item);
+    }
+    
+    // Add custom input option
+    const customItem = document.createElement('div');
+    customItem.className = 'music-dropdown-item custom-item';
+    customItem.setAttribute('data-value', 'custom');
+    customItem.setAttribute('onclick', "selectMusic('custom')");
+    customItem.innerHTML = `
+        <div class="music-item-main">
+            <span class="music-title">カスタム入力</span>
+            <span class="custom-icon">✏️</span>
+        </div>
+        <div class="music-item-sub">
+            <span class="custom-description">楽曲データを自由に設定</span>
+        </div>
+    `;
+    dropdownItems.appendChild(customItem);
+    
+    // Update current selection
+    const currentValue = document.getElementById('music').value;
+    const currentItem = dropdownItems.querySelector(`[data-value="${currentValue}"]`);
+    if (currentItem) {
+        currentItem.classList.add('selected');
+    }
+}
+
+// Create music dropdown item
+function createMusicDropdownItem(key, music) {
+    const item = document.createElement('div');
+    item.className = 'music-dropdown-item';
+    item.setAttribute('data-value', key);
+    item.setAttribute('onclick', `selectMusic('${key}')`);
+    
+    const centerName = music.centerCharacter || '';
+    item.innerHTML = `
+        <div class="music-item-main">
+            <span class="music-title">${music.name}</span>
+            <div class="music-phases">
+                <span class="phase-tag">${music.phases[0]}</span>
+                <span class="phase-arrow">→</span>
+                <span class="phase-tag fever">${music.phases[1]}</span>
+                <span class="phase-arrow">→</span>
+                <span class="phase-tag">${music.phases[2]}</span>
+            </div>
+        </div>
+        <div class="music-item-sub">
+            <span class="center-label">センター:</span>
+            <span class="center-name">${centerName}</span>
+        </div>
+    `;
+    
+    return item;
+}
+
 // Toggle music input
 function toggleMusicInput() {
     const musicSelect = document.getElementById('music');
@@ -826,43 +1002,11 @@ function toggleMusicInput() {
     // Update previous value
     musicSelect.setAttribute('data-previous-value', musicSelect.value);
     
-    // Update center character display
-    const centerDisplay = document.getElementById('centerCharacterDisplay');
-    const centerNameSpan = document.getElementById('centerCharacterName');
-    
     if (musicSelect.value === 'custom') {
         customMusic.style.display = 'block';
-        
-        // Update center display based on custom center character selection
-        const customCenterSelect = document.getElementById('customCenterCharacter');
-        if (customCenterSelect && customCenterSelect.value) {
-            centerDisplay.style.display = 'block';
-            centerNameSpan.textContent = customCenterSelect.value;
-        } else {
-            centerDisplay.style.display = 'none';
-        }
-        
         updateSavedCustomMusicDisplay();
     } else {
         customMusic.style.display = 'none';
-        
-        // Show center character if available
-        let centerCharacter = null;
-        if (musicData[musicSelect.value]) {
-            centerCharacter = musicData[musicSelect.value].centerCharacter;
-        } else {
-            const customList = getCustomMusicList();
-            if (customList[musicSelect.value]) {
-                centerCharacter = customList[musicSelect.value].centerCharacter;
-            }
-        }
-        
-        if (centerCharacter) {
-            centerDisplay.style.display = 'block';
-            centerNameSpan.textContent = centerCharacter;
-        } else {
-            centerDisplay.style.display = 'none';
-        }
         
         // Load state for the selected song
         setTimeout(() => {
@@ -2368,6 +2512,9 @@ function updateMusicDropdown() {
     
     // Update saved custom music display
     updateSavedCustomMusicDisplay();
+    
+    // Rebuild the visual dropdown
+    rebuildMusicDropdown();
 }
 
 function updateSavedCustomMusicDisplay() {
@@ -2414,3 +2561,36 @@ function updateSavedCustomMusicDisplay() {
     html += '</div>';
     container.innerHTML = html;
 }
+
+// Initialize page on load
+window.addEventListener('DOMContentLoaded', function() {
+    // Rebuild dropdown to include any saved custom songs
+    rebuildMusicDropdown();
+    
+    // Initialize selected music
+    const currentMusic = document.getElementById('music').value;
+    if (currentMusic) {
+        document.querySelector(`.music-dropdown-item[data-value="${currentMusic}"]`)?.classList.add('selected');
+        updateMusicDisplay(currentMusic);
+    }
+    
+    // Add keyboard navigation for music search
+    const searchInput = document.getElementById('musicSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.getElementById('musicDropdown').classList.remove('show');
+                document.querySelector('.music-select-display').classList.remove('active');
+            }
+        });
+    }
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const wrapper = document.querySelector('.music-select-wrapper');
+    if (wrapper && !wrapper.contains(event.target)) {
+        document.getElementById('musicDropdown')?.classList.remove('show');
+        document.querySelector('.music-select-display')?.classList.remove('active');
+    }
+});

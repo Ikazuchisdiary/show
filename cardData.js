@@ -1049,7 +1049,7 @@ const gameData = {
   },
   "music": {
     "i_do_me": {
-      "name": "アイドゥーミー",
+      "name": "アイドゥーミー！",
       "phases": [12, 6, 5],
       "description": "フィーバー前: 12, フィーバー中: 6, フィーバー後: 5",
       "centerCharacter": "大沢瑠璃乃"
