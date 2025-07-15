@@ -43,6 +43,18 @@ body {
         margin-bottom: 15px;
         padding: 10px 12px;
     }
+    
+    /* Reduce card search input font size */
+    .card-search {
+        font-size: 14px;
+        padding: 8px;
+    }
+    
+    /* Reduce dropdown option font size */
+    .card-option {
+        font-size: 14px;
+        padding: 8px;
+    }
 }
 
 h1 {
