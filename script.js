@@ -46,7 +46,6 @@ class Game {
             beforeFeverStart: false,
             afterLastTurn: false
         };
-        this.skillCount = 0; // Total skill activation count across all cards
     }
 
     doGame() {
@@ -74,7 +73,6 @@ class Game {
         
         // Store initial turn state to check if turn was skipped
         const initialTurn = this.turn;
-        const initialCardTurn = this.cardTurn;
         
         // Check if card will be skipped before creating log
         let willBeSkipped = false;
@@ -100,12 +98,6 @@ class Game {
         }
         
         card.do(this);
-        const turnSkipped = this.turn === initialTurn;
-        
-        // Increment skill count if card was not skipped
-        if (!turnSkipped) {
-            this.skillCount++;
-        }
         
         // Create log entry only if we have content and card wasn't skipped
         if (this.verbose && this.currentTurnLog.length > 0 && !willBeSkipped) {
@@ -400,7 +392,6 @@ class Game {
             case 'voltageLevel': return this.getVoltageLevel();
             case 'voltagePt': return this.voltagePt;
             case 'turn': return this.turn;
-            case 'skillCount': return this.skillCount;
             default:
                 // Try to parse as number
                 const num = parseFloat(trimmed);
@@ -417,8 +408,7 @@ class Game {
             'mental': this.mental,
             'voltageLevel': this.getVoltageLevel(), 
             'voltagePt': this.voltagePt,
-            'turn': this.turn,
-            'skillCount': this.skillCount
+            'turn': this.turn
         };
         
         for (const [key, value] of Object.entries(replacements)) {
@@ -470,8 +460,7 @@ class GenericCard extends Card {
             voltageLevel: game.getVoltageLevel(),
             voltagePt: game.voltagePt,
             turn: game.turn,
-            count: this.count,
-            skillCount: game.skillCount
+            count: this.count
         };
         
         const effects = this.config.effects;
@@ -625,14 +614,12 @@ class GenericCard extends Card {
             voltageLevel: game.getVoltageLevel(),
             voltagePt: game.voltagePt,
             turn: game.turn,
-            count: this.count,
-            skillCount: game.skillCount
+            count: this.count
         };
         
         // Replace variables in condition with turn start values
         let evalStr = condition;
         evalStr = evalStr.replace(/count/g, values.count);
-        evalStr = evalStr.replace(/skillCount/g, values.skillCount);
         
         // Special handling for fantasyGin mental condition
         if (this.cardKey === 'fantasyGin' && condition.includes('mental')) {
@@ -674,13 +661,11 @@ class GenericCard extends Card {
             voltageLevel: game.getVoltageLevel(),
             voltagePt: game.voltagePt,
             turn: game.turn,
-            count: this.count,
-            skillCount: game.skillCount
+            count: this.count
         };
         
         // Replace variables with their turn start values in parentheses
         formatted = formatted.replace(/count/g, `${values.count}`);
-        formatted = formatted.replace(/skillCount/g, `${values.skillCount}`);
         formatted = formatted.replace(/mental/g, `${values.mental}`);
         formatted = formatted.replace(/voltageLevel/g, `${values.voltageLevel}`);
         formatted = formatted.replace(/turn/g, `${values.turn + 1}`);
@@ -700,12 +685,6 @@ class GenericCard extends Card {
                 const match = condition.match(/count\s*<=\s*(\d+)/);
                 description = `${this.displayName}の使用回数が${match[1]}回以下か`;
                 formatted = `使用回数(${this.count}) ≤ ${match[1]}`;
-            }
-        } else if (condition.includes('skillCount')) {
-            if (condition.match(/skillCount\s*>=\s*(\d+)/)) {
-                const match = condition.match(/skillCount\s*>=\s*(\d+)/);
-                description = `スキル発動回数が${match[1]}回以上か`;
-                formatted = `スキル発動回数(${values.skillCount}) ≥ ${match[1]}`;
             }
         } else if (condition.includes('turn')) {
             if (condition.match(/turn\s*>=\s*(\d+)/)) {
