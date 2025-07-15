@@ -1140,6 +1140,96 @@ const gameData = {
       "phases": [10, 4, 4],
       "description": "フィーバー前: 10, フィーバー中: 4, フィーバー後: 4",
       "centerCharacter": "安養寺姫芽"
+    },
+    "dream_believers_105": {
+      "name": "Dream Believers（105期Ver.）",
+      "phases": [15, 5, 7],
+      "description": "フィーバー前: 15, フィーバー中: 5, フィーバー後: 7",
+      "centerCharacter": "日野下花帆"
+    },
+    "be_proud": {
+      "name": "Be Proud",
+      "phases": [11, 5, 5],
+      "description": "フィーバー前: 11, フィーバー中: 5, フィーバー後: 5",
+      "centerCharacter": "乙宗梢"
+    },
+    "shiawase_no_ribbon": {
+      "name": "幸せのリボン",
+      "phases": [10, 8, 5],
+      "description": "フィーバー前: 10, フィーバー中: 8, フィーバー後: 5",
+      "centerCharacter": "夕霧綴理"
+    },
+    "yappa_tenshi": {
+      "name": "やっぱ天使！",
+      "phases": [9, 6, 4],
+      "description": "フィーバー前: 9, フィーバー中: 6, フィーバー後: 4",
+      "centerCharacter": "藤島慈"
+    },
+    "fortune_movie": {
+      "name": "フォーチュンムービー",
+      "phases": [8, 5, 2],
+      "description": "フィーバー前: 8, フィーバー中: 5, フィーバー後: 2",
+      "centerCharacter": "日野下花帆"
+    },
+    "sparkly_spot": {
+      "name": "Sparkly Spot",
+      "phases": [10, 5, 3],
+      "description": "フィーバー前: 10, フィーバー中: 5, フィーバー後: 3",
+      "centerCharacter": "村野さやか"
+    },
+    "scapegoat": {
+      "name": "スケイプゴート",
+      "phases": [14, 4, 5],
+      "description": "フィーバー前: 14, フィーバー中: 4, フィーバー後: 5",
+      "centerCharacter": "夕霧綴理"
+    },
+    "reflection_in_the_mirror": {
+      "name": "Reflection in the mirror",
+      "phases": [11, 4, 4],
+      "description": "フィーバー前: 11, フィーバー中: 4, フィーバー後: 4",
+      "centerCharacter": "乙宗梢"
+    },
+    "eien_no_euphoria_104": {
+      "name": "永遠のEuphoria（104期Ver.）",
+      "phases": [13, 5, 3],
+      "description": "フィーバー前: 13, フィーバー中: 5, フィーバー後: 3",
+      "centerCharacter": "藤島慈"
+    },
+    "tsukimakase": {
+      "name": "ツキマカセ",
+      "phases": [13, 3, 4],
+      "description": "フィーバー前: 13, フィーバー中: 3, フィーバー後: 4",
+      "centerCharacter": "夕霧綴理"
+    },
+    "ouka_ranman": {
+      "name": "謳歌爛漫",
+      "phases": [14, 4, 4],
+      "description": "フィーバー前: 14, フィーバー中: 4, フィーバー後: 4",
+      "centerCharacter": "乙宗梢"
+    },
+    "on_your_mark_104": {
+      "name": "On your mark（104期Ver.）",
+      "phases": [17, 8, 6],
+      "description": "フィーバー前: 17, フィーバー中: 8, フィーバー後: 6",
+      "centerCharacter": "夕霧綴理"
+    },
+    "preserved_roses": {
+      "name": "Preserved Roses",
+      "phases": [12, 6, 0],
+      "description": "フィーバー前: 12, フィーバー中: 6, フィーバー後: 0",
+      "centerCharacter": "日野下花帆"
+    },
+    "tokimeki_runners": {
+      "name": "TOKIMEKI Runners",
+      "phases": [12, 4, 2],
+      "description": "フィーバー前: 12, フィーバー中: 4, フィーバー後: 2",
+      "centerCharacter": "大沢瑠璃乃"
+    },
+    "kimi_no_kokoro": {
+      "name": "君のこころは輝いてるかい？",
+      "phases": [11, 8, 4],
+      "description": "フィーバー前: 11, フィーバー中: 8, フィーバー後: 4",
+      "centerCharacter": "日野下花帆"
     }
   }
 };
