@@ -1224,6 +1224,17 @@ body.has-dragged .drag-hint {
     background: #f5f5f5;
 }
 
+/* Hide the original card slot content during drag on mobile */
+.card-slot.dragging > * {
+    opacity: 0;
+}
+
+/* Style for drag clone */
+#drag-clone {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    transform: rotate(2deg);
+}
+
 .card-slot.drag-over {
     background-color: #f0f8ff;
     transform: scale(1.01);

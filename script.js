@@ -2217,6 +2217,7 @@ function setupDragAndDrop() {
         slot.addEventListener('touchstart', handleTouchStart, {passive: false});
         slot.addEventListener('touchmove', handleTouchMove, {passive: false});
         slot.addEventListener('touchend', handleTouchEnd, {passive: false});
+        slot.addEventListener('touchcancel', handleTouchCancel, {passive: false});
     });
 }
 
@@ -2695,11 +2696,13 @@ function handleTouchStart(e) {
     clone.id = 'drag-clone';
     clone.style.position = 'fixed';
     clone.style.zIndex = '9999';
-    clone.style.opacity = '0.8';
+    clone.style.opacity = '0.9';
     clone.style.pointerEvents = 'none';
     clone.style.width = rect.width + 'px';
     clone.style.left = (touch.clientX - touchOffset.x) + 'px';
     clone.style.top = (touch.clientY - touchOffset.y) + 'px';
+    clone.style.backgroundColor = '#ffffff';
+    clone.classList.remove('dragging'); // Remove dragging class from clone
     document.body.appendChild(clone);
 }
 
@@ -2748,22 +2751,22 @@ function handleTouchEnd(e) {
         e.preventDefault();
     }
     
-    if (!touchItem) return;
-    
-    const touch = e.changedTouches[0];
-    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-    const slotBelow = elementBelow?.closest('.card-slot');
-    
-    // Remove clone
+    // Always remove clone first
     const clone = document.getElementById('drag-clone');
     if (clone) {
         clone.remove();
     }
     
-    // Clear all visual indicators
+    // Clear all visual indicators immediately
     document.querySelectorAll('.card-slot').forEach(slot => {
         slot.classList.remove('dragging', 'drop-before', 'drop-after');
     });
+    
+    if (!touchItem) return;
+    
+    const touch = e.changedTouches[0];
+    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    const slotBelow = elementBelow?.closest('.card-slot');
     
     // Perform the drop
     if (slotBelow && slotBelow !== touchItem) {
@@ -2773,6 +2776,20 @@ function handleTouchEnd(e) {
         
         insertCard(touchItem, slotBelow, insertBefore);
     }
+    
+    touchItem = null;
+}
+
+function handleTouchCancel() {
+    // Clean up if touch is cancelled
+    const clone = document.getElementById('drag-clone');
+    if (clone) {
+        clone.remove();
+    }
+    
+    document.querySelectorAll('.card-slot').forEach(slot => {
+        slot.classList.remove('dragging', 'drop-before', 'drop-after');
+    });
     
     touchItem = null;
 }
