@@ -1230,6 +1230,60 @@ const gameData = {
       "phases": [11, 8, 4],
       "description": "フィーバー前: 11, フィーバー中: 8, フィーバー後: 4",
       "centerCharacter": "日野下花帆"
+    },
+    "hakuchu_a_la_mode_104": {
+      "name": "ハクチューアラモード（104期Ver.）",
+      "phases": [9, 6, 2],
+      "description": "フィーバー前: 9, フィーバー中: 6, フィーバー後: 2",
+      "centerCharacter": "大沢瑠璃乃"
+    },
+    "do_do_do_104": {
+      "name": "ド！ド！ド！（104期Ver.）",
+      "phases": [11, 4, 3],
+      "description": "フィーバー前: 11, フィーバー中: 4, フィーバー後: 3",
+      "centerCharacter": "安養寺姫芽"
+    },
+    "kokon_touzai_104": {
+      "name": "ココン東西（104期Ver.）",
+      "phases": [10, 5, 3],
+      "description": "フィーバー前: 10, フィーバー中: 5, フィーバー後: 3",
+      "centerCharacter": "安養寺姫芽"
+    },
+    "ishin_denshin_104": {
+      "name": "以心☆電心（104期Ver.）",
+      "phases": [12, 5, 3],
+      "description": "フィーバー前: 12, フィーバー中: 5, フィーバー後: 3",
+      "centerCharacter": "大沢瑠璃乃"
+    },
+    "kibouteki_prism_104": {
+      "name": "希望的プリズム（104期Ver.）",
+      "phases": [11, 6, 5],
+      "description": "フィーバー前: 11, フィーバー中: 6, フィーバー後: 5",
+      "centerCharacter": "夕霧綴理"
+    },
+    "awoke_104": {
+      "name": "AWOKE（104期Ver.）",
+      "phases": [13, 5, 7],
+      "description": "フィーバー前: 13, フィーバー中: 5, フィーバー後: 7",
+      "centerCharacter": "徒町小鈴"
+    },
+    "suisai_sekai_104": {
+      "name": "水彩世界（104期Ver.）",
+      "phases": [11, 4, 4],
+      "description": "フィーバー前: 11, フィーバー中: 4, フィーバー後: 4",
+      "centerCharacter": "百生吟子"
+    },
+    "mix_shake_104": {
+      "name": "Mix shake!!（104期Ver.）",
+      "phases": [13, 5, 5],
+      "description": "フィーバー前: 13, フィーバー中: 5, フィーバー後: 5",
+      "centerCharacter": "百生吟子"
+    },
+    "natsumeki_pain_104": {
+      "name": "夏めきペイン（104期Ver.）",
+      "phases": [12, 4, 2],
+      "description": "フィーバー前: 12, フィーバー中: 4, フィーバー後: 2",
+      "centerCharacter": "乙宗梢"
     }
   }
 };
