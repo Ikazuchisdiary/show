@@ -897,6 +897,14 @@ button.secondary:hover {
     border-radius: 4px;
 }
 
+.turn-number.center-skill {
+    background: #ff9800;
+    color: white;
+    min-width: auto;
+    padding: 0 10px;
+    font-size: 12px;
+}
+
 .fever-icon {
     font-size: 16px;
     margin-left: 4px;

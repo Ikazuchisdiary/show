@@ -230,20 +230,10 @@ class Game {
                 
                 if (this.verbose) {
                     this.currentTurnLog = [];
-                    let timingText = '';
-                    switch (card.config.centerSkill.timing) {
-                        case 'beforeFirstTurn':
-                            timingText = 'ライブ開始時';
-                            break;
-                        case 'beforeFeverStart':
-                            timingText = 'FEVER開始時';
-                            break;
-                        case 'afterLastTurn':
-                            timingText = 'ライブ終了時';
-                            break;
-                    }
-                    this.currentTurnLog.push(`<div class="log-turn-header" style="background-color: #ff9800; color: white;">センタースキル発動 [${timingText}]</div>`);
-                    this.currentTurnLog.push(`<div class="log-action"><span class="log-card-name">${card.displayName}</span></div>`);
+                    const isFeverTiming = timing === 'beforeFeverStart' || 
+                        (timing === 'afterLastTurn' && this.music[1] >= this.totalTurns - this.music[0]);
+                    const feverIcon = isFeverTiming ? '<span class="fever-icon">🔥</span>' : '';
+                    this.currentTurnLog.push(`<div class="log-turn-header"><span class="turn-number center-skill">センタースキル</span>${feverIcon} <span class="log-card-name">${card.displayName}</span></div>`);
                 }
                 
                 // Process center skill effects
@@ -317,16 +307,29 @@ class Game {
                 const conditionMet = this.evaluateCenterSkillCondition(effect.condition);
                 
                 if (this.verbose) {
-                    const conditionText = this.formatCenterSkillCondition(effect.condition);
+                    // Create a dummy card object to use formatCondition
+                    const dummyCard = {
+                        formatCondition: GenericCard.prototype.formatCondition,
+                        displayName: 'センタースキル',
+                        turnStartValues: {
+                            mental: this.mental,
+                            voltageLevel: this.getVoltageLevel(),
+                            voltagePt: this.voltagePt,
+                            turn: this.turn,
+                            count: 0
+                        }
+                    };
+                    const conditionInfo = dummyCard.formatCondition.call(dummyCard, effect.condition, this);
+                    
                     if (conditionMet) {
                         this.currentTurnLog.push(`<div class="log-condition-success">
-                            <span class="condition-text">${conditionText}</span>
+                            <span class="condition-text">${conditionInfo.formatted}</span>
                             <span class="condition-arrow">→</span>
                             <span class="condition-result">成立 ✓</span>
                         </div>`);
                     } else {
                         this.currentTurnLog.push(`<div class="log-condition-fail">
-                            <span class="condition-text">${conditionText}</span>
+                            <span class="condition-text">${conditionInfo.formatted}</span>
                             <span class="condition-arrow">→</span>
                             <span class="condition-result">不成立 ✗</span>
                         </div>`);
