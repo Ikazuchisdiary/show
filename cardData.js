@@ -618,7 +618,7 @@ const gameData = {
           "then": [
             {
               "type": "scoreBoost",
-              "value": 1.61,
+              "value": 0.805,
               "description": "スコア161%ブースト (Lv.10)"
             }
           ]
