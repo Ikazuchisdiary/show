@@ -540,8 +540,8 @@ const gameData = {
       "effects": [
         {
           "type": "scoreBoost",
-          "value": 3.15,
-          "description": "スコア315%ブースト (Lv.10)"
+          "value": 1.575,
+          "description": "スコア157.5%ブースト (Lv.10)"
         },
         {
           "type": "conditional",
@@ -977,8 +977,8 @@ const gameData = {
         },
         {
           "type": "voltageBoost",
-          "value": 0.726,
-          "description": "ボルテージ72.6%ブースト (Lv.10)"
+          "value": 0.363,
+          "description": "ボルテージ36.3%ブースト (Lv.10)"
         },
         {
           "type": "resetCardTurn",
