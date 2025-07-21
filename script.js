@@ -926,15 +926,8 @@ function rebuildMusicDropdown() {
     const existingItems = dropdownItems.querySelectorAll('.music-dropdown-item');
     existingItems.forEach(item => item.remove());
     
-    // Add default music options
+    // Add all music options (including custom ones already in musicData)
     for (const [key, music] of Object.entries(musicData)) {
-        const item = createMusicDropdownItem(key, music);
-        dropdownItems.appendChild(item);
-    }
-    
-    // Add saved custom music
-    const customList = getCustomMusicList();
-    for (const [key, music] of Object.entries(customList)) {
         const item = createMusicDropdownItem(key, music);
         dropdownItems.appendChild(item);
     }
@@ -1157,6 +1150,12 @@ function loadCardData() {
         // Use data from cardData.js
         cardData = gameData.cards;
         musicData = gameData.music;
+        
+        // Load custom music from localStorage
+        const customList = getCustomMusicList();
+        for (const [key, music] of Object.entries(customList)) {
+            musicData[key] = music;
+        }
         
         // Populate card dropdowns
         populateCardDropdowns();
@@ -1435,8 +1434,10 @@ function onSkillLevelChange(slotNum) {
     
     if (!cardType || !cardData[cardType]) return;
     
-    // Save skill level for this card
-    saveCardSkillLevel(cardType, skillLevel);
+    // Save skill level for this card (only in non-share mode)
+    if (!isShareMode) {
+        saveCardSkillLevel(cardType, skillLevel);
+    }
     
     // Calculate values for this skill level
     const calculatedValues = getCalculatedSkillValues(cardType, skillLevel);
@@ -2058,6 +2059,9 @@ function setupSearchableSelect(slotNum) {
 
 // Save current state to localStorage
 function saveCurrentState() {
+    // Don't save anything in share mode
+    if (isShareMode) return;
+    
     const musicKey = document.getElementById('music').value;
     if (musicKey === 'custom') return; // Don't save custom music states
     
@@ -2494,62 +2498,7 @@ function closeNotice() {
     localStorage.setItem('noticeHidden', 'true');
 }
 
-// Initialize on page load
-window.onload = function() {
-    loadCardData();
-    
-    // Setup searchable selects for all card slots
-    for (let i = 1; i <= 6; i++) {
-        setupSearchableSelect(i);
-    }
-    
-    // Setup drag and drop
-    setupDragAndDrop();
-    
-    
-    // Add event listener for custom center character changes
-    const customCenterSelect = document.getElementById('customCenterCharacter');
-    if (customCenterSelect) {
-        customCenterSelect.addEventListener('change', function() {
-            const musicSelect = document.getElementById('music');
-            if (musicSelect.value === 'custom') {
-                const centerDisplay = document.getElementById('centerCharacterDisplay');
-                const centerNameSpan = document.getElementById('centerCharacterName');
-                
-                if (this.value) {
-                    centerDisplay.style.display = 'block';
-                    centerNameSpan.textContent = this.value;
-                } else {
-                    centerDisplay.style.display = 'none';
-                }
-                
-                // Update center character highlighting
-                updateCenterCharacterHighlight();
-            }
-        });
-    }
-    
-    // Use setTimeout to ensure DOM is fully ready and card data is loaded
-    setTimeout(() => {
-        // Setup auto-save
-        setupAutoSave();
-        
-        // Load state for default song
-        const defaultMusic = document.getElementById('music').value;
-        loadStateForSong(defaultMusic);
-        
-        // Show center character for default song
-        toggleMusicInput();
-        
-        // Check if notice should be hidden
-        if (localStorage.getItem('noticeHidden') === 'true') {
-            const banner = document.getElementById('noticeBanner');
-            if (banner) {
-                banner.classList.add('hidden');
-            }
-        }
-    }, 100);
-};
+// Initialize on page load - moved to DOMContentLoaded at the bottom
 
 // Custom music management functions
 function getCustomMusicList() {
@@ -2579,15 +2528,21 @@ function saveCustomMusic() {
     // Generate a unique key for this custom music
     const key = 'custom_' + Date.now();
     
-    // Save to custom music list
-    const customList = getCustomMusicList();
-    customList[key] = {
+    // Create custom music object
+    const customMusic = {
         name: name,
         phases: phases,
         centerCharacter: centerCharacter || null,
         description: `フィーバー前: ${phases[0]}, フィーバー中: ${phases[1]}, フィーバー後: ${phases[2]}`
     };
+    
+    // Save to custom music list
+    const customList = getCustomMusicList();
+    customList[key] = customMusic;
     saveCustomMusicList(customList);
+    
+    // Also add to musicData for immediate use
+    musicData[key] = customMusic;
     
     // Update the music dropdown
     updateMusicDropdown();
@@ -2607,6 +2562,9 @@ function deleteCustomMusic(key) {
     if (confirm(`「${name}」を削除しますか？`)) {
         delete customList[key];
         saveCustomMusicList(customList);
+        
+        // Also delete from musicData
+        delete musicData[key];
         
         // Also delete any saved state for this music
         localStorage.removeItem(`sukushou_state_${key}`);
@@ -2629,17 +2587,8 @@ function updateMusicDropdown() {
     // Clear and rebuild options
     select.innerHTML = '';
     
-    // Add default music options
+    // Add all music options (including custom ones already in musicData)
     for (const [key, music] of Object.entries(musicData)) {
-        const option = document.createElement('option');
-        option.value = key;
-        option.textContent = `${music.name} (${music.phases.join(', ')})`;
-        select.appendChild(option);
-    }
-    
-    // Add saved custom music
-    const customList = getCustomMusicList();
-    for (const [key, music] of Object.entries(customList)) {
         const option = document.createElement('option');
         option.value = key;
         option.textContent = `${music.name} (${music.phases.join(', ')})`;
@@ -2709,29 +2658,7 @@ function updateSavedCustomMusicDisplay() {
     container.innerHTML = html;
 }
 
-// Initialize page on load
-window.addEventListener('DOMContentLoaded', function() {
-    // Rebuild dropdown to include any saved custom songs
-    rebuildMusicDropdown();
-    
-    // Initialize selected music
-    const currentMusic = document.getElementById('music').value;
-    if (currentMusic) {
-        document.querySelector(`.music-dropdown-item[data-value="${currentMusic}"]`)?.classList.add('selected');
-        updateMusicDisplay(currentMusic);
-    }
-    
-    // Add keyboard navigation for music search
-    const searchInput = document.getElementById('musicSearchInput');
-    if (searchInput) {
-        searchInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.getElementById('musicDropdown').classList.remove('show');
-                document.querySelector('.music-select-display').classList.remove('active');
-            }
-        });
-    }
-});
+// Initialize page on load - moved to DOMContentLoaded at the bottom
 
 // Close dropdown when clicking outside
 document.addEventListener('click', function(event) {
@@ -2908,3 +2835,377 @@ function handleTouchCancel() {
     touchItem = null;
     isDragging = false;
 }
+
+// URL share functionality
+let isShareMode = false;
+
+function createShareURL() {
+    const data = {
+        appeal: document.getElementById('appeal').value,
+        mental: document.getElementById('mental').value,
+        learningCorrection: document.getElementById('learningCorrection').value,
+        music: document.getElementById('music').value,
+        customMusic: null,
+        customCenter: null,
+        cards: []
+    };
+    
+    // If using custom music, save the phases and center
+    if (data.music === 'custom') {
+        data.customMusic = [
+            parseInt(document.getElementById('beforeFever').value) || 0,
+            parseInt(document.getElementById('duringFever').value) || 0,
+            parseInt(document.getElementById('afterFever').value) || 0
+        ];
+        data.customCenter = document.getElementById('customCenterCharacter').value || null;
+    }
+    
+    // Collect card data
+    for (let i = 1; i <= 6; i++) {
+        const cardId = document.getElementById(`card${i}`).value;
+        if (cardId) {
+            const cardData = {
+                id: cardId,
+                skill: parseInt(document.getElementById(`skill${i}`).value),
+                params: getSkillValues(i),
+                centerSkill: parseInt(document.getElementById(`centerSkillLevel${i}`)?.value || 14),
+                centerParams: getCenterSkillValues(i)
+            };
+            data.cards.push(cardData);
+        }
+    }
+    
+    // Compress and encode data
+    const json = JSON.stringify(data);
+    const compressed = btoa(unescape(encodeURIComponent(json)));
+    
+    // Create share URL
+    const url = new URL(window.location.href);
+    url.searchParams.set('share', '1');
+    url.searchParams.set('data', compressed);
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(url.toString()).then(() => {
+        alert('共有URLをクリップボードにコピーしました！');
+    }).catch(() => {
+        prompt('共有URL:', url.toString());
+    });
+}
+
+function loadShareData() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    if (urlParams.get('share') === '1') {
+        isShareMode = true;
+        document.getElementById('shareMode').style.display = 'block';
+        document.body.classList.add('share-mode');
+        
+        const encodedData = urlParams.get('data');
+        if (encodedData) {
+            try {
+                const json = decodeURIComponent(escape(atob(encodedData)));
+                const data = JSON.parse(json);
+                
+                // Load appeal value
+                if (data.appeal) {
+                    document.getElementById('appeal').value = data.appeal;
+                }
+                
+                // Load mental and learning correction
+                if (data.mental) {
+                    document.getElementById('mental').value = data.mental;
+                }
+                if (data.learningCorrection) {
+                    document.getElementById('learningCorrection').value = data.learningCorrection;
+                }
+                
+                // Load music
+                if (data.music) {
+                    document.getElementById('music').value = data.music;
+                    toggleMusicInput();
+                } else if (data.customMusic) {
+                    document.getElementById('music').value = 'custom';
+                    toggleMusicInput();
+                    // Set custom music phases
+                    document.getElementById('beforeFever').value = data.customMusic[0];
+                    document.getElementById('duringFever').value = data.customMusic[1];
+                    document.getElementById('afterFever').value = data.customMusic[2];
+                    
+                    // Set custom center if provided
+                    if (data.customCenter) {
+                        document.getElementById('customCenterCharacter').value = data.customCenter;
+                        // Trigger change event to update display
+                        const event = new Event('change');
+                        document.getElementById('customCenterCharacter').dispatchEvent(event);
+                    }
+                }
+                
+                
+                // Load cards
+                data.cards.forEach((card, index) => {
+                    if (index < 6) {
+                        const slotNum = index + 1;
+                        document.getElementById(`card${slotNum}`).value = card.id;
+                        onCardChange(slotNum);
+                        
+                        if (card.skill) {
+                            document.getElementById(`skill${slotNum}`).value = card.skill;
+                            onSkillLevelChange(slotNum);
+                        }
+                        
+                        // Load skill parameters
+                        if (card.params) {
+                            setTimeout(() => {
+                                Object.keys(card.params).forEach(key => {
+                                    const input = document.getElementById(`skill${slotNum}_${key}`);
+                                    if (input) {
+                                        input.value = card.params[key];
+                                    }
+                                });
+                            }, 100);
+                        }
+                        
+                        // Load center skill level and parameters
+                        if (card.centerSkill) {
+                            setTimeout(() => {
+                                const centerSkillSelect = document.getElementById(`centerSkillLevel${slotNum}`);
+                                if (centerSkillSelect) {
+                                    centerSkillSelect.value = card.centerSkill;
+                                    onCenterSkillLevelChange(slotNum);
+                                }
+                                
+                                if (card.centerParams) {
+                                    Object.keys(card.centerParams).forEach(key => {
+                                        const input = document.getElementById(`centerSkill${slotNum}_${key}`);
+                                        if (input) {
+                                            input.value = card.centerParams[key];
+                                        }
+                                    });
+                                }
+                            }, 200);
+                        }
+                    }
+                });
+                
+            } catch (e) {
+                console.error('Failed to load share data:', e);
+                console.error('Encoded data:', encodedData);
+                alert('共有URLのデータの読み込みに失敗しました。\n\nエラー: ' + e.message);
+            }
+        }
+    }
+}
+
+function saveAsCustomMusic() {
+    // Get current music configuration
+    const musicSelect = document.getElementById('music');
+    const musicValue = musicSelect.value;
+    
+    let currentMusic = null;
+    let musicName = '';
+    let phases = [];
+    let center = '';
+    
+    if (musicValue === 'custom') {
+        // Custom music - get values from inputs
+        musicName = 'カスタム楽曲';
+        phases = [
+            parseInt(document.getElementById('beforeFever').value) || 0,
+            parseInt(document.getElementById('duringFever').value) || 0,
+            parseInt(document.getElementById('afterFever').value) || 0
+        ];
+        center = document.getElementById('customCenterCharacter').value || '';
+    } else if (musicData[musicValue]) {
+        // Existing music
+        currentMusic = musicData[musicValue];
+        musicName = currentMusic.name;
+        phases = [...currentMusic.phases];
+        center = currentMusic.centerCharacter || '';
+    } else {
+        alert('楽曲情報が見つかりません');
+        return;
+    }
+    
+    // Generate a name for the custom music
+    const customName = prompt(
+        'カスタム楽曲名を入力してください：',
+        `${musicName} (カスタム編成)`
+    );
+    
+    if (!customName || customName.trim() === '') {
+        return;
+    }
+    
+    // Create custom music object
+    const customMusic = {
+        id: 'custom_' + Date.now(),
+        name: customName.trim(),
+        phases: phases,
+        center: center,
+        centerCharacter: center,
+        description: `フィーバー前: ${phases[0]}, フィーバー中: ${phases[1]}, フィーバー後: ${phases[2]}`
+    };
+    
+    // Save to custom music list
+    const customList = getCustomMusicList();
+    customList[customMusic.id] = customMusic;
+    saveCustomMusicList(customList);
+    
+    // Add to musicData for immediate use
+    musicData[customMusic.id] = customMusic;
+    
+    // Save current card configuration with this custom music
+    const cardState = {};
+    for (let i = 1; i <= 6; i++) {
+        cardState[`card${i}`] = {
+            id: document.getElementById(`card${i}`).value,
+            skillLevel: parseInt(document.getElementById(`skill${i}`).value) || 14,
+            skillValues: getSkillValues(i)
+        };
+    }
+    
+    // Save card configuration for this custom music
+    localStorage.setItem(`state_${customMusic.id}`, JSON.stringify({
+        appeal: document.getElementById('appeal').value,
+        mental: document.getElementById('mental').value,
+        learningCorrection: document.getElementById('learningCorrection').value,
+        cards: cardState
+    }));
+    
+    // Update the select element to include the new option
+    const musicSelectElement = document.getElementById('music');
+    const newOption = document.createElement('option');
+    newOption.value = customMusic.id;
+    newOption.textContent = `${customMusic.name} (${customMusic.phases.join('-')})`;
+    musicSelectElement.appendChild(newOption);
+    
+    // Rebuild music dropdown to include new custom music
+    rebuildMusicDropdown();
+    
+    // Switch to the new custom music
+    musicSelect.value = customMusic.id;
+    toggleMusicInput();
+    
+    // Remove share parameters from URL
+    const url = new URL(window.location.href);
+    url.searchParams.delete('share');
+    url.searchParams.delete('data');
+    window.history.replaceState({}, document.title, url.pathname);
+    
+    // Hide share mode banner
+    document.getElementById('shareMode').style.display = 'none';
+    document.body.classList.remove('share-mode');
+    isShareMode = false;
+    
+    alert(`カスタム楽曲「${customName}」として保存しました！`);
+}
+
+function exitShareMode() {
+    // Remove share parameters from URL
+    const url = new URL(window.location.href);
+    url.searchParams.delete('share');
+    url.searchParams.delete('data');
+    window.history.replaceState({}, document.title, url.pathname);
+    
+    // Hide share mode banner
+    document.getElementById('shareMode').style.display = 'none';
+    document.body.classList.remove('share-mode');
+    isShareMode = false;
+    
+    // Reload the page to restore previous state
+    location.reload();
+}
+
+// Initialize share mode on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // First, load card data
+    loadCardData();
+    
+    // Setup searchable selects for all card slots
+    for (let i = 1; i <= 6; i++) {
+        setupSearchableSelect(i);
+    }
+    
+    // Setup drag and drop
+    setupDragAndDrop();
+    
+    // Add event listener for custom center character changes
+    const customCenterSelect = document.getElementById('customCenterCharacter');
+    if (customCenterSelect) {
+        customCenterSelect.addEventListener('change', function() {
+            const musicSelect = document.getElementById('music');
+            if (musicSelect.value === 'custom') {
+                const centerDisplay = document.getElementById('centerCharacterDisplay');
+                const centerNameSpan = document.getElementById('centerCharacterName');
+                
+                if (this.value) {
+                    centerDisplay.style.display = 'block';
+                    centerNameSpan.textContent = this.value;
+                } else {
+                    centerDisplay.style.display = 'none';
+                }
+                
+                // Update center character highlighting
+                updateCenterCharacterHighlight();
+            }
+        });
+    }
+    
+    // Check if in share mode first
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('share') === '1') {
+        // Don't load from localStorage in share mode
+        loadShareData();
+    } else {
+        // Normal mode - load from localStorage
+        loadAppeal();
+        loadMusic();
+        loadCardSelections();
+        
+        // Check notice preference
+        if (localStorage.getItem('noticeHidden') === 'true') {
+            const banner = document.getElementById('noticeBanner');
+            if (banner) {
+                banner.classList.add('hidden');
+            }
+        }
+    }
+    
+    // Use setTimeout to ensure DOM is fully ready and card data is loaded
+    setTimeout(() => {
+        // Setup auto-save only in non-share mode
+        if (!isShareMode) {
+            setupAutoSave();
+        }
+        
+        // Load state for default song
+        const defaultMusic = document.getElementById('music').value;
+        if (!isShareMode) {
+            loadStateForSong(defaultMusic);
+        }
+        
+        // Show center character for default song
+        toggleMusicInput();
+    }, 100);
+    
+    // Rebuild dropdown to include any saved custom songs
+    rebuildMusicDropdown();
+    
+    // Initialize selected music
+    const currentMusic = document.getElementById('music').value;
+    if (currentMusic) {
+        document.querySelector(`.music-dropdown-item[data-value="${currentMusic}"]`)?.classList.add('selected');
+        updateMusicDisplay(currentMusic);
+    }
+    
+    // Add keyboard navigation for music search
+    const searchInput = document.getElementById('musicSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.getElementById('musicDropdown').classList.remove('show');
+                document.querySelector('.music-select-display').classList.remove('active');
+            }
+        });
+    }
+});
