@@ -46,6 +46,8 @@ class Game {
             beforeFeverStart: false,
             afterLastTurn: false
         };
+        this.removedCards = new Set(); // 除外されたカードを管理
+        this.resetCardRequested = false; // resetCardTurnのフラグ
     }
 
     doGame() {
@@ -66,28 +68,39 @@ class Game {
     }
 
     turnUp() {
-        if (this.cardTurn >= this.cards.length) {
-            this.cardTurn = 0;
-        }
-        const card = this.cards[this.cardTurn];
+        // カードの選択を繰り返し、除外されていないカードを見つける
+        let card = null;
+        let attemptCount = 0;
+        let currentIndex = this.cardTurn;
+        let foundIndex = -1;
         
-        
-        // Check if card will be skipped before creating log
-        let willBeSkipped = false;
-        if (card.config && card.config.effects) {
-            for (const effect of card.config.effects) {
-                if (effect.type === 'skipTurn' && card.evaluateCondition) {
-                    // Increment count temporarily to check condition
-                    card.count++;
-                    willBeSkipped = card.evaluateCondition(effect.condition, this);
-                    card.count--;
-                    if (willBeSkipped) break;
-                }
+        while (attemptCount < this.cards.length) {
+            if (currentIndex >= this.cards.length) {
+                currentIndex = 0;
             }
+            
+            const currentCard = this.cards[currentIndex];
+            
+            // 除外されていないカードなら使用
+            if (!this.removedCards.has(currentCard.name)) {
+                card = currentCard;
+                foundIndex = currentIndex;
+                break;
+            }
+            
+            // 次のカードへ
+            currentIndex++;
+            attemptCount++;
         }
         
-        // Only create log header if card won't be skipped
-        if (this.verbose && !willBeSkipped) {
+        // すべてのカードが除外されている場合
+        if (!card) {
+            this.turn++;
+            return;
+        }
+        
+        // ログの作成
+        if (this.verbose) {
             this.log += `turn ${this.turn + 1}\n`;
             this.currentTurnLog = [];
             const phase = this.getCurrentPhase();
@@ -95,11 +108,24 @@ class Game {
             this.currentTurnLog.push(`<div class="log-turn-header"><span class="turn-number">${this.turn + 1}</span> ${phase} <span class="log-card-name">${cardName}</span></div>`);
         }
         
+        // 次のカード使用のためのフラグ
+        this.resetCardRequested = false;
+        
         card.do(this);
         
-        // Create log entry only if we have content and card wasn't skipped
-        if (this.verbose && this.currentTurnLog.length > 0 && !willBeSkipped) {
+        // Create log entry only if we have content
+        if (this.verbose && this.currentTurnLog.length > 0) {
             this.logHtml += `<div class="log-turn">${this.currentTurnLog.join('')}</div>`;
+        }
+        
+        // resetCardTurnが要求された場合は0に、そうでなければ見つけたカードの次へ
+        if (this.resetCardRequested) {
+            this.cardTurn = 0;
+        } else {
+            this.cardTurn = foundIndex + 1;
+            if (this.cardTurn >= this.cards.length) {
+                this.cardTurn = 0;
+            }
         }
     }
     
@@ -433,7 +459,6 @@ class Card {
             game.log += `done ${this.name}\n`;
         }
         game.turn += 1;
-        game.cardTurn += 1;
     }
 }
 
@@ -471,32 +496,35 @@ class GenericCard extends Card {
             const effect = effects[i];
             
             switch (effect.type) {
+                case 'removeAfterUse':
+                    const shouldRemove = this.evaluateCondition(effect.condition, game);
+                    
+                    
+                    if (shouldRemove) {
+                        // カードを除外リストに追加
+                        game.removedCards.add(this.name);
+                        
+                        if (game.verbose) {
+                            game.currentTurnLog.push(`<div class="log-condition-skip">
+                                <span class="condition-result">デッキから除外 🚫</span>
+                            </div>`);
+                        }
+                    }
+                    break;
+                    
                 case 'skipTurn':
+                    // 後方互換性のため一時的に残す
                     const skipConditionMet = this.evaluateCondition(effect.condition, game);
                     
-                    // Check if this is the last use before removal
-                    let isLastUseBeforeRemoval = false;
-                    if (effect.condition.includes('count >')) {
-                        const match = effect.condition.match(/count\s*>\s*(\d+)/);
-                        if (match) {
-                            const threshold = parseInt(match[1]);
-                            isLastUseBeforeRemoval = this.count === threshold;
-                        }
-                    }
-                    
-                    if (game.verbose && isLastUseBeforeRemoval) {
-                        game.currentTurnLog.push(`<div class="log-condition-skip">
-                            <span class="condition-result">デッキから除外 🚫</span>
-                        </div>`);
-                    }
-                    
                     if (skipConditionMet) {
-                        // Clear the log since we won't show this turn
+                        // カードを除外リストに追加
+                        game.removedCards.add(this.name);
+                        
                         if (game.verbose) {
-                            game.currentTurnLog = [];
+                            game.currentTurnLog.push(`<div class="log-condition-skip">
+                                <span class="condition-result">デッキから除外 🚫</span>
+                            </div>`);
                         }
-                        game.cardTurn += 1;
-                        return;
                     }
                     break;
                     
@@ -558,7 +586,7 @@ class GenericCard extends Card {
                     break;
                     
                 case 'resetCardTurn':
-                    game.cardTurn = -1;
+                    game.resetCardRequested = true;
                     if (game.verbose) {
                         game.currentTurnLog.push(`<div class="log-action" style="color: #3498db;">カード順リセット</div>`);
                     }
@@ -618,9 +646,20 @@ class GenericCard extends Card {
             count: this.count
         };
         
+        // First handle ternary operator if present
+        if (condition.includes('?')) {
+            const ternaryMatch = condition.match(/(.+)\?(.+):(.+)/);
+            if (ternaryMatch) {
+                const [_, condPart, truePart, falsePart] = ternaryMatch;
+                const condResult = this.evaluateCondition(condPart.trim(), game);
+                return this.evaluateCondition(condResult ? truePart.trim() : falsePart.trim(), game);
+            }
+        }
+        
         // Replace variables in condition with turn start values
         let evalStr = condition;
         evalStr = evalStr.replace(/count/g, values.count);
+        evalStr = evalStr.replace(/skillLevel/g, this.skillLevel);
         
         // Special handling for fantasyGin mental condition
         if (this.cardKey === 'fantasyGin' && condition.includes('mental')) {
@@ -760,7 +799,7 @@ class GenericCard extends Card {
                     break;
                     
                 case 'resetCardTurn':
-                    game.cardTurn = -1;
+                    game.resetCardRequested = true;
                     if (game.verbose) {
                         game.currentTurnLog.push(`<div class="log-action" style="color: #3498db;">カード順リセット</div>`);
                     }
@@ -1413,6 +1452,24 @@ function onSkillLevelChange(slotNum) {
         }
     }
     
+    // beProudKozuの場合、removeAfterUseの説明文を更新
+    if (cardType === 'beProudKozu') {
+        const skillParamsDiv = document.getElementById(`skillParams${slotNum}`);
+        if (skillParamsDiv) {
+            const spans = skillParamsDiv.querySelectorAll('span');
+            for (const span of spans) {
+                if (span.textContent.includes('回使用後はデッキから除外')) {
+                    if (skillLevel >= 12) {
+                        span.textContent = '10回使用後はデッキから除外';
+                    } else {
+                        span.textContent = '6回使用後はデッキから除外';
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    
     // Update center skill display when skill level changes
     updateCenterCharacterHighlight();
 }
@@ -1531,10 +1588,21 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
                 </div>`;
             }
             break;
-        case 'skipTurn':
+        case 'removeAfterUse':
+        case 'skipTurn': // 後方互換性のため残す
+            // スキルレベルに応じて説明文を動的に生成
+            let removeDescription = effect.description || 'デッキから除外';
+            if (cardKey === 'beProudKozu' && effect.condition && effect.condition.includes('skillLevel')) {
+                const skillLevel = parseInt(document.getElementById(`${cardKey}_skillLevel`).value) || 10;
+                if (skillLevel >= 12) {
+                    removeDescription = '10回使用後はデッキから除外';
+                } else {
+                    removeDescription = '6回使用後はデッキから除外';
+                }
+            }
             html += `<div class="skill-param-row">
                 <label>効果:</label>
-                <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #f5f5f5; color: #666; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">${effect.description || 'デッキから除外'}</span>
+                <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #f5f5f5; color: #666; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">${removeDescription}</span>
             </div>`;
             break;
         case 'resetCardTurn':
@@ -1651,7 +1719,8 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
             }
             break;
             
-        case 'skipTurn':
+        case 'removeAfterUse':
+        case 'skipTurn': // 後方互換性のため残す
             html += `<div class="skill-param-row">
                 <label>効果:</label>
                 <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #f5f5f5; color: #666; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">${effect.description || 'ターンスキップ'}</span>

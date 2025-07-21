@@ -59,9 +59,9 @@ const gameData = {
       "character": "乙宗梢",
       "effects": [
         {
-          "type": "skipTurn",
-          "condition": "count > 6",
-          "description": "6回使用後はデッキから除外"
+          "type": "removeAfterUse",
+          "condition": "skillLevel >= 12 ? count == 10 : count == 6",
+          "description": "6回使用後はデッキから除外 (Lv.12以上: 10回)"
         },
         {
           "type": "voltageBoost",
@@ -110,8 +110,8 @@ const gameData = {
       "character": "夕霧綴理",
       "effects": [
         {
-          "type": "skipTurn",
-          "condition": "count > 1",
+          "type": "removeAfterUse",
+          "condition": "count == 1",
           "description": "1回使用後はデッキから除外"
         },
         {
@@ -679,8 +679,8 @@ const gameData = {
       "character": "大沢瑠璃乃",
       "effects": [
         {
-          "type": "skipTurn",
-          "condition": "count > 3",
+          "type": "removeAfterUse",
+          "condition": "count == 3",
           "description": "3回使用後はデッキから除外"
         },
         {
@@ -785,8 +785,8 @@ const gameData = {
       "character": "百生吟子",
       "effects": [
         {
-          "type": "skipTurn",
-          "condition": "count > 3",
+          "type": "removeAfterUse",
+          "condition": "count == 3",
           "description": "3回使用後はデッキから除外"
         },
         {
@@ -838,6 +838,11 @@ const gameData = {
       "displayName": "［アイマイメーデー］徒町小鈴",
       "character": "徒町小鈴",
       "effects": [
+        {
+          "type": "removeAfterUse",
+          "condition": "mental <= 25",
+          "description": "メンタル25%以下でデッキから除外"
+        },
         {
           "type": "voltageGain",
           "value": 134,
@@ -966,8 +971,8 @@ const gameData = {
       "character": "セラス 柳田 リリエンフェルト",
       "effects": [
         {
-          "type": "skipTurn",
-          "condition": "count > 3",
+          "type": "removeAfterUse",
+          "condition": "count == 3",
           "description": "3回使用後はデッキから除外"
         },
         {
@@ -1085,14 +1090,32 @@ const gameData = {
       "character": "大賀美沙知",
       "effects": [
         {
-          "type": "skipTurn",
-          "condition": "count > 3",
+          "type": "removeAfterUse",
+          "condition": "count == 3",
           "description": "3回使用後はデッキから除外"
         }
       ]
     }
   },
   "music": {
+    "ai_scream": {
+      "name": "愛♡スクリ〜ム！",
+      "phases": [18, 7, 6],
+      "description": "フィーバー前: 18, フィーバー中: 7, フィーバー後: 6",
+      "centerCharacter": "大沢瑠璃乃"
+    },
+    "fruit_punch": {
+      "name": "フルーツパンチ",
+      "phases": [11, 6, 4],
+      "description": "フィーバー前: 11, フィーバー中: 6, フィーバー後: 4",
+      "centerCharacter": "日野下花帆"
+    },
+    "tenchi_reimei": {
+      "name": "天地黎明",
+      "phases": [15, 8, 0],
+      "description": "フィーバー前: 15, フィーバー中: 8, フィーバー後: 0",
+      "centerCharacter": "桂城泉"
+    },
     "i_do_me": {
       "name": "アイドゥーミー！",
       "phases": [12, 6, 5],
