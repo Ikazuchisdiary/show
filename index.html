@@ -10,6 +10,14 @@
     <div class="container">
         <h1>スクショウ スコア計算機</h1>
         
+        <div id="shareMode" class="share-mode-banner" style="display: none;">
+            <div class="share-mode-header">共有された編成を表示中</div>
+            <div class="share-mode-content">
+                <button onclick="saveAsCustomMusic()" class="save-shared-button">カスタム楽曲として保存</button>
+                <button onclick="exitShareMode()" class="exit-share-button">通常モードに戻る</button>
+            </div>
+        </div>
+        
         <div class="notice-banner" id="noticeBanner">
             <div class="notice-content">
                 <div class="notice-icon">💡</div>
@@ -310,13 +318,6 @@
             <button onclick="createShareURL()" class="share-button">共有URLを作成</button>
         </div>
         
-        <div id="shareMode" class="share-mode-banner" style="display: none;">
-            <div class="share-mode-content">
-                <span class="share-mode-icon">🔗</span>
-                <span class="share-mode-text">共有モードで表示中</span>
-                <button onclick="saveSharedData()" class="save-shared-button">このデータを保存</button>
-            </div>
-        </div>
         
         <div id="result">
             <h2>計算結果</h2>

@@ -926,15 +926,8 @@ function rebuildMusicDropdown() {
     const existingItems = dropdownItems.querySelectorAll('.music-dropdown-item');
     existingItems.forEach(item => item.remove());
     
-    // Add default music options
+    // Add all music options (including custom ones already in musicData)
     for (const [key, music] of Object.entries(musicData)) {
-        const item = createMusicDropdownItem(key, music);
-        dropdownItems.appendChild(item);
-    }
-    
-    // Add saved custom music
-    const customList = getCustomMusicList();
-    for (const [key, music] of Object.entries(customList)) {
         const item = createMusicDropdownItem(key, music);
         dropdownItems.appendChild(item);
     }
@@ -1157,6 +1150,12 @@ function loadCardData() {
         // Use data from cardData.js
         cardData = gameData.cards;
         musicData = gameData.music;
+        
+        // Load custom music from localStorage
+        const customList = getCustomMusicList();
+        for (const [key, music] of Object.entries(customList)) {
+            musicData[key] = music;
+        }
         
         // Populate card dropdowns
         populateCardDropdowns();
@@ -1435,8 +1434,10 @@ function onSkillLevelChange(slotNum) {
     
     if (!cardType || !cardData[cardType]) return;
     
-    // Save skill level for this card
-    saveCardSkillLevel(cardType, skillLevel);
+    // Save skill level for this card (only in non-share mode)
+    if (!isShareMode) {
+        saveCardSkillLevel(cardType, skillLevel);
+    }
     
     // Calculate values for this skill level
     const calculatedValues = getCalculatedSkillValues(cardType, skillLevel);
@@ -2058,6 +2059,9 @@ function setupSearchableSelect(slotNum) {
 
 // Save current state to localStorage
 function saveCurrentState() {
+    // Don't save anything in share mode
+    if (isShareMode) return;
+    
     const musicKey = document.getElementById('music').value;
     if (musicKey === 'custom') return; // Don't save custom music states
     
@@ -2524,15 +2528,21 @@ function saveCustomMusic() {
     // Generate a unique key for this custom music
     const key = 'custom_' + Date.now();
     
-    // Save to custom music list
-    const customList = getCustomMusicList();
-    customList[key] = {
+    // Create custom music object
+    const customMusic = {
         name: name,
         phases: phases,
         centerCharacter: centerCharacter || null,
         description: `フィーバー前: ${phases[0]}, フィーバー中: ${phases[1]}, フィーバー後: ${phases[2]}`
     };
+    
+    // Save to custom music list
+    const customList = getCustomMusicList();
+    customList[key] = customMusic;
     saveCustomMusicList(customList);
+    
+    // Also add to musicData for immediate use
+    musicData[key] = customMusic;
     
     // Update the music dropdown
     updateMusicDropdown();
@@ -2552,6 +2562,9 @@ function deleteCustomMusic(key) {
     if (confirm(`「${name}」を削除しますか？`)) {
         delete customList[key];
         saveCustomMusicList(customList);
+        
+        // Also delete from musicData
+        delete musicData[key];
         
         // Also delete any saved state for this music
         localStorage.removeItem(`sukushou_state_${key}`);
@@ -2574,17 +2587,8 @@ function updateMusicDropdown() {
     // Clear and rebuild options
     select.innerHTML = '';
     
-    // Add default music options
+    // Add all music options (including custom ones already in musicData)
     for (const [key, music] of Object.entries(musicData)) {
-        const option = document.createElement('option');
-        option.value = key;
-        option.textContent = `${music.name} (${music.phases.join(', ')})`;
-        select.appendChild(option);
-    }
-    
-    // Add saved custom music
-    const customList = getCustomMusicList();
-    for (const [key, music] of Object.entries(customList)) {
         const option = document.createElement('option');
         option.value = key;
         option.textContent = `${music.name} (${music.phases.join(', ')})`;
@@ -2838,10 +2842,23 @@ let isShareMode = false;
 function createShareURL() {
     const data = {
         appeal: document.getElementById('appeal').value,
+        mental: document.getElementById('mental').value,
+        learningCorrection: document.getElementById('learningCorrection').value,
         music: document.getElementById('music').value,
-        customMusic: musicData === null ? [musicPhases[0], musicPhases[1], musicPhases[2]] : null,
+        customMusic: null,
+        customCenter: null,
         cards: []
     };
+    
+    // If using custom music, save the phases and center
+    if (data.music === 'custom') {
+        data.customMusic = [
+            parseInt(document.getElementById('beforeFever').value) || 0,
+            parseInt(document.getElementById('duringFever').value) || 0,
+            parseInt(document.getElementById('afterFever').value) || 0
+        ];
+        data.customCenter = document.getElementById('customCenterCharacter').value || null;
+    }
     
     // Collect card data
     for (let i = 1; i <= 6; i++) {
@@ -2894,18 +2911,33 @@ function loadShareData() {
                     document.getElementById('appeal').value = data.appeal;
                 }
                 
+                // Load mental and learning correction
+                if (data.mental) {
+                    document.getElementById('mental').value = data.mental;
+                }
+                if (data.learningCorrection) {
+                    document.getElementById('learningCorrection').value = data.learningCorrection;
+                }
+                
                 // Load music
                 if (data.music) {
                     document.getElementById('music').value = data.music;
-                    onMusicChange();
+                    toggleMusicInput();
                 } else if (data.customMusic) {
                     document.getElementById('music').value = 'custom';
-                    onMusicChange();
+                    toggleMusicInput();
                     // Set custom music phases
-                    musicPhases[0] = data.customMusic[0];
-                    musicPhases[1] = data.customMusic[1]; 
-                    musicPhases[2] = data.customMusic[2];
-                    updateSavedCustomMusicDisplay();
+                    document.getElementById('beforeFever').value = data.customMusic[0];
+                    document.getElementById('duringFever').value = data.customMusic[1];
+                    document.getElementById('afterFever').value = data.customMusic[2];
+                    
+                    // Set custom center if provided
+                    if (data.customCenter) {
+                        document.getElementById('customCenterCharacter').value = data.customCenter;
+                        // Trigger change event to update display
+                        const event = new Event('change');
+                        document.getElementById('customCenterCharacter').dispatchEvent(event);
+                    }
                 }
                 
                 
@@ -2964,14 +2996,95 @@ function loadShareData() {
     }
 }
 
-function saveSharedData() {
-    // Save current state to localStorage
-    saveAppeal();
-    saveMusic();
+function saveAsCustomMusic() {
+    // Get current music configuration
+    const musicSelect = document.getElementById('music');
+    const musicValue = musicSelect.value;
     
-    for (let i = 1; i <= 6; i++) {
-        saveCardSelection(i);
+    let currentMusic = null;
+    let musicName = '';
+    let phases = [];
+    let center = '';
+    
+    if (musicValue === 'custom') {
+        // Custom music - get values from inputs
+        musicName = 'カスタム楽曲';
+        phases = [
+            parseInt(document.getElementById('beforeFever').value) || 0,
+            parseInt(document.getElementById('duringFever').value) || 0,
+            parseInt(document.getElementById('afterFever').value) || 0
+        ];
+        center = document.getElementById('customCenterCharacter').value || '';
+    } else if (musicData[musicValue]) {
+        // Existing music
+        currentMusic = musicData[musicValue];
+        musicName = currentMusic.name;
+        phases = [...currentMusic.phases];
+        center = currentMusic.centerCharacter || '';
+    } else {
+        alert('楽曲情報が見つかりません');
+        return;
     }
+    
+    // Generate a name for the custom music
+    const customName = prompt(
+        'カスタム楽曲名を入力してください：',
+        `${musicName} (カスタム編成)`
+    );
+    
+    if (!customName || customName.trim() === '') {
+        return;
+    }
+    
+    // Create custom music object
+    const customMusic = {
+        id: 'custom_' + Date.now(),
+        name: customName.trim(),
+        phases: phases,
+        center: center,
+        centerCharacter: center,
+        description: `フィーバー前: ${phases[0]}, フィーバー中: ${phases[1]}, フィーバー後: ${phases[2]}`
+    };
+    
+    // Save to custom music list
+    const customList = getCustomMusicList();
+    customList[customMusic.id] = customMusic;
+    saveCustomMusicList(customList);
+    
+    // Add to musicData for immediate use
+    musicData[customMusic.id] = customMusic;
+    
+    // Save current card configuration with this custom music
+    const cardState = {};
+    for (let i = 1; i <= 6; i++) {
+        cardState[`card${i}`] = {
+            id: document.getElementById(`card${i}`).value,
+            skillLevel: parseInt(document.getElementById(`skill${i}`).value) || 14,
+            skillValues: getSkillValues(i)
+        };
+    }
+    
+    // Save card configuration for this custom music
+    localStorage.setItem(`state_${customMusic.id}`, JSON.stringify({
+        appeal: document.getElementById('appeal').value,
+        mental: document.getElementById('mental').value,
+        learningCorrection: document.getElementById('learningCorrection').value,
+        cards: cardState
+    }));
+    
+    // Update the select element to include the new option
+    const musicSelectElement = document.getElementById('music');
+    const newOption = document.createElement('option');
+    newOption.value = customMusic.id;
+    newOption.textContent = `${customMusic.name} (${customMusic.phases.join('-')})`;
+    musicSelectElement.appendChild(newOption);
+    
+    // Rebuild music dropdown to include new custom music
+    rebuildMusicDropdown();
+    
+    // Switch to the new custom music
+    musicSelect.value = customMusic.id;
+    toggleMusicInput();
     
     // Remove share parameters from URL
     const url = new URL(window.location.href);
@@ -2984,7 +3097,23 @@ function saveSharedData() {
     document.body.classList.remove('share-mode');
     isShareMode = false;
     
-    alert('データを保存しました！');
+    alert(`カスタム楽曲「${customName}」として保存しました！`);
+}
+
+function exitShareMode() {
+    // Remove share parameters from URL
+    const url = new URL(window.location.href);
+    url.searchParams.delete('share');
+    url.searchParams.delete('data');
+    window.history.replaceState({}, document.title, url.pathname);
+    
+    // Hide share mode banner
+    document.getElementById('shareMode').style.display = 'none';
+    document.body.classList.remove('share-mode');
+    isShareMode = false;
+    
+    // Reload the page to restore previous state
+    location.reload();
 }
 
 // Initialize share mode on page load
@@ -3044,12 +3173,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Use setTimeout to ensure DOM is fully ready and card data is loaded
     setTimeout(() => {
-        // Setup auto-save
-        setupAutoSave();
+        // Setup auto-save only in non-share mode
+        if (!isShareMode) {
+            setupAutoSave();
+        }
         
         // Load state for default song
         const defaultMusic = document.getElementById('music').value;
-        loadStateForSong(defaultMusic);
+        if (!isShareMode) {
+            loadStateForSong(defaultMusic);
+        }
         
         // Show center character for default song
         toggleMusicInput();
