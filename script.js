@@ -71,8 +71,6 @@ class Game {
         }
         const card = this.cards[this.cardTurn];
         
-        // Store initial turn state to check if turn was skipped
-        const initialTurn = this.turn;
         
         // Check if card will be skipped before creating log
         let willBeSkipped = false;
@@ -2427,62 +2425,7 @@ function closeNotice() {
     localStorage.setItem('noticeHidden', 'true');
 }
 
-// Initialize on page load
-window.onload = function() {
-    loadCardData();
-    
-    // Setup searchable selects for all card slots
-    for (let i = 1; i <= 6; i++) {
-        setupSearchableSelect(i);
-    }
-    
-    // Setup drag and drop
-    setupDragAndDrop();
-    
-    
-    // Add event listener for custom center character changes
-    const customCenterSelect = document.getElementById('customCenterCharacter');
-    if (customCenterSelect) {
-        customCenterSelect.addEventListener('change', function() {
-            const musicSelect = document.getElementById('music');
-            if (musicSelect.value === 'custom') {
-                const centerDisplay = document.getElementById('centerCharacterDisplay');
-                const centerNameSpan = document.getElementById('centerCharacterName');
-                
-                if (this.value) {
-                    centerDisplay.style.display = 'block';
-                    centerNameSpan.textContent = this.value;
-                } else {
-                    centerDisplay.style.display = 'none';
-                }
-                
-                // Update center character highlighting
-                updateCenterCharacterHighlight();
-            }
-        });
-    }
-    
-    // Use setTimeout to ensure DOM is fully ready and card data is loaded
-    setTimeout(() => {
-        // Setup auto-save
-        setupAutoSave();
-        
-        // Load state for default song
-        const defaultMusic = document.getElementById('music').value;
-        loadStateForSong(defaultMusic);
-        
-        // Show center character for default song
-        toggleMusicInput();
-        
-        // Check if notice should be hidden
-        if (localStorage.getItem('noticeHidden') === 'true') {
-            const banner = document.getElementById('noticeBanner');
-            if (banner) {
-                banner.classList.add('hidden');
-            }
-        }
-    }, 100);
-};
+// Initialize on page load - moved to DOMContentLoaded at the bottom
 
 // Custom music management functions
 function getCustomMusicList() {
@@ -2642,29 +2585,7 @@ function updateSavedCustomMusicDisplay() {
     container.innerHTML = html;
 }
 
-// Initialize page on load
-window.addEventListener('DOMContentLoaded', function() {
-    // Rebuild dropdown to include any saved custom songs
-    rebuildMusicDropdown();
-    
-    // Initialize selected music
-    const currentMusic = document.getElementById('music').value;
-    if (currentMusic) {
-        document.querySelector(`.music-dropdown-item[data-value="${currentMusic}"]`)?.classList.add('selected');
-        updateMusicDisplay(currentMusic);
-    }
-    
-    // Add keyboard navigation for music search
-    const searchInput = document.getElementById('musicSearchInput');
-    if (searchInput) {
-        searchInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.getElementById('musicDropdown').classList.remove('show');
-                document.querySelector('.music-select-display').classList.remove('active');
-            }
-        });
-    }
-});
+// Initialize page on load - moved to DOMContentLoaded at the bottom
 
 // Close dropdown when clicking outside
 document.addEventListener('click', function(event) {
@@ -2841,3 +2762,248 @@ function handleTouchCancel() {
     touchItem = null;
     isDragging = false;
 }
+
+// URL share functionality
+let isShareMode = false;
+
+function createShareURL() {
+    const data = {
+        appeal: document.getElementById('appeal').value,
+        music: document.getElementById('music').value,
+        customMusic: musicData === null ? [musicPhases[0], musicPhases[1], musicPhases[2]] : null,
+        cards: []
+    };
+    
+    // Collect card data
+    for (let i = 1; i <= 6; i++) {
+        const cardId = document.getElementById(`card${i}`).value;
+        if (cardId) {
+            const cardData = {
+                id: cardId,
+                skill: parseInt(document.getElementById(`skill${i}`).value),
+                params: getSkillValues(i),
+                centerSkill: parseInt(document.getElementById(`centerSkillLevel${i}`)?.value || 14),
+                centerParams: getCenterSkillValues(i)
+            };
+            data.cards.push(cardData);
+        }
+    }
+    
+    // Compress and encode data
+    const json = JSON.stringify(data);
+    const compressed = btoa(unescape(encodeURIComponent(json)));
+    
+    // Create share URL
+    const url = new URL(window.location.href);
+    url.searchParams.set('share', '1');
+    url.searchParams.set('data', compressed);
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(url.toString()).then(() => {
+        alert('共有URLをクリップボードにコピーしました！');
+    }).catch(() => {
+        prompt('共有URL:', url.toString());
+    });
+}
+
+function loadShareData() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    if (urlParams.get('share') === '1') {
+        isShareMode = true;
+        document.getElementById('shareMode').style.display = 'block';
+        document.body.classList.add('share-mode');
+        
+        const encodedData = urlParams.get('data');
+        if (encodedData) {
+            try {
+                const json = decodeURIComponent(escape(atob(encodedData)));
+                const data = JSON.parse(json);
+                
+                // Load appeal value
+                if (data.appeal) {
+                    document.getElementById('appeal').value = data.appeal;
+                }
+                
+                // Load music
+                if (data.music) {
+                    document.getElementById('music').value = data.music;
+                    onMusicChange();
+                } else if (data.customMusic) {
+                    document.getElementById('music').value = 'custom';
+                    onMusicChange();
+                    // Set custom music phases
+                    musicPhases[0] = data.customMusic[0];
+                    musicPhases[1] = data.customMusic[1]; 
+                    musicPhases[2] = data.customMusic[2];
+                    updateSavedCustomMusicDisplay();
+                }
+                
+                
+                // Load cards
+                data.cards.forEach((card, index) => {
+                    if (index < 6) {
+                        const slotNum = index + 1;
+                        document.getElementById(`card${slotNum}`).value = card.id;
+                        onCardChange(slotNum);
+                        
+                        if (card.skill) {
+                            document.getElementById(`skill${slotNum}`).value = card.skill;
+                            onSkillLevelChange(slotNum);
+                        }
+                        
+                        // Load skill parameters
+                        if (card.params) {
+                            setTimeout(() => {
+                                Object.keys(card.params).forEach(key => {
+                                    const input = document.getElementById(`skill${slotNum}_${key}`);
+                                    if (input) {
+                                        input.value = card.params[key];
+                                    }
+                                });
+                            }, 100);
+                        }
+                        
+                        // Load center skill level and parameters
+                        if (card.centerSkill) {
+                            setTimeout(() => {
+                                const centerSkillSelect = document.getElementById(`centerSkillLevel${slotNum}`);
+                                if (centerSkillSelect) {
+                                    centerSkillSelect.value = card.centerSkill;
+                                    onCenterSkillLevelChange(slotNum);
+                                }
+                                
+                                if (card.centerParams) {
+                                    Object.keys(card.centerParams).forEach(key => {
+                                        const input = document.getElementById(`centerSkill${slotNum}_${key}`);
+                                        if (input) {
+                                            input.value = card.centerParams[key];
+                                        }
+                                    });
+                                }
+                            }, 200);
+                        }
+                    }
+                });
+                
+            } catch (e) {
+                console.error('Failed to load share data:', e);
+                console.error('Encoded data:', encodedData);
+                alert('共有URLのデータの読み込みに失敗しました。\n\nエラー: ' + e.message);
+            }
+        }
+    }
+}
+
+function saveSharedData() {
+    // Save current state to localStorage
+    saveAppeal();
+    saveMusic();
+    
+    for (let i = 1; i <= 6; i++) {
+        saveCardSelection(i);
+    }
+    
+    // Remove share parameters from URL
+    const url = new URL(window.location.href);
+    url.searchParams.delete('share');
+    url.searchParams.delete('data');
+    window.history.replaceState({}, document.title, url.pathname);
+    
+    // Hide share mode banner
+    document.getElementById('shareMode').style.display = 'none';
+    document.body.classList.remove('share-mode');
+    isShareMode = false;
+    
+    alert('データを保存しました！');
+}
+
+// Initialize share mode on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // First, load card data
+    loadCardData();
+    
+    // Setup searchable selects for all card slots
+    for (let i = 1; i <= 6; i++) {
+        setupSearchableSelect(i);
+    }
+    
+    // Setup drag and drop
+    setupDragAndDrop();
+    
+    // Add event listener for custom center character changes
+    const customCenterSelect = document.getElementById('customCenterCharacter');
+    if (customCenterSelect) {
+        customCenterSelect.addEventListener('change', function() {
+            const musicSelect = document.getElementById('music');
+            if (musicSelect.value === 'custom') {
+                const centerDisplay = document.getElementById('centerCharacterDisplay');
+                const centerNameSpan = document.getElementById('centerCharacterName');
+                
+                if (this.value) {
+                    centerDisplay.style.display = 'block';
+                    centerNameSpan.textContent = this.value;
+                } else {
+                    centerDisplay.style.display = 'none';
+                }
+                
+                // Update center character highlighting
+                updateCenterCharacterHighlight();
+            }
+        });
+    }
+    
+    // Check if in share mode first
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('share') === '1') {
+        // Don't load from localStorage in share mode
+        loadShareData();
+    } else {
+        // Normal mode - load from localStorage
+        loadAppeal();
+        loadMusic();
+        loadCardSelections();
+        
+        // Check notice preference
+        if (localStorage.getItem('noticeHidden') === 'true') {
+            const banner = document.getElementById('noticeBanner');
+            if (banner) {
+                banner.classList.add('hidden');
+            }
+        }
+    }
+    
+    // Use setTimeout to ensure DOM is fully ready and card data is loaded
+    setTimeout(() => {
+        // Setup auto-save
+        setupAutoSave();
+        
+        // Load state for default song
+        const defaultMusic = document.getElementById('music').value;
+        loadStateForSong(defaultMusic);
+        
+        // Show center character for default song
+        toggleMusicInput();
+    }, 100);
+    
+    // Rebuild dropdown to include any saved custom songs
+    rebuildMusicDropdown();
+    
+    // Initialize selected music
+    const currentMusic = document.getElementById('music').value;
+    if (currentMusic) {
+        document.querySelector(`.music-dropdown-item[data-value="${currentMusic}"]`)?.classList.add('selected');
+        updateMusicDisplay(currentMusic);
+    }
+    
+    // Add keyboard navigation for music search
+    const searchInput = document.getElementById('musicSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.getElementById('musicDropdown').classList.remove('show');
+                document.querySelector('.music-select-display').classList.remove('active');
+            }
+        });
+    }
+});

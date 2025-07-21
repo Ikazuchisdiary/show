@@ -4,6 +4,19 @@ body {
     margin: 0 auto;
     padding: 20px;
     background-color: #f5f5f5;
+    transition: background-color 0.3s ease;
+}
+
+body.share-mode {
+    background-color: #e8f4f8;
+    background-image: 
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(33, 150, 243, 0.03) 10px,
+            rgba(33, 150, 243, 0.03) 20px
+        );
 }
 
 .container {
@@ -407,6 +420,86 @@ input[type="number"] {
     text-align: center;
     color: #666;
     font-size: 14px;
+}
+
+/* Button container styles */
+.button-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.share-button {
+    background: #2196F3;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.share-button:hover {
+    background: #1976D2;
+}
+
+/* Share mode banner */
+.share-mode-banner {
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    border: 2px solid #1565C0;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    animation: slideDown 0.3s ease-out;
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.share-mode-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.share-mode-icon {
+    font-size: 24px;
+    margin-right: 12px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.share-mode-text {
+    flex: 1;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.save-shared-button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.save-shared-button:hover {
+    background: #45a049;
 }
 
 /* Custom music inner section */

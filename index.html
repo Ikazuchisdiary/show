@@ -305,7 +305,18 @@
             </div>
         </div>
         
-        <button onclick="calculate()">スコア計算</button>
+        <div class="button-container">
+            <button onclick="calculate()">スコア計算</button>
+            <button onclick="createShareURL()" class="share-button">共有URLを作成</button>
+        </div>
+        
+        <div id="shareMode" class="share-mode-banner" style="display: none;">
+            <div class="share-mode-content">
+                <span class="share-mode-icon">🔗</span>
+                <span class="share-mode-text">共有モードで表示中</span>
+                <button onclick="saveSharedData()" class="save-shared-button">このデータを保存</button>
+            </div>
+        </div>
         
         <div id="result">
             <h2>計算結果</h2>
