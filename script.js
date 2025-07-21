@@ -2072,12 +2072,11 @@ function saveCurrentState() {
         cards: []
     };
     
-    // Save card selections and skill values (but not skill level)
+    // Save card selections only (skill values are calculated from skill level)
     for (let i = 1; i <= 6; i++) {
         const cardData = {
-            card: document.getElementById(`card${i}`).value,
-            // Don't save skillLevel here - it will be saved separately per card
-            skillValues: getSkillValues(i)
+            card: document.getElementById(`card${i}`).value
+            // スキルレベルは別途保存、スキル値は保存しない
         };
         state.cards.push(cardData);
     }
@@ -2105,7 +2104,7 @@ function loadCardSkillLevel(cardType) {
 
 // Save center skill level for a specific card type
 function saveCardCenterSkillLevel(cardType, skillLevel) {
-    if (!cardType) return;
+    if (!cardType || isShareMode) return; // 共有モードでは保存しない
     const key = `sukushou_card_center_skill_${cardType}`;
     localStorage.setItem(key, skillLevel);
 }
@@ -2208,18 +2207,8 @@ function loadStateForSong(musicKey) {
                 
                 // Don't load skill level from song state anymore - it's loaded per card
                 
-                // Trigger skill level change
+                // Trigger skill level change (スキル値は自動計算される)
                 onSkillLevelChange(i);
-                
-                // Load custom skill values
-                if (cardData.skillValues) {
-                    for (const [key, value] of Object.entries(cardData.skillValues)) {
-                        const input = document.getElementById(`skill${i}_${key}`);
-                        if (input) {
-                            input.value = value;
-                        }
-                    }
-                }
                 
                 // Update search input display
                 const searchInput = document.getElementById(`cardSearch${i}`);
@@ -2380,7 +2369,7 @@ function insertCard(fromSlot, toSlot, insertBefore) {
         cardData.push({
             card: document.getElementById(`card${i}`).value,
             skill: document.getElementById(`skill${i}`).value,
-            skillValues: getSkillValues(i),
+            // スキル値は保存しない（スキルレベルから自動計算）
             searchValue: document.getElementById(`cardSearch${i}`).value
         });
     }
@@ -2417,11 +2406,7 @@ function insertCard(fromSlot, toSlot, insertBefore) {
         // Trigger skill level change
         onSkillLevelChange(slotNum);
         
-        // Restore custom skill values
-        for (const [key, value] of Object.entries(data.skillValues)) {
-            const input = document.getElementById(`skill${slotNum}_${key}`);
-            if (input) input.value = value;
-        }
+        // スキル値はスキルレベルから自動計算されるため復元不要
     }
     
     // Check for duplicate characters
@@ -2440,12 +2425,10 @@ function swapCards(fromSlot, toSlot) {
     // Get current values
     const fromCard = document.getElementById(`card${fromSlotNum}`).value;
     const fromSkill = document.getElementById(`skill${fromSlotNum}`).value;
-    const fromSkillValues = getSkillValues(fromSlotNum);
     const fromSearchValue = document.getElementById(`cardSearch${fromSlotNum}`).value;
     
     const toCard = document.getElementById(`card${toSlotNum}`).value;
     const toSkill = document.getElementById(`skill${toSlotNum}`).value;
-    const toSkillValues = getSkillValues(toSlotNum);
     const toSearchValue = document.getElementById(`cardSearch${toSlotNum}`).value;
     
     // Swap card selections
@@ -2460,20 +2443,9 @@ function swapCards(fromSlot, toSlot) {
     document.getElementById(`skill${fromSlotNum}`).value = toSkill;
     document.getElementById(`skill${toSlotNum}`).value = fromSkill;
     
-    // Trigger skill level changes
+    // Trigger skill level changes (スキル値は自動計算される)
     onSkillLevelChange(fromSlotNum);
     onSkillLevelChange(toSlotNum);
-    
-    // Restore custom skill values
-    for (const [key, value] of Object.entries(toSkillValues)) {
-        const input = document.getElementById(`skill${fromSlotNum}_${key}`);
-        if (input) input.value = value;
-    }
-    
-    for (const [key, value] of Object.entries(fromSkillValues)) {
-        const input = document.getElementById(`skill${toSlotNum}_${key}`);
-        if (input) input.value = value;
-    }
     
     // Update search inputs
     document.getElementById(`cardSearch${fromSlotNum}`).value = toSearchValue;
