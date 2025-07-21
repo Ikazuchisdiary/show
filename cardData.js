@@ -833,6 +833,39 @@ const gameData = {
       ]
     },
     // 徒町小鈴
+    "ladybugKosuzu": {
+      "name": "Ladybug Kosuzu",
+      "displayName": "［レディバグ］徒町小鈴",
+      "character": "徒町小鈴",
+      "effects": [
+        {
+          "type": "voltageGain",
+          "value": 318,
+          "description": "ボルテージ318獲得 (Lv.10)"
+        }
+      ],
+      "centerSkill": {
+        "timing": "beforeFeverStart",
+        "effects": [
+          {
+            "type": "voltageGain",
+            "value": 113,
+            "description": "ボルテージ113獲得 (Lv.10)"
+          },
+          {
+            "type": "conditional",
+            "condition": "mental <= 75",
+            "then": [
+              {
+                "type": "voltageGain",
+                "value": 136,
+                "description": "ボルテージ136獲得 (Lv.10)"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "aimaiKosuzu": {
       "name": "Aimai Kosuzu",
       "displayName": "［アイマイメーデー］徒町小鈴",
