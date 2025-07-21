@@ -990,7 +990,7 @@ function toggleMusicInput() {
     const customMusic = document.getElementById('customMusic');
     
     // Get previous music value to save its state
-    const previousMusic = musicSelect.getAttribute('data-previous-value') || 'i_do_me';
+    const previousMusic = musicSelect.getAttribute('data-previous-value') || 'ai_scream';
     
     // Save current state for the previous song
     if (previousMusic !== 'custom' && previousMusic !== musicSelect.value) {
@@ -2574,7 +2574,7 @@ function deleteCustomMusic(key) {
         
         // If the deleted music was selected, switch to default
         if (document.getElementById('music').value === key) {
-            document.getElementById('music').value = 'i_do_me';
+            document.getElementById('music').value = 'ai_scream';
             toggleMusicInput();
         }
     }
@@ -2867,9 +2867,7 @@ function createShareURL() {
             const cardData = {
                 id: cardId,
                 skill: parseInt(document.getElementById(`skill${i}`).value),
-                params: getSkillValues(i),
-                centerSkill: parseInt(document.getElementById(`centerSkillLevel${i}`)?.value || 14),
-                centerParams: getCenterSkillValues(i)
+                centerSkill: parseInt(document.getElementById(`centerSkillLevel${i}`)?.value || 14)
             };
             data.cards.push(cardData);
         }
@@ -2948,39 +2946,30 @@ function loadShareData() {
                         document.getElementById(`card${slotNum}`).value = card.id;
                         onCardChange(slotNum);
                         
+                        // Update search input display after onCardChange
+                        setTimeout(() => {
+                            const searchInput = document.getElementById(`cardSearch${slotNum}`);
+                            const selectElement = document.getElementById(`card${slotNum}`);
+                            const selectedOption = selectElement.options[selectElement.selectedIndex];
+                            if (selectedOption && selectedOption.value) {
+                                searchInput.value = selectedOption.textContent;
+                            }
+                        }, 50);
+                        
                         if (card.skill) {
                             document.getElementById(`skill${slotNum}`).value = card.skill;
                             onSkillLevelChange(slotNum);
                         }
                         
-                        // Load skill parameters
-                        if (card.params) {
-                            setTimeout(() => {
-                                Object.keys(card.params).forEach(key => {
-                                    const input = document.getElementById(`skill${slotNum}_${key}`);
-                                    if (input) {
-                                        input.value = card.params[key];
-                                    }
-                                });
-                            }, 100);
-                        }
+                        // スキルの数値はスキルレベルから自動計算されるため、paramsは読み込まない
                         
-                        // Load center skill level and parameters
+                        // Load center skill level (センタースキルの数値も自動計算)
                         if (card.centerSkill) {
                             setTimeout(() => {
                                 const centerSkillSelect = document.getElementById(`centerSkillLevel${slotNum}`);
                                 if (centerSkillSelect) {
                                     centerSkillSelect.value = card.centerSkill;
                                     onCenterSkillLevelChange(slotNum);
-                                }
-                                
-                                if (card.centerParams) {
-                                    Object.keys(card.centerParams).forEach(key => {
-                                        const input = document.getElementById(`centerSkill${slotNum}_${key}`);
-                                        if (input) {
-                                            input.value = card.centerParams[key];
-                                        }
-                                    });
                                 }
                             }, 200);
                         }
@@ -3059,8 +3048,8 @@ function saveAsCustomMusic() {
     for (let i = 1; i <= 6; i++) {
         cardState[`card${i}`] = {
             id: document.getElementById(`card${i}`).value,
-            skillLevel: parseInt(document.getElementById(`skill${i}`).value) || 14,
-            skillValues: getSkillValues(i)
+            skillLevel: parseInt(document.getElementById(`skill${i}`).value) || 14
+            // スキルの数値は保存しない（スキルレベルから自動計算）
         };
     }
     
