@@ -2518,6 +2518,7 @@ function saveCustomMusic() {
     
     // Update the music dropdown
     updateMusicDropdown();
+    rebuildMusicDropdown();
     
     // Select the newly saved custom music
     document.getElementById('music').value = key;
@@ -2525,6 +2526,9 @@ function saveCustomMusic() {
     
     // Clear the name input
     document.getElementById('customMusicName').value = '';
+    
+    // Update saved custom music display
+    updateSavedCustomMusicDisplay();
 }
 
 function deleteCustomMusic(key) {
@@ -2822,7 +2826,7 @@ function createShareURL() {
         cards: []
     };
     
-    // If using custom music, save the phases and center
+    // If using custom music or saved custom music, save the phases and center
     if (data.music === 'custom') {
         data.customMusic = [
             parseInt(document.getElementById('beforeFever').value) || 0,
@@ -2830,6 +2834,14 @@ function createShareURL() {
             parseInt(document.getElementById('afterFever').value) || 0
         ];
         data.customCenter = document.getElementById('customCenterCharacter').value || null;
+    } else if (data.music && data.music.startsWith('custom_')) {
+        // 保存されたカスタム楽曲の場合
+        const customList = getCustomMusicList();
+        if (customList[data.music]) {
+            data.customMusic = customList[data.music].phases;
+            data.customCenter = customList[data.music].centerCharacter;
+            data.customMusicName = customList[data.music].name;
+        }
     }
     
     // Collect card data
@@ -2890,7 +2902,23 @@ function loadShareData() {
                 }
                 
                 // Load music
-                if (data.music) {
+                if (data.music && data.music.startsWith('custom_') && data.customMusic) {
+                    // 保存されたカスタム楽曲の場合、一時的にmusicDataに追加
+                    const tempCustomMusic = {
+                        name: data.customMusicName || 'カスタム楽曲',
+                        phases: data.customMusic,
+                        centerCharacter: data.customCenter || null
+                    };
+                    musicData[data.music] = tempCustomMusic;
+                    
+                    // ドロップダウンを更新
+                    updateMusicDropdown();
+                    rebuildMusicDropdown();
+                    
+                    // 楽曲を選択
+                    document.getElementById('music').value = data.music;
+                    toggleMusicInput();
+                } else if (data.music) {
                     document.getElementById('music').value = data.music;
                     toggleMusicInput();
                 } else if (data.customMusic) {
