@@ -2,6 +2,46 @@
 let cardData = {};
 let musicData = {};
 
+// Calculate base AP based on combo count and initial mental
+function calculateBaseAP(comboCount, initialMental) {
+    // 実際のコンボ数 = 切り捨て(コンボ数 - （1-初期メンタル) / 0.04685)
+    const actualComboCount = Math.floor(comboCount - (1 - initialMental / 100) / 0.04685);
+    
+    // 1コンボ当たりAP = 小数点以下第4位切り上げ(60/実際のコンボ数)
+    const apPerCombo = Math.ceil((60 / comboCount) * 10000) / 10000;
+    
+    // 基礎AP = (59 + 1.5 * (実際のコンボ数 - 49)) * 1コンボ当たりAP
+    const baseAP = (59 + 1.5 * (actualComboCount - 49)) * apPerCombo;
+    
+    return Math.round(baseAP * 100) / 100; // Round to 2 decimal places
+}
+
+// Update base AP display
+function updateBaseAP() {
+    const musicSelect = document.getElementById('music').value;
+    const difficulty = document.getElementById('difficulty').value;
+    const initialMental = parseFloat(document.getElementById('mental').value);
+    const baseAPValue = document.getElementById('baseAPValue');
+    
+    if (musicSelect === 'custom') {
+        // For custom music, check if combo values are entered
+        const comboInput = document.getElementById(`customCombo${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`);
+        if (comboInput && comboInput.value) {
+            const comboCount = parseInt(comboInput.value);
+            const baseAP = calculateBaseAP(comboCount, initialMental);
+            baseAPValue.textContent = baseAP;
+        } else {
+            baseAPValue.textContent = '-';
+        }
+    } else if (musicData[musicSelect] && musicData[musicSelect].combos && musicData[musicSelect].combos[difficulty]) {
+        const comboCount = musicData[musicSelect].combos[difficulty];
+        const baseAP = calculateBaseAP(comboCount, initialMental);
+        baseAPValue.textContent = baseAP;
+    } else {
+        baseAPValue.textContent = '-';
+    }
+}
+
 // Skill level multipliers (Lv.1 = 1.0x, Lv.2 = 1.1x, ..., Lv.14 = 3.0x)
 const SKILL_LEVEL_MULTIPLIERS = [
     1.0,  // Lv.1
@@ -117,9 +157,28 @@ class Game {
         
         // Track AP consumption
         if (card.apCost) {
-            this.apConsumed += card.apCost;
+            let actualApCost = card.apCost;
+            
+            // Check if center character is a Butoukai card
+            if (this.centerCharacter) {
+                // Find all cards with matching center character
+                const centerCards = this.cards.filter(c => 
+                    c.config && c.config.character === this.centerCharacter
+                );
+                
+                // Check if any of them have "舞踏会" in their display name
+                const hasButoukaiCenter = centerCards.some(c => 
+                    c.config && c.config.displayName && c.config.displayName.includes('舞踏会')
+                );
+                
+                if (hasButoukaiCenter) {
+                    actualApCost = Math.max(0, actualApCost - 2);
+                }
+            }
+            
+            this.apConsumed += actualApCost;
             if (this.verbose) {
-                this.currentTurnLog.push(`<div class="log-ap">AP消費: ${card.apCost} (累計消費: ${this.apConsumed})</div>`);
+                this.currentTurnLog.push(`<div class="log-ap">AP消費: ${actualApCost} (累計消費: ${this.apConsumed})</div>`);
             }
         }
         
@@ -255,9 +314,16 @@ class Game {
     }
     
     getAP(value) {
-        this.apAcquired += value;
+        // Apply 1.5x multiplier to AP gains
+        const actualValue = value * 1.5;
+        this.apAcquired += actualValue;
         if (this.verbose) {
-            this.currentTurnLog.push(`<div class="log-action log-ap-gain">AP獲得: +${value} (累計獲得: ${this.apAcquired})</div>`);
+            // Format AP values to 2 decimal places without zero padding
+            const formatAP = (val) => {
+                const rounded = Math.round(val * 100) / 100;
+                return rounded.toString();
+            };
+            this.currentTurnLog.push(`<div class="log-action log-boost-action"><div class="log-ap-gain">💎 AP獲得</div><div class="ap-gain-values">+${formatAP(actualValue)} → ${formatAP(this.apAcquired)}</div></div>`);
         }
     }
     
@@ -267,7 +333,7 @@ class Game {
         // Find cards with matching character and center skill for this timing
         for (const card of this.cards) {
             if (card.config && card.config.character === this.centerCharacter && 
-                card.config.centerSkill && card.config.centerSkill.timing === timing) {
+                card.config.centerSkill && card.config.centerSkill.when === timing) {
                 
                 this.centerSkillActivated[timing] = true;
                 
@@ -316,8 +382,14 @@ class Game {
                 break;
                 
             case 'apGain':
-                const apValue = centerSkillValues[key] !== undefined ? 
-                    parseInt(centerSkillValues[key]) : effect.value;
+                let apValue;
+                if (centerSkillValues[key] !== undefined) {
+                    apValue = parseInt(centerSkillValues[key]);
+                } else if (effect.levelValues && effect.levelValues[skillLevel - 1] !== undefined) {
+                    apValue = effect.levelValues[skillLevel - 1];
+                } else {
+                    apValue = effect.value;
+                }
                 this.getAP(apValue);
                 break;
                 
@@ -495,6 +567,7 @@ class GenericCard extends Card {
         this.name = cardConfig.name.toLowerCase();
         this.displayName = cardConfig.displayName;
         this.config = cardConfig;
+        this.apCost = cardConfig.apCost || 0;
         this.skillValues = skillValues || {};
         this.skillLevel = skillLevel || 1;
         this.centerSkillLevel = centerSkillLevel || skillLevel || 1;
@@ -575,6 +648,18 @@ class GenericCard extends Card {
                     const voltageGainValue = this.skillValues[`effect_${i}_value`] !== undefined ? 
                         parseInt(this.skillValues[`effect_${i}_value`]) : effect.value;
                     game.getVoltage(voltageGainValue);
+                    break;
+                    
+                case 'apGain':
+                    let apGainValue;
+                    if (this.skillValues[`effect_${i}_value`] !== undefined) {
+                        apGainValue = parseInt(this.skillValues[`effect_${i}_value`]);
+                    } else if (effect.levelValues && effect.levelValues[this.skillLevel - 1] !== undefined) {
+                        apGainValue = effect.levelValues[this.skillLevel - 1];
+                    } else {
+                        apGainValue = effect.value;
+                    }
+                    game.getAP(apGainValue);
                     break;
                     
                 case 'voltagePenalty':
@@ -817,8 +902,14 @@ class GenericCard extends Card {
                     break;
                     
                 case 'apGain':
-                    const apGainValue = this.skillValues[key] !== undefined ? 
-                        parseInt(this.skillValues[key]) : effect.value;
+                    let apGainValue;
+                    if (this.skillValues[key] !== undefined) {
+                        apGainValue = parseInt(this.skillValues[key]);
+                    } else if (effect.levelValues && effect.levelValues[this.skillLevel - 1] !== undefined) {
+                        apGainValue = effect.levelValues[this.skillLevel - 1];
+                    } else {
+                        apGainValue = effect.value;
+                    }
                     game.getAP(apGainValue);
                     break;
                     
@@ -1031,19 +1122,22 @@ function toggleMusicInput() {
         musicSelect.value = tempMusicValue;
     }
     
-    // If switching to custom, store the previous song's phase values and center
+    // If switching to custom, store the previous song's phase values, center, and combo counts
     if (musicSelect.value === 'custom' && previousMusic !== 'custom') {
         let previousPhases;
         let previousCenter;
+        let previousCombos;
         if (musicData[previousMusic]) {
             previousPhases = musicData[previousMusic].phases;
             previousCenter = musicData[previousMusic].centerCharacter;
+            previousCombos = musicData[previousMusic].combos;
         } else {
             // Check custom music list
             const customList = getCustomMusicList();
             if (customList[previousMusic]) {
                 previousPhases = customList[previousMusic].phases;
                 previousCenter = customList[previousMusic].centerCharacter;
+                previousCombos = customList[previousMusic].combos;
             }
         }
         
@@ -1057,6 +1151,14 @@ function toggleMusicInput() {
         const centerSelect = document.getElementById('customCenterCharacter');
         if (centerSelect && previousCenter) {
             centerSelect.value = previousCenter;
+        }
+        
+        // Set combo counts
+        if (previousCombos) {
+            if (previousCombos.normal) document.getElementById('customComboNormal').value = previousCombos.normal;
+            if (previousCombos.hard) document.getElementById('customComboHard').value = previousCombos.hard;
+            if (previousCombos.expert) document.getElementById('customComboExpert').value = previousCombos.expert;
+            if (previousCombos.master) document.getElementById('customComboMaster').value = previousCombos.master;
         }
     }
     
@@ -1161,15 +1263,50 @@ function calculate() {
     document.getElementById('score').textContent = game.score.toLocaleString();
     document.getElementById('result').style.display = 'block';
     
-    // Display AP summary
-    const apBalance = game.apAcquired - game.apConsumed;
+    // Calculate and display base AP
+    const difficulty = document.getElementById('difficulty').value;
+    let comboCount = null;
+    
+    if (musicKey === 'custom') {
+        // For custom music, check if combo values are entered
+        const comboInput = document.getElementById(`customCombo${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`);
+        if (comboInput && comboInput.value) {
+            comboCount = parseInt(comboInput.value);
+        }
+    } else if (musicData[musicKey] && musicData[musicKey].combos && musicData[musicKey].combos[difficulty]) {
+        comboCount = musicData[musicKey].combos[difficulty];
+    } else {
+        // Check custom music list
+        const customList = getCustomMusicList();
+        if (customList[musicKey] && customList[musicKey].combos && customList[musicKey].combos[difficulty]) {
+            comboCount = customList[musicKey].combos[difficulty];
+        }
+    }
+    
+    let baseAP = 0;
+    if (comboCount) {
+        baseAP = calculateBaseAP(comboCount, initialMental);
+    }
+    
+    // Display AP summary with base AP included
+    const totalAP = baseAP + game.apAcquired;
+    const apBalance = totalAP - game.apConsumed;
+    
+    // Format AP values to 2 decimal places without zero padding
+    const formatAP = (value) => {
+        const rounded = Math.round(value * 100) / 100;
+        return rounded.toString();
+    };
+    
     const apSummaryHtml = `
         <div class="ap-summary" style="margin-top: 10px; padding: 10px; background-color: ${apBalance >= 0 ? '#e8f5e9' : '#ffebee'}; border-radius: 5px;">
             <h4 style="margin: 0 0 10px 0;">AP収支</h4>
-            <div>獲得AP: ${game.apAcquired}</div>
-            <div>消費AP: ${game.apConsumed}</div>
-            <div style="font-weight: bold; color: ${apBalance >= 0 ? '#2e7d32' : '#c62828'};">
-                差引: ${apBalance >= 0 ? '+' : ''}${apBalance} ${apBalance >= 0 ? '(足りています)' : '(不足しています)'}
+            <div>基礎AP: ${formatAP(baseAP)}</div>
+            <div>獲得AP: ${formatAP(game.apAcquired)}</div>
+            <div style="font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 5px;">合計AP: ${formatAP(totalAP)}</div>
+            <div>消費AP: ${formatAP(game.apConsumed)}</div>
+            <div style="font-weight: bold; color: ${apBalance >= 0 ? '#2e7d32' : '#c62828'}; margin-top: 10px;">
+                差引: ${apBalance >= 0 ? '+' : ''}${formatAP(apBalance)} ${apBalance >= 0 ? '(足りています)' : '(不足しています)'}
             </div>
         </div>
     `;
@@ -1221,6 +1358,42 @@ function loadCardData() {
         console.error('Failed to load card data:', error);
         alert('カードデータの読み込みに失敗しました。');
     }
+}
+
+function getCardDescription(card) {
+    let description = card.displayName;
+    
+    // Add center skill AP gain info if it exists
+    if (card.centerSkill && card.centerSkill.effects) {
+        const apEffects = [];
+        
+        for (const effect of card.centerSkill.effects) {
+            if (effect.type === 'apGain') {
+                if (effect.levelValues) {
+                    apEffects.push(`AP+${effect.levelValues[9]}`); // Show Lv.10 value
+                } else {
+                    apEffects.push(`AP+${effect.value}`);
+                }
+            } else if (effect.type === 'conditional' && effect.then) {
+                // Check for conditional AP gains
+                for (const thenEffect of effect.then) {
+                    if (thenEffect.type === 'apGain') {
+                        if (thenEffect.levelValues) {
+                            apEffects.push(`条件AP+${thenEffect.levelValues[9]}`);
+                        } else {
+                            apEffects.push(`条件AP+${thenEffect.value}`);
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (apEffects.length > 0) {
+            description += ` [センター: ${apEffects.join(', ')}]`;
+        }
+    }
+    
+    return description;
 }
 
 function populateCardDropdowns() {
@@ -1379,13 +1552,23 @@ function updateCenterCharacterHighlight() {
             // Add center skill parameters if card has center skill
             if (cardData[cardValue].centerSkill) {
                 const centerSkill = cardData[cardValue].centerSkill;
-                // Use saved center skill level (共有モードでは既存の値を使用)
-                const savedCenterSkillLevel = !isShareMode ? loadCardCenterSkillLevel(cardValue) : 
-                    parseInt(document.getElementById(`centerSkillLevel${i}`)?.value) || 14;
+                // Use saved center skill level or get current value if element exists
+                const centerSkillElement = document.getElementById(`centerSkillLevel${i}`);
+                let savedCenterSkillLevel;
+                if (centerSkillElement) {
+                    // Element exists, use its current value
+                    savedCenterSkillLevel = parseInt(centerSkillElement.value);
+                } else if (isShareMode) {
+                    // In share mode, default to 14 (will be overridden by share data later)
+                    savedCenterSkillLevel = 14;
+                } else {
+                    // Normal mode, load from localStorage
+                    savedCenterSkillLevel = loadCardCenterSkillLevel(cardValue);
+                }
                 
                 // Add timing display
                 let timingText = '';
-                switch (centerSkill.timing) {
+                switch (centerSkill.when) {
                     case 'beforeFirstTurn':
                         timingText = 'ライブ開始時';
                         break;
@@ -1543,6 +1726,15 @@ function generateSkillParams(slotNum, cardType, skillLevel = null) {
     }
     
     let html = '';
+    
+    // Add AP cost display
+    if (card.apCost !== undefined) {
+        html += `<div class="skill-param-row">
+            <label>AP消費:</label>
+            <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #f5f5f5; color: #666; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">${card.apCost}</span>
+        </div>`;
+    }
+    
     const effects = card.effects;
     let hasParams = false;
     
@@ -1641,6 +1833,20 @@ function generateCenterSkillEffectInputs(effect, slotNum, effectIndex, prefix, s
                 html += `<div class="skill-param-row">
                     <label>アピール値上昇:</label>
                     <input type="number" id="${inputId}" value="${calculatedValue}" step="0.001" style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px;">
+                </div>`;
+            }
+            break;
+        case 'apGain':
+            let apValue;
+            if (effect.levelValues && effect.levelValues[skillLevel - 1] !== undefined) {
+                apValue = effect.levelValues[skillLevel - 1];
+            } else if (effect.value !== undefined) {
+                apValue = effect.value;
+            }
+            if (apValue !== undefined) {
+                html += `<div class="skill-param-row">
+                    <label>AP獲得:</label>
+                    <span style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px; background-color: #e3f2fd; color: #1565c0; display: inline-block; box-sizing: border-box; height: 32px; line-height: 20px;">+${apValue}</span>
                 </div>`;
             }
             break;
@@ -1743,6 +1949,21 @@ function generateEffectInputs(effect, slotNum, effectIndex, prefix, skillLevel =
                 const calculatedValue = calculateSkillValue(effect.value, skillLevel, false);
                 html += `<div class="skill-param-row">
                     <label>ボルテージ獲得:</label>
+                    <input type="number" id="${inputId}" value="${Math.floor(calculatedValue)}" step="1" style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px;">
+                </div>`;
+            }
+            break;
+            
+        case 'apGain':
+            if (effect.value !== undefined) {
+                let calculatedValue;
+                if (effect.levelValues && effect.levelValues[skillLevel - 1] !== undefined) {
+                    calculatedValue = effect.levelValues[skillLevel - 1];
+                } else {
+                    calculatedValue = calculateSkillValue(effect.value, skillLevel, false);
+                }
+                html += `<div class="skill-param-row">
+                    <label>AP獲得:</label>
                     <input type="number" id="${inputId}" value="${Math.floor(calculatedValue)}" step="1" style="flex: 1; min-width: 100px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 14px;">
                 </div>`;
             }
@@ -1946,6 +2167,16 @@ function processEffectForSkillLevel(effect, prefix, values, skillLevel, cardType
         case 'voltageGain':
             if (effect.value !== undefined) {
                 values[`${prefix}_value`] = calculateSkillValue(effect.value, skillLevel, false);
+            }
+            break;
+            
+        case 'apGain':
+            if (effect.value !== undefined) {
+                if (effect.levelValues && effect.levelValues[skillLevel - 1] !== undefined) {
+                    values[`${prefix}_value`] = effect.levelValues[skillLevel - 1];
+                } else {
+                    values[`${prefix}_value`] = calculateSkillValue(effect.value, skillLevel, false);
+                }
             }
             break;
             
@@ -2184,10 +2415,8 @@ function onCenterSkillLevelChange(slotNum) {
     // Save center skill level for this card
     saveCardCenterSkillLevel(cardType, centerSkillLevel);
     
-    // Update center skill parameter values based on new level
-    if (cardData[cardType].centerSkill) {
-        updateCenterSkillValues(slotNum, cardData[cardType].centerSkill, centerSkillLevel);
-    }
+    // Regenerate the entire center character display to update AP gain displays
+    updateCenterCharacterHighlight();
 }
 
 // Update center skill input values based on skill level
@@ -2555,6 +2784,18 @@ function saveCustomMusic() {
     // Generate a unique key for this custom music
     const key = 'custom_' + Date.now();
     
+    // Get combo values
+    const combos = {};
+    const comboNormal = document.getElementById('customComboNormal').value;
+    const comboHard = document.getElementById('customComboHard').value;
+    const comboExpert = document.getElementById('customComboExpert').value;
+    const comboMaster = document.getElementById('customComboMaster').value;
+    
+    if (comboNormal) combos.normal = parseInt(comboNormal);
+    if (comboHard) combos.hard = parseInt(comboHard);
+    if (comboExpert) combos.expert = parseInt(comboExpert);
+    if (comboMaster) combos.master = parseInt(comboMaster);
+    
     // Create custom music object
     const customMusic = {
         name: name,
@@ -2562,6 +2803,11 @@ function saveCustomMusic() {
         centerCharacter: centerCharacter || null,
         description: `フィーバー前: ${phases[0]}, フィーバー中: ${phases[1]}, フィーバー後: ${phases[2]}`
     };
+    
+    // Add combos if any were provided
+    if (Object.keys(combos).length > 0) {
+        customMusic.combos = combos;
+    }
     
     // Save to custom music list
     const customList = getCustomMusicList();
@@ -2889,6 +3135,22 @@ function createShareURL() {
             parseInt(document.getElementById('afterFever').value) || 0
         ];
         data.customCenter = document.getElementById('customCenterCharacter').value || null;
+        
+        // Save combo counts if they exist
+        const combos = {};
+        const comboNormal = document.getElementById('customComboNormal').value;
+        const comboHard = document.getElementById('customComboHard').value;
+        const comboExpert = document.getElementById('customComboExpert').value;
+        const comboMaster = document.getElementById('customComboMaster').value;
+        
+        if (comboNormal) combos.normal = parseInt(comboNormal);
+        if (comboHard) combos.hard = parseInt(comboHard);
+        if (comboExpert) combos.expert = parseInt(comboExpert);
+        if (comboMaster) combos.master = parseInt(comboMaster);
+        
+        if (Object.keys(combos).length > 0) {
+            data.customCombos = combos;
+        }
     } else if (data.music && data.music.startsWith('custom_')) {
         // 保存されたカスタム楽曲の場合
         const customList = getCustomMusicList();
@@ -2896,6 +3158,10 @@ function createShareURL() {
             data.customMusic = customList[data.music].phases;
             data.customCenter = customList[data.music].centerCharacter;
             data.customMusicName = customList[data.music].name;
+            // Include combos if they exist
+            if (customList[data.music].combos) {
+                data.customCombos = customList[data.music].combos;
+            }
         }
     }
     
@@ -2973,6 +3239,10 @@ function loadShareData() {
                         phases: data.customMusic,
                         centerCharacter: data.customCenter || null
                     };
+                    // Include combos if they exist
+                    if (data.customCombos) {
+                        tempCustomMusic.combos = data.customCombos;
+                    }
                     musicData[data.music] = tempCustomMusic;
                     
                     // ドロップダウンを更新
@@ -2999,6 +3269,14 @@ function loadShareData() {
                         // Trigger change event to update display
                         const event = new Event('change');
                         document.getElementById('customCenterCharacter').dispatchEvent(event);
+                    }
+                    
+                    // Set custom combos if provided
+                    if (data.customCombos) {
+                        if (data.customCombos.normal) document.getElementById('customComboNormal').value = data.customCombos.normal;
+                        if (data.customCombos.hard) document.getElementById('customComboHard').value = data.customCombos.hard;
+                        if (data.customCombos.expert) document.getElementById('customComboExpert').value = data.customCombos.expert;
+                        if (data.customCombos.master) document.getElementById('customComboMaster').value = data.customCombos.master;
                     }
                 }
                 
@@ -3192,6 +3470,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Setup drag and drop
     setupDragAndDrop();
+    
     
     // Add event listener for custom center character changes
     const customCenterSelect = document.getElementById('customCenterCharacter');

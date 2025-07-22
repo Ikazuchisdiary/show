@@ -76,6 +76,15 @@
                 
                 <div class="stats-row">
                     <div class="stats-group">
+                        <label for="difficulty">難易度</label>
+                        <select id="difficulty">
+                            <option value="normal">NORMAL</option>
+                            <option value="hard">HARD</option>
+                            <option value="expert">EXPERT</option>
+                            <option value="master" selected>MASTER</option>
+                        </select>
+                    </div>
+                    <div class="stats-group">
                         <label for="appeal">アピール値</label>
                         <input type="number" id="appeal" value="88146" min="0">
                     </div>
@@ -132,6 +141,28 @@
                                     <option value="桂城泉">桂城泉</option>
                                     <option value="セラス 柳田 リリエンフェルト">セラス 柳田 リリエンフェルト</option>
                                 </select>
+                            </div>
+                            
+                            <div class="combo-inputs-section">
+                                <div class="section-label">コンボ数設定</div>
+                                <div class="combo-inputs-container">
+                                    <div class="combo-input-group">
+                                        <label>NORMAL</label>
+                                        <input type="number" id="customComboNormal" placeholder="コンボ数" min="0">
+                                    </div>
+                                    <div class="combo-input-group">
+                                        <label>HARD</label>
+                                        <input type="number" id="customComboHard" placeholder="コンボ数" min="0">
+                                    </div>
+                                    <div class="combo-input-group">
+                                        <label>EXPERT</label>
+                                        <input type="number" id="customComboExpert" placeholder="コンボ数" min="0">
+                                    </div>
+                                    <div class="combo-input-group">
+                                        <label>MASTER</label>
+                                        <input type="number" id="customComboMaster" placeholder="コンボ数" min="0">
+                                    </div>
+                                </div>
                             </div>
                             
                             <div class="save-music-row">

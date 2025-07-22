@@ -1224,10 +1224,15 @@ button.secondary:hover {
 }
 
 .log-ap-gain {
-    background-color: #e3f2fd;
-    border-left: 3px solid #1976d2;
-    padding: 4px 8px;
-    margin: 4px 0;
+    color: #1976d2;
+    font-weight: bold;
+}
+
+.ap-gain-values {
+    padding-left: 16px;
+    color: #1565c0;
+    font-weight: 600;
+    font-size: 13px;
 }
 
 .log-calculation {
@@ -1521,6 +1526,49 @@ input[placeholder="不明"]:focus {
 /* Hide hint after user has dragged once */
 body.has-dragged .drag-hint {
     display: none;
+}
+
+/* Base AP Result Display */
+.base-ap-result {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px 16px;
+    margin: 10px 0;
+    font-size: 16px;
+    text-align: center;
+    color: #666;
+}
+
+/* Combo inputs styling */
+.combo-inputs-section {
+    margin-top: 20px;
+}
+
+.combo-inputs-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.combo-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.combo-input-group label {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+}
+
+.combo-input-group input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
 }
 
 /* Drag and drop styles */

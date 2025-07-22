@@ -52,8 +52,55 @@ const gameData = {
           "type": "voltageBoost",
           "value": 0.825,
           "description": "ボルテージ82.5%ブースト (Lv.10)"
+        },
+        {
+          "type": "conditional",
+          "condition": "count <= 4",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 5,
+              "description": "AP獲得 (固定値)",
+              "levelValues": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+            }
+          ]
+        },
+        {
+          "type": "conditional",
+          "condition": "count <= 2",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 5,
+              "description": "さらにAP獲得 (固定値)",
+              "levelValues": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+            }
+          ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "effects": [
+          {
+            "type": "apGain",
+            "value": 4,
+            "description": "AP獲得",
+            "levelValues": [4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 9, 10, 11]
+          },
+          {
+            "type": "conditional",
+            "condition": "turn >= 6",
+            "then": [
+              {
+                "type": "apGain",
+                "value": 2,
+                "description": "さらにAP獲得",
+                "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+              }
+            ]
+          }
+        ],
+        "when": "beforeFeverStart"
+      }
     },
     "beProudKozu": {
       "name": "Be Proud Kozu",
@@ -134,10 +181,22 @@ const gameData = {
               "description": "ボルテージ780獲得 (Lv.10)"
             }
           ]
+        },
+        {
+          "type": "conditional",
+          "condition": "count <= 12",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 0,
+              "description": "AP獲得",
+              "levelValues": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 20, 20]
+            }
+          ]
         }
       ],
       "centerSkill": {
-        "timing": "beforeFeverStart",
+        "when": "beforeFeverStart",
         "effects": [
           {
             "type": "voltageGain",
@@ -163,10 +222,34 @@ const gameData = {
           "type": "voltageBoost",
           "value": 0.825,
           "description": "ボルテージ82.5%ブースト (Lv.10)"
+        },
+        {
+          "type": "conditional",
+          "condition": "count <= 4",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 5,
+              "description": "AP獲得",
+              "levelValues": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+            }
+          ]
+        },
+        {
+          "type": "conditional",
+          "condition": "count <= 2",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 5,
+              "description": "追加AP獲得",
+              "levelValues": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+            }
+          ]
         }
       ],
       "centerSkill": {
-        "timing": "beforeFeverStart",
+        "when": "beforeFeverStart",
         "effects": [
           {
             "type": "scoreGain",
@@ -200,7 +283,7 @@ const gameData = {
         }
       ],
       "centerSkill": {
-        "timing": "afterLastTurn",
+        "when": "afterLastTurn",
         "effects": [
           {
             "type": "scoreGain",
@@ -218,6 +301,18 @@ const gameData = {
       "effects": [
         {
           "type": "conditional",
+          "condition": "turn <= 9",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 15,
+              "description": "AP獲得",
+              "levelValues": [15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15]
+            }
+          ]
+        },
+        {
+          "type": "conditional",
           "condition": "turn >= 10",
           "then": [
             {
@@ -229,7 +324,7 @@ const gameData = {
         }
       ],
       "centerSkill": {
-        "timing": "beforeFeverStart",
+        "when": "beforeFeverStart",
         "effects": [
           {
             "type": "scoreGain",
@@ -282,7 +377,7 @@ const gameData = {
         }
       ],
       "centerSkill": {
-        "timing": "afterLastTurn",
+        "when": "afterLastTurn",
         "effects": [
           {
             "type": "scoreGain",
@@ -322,7 +417,7 @@ const gameData = {
         }
       ],
       "centerSkill": {
-        "timing": "afterLastTurn",
+        "when": "afterLastTurn",
         "effects": [
           {
             "type": "scoreGain",
@@ -388,7 +483,7 @@ const gameData = {
         }
       ],
       "centerSkill": {
-        "timing": "beforeFeverStart",
+        "when": "beforeFeverStart",
         "effects": [
           {
             "type": "scoreGain",
@@ -433,7 +528,7 @@ const gameData = {
         }
       ],
       "centerSkill": {
-        "timing": "beforeFirstTurn",
+        "when": "beforeFirstTurn",
         "effects": [
           {
             "type": "voltageGain",
@@ -478,7 +573,7 @@ const gameData = {
         }
       ],
       "centerSkill": {
-        "timing": "beforeFeverStart",
+        "when": "beforeFeverStart",
         "effects": [
           {
             "type": "voltageGain",
@@ -528,7 +623,30 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "effects": [
+          {
+            "type": "apGain",
+            "value": 2,
+            "description": "AP獲得",
+            "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+          },
+          {
+            "type": "conditional",
+            "condition": "voltageLevel >= 4",
+            "then": [
+              {
+                "type": "apGain",
+                "value": 2,
+                "description": "さらにAP獲得",
+                "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+              }
+            ]
+          }
+        ],
+        "when": "beforeFeverStart"
+      }
     },
     "bdRurino": {
       "name": "BD Rurino",
@@ -545,8 +663,55 @@ const gameData = {
           "type": "voltageBoost",
           "value": 0.825,
           "description": "ボルテージ82.5%ブースト (Lv.10)"
+        },
+        {
+          "type": "conditional",
+          "condition": "mental >= 50",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 5,
+              "description": "AP獲得",
+              "levelValues": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+            }
+          ]
+        },
+        {
+          "type": "conditional",
+          "condition": "mental >= 100",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 5,
+              "description": "追加AP獲得",
+              "levelValues": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+            }
+          ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "when": "beforeFeverStart",
+        "effects": [
+          {
+            "type": "apGain",
+            "value": 6,
+            "description": "AP獲得",
+            "levelValues": [4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 9, 10, 11]
+          },
+          {
+            "type": "conditional",
+            "condition": "mental >= 50",
+            "then": [
+              {
+                "type": "apGain",
+                "value": 4,
+                "description": "追加AP獲得",
+                "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+              }
+            ]
+          }
+        ]
+      }
     },
     "joshoRurino": {
       "name": "Josho Rurino",
@@ -570,7 +735,30 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "effects": [
+          {
+            "type": "apGain",
+            "value": 2,
+            "description": "AP獲得",
+            "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+          },
+          {
+            "type": "conditional",
+            "condition": "mental >= 50",
+            "then": [
+              {
+                "type": "apGain",
+                "value": 2,
+                "description": "さらにAP獲得",
+                "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+              }
+            ]
+          }
+        ],
+        "when": "beforeFeverStart"
+      }
     },
     "momijidaniRurino": {
       "name": "Momijidani Rurino",
@@ -594,7 +782,30 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "effects": [
+          {
+            "type": "apGain",
+            "value": 2,
+            "description": "AP獲得",
+            "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+          },
+          {
+            "type": "conditional",
+            "condition": "voltageLevel >= 2",
+            "then": [
+              {
+                "type": "apGain",
+                "value": 2,
+                "description": "さらにAP獲得",
+                "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+              }
+            ]
+          }
+        ],
+        "when": "beforeFeverStart"
+      }
     },
     "fanfareRurino": {
       "name": "Fanfare Rurino",
@@ -618,7 +829,18 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "effects": [
+          {
+            "type": "apGain",
+            "value": 2,
+            "description": "AP獲得",
+            "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+          }
+        ],
+        "when": "beforeFirstTurn"
+      }
     },
     "linkFutureRurino": {
       "name": "Link Future Rurino",
@@ -642,7 +864,30 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "effects": [
+          {
+            "type": "apGain",
+            "value": 2,
+            "description": "AP獲得",
+            "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+          },
+          {
+            "type": "conditional",
+            "condition": "mental >= 50",
+            "then": [
+              {
+                "type": "apGain",
+                "value": 2,
+                "description": "さらにAP獲得",
+                "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+              }
+            ]
+          }
+        ],
+        "when": "beforeFeverStart"
+      }
     },
     "identityRurino": {
       "name": "Identity Rurino",
@@ -655,7 +900,30 @@ const gameData = {
           "value": 3.1875,
           "description": "スコアブースト効果318.75%上昇 (Lv.10)"
         }
-      ]
+      ],
+      "centerSkill": {
+        "effects": [
+          {
+            "type": "apGain",
+            "value": 2,
+            "description": "AP獲得",
+            "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+          },
+          {
+            "type": "conditional",
+            "condition": "mental >= 50",
+            "then": [
+              {
+                "type": "apGain",
+                "value": 2,
+                "description": "さらにAP獲得",
+                "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+              }
+            ]
+          }
+        ],
+        "when": "beforeFeverStart"
+      }
     },
     "yoursEverRurino": {
       "name": "Yours Ever Rurino",
@@ -668,7 +936,18 @@ const gameData = {
           "value": 2.325,
           "description": "スコア232.5%ブースト (Lv.10)"
         }
-      ]
+      ],
+      "centerSkill": {
+        "effects": [
+          {
+            "type": "apGain",
+            "value": 2,
+            "description": "AP獲得",
+            "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+          }
+        ],
+        "when": "beforeFirstTurn"
+      }
     },
     "natsumekiRurino": {
       "name": "Natsumeki Rurino",
@@ -681,7 +960,30 @@ const gameData = {
           "value": 1.8125,
           "description": "スコア181.25%ブースト (Lv.10)"
         }
-      ]
+      ],
+      "centerSkill": {
+        "effects": [
+          {
+            "type": "apGain",
+            "value": 2,
+            "description": "AP獲得",
+            "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+          },
+          {
+            "type": "conditional",
+            "condition": "mental >= 50",
+            "then": [
+              {
+                "type": "apGain",
+                "value": 2,
+                "description": "さらにAP獲得",
+                "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+              }
+            ]
+          }
+        ],
+        "when": "beforeFeverStart"
+      }
     },
     "dreamRurino": {
       "name": "Dream Rurino",
@@ -694,7 +996,30 @@ const gameData = {
           "value": 1.35,
           "description": "スコア135%ブースト (Lv.10)"
         }
-      ]
+      ],
+      "centerSkill": {
+        "effects": [
+          {
+            "type": "apGain",
+            "value": 2,
+            "description": "AP獲得",
+            "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+          },
+          {
+            "type": "conditional",
+            "condition": "voltageLevel >= 2",
+            "then": [
+              {
+                "type": "apGain",
+                "value": 2,
+                "description": "さらにAP獲得",
+                "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+              }
+            ]
+          }
+        ],
+        "when": "beforeFeverStart"
+      }
     },
     "iDoMeRurino": {
       "name": "I Do Me Rurino",
@@ -714,6 +1039,18 @@ const gameData = {
         },
         {
           "type": "conditional",
+          "condition": "mental >= 100",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 8,
+              "description": "AP獲得 (固定値)",
+              "levelValues": [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8]
+            }
+          ]
+        },
+        {
+          "type": "conditional",
           "condition": "mental <= 99",
           "then": [
             {
@@ -723,7 +1060,29 @@ const gameData = {
             }
           ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "effects": [
+          {
+            "type": "apGain",
+            "value": 6,
+            "description": "AP獲得",
+            "levelValues": [6, 7, 8, 8, 9, 10, 10, 11, 12, 13, 14, 15, 16, 17]
+          },
+          {
+            "type": "conditional",
+            "condition": "mental <= 99",
+            "then": [
+              {
+                "type": "voltagePenalty",
+                "value": 1000,
+                "description": "ボルテージ-1000"
+              }
+            ]
+          }
+        ],
+        "when": "beforeFeverStart"
+      }
     },
     // 百生吟子
     "butoGin": {
@@ -745,6 +1104,12 @@ const gameData = {
               "type": "voltageBoost",
               "value": 1.6875,
               "description": "ボルテージ168.75%ブースト (Lv.10)"
+            },
+            {
+              "type": "apGain",
+              "value": 10,
+              "description": "AP獲得 (Lv.10: 10)",
+              "levelValues": [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
             }
           ]
         },
@@ -753,7 +1118,30 @@ const gameData = {
           "value": 50,
           "description": "メンタル50%減少"
         }
-      ]
+      ],
+      "centerSkill": {
+        "when": "beforeFeverStart",
+        "effects": [
+          {
+            "type": "apGain",
+            "value": 5,
+            "description": "AP獲得",
+            "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+          },
+          {
+            "type": "conditional",
+            "condition": "voltageLevel >= 4",
+            "then": [
+              {
+                "type": "apGain",
+                "value": 5,
+                "description": "追加AP獲得",
+                "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+              }
+            ]
+          }
+        ]
+      }
     },
     "bdGin": {
       "name": "BD Gin", 
@@ -770,8 +1158,55 @@ const gameData = {
           "type": "voltageBoost",
           "value": 0.825,
           "description": "ボルテージ82.5%ブースト (Lv.10)"
+        },
+        {
+          "type": "conditional",
+          "condition": "mental <= 75",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 5,
+              "description": "AP獲得 (固定値)",
+              "levelValues": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+            }
+          ]
+        },
+        {
+          "type": "conditional",
+          "condition": "mental <= 25",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 5,
+              "description": "さらにAP獲得 (固定値)",
+              "levelValues": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+            }
+          ]
         }
-      ]
+      ],
+      "centerSkill": {
+        "effects": [
+          {
+            "type": "apGain",
+            "value": 4,
+            "description": "AP獲得",
+            "levelValues": [4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 9, 10, 11]
+          },
+          {
+            "type": "conditional",
+            "condition": "mental <= 50",
+            "then": [
+              {
+                "type": "apGain",
+                "value": 2,
+                "description": "さらにAP獲得",
+                "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+              }
+            ]
+          }
+        ],
+        "when": "beforeFeverStart"
+      }
     },
     "fantasyGin": {
       "name": "Fantasy Gin",
@@ -793,10 +1228,22 @@ const gameData = {
               "description": "山札リセット"
             }
           ]
+        },
+        {
+          "type": "conditional",
+          "condition": "mental <= 25",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 3,
+              "description": "AP獲得",
+              "levelValues": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+            }
+          ]
         }
       ],
       "centerSkill": {
-        "timing": "beforeFirstTurn",
+        "when": "beforeFirstTurn",
         "effects": [
           {
             "type": "mentalReduction",
@@ -877,7 +1324,7 @@ const gameData = {
         }
       ],
       "centerSkill": {
-        "timing": "beforeFeverStart",
+        "when": "beforeFeverStart",
         "effects": [
           {
             "type": "voltageGain",
@@ -938,7 +1385,7 @@ const gameData = {
         }
       ],
       "centerSkill": {
-        "timing": "beforeFeverStart",
+        "when": "beforeFeverStart",
         "effects": [
           {
             "type": "voltageGain",
@@ -965,6 +1412,12 @@ const gameData = {
               "description": "メンタル20減少"
             },
             {
+              "type": "apGain",
+              "value": 8,
+              "description": "AP獲得",
+              "levelValues": [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8]
+            },
+            {
               "type": "scoreBoost",
               "value": 0.99,
               "description": "スコア99%ブースト (Lv.10)"
@@ -980,7 +1433,7 @@ const gameData = {
         }
       ],
       "centerSkill": {
-        "timing": "beforeFeverStart",
+        "when": "beforeFeverStart",
         "effects": [
           {
             "type": "mentalReduction",
@@ -1019,10 +1472,22 @@ const gameData = {
               "description": "ボルテージ279獲得 (Lv.10)"
             }
           ]
+        },
+        {
+          "type": "conditional",
+          "condition": "count >= 3",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 4,
+              "description": "AP獲得",
+              "levelValues": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+            }
+          ]
         }
       ],
       "centerSkill": {
-        "timing": "beforeFirstTurn",
+        "when": "beforeFirstTurn",
         "effects": [
           {
             "type": "voltageGain",
@@ -1043,6 +1508,12 @@ const gameData = {
           "type": "removeAfterUse",
           "condition": "count == 3",
           "description": "3回使用後はデッキから除外"
+        },
+        {
+          "type": "apGain",
+          "value": 5,
+          "description": "AP獲得",
+          "levelValues": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
         },
         {
           "type": "voltageBoost",
@@ -1078,10 +1549,22 @@ const gameData = {
               "description": "スコア334.8%獲得 (Lv.10)"
             }
           ]
+        },
+        {
+          "type": "conditional",
+          "condition": "count >= 3",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 2,
+              "description": "AP獲得 (固定値)",
+              "levelValues": [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+            }
+          ]
         }
       ],
       "centerSkill": {
-        "timing": "afterLastTurn",
+        "when": "afterLastTurn",
         "effects": [
           {
             "type": "scoreGain",
@@ -1131,7 +1614,7 @@ const gameData = {
         }
       ],
       "centerSkill": {
-        "timing": "beforeFeverStart",
+        "when": "beforeFeverStart",
         "effects": [
           {
             "type": "voltageGain",
@@ -1166,6 +1649,12 @@ const gameData = {
           "type": "removeAfterUse",
           "condition": "count == 3",
           "description": "3回使用後はデッキから除外"
+        },
+        {
+          "type": "apGain",
+          "value": 6,
+          "description": "AP獲得 (Lv.10: 6)",
+          "levelValues": [3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 7, 8, 8, 10]
         }
       ]
     }
@@ -1175,211 +1664,421 @@ const gameData = {
       "name": "愛♡スクリ〜ム！",
       "phases": [18, 7, 6],
       "description": "フィーバー前: 18, フィーバー中: 7, フィーバー後: 6",
-      "centerCharacter": "大沢瑠璃乃"
+      "centerCharacter": "大沢瑠璃乃",
+      "combos": {
+        "normal": 287,
+        "hard": 536,
+        "expert": 1278,
+        "master": 1857
+      }
     },
     "fruit_punch": {
       "name": "フルーツパンチ",
       "phases": [11, 6, 4],
       "description": "フィーバー前: 11, フィーバー中: 6, フィーバー後: 4",
-      "centerCharacter": "日野下花帆"
+      "centerCharacter": "日野下花帆",
+      "combos": {
+        "normal": 252,
+        "hard": 423,
+        "expert": 556,
+        "master": 862
+      }
     },
     "tenchi_reimei": {
       "name": "天地黎明",
       "phases": [15, 8, 0],
       "description": "フィーバー前: 15, フィーバー中: 8, フィーバー後: 0",
-      "centerCharacter": "桂城泉"
+      "centerCharacter": "桂城泉",
+      "combos": {
+        "normal": 390,
+        "hard": 555,
+        "expert": 792,
+        "master": 1127
+      }
     },
     "i_do_me": {
       "name": "アイドゥーミー！",
       "phases": [12, 6, 5],
       "description": "フィーバー前: 12, フィーバー中: 6, フィーバー後: 5",
-      "centerCharacter": "大沢瑠璃乃"
+      "centerCharacter": "大沢瑠璃乃",
+      "combos": {
+        "normal": 373,
+        "hard": 774,
+        "expert": 1111,
+        "master": 1678
+      }
     },
     "hello_new_dream": {
       "name": "Hello, new dream!",
       "phases": [12, 8, 5],
       "description": "フィーバー前: 12, フィーバー中: 8, フィーバー後: 5",
-      "centerCharacter": "村野さやか"
+      "centerCharacter": "村野さやか",
+      "combos": {
+        "normal": 420,
+        "hard": 640,
+        "expert": 889,
+        "master": 1396
+      }
     },
     "izayoi_serene": {
       "name": "十六夜セレーネ",
       "phases": [13, 6, 4],
       "description": "フィーバー前: 13, フィーバー中: 6, フィーバー後: 4",
-      "centerCharacter": "セラス 柳田 リリエンフェルト"
+      "centerCharacter": "セラス 柳田 リリエンフェルト",
+      "combos": {
+        "normal": 362,
+        "hard": 585,
+        "expert": 874,
+        "master": 1131
+      }
     },
     "retrofuture": {
       "name": "Retrofuture",
       "phases": [19, 9, 0],
       "description": "フィーバー前: 19, フィーバー中: 9, フィーバー後: 0",
-      "centerCharacter": "セラス 柳田 リリエンフェルト"
+      "centerCharacter": "セラス 柳田 リリエンフェルト",
+      "combos": {
+        "normal": 344,
+        "hard": 706,
+        "expert": 1057,
+        "master": 1467
+      }
     },
     "edelied": {
       "name": "Edelied",
       "phases": [11, 3, 4],
       "description": "フィーバー前: 11, フィーバー中: 3, フィーバー後: 4",
-      "centerCharacter": "桂城泉"
+      "centerCharacter": "桂城泉",
+      "combos": {
+        "normal": 291,
+        "hard": 464,
+        "expert": 1010,
+        "master": 1124
+      }
     },
     "chirikonkan": {
       "name": "チリコンカン",
       "phases": [10, 5, 4],
       "description": "フィーバー前: 10, フィーバー中: 5, フィーバー後: 4",
-      "centerCharacter": "桂城泉"
+      "centerCharacter": "桂城泉",
+      "combos": {
+        "normal": 290,
+        "hard": 552,
+        "expert": 898,
+        "master": 1122
+      }
     },
     "rinbu_revolution": {
       "name": "輪舞-revolution",
       "phases": [15, 5, 0],
       "description": "フィーバー前: 15, フィーバー中: 5, フィーバー後: 0",
-      "centerCharacter": "セラス 柳田 リリエンフェルト"
+      "centerCharacter": "セラス 柳田 リリエンフェルト",
+      "combos": {
+        "normal": 234,
+        "hard": 418,
+        "expert": 742,
+        "master": 1049
+      }
     },
     "aozora_jumping_heart": {
       "name": "青空Jumping Heart",
       "phases": [10, 4, 4],
       "description": "フィーバー前: 10, フィーバー中: 4, フィーバー後: 4",
-      "centerCharacter": "安養寺姫芽"
+      "centerCharacter": "安養寺姫芽",
+      "combos": {
+        "normal": 259,
+        "hard": 540,
+        "expert": 809,
+        "master": 1005
+      }
     },
     "dream_believers_105": {
       "name": "Dream Believers（105期Ver.）",
       "phases": [15, 5, 7],
       "description": "フィーバー前: 15, フィーバー中: 5, フィーバー後: 7",
-      "centerCharacter": "日野下花帆"
+      "centerCharacter": "日野下花帆",
+      "combos": {
+        "normal": 432,
+        "hard": 901,
+        "expert": 1257,
+        "master": 1389
+      }
     },
     "be_proud": {
       "name": "Be Proud",
       "phases": [11, 5, 5],
       "description": "フィーバー前: 11, フィーバー中: 5, フィーバー後: 5",
-      "centerCharacter": "乙宗梢"
+      "centerCharacter": "乙宗梢",
+      "combos": {
+        "normal": 402,
+        "hard": 422,
+        "expert": 695,
+        "master": 1019
+      }
     },
     "shiawase_no_ribbon": {
       "name": "幸せのリボン",
       "phases": [10, 8, 5],
       "description": "フィーバー前: 10, フィーバー中: 8, フィーバー後: 5",
-      "centerCharacter": "夕霧綴理"
+      "centerCharacter": "夕霧綴理",
+      "combos": {
+        "normal": 267,
+        "hard": 508,
+        "expert": 777,
+        "master": 985
+      }
     },
     "yappa_tenshi": {
       "name": "やっぱ天使！",
       "phases": [9, 6, 4],
       "description": "フィーバー前: 9, フィーバー中: 6, フィーバー後: 4",
-      "centerCharacter": "藤島慈"
+      "centerCharacter": "藤島慈",
+      "combos": {
+        "normal": 237,
+        "hard": 435,
+        "expert": 653,
+        "master": 1004
+      }
     },
     "fortune_movie": {
       "name": "フォーチュンムービー",
       "phases": [8, 5, 2],
       "description": "フィーバー前: 8, フィーバー中: 5, フィーバー後: 2",
-      "centerCharacter": "日野下花帆"
+      "centerCharacter": "日野下花帆",
+      "combos": {
+        "normal": 131,
+        "hard": 279,
+        "expert": 602,
+        "master": 690
+      }
     },
     "sparkly_spot": {
       "name": "Sparkly Spot",
       "phases": [10, 5, 3],
       "description": "フィーバー前: 10, フィーバー中: 5, フィーバー後: 3",
-      "centerCharacter": "村野さやか"
+      "centerCharacter": "村野さやか",
+      "combos": {
+        "normal": 274,
+        "hard": 509,
+        "expert": 741,
+        "master": 893
+      }
     },
     "scapegoat": {
       "name": "スケイプゴート",
       "phases": [14, 4, 5],
       "description": "フィーバー前: 14, フィーバー中: 4, フィーバー後: 5",
-      "centerCharacter": "夕霧綴理"
+      "centerCharacter": "夕霧綴理",
+      "combos": {
+        "normal": 298,
+        "hard": 488,
+        "expert": 677,
+        "master": 785
+      }
     },
     "reflection_in_the_mirror": {
       "name": "Reflection in the mirror",
       "phases": [11, 4, 4],
       "description": "フィーバー前: 11, フィーバー中: 4, フィーバー後: 4",
-      "centerCharacter": "乙宗梢"
+      "centerCharacter": "乙宗梢",
+      "combos": {
+        "normal": 261,
+        "hard": 500,
+        "expert": 758,
+        "master": 1026
+      }
     },
     "eien_no_euphoria_104": {
       "name": "永遠のEuphoria（104期Ver.）",
       "phases": [13, 5, 3],
       "description": "フィーバー前: 13, フィーバー中: 5, フィーバー後: 3",
-      "centerCharacter": "藤島慈"
+      "centerCharacter": "藤島慈",
+      "combos": {
+        "normal": 225,
+        "hard": 585,
+        "expert": 867,
+        "master": 916
+      }
     },
     "tsukimakase": {
       "name": "ツキマカセ",
       "phases": [13, 3, 4],
       "description": "フィーバー前: 13, フィーバー中: 3, フィーバー後: 4",
-      "centerCharacter": "夕霧綴理"
+      "centerCharacter": "夕霧綴理",
+      "combos": {
+        "normal": 293,
+        "hard": 559,
+        "expert": 786,
+        "master": 958
+      }
     },
     "ouka_ranman": {
       "name": "謳歌爛漫",
       "phases": [14, 4, 4],
       "description": "フィーバー前: 14, フィーバー中: 4, フィーバー後: 4",
-      "centerCharacter": "乙宗梢"
+      "centerCharacter": "乙宗梢",
+      "combos": {
+        "normal": 275,
+        "hard": 435,
+        "expert": 607,
+        "master": 758
+      }
     },
     "on_your_mark_104": {
       "name": "On your mark（104期Ver.）",
       "phases": [10, 5, 4],
       "description": "フィーバー前: 10, フィーバー中: 5, フィーバー後: 4",
-      "centerCharacter": "夕霧綴理"
+      "centerCharacter": "夕霧綴理",
+      "combos": {
+        "normal": 311,
+        "hard": 563,
+        "expert": 783,
+        "master": 818
+      }
     },
     "preserved_roses": {
       "name": "Preserved Roses",
       "phases": [12, 6, 0],
       "description": "フィーバー前: 12, フィーバー中: 6, フィーバー後: 0",
-      "centerCharacter": "日野下花帆"
+      "centerCharacter": "日野下花帆",
+      "combos": {
+        "normal": 337,
+        "hard": 596,
+        "expert": 721,
+        "master": 929
+      }
     },
     "tokimeki_runners": {
       "name": "TOKIMEKI Runners",
       "phases": [12, 4, 2],
       "description": "フィーバー前: 12, フィーバー中: 4, フィーバー後: 2",
-      "centerCharacter": "大沢瑠璃乃"
+      "centerCharacter": "大沢瑠璃乃",
+      "combos": {
+        "normal": 267,
+        "hard": 484,
+        "expert": 617,
+        "master": 921
+      }
     },
     "kimi_no_kokoro": {
       "name": "君のこころは輝いてるかい？",
       "phases": [11, 8, 4],
       "description": "フィーバー前: 11, フィーバー中: 8, フィーバー後: 4",
-      "centerCharacter": "日野下花帆"
+      "centerCharacter": "日野下花帆",
+      "combos": {
+        "normal": 404,
+        "hard": 679,
+        "expert": 908,
+        "master": 1152
+      }
     },
     "hakuchu_a_la_mode_104": {
       "name": "ハクチューアラモード（104期Ver.）",
       "phases": [9, 6, 2],
       "description": "フィーバー前: 9, フィーバー中: 6, フィーバー後: 2",
-      "centerCharacter": "大沢瑠璃乃"
+      "centerCharacter": "大沢瑠璃乃",
+      "combos": {
+        "normal": 190,
+        "hard": 448,
+        "expert": 639,
+        "master": 689
+      }
     },
     "do_do_do_104": {
       "name": "ド！ド！ド！（104期Ver.）",
       "phases": [11, 4, 3],
       "description": "フィーバー前: 11, フィーバー中: 4, フィーバー後: 3",
-      "centerCharacter": "安養寺姫芽"
+      "centerCharacter": "安養寺姫芽",
+      "combos": {
+        "normal": 274,
+        "hard": 517,
+        "expert": 708,
+        "master": 1000
+      }
     },
     "kokon_touzai_104": {
       "name": "ココン東西（104期Ver.）",
       "phases": [10, 5, 3],
       "description": "フィーバー前: 10, フィーバー中: 5, フィーバー後: 3",
-      "centerCharacter": "安養寺姫芽"
+      "centerCharacter": "安養寺姫芽",
+      "combos": {
+        "normal": 328,
+        "hard": 459,
+        "expert": 720,
+        "master": 1077
+      }
     },
     "ishin_denshin_104": {
       "name": "以心☆電心（104期Ver.）",
       "phases": [12, 5, 3],
       "description": "フィーバー前: 12, フィーバー中: 5, フィーバー後: 3",
-      "centerCharacter": "大沢瑠璃乃"
+      "centerCharacter": "大沢瑠璃乃",
+      "combos": {
+        "normal": 315,
+        "hard": 517,
+        "expert": 793,
+        "master": 1012
+      }
     },
     "kibouteki_prism_104": {
       "name": "希望的プリズム（104期Ver.）",
       "phases": [11, 6, 5],
       "description": "フィーバー前: 11, フィーバー中: 6, フィーバー後: 5",
-      "centerCharacter": "夕霧綴理"
+      "centerCharacter": "夕霧綴理",
+      "combos": {
+        "normal": 263,
+        "hard": 521,
+        "expert": 683,
+        "master": 890
+      }
     },
     "awoke_104": {
       "name": "AWOKE（104期Ver.）",
       "phases": [13, 5, 7],
       "description": "フィーバー前: 13, フィーバー中: 5, フィーバー後: 7",
-      "centerCharacter": "徒町小鈴"
+      "centerCharacter": "徒町小鈴",
+      "combos": {
+        "normal": 322,
+        "hard": 511,
+        "expert": 787,
+        "master": 1075
+      }
     },
     "suisai_sekai_104": {
       "name": "水彩世界（104期Ver.）",
       "phases": [11, 4, 4],
       "description": "フィーバー前: 11, フィーバー中: 4, フィーバー後: 4",
-      "centerCharacter": "百生吟子"
+      "centerCharacter": "百生吟子",
+      "combos": {
+        "normal": 243,
+        "hard": 420,
+        "expert": 761,
+        "master": 916
+      }
     },
     "mix_shake_104": {
       "name": "Mix shake!!（104期Ver.）",
       "phases": [13, 5, 5],
       "description": "フィーバー前: 13, フィーバー中: 5, フィーバー後: 5",
-      "centerCharacter": "百生吟子"
+      "centerCharacter": "百生吟子",
+      "combos": {
+        "normal": 285,
+        "hard": 591,
+        "expert": 950,
+        "master": 1206
+      }
     },
     "natsumeki_pain_104": {
       "name": "夏めきペイン（104期Ver.）",
       "phases": [12, 4, 2],
       "description": "フィーバー前: 12, フィーバー中: 4, フィーバー後: 2",
-      "centerCharacter": "乙宗梢"
+      "centerCharacter": "乙宗梢",
+      "combos": {
+        "normal": 251,
+        "hard": 463,
+        "expert": 650,
+        "master": 872
+      }
     }
   }
 };
