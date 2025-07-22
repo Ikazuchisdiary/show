@@ -652,7 +652,7 @@ const gameData = {
       "name": "BD Rurino",
       "displayName": "［17th Birthday］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
-      "apCost": 3,
+      "apCost": 10,
       "effects": [
         {
           "type": "scoreBoost",
