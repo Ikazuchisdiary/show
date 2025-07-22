@@ -1,6 +1,17 @@
 // Update history data
 const updateHistory = [
     {
+        version: "2025.07.22.5",
+        date: "2025-07-22",
+        time: "23:30",
+        updates: [
+            "AP（アクションポイント）システムを実装",
+            "各カードにAP消費コストを追加",
+            "AP収支計算機能を追加（獲得APと消費APの比較）",
+            "毎ターン15APの自然獲得を実装"
+        ]
+    },
+    {
         version: "2025.07.22.4",
         date: "2025-07-22",
         time: "18:04",

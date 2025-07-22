@@ -41,7 +41,6 @@ const gameData = {
       "name": "BD Kozu",
       "displayName": "［18th Birthday］乙宗梢",
       "character": "乙宗梢",
-      "apCost": 10,
       "effects": [
         {
           "type": "scoreBoost",
@@ -59,7 +58,6 @@ const gameData = {
       "name": "Be Proud Kozu",
       "displayName": "［be proud］乙宗梢",
       "character": "乙宗梢",
-      "apCost": 5,
       "effects": [
         {
           "type": "removeAfterUse",
@@ -81,7 +79,6 @@ const gameData = {
       "name": "Kiseki Kozu",
       "displayName": "［奇跡の舞踏会］乙宗梢",
       "character": "乙宗梢",
-      "apCost": 8,
       "effects": [
         {
           "type": "conditional",
@@ -112,7 +109,6 @@ const gameData = {
       "name": "LR Tsuzuri",
       "displayName": "［幸せのリボン］夕霧綴理",
       "character": "夕霧綴理",
-      "apCost": 20,
       "effects": [
         {
           "type": "removeAfterUse",
@@ -152,7 +148,6 @@ const gameData = {
       "name": "BD Megu",
       "displayName": "［18th Birthday］藤島慈",
       "character": "藤島慈",
-      "apCost": 10,
       "effects": [
         {
           "type": "scoreBoost",
@@ -180,7 +175,6 @@ const gameData = {
       "name": "Angel Megu",
       "displayName": "［やっぱ天使！］藤島慈",
       "character": "藤島慈",
-      "apCost": 12,
       "effects": [
         {
           "type": "scoreGain",
@@ -214,7 +208,6 @@ const gameData = {
       "name": "Kuon Megu",
       "displayName": "［久遠の銀河へ］藤島慈",
       "character": "藤島慈",
-      "apCost": 10,
       "effects": [
         {
           "type": "conditional",
@@ -255,7 +248,6 @@ const gameData = {
       "name": "I Do Me Kaho",
       "displayName": "［アイドゥーミー！］日野下花帆",
       "character": "日野下花帆",
-      "apCost": 12,
       "effects": [
         {
           "type": "mentalRecover",
@@ -296,7 +288,6 @@ const gameData = {
       "name": "Kiseki Kaho",
       "displayName": "［軌跡の舞踏会］日野下花帆",
       "character": "日野下花帆",
-      "apCost": 10,
       "effects": [
         {
           "type": "conditional",
@@ -348,7 +339,6 @@ const gameData = {
       "name": "I Do Me Sayaka",
       "displayName": "［アイドゥーミー！］村野さやか",
       "character": "村野さやか",
-      "apCost": 14,
       "effects": [
         {
           "type": "conditional",
@@ -413,7 +403,6 @@ const gameData = {
       "name": "Dolphin Sayaka",
       "displayName": "［ドルフィン〰ビーチ］村野さやか",
       "character": "村野さやか",
-      "apCost": 8,
       "effects": [
         {
           "type": "voltageGain",
@@ -447,7 +436,6 @@ const gameData = {
       "name": "Shinjitsu Sayaka",
       "displayName": "［真実の舞踏会］村野さやか",
       "character": "村野さやか",
-      "apCost": 10,
       "effects": [
         {
           "type": "conditional",
@@ -504,7 +492,6 @@ const gameData = {
       "name": "Buto Ruri",
       "displayName": "［悠久の舞踏会］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
-      "apCost": 10,
       "effects": [
         {
           "type": "conditional",
@@ -534,7 +521,6 @@ const gameData = {
       "name": "BD Rurino",
       "displayName": "［17th Birthday］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
-      "apCost": 3,
       "effects": [
         {
           "type": "scoreBoost",
@@ -552,7 +538,6 @@ const gameData = {
       "name": "Josho Rurino",
       "displayName": "［ジョーショーキリュー］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
-      "apCost": 15,
       "effects": [
         {
           "type": "scoreBoost",
@@ -576,7 +561,6 @@ const gameData = {
       "name": "Momijidani Rurino",
       "displayName": "［紅葉乃舞姫］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
-      "apCost": 12,
       "effects": [
         {
           "type": "scoreBoost",
@@ -600,7 +584,6 @@ const gameData = {
       "name": "Fanfare Rurino",
       "displayName": "［ファンファーレ！！！］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
-      "apCost": 8,
       "effects": [
         {
           "type": "scoreBoost",
@@ -624,7 +607,6 @@ const gameData = {
       "name": "Link Future Rurino",
       "displayName": "［Link to the FUTURE］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
-      "apCost": 8,
       "effects": [
         {
           "type": "scoreBoost",
@@ -648,7 +630,6 @@ const gameData = {
       "name": "Identity Rurino",
       "displayName": "［アイデンティティ］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
-      "apCost": 18,
       "effects": [
         {
           "type": "scoreBoost",
@@ -661,7 +642,6 @@ const gameData = {
       "name": "Yours Ever Rurino",
       "displayName": "［yours ever］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
-      "apCost": 12,
       "effects": [
         {
           "type": "scoreBoost",
@@ -674,7 +654,6 @@ const gameData = {
       "name": "Natsumeki Rurino",
       "displayName": "［夏めきペイン］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
-      "apCost": 10,
       "effects": [
         {
           "type": "scoreBoost",
@@ -687,7 +666,6 @@ const gameData = {
       "name": "Dream Rurino",
       "displayName": "［Dream Believers］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
-      "apCost": 8,
       "effects": [
         {
           "type": "scoreBoost",
@@ -700,7 +678,6 @@ const gameData = {
       "name": "I Do Me Rurino",
       "displayName": "［アイドゥーミー！］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
-      "apCost": 5,
       "effects": [
         {
           "type": "removeAfterUse",
@@ -730,7 +707,6 @@ const gameData = {
       "name": "Buto Gin",
       "displayName": "［輝跡の舞踏会］百生吟子",
       "character": "百生吟子",
-      "apCost": 10,
       "effects": [
         {
           "type": "conditional",
@@ -759,7 +735,6 @@ const gameData = {
       "name": "BD Gin", 
       "displayName": "［16th Birthday］百生吟子",
       "character": "百生吟子",
-      "apCost": 10,
       "effects": [
         {
           "type": "scoreBoost",
@@ -777,7 +752,6 @@ const gameData = {
       "name": "Fantasy Gin",
       "displayName": "［37.5℃のファンタジー］百生吟子",
       "character": "百生吟子",
-      "apCost": 7,
       "effects": [
         {
           "type": "scoreBoost",
@@ -810,7 +784,6 @@ const gameData = {
       "name": "Link Future Gin",
       "displayName": "［Link to the FUTURE］百生吟子",
       "character": "百生吟子",
-      "apCost": 1,
       "effects": [
         {
           "type": "removeAfterUse",
@@ -828,7 +801,6 @@ const gameData = {
       "name": "Seiran Gin",
       "displayName": "［青嵐の鯉流し］百生吟子",
       "character": "百生吟子",
-      "apCost": 15,
       "effects": [
         {
           "type": "scoreBoost",
@@ -841,7 +813,6 @@ const gameData = {
       "name": "Reflection Gin",
       "displayName": "［Reflection in the mirror］百生吟子",
       "character": "百生吟子",
-      "apCost": 10,
       "effects": [
         {
           "type": "scoreBoost",
@@ -854,7 +825,6 @@ const gameData = {
       "name": "Dream Gin",
       "displayName": "［Dream Believers］百生吟子",
       "character": "百生吟子",
-      "apCost": 10,
       "effects": [
         {
           "type": "scoreBoost",
@@ -868,7 +838,6 @@ const gameData = {
       "name": "Ladybug Kosuzu",
       "displayName": "［レディバグ］徒町小鈴",
       "character": "徒町小鈴",
-      "apCost": 15,
       "effects": [
         {
           "type": "voltageGain",
@@ -902,7 +871,6 @@ const gameData = {
       "name": "Aimai Kosuzu",
       "displayName": "［アイマイメーデー］徒町小鈴",
       "character": "徒町小鈴",
-      "apCost": 8,
       "effects": [
         {
           "type": "removeAfterUse",
@@ -953,7 +921,6 @@ const gameData = {
       "name": "Blast Hime",
       "displayName": "［BLAST!!］安養寺姫芽",
       "character": "安養寺姫芽",
-      "apCost": 20,
       "effects": [
         {
           "type": "conditional",
@@ -1000,7 +967,6 @@ const gameData = {
       "name": "Tenchi Izumi",
       "displayName": "［天地黎明］桂城泉",
       "character": "桂城泉",
-      "apCost": 17,
       "effects": [
         {
           "type": "conditional",
@@ -1037,7 +1003,6 @@ const gameData = {
       "name": "BD Celestine",
       "displayName": "［16th Birthday］セラス 柳田 リリエンフェルト",
       "character": "セラス 柳田 リリエンフェルト",
-      "apCost": 0,
       "effects": [
         {
           "type": "removeAfterUse",
@@ -1059,7 +1024,6 @@ const gameData = {
       "name": "Tenchi Celestine",
       "displayName": "［天地黎明］セラス 柳田 リリエンフェルト",
       "character": "セラス 柳田 リリエンフェルト",
-      "apCost": 20,
       "effects": [
         {
           "type": "conditional",
@@ -1095,7 +1059,6 @@ const gameData = {
       "name": "Izayoi Celestine",
       "displayName": "［十六夜セレーネ］セラス 柳田 リリエンフェルト",
       "character": "セラス 柳田 リリエンフェルト",
-      "apCost": 12,
       "effects": [
         {
           "type": "conditional",
@@ -1146,7 +1109,6 @@ const gameData = {
       "name": "Edelied Izumi & Celestine",
       "displayName": "［Edelied］桂城泉＆セラス 柳田 リリエンフェルト",
       "character": "桂城泉＆セラス 柳田 リリエンフェルト",
-      "apCost": 20,
       "effects": [
         {
           "type": "scoreGain",
@@ -1160,7 +1122,6 @@ const gameData = {
       "name": "Sachi",
       "displayName": "［蓮ノ空女学院スクールアイドルクラブ101期生］大賀美沙知",
       "character": "大賀美沙知",
-      "apCost": 0,
       "effects": [
         {
           "type": "removeAfterUse",

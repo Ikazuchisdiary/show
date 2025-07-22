@@ -1217,6 +1217,19 @@ button.secondary:hover {
     color: #666;
 }
 
+.log-ap {
+    color: #1976d2;
+    font-size: 0.9em;
+    margin-top: 2px;
+}
+
+.log-ap-gain {
+    background-color: #e3f2fd;
+    border-left: 3px solid #1976d2;
+    padding: 4px 8px;
+    margin: 4px 0;
+}
+
 .log-calculation {
     font-size: 12px;
     color: #888;

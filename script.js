@@ -48,6 +48,10 @@ class Game {
         };
         this.removedCards = new Set(); // 除外されたカードを管理
         this.resetCardRequested = false; // resetCardTurnのフラグ
+        
+        // AP tracking
+        this.apConsumed = 0; // 消費したAPの総量
+        this.apAcquired = 0; // 獲得したAPの総量
     }
 
     doGame() {
@@ -68,6 +72,10 @@ class Game {
     }
 
     turnUp() {
+        // Natural AP acquisition per turn (基本AP獲得)
+        const baseAP = 15; // 基本的に毎ターン15AP獲得
+        this.getAP(baseAP);
+        
         // カードの選択を繰り返し、除外されていないカードを見つける
         let card = null;
         let attemptCount = 0;
@@ -110,6 +118,14 @@ class Game {
         
         // 次のカード使用のためのフラグ
         this.resetCardRequested = false;
+        
+        // Track AP consumption
+        if (card.apCost) {
+            this.apConsumed += card.apCost;
+            if (this.verbose) {
+                this.currentTurnLog.push(`<div class="log-ap">AP消費: ${card.apCost} (累計消費: ${this.apConsumed})</div>`);
+            }
+        }
         
         card.do(this);
         
@@ -242,6 +258,13 @@ class Game {
         this.voltageBoostCount += 1;
     }
     
+    getAP(value) {
+        this.apAcquired += value;
+        if (this.verbose) {
+            this.currentTurnLog.push(`<div class="log-action log-ap-gain">AP獲得: +${value} (累計獲得: ${this.apAcquired})</div>`);
+        }
+    }
+    
     activateCenterSkills(timing) {
         if (!this.centerCharacter || this.centerSkillActivated[timing]) return;
         
@@ -294,6 +317,12 @@ class Game {
                 const voltageValue = centerSkillValues[key] !== undefined ? 
                     parseInt(centerSkillValues[key]) : effect.value;
                 this.getVoltage(voltageValue);
+                break;
+                
+            case 'apGain':
+                const apValue = centerSkillValues[key] !== undefined ? 
+                    parseInt(centerSkillValues[key]) : effect.value;
+                this.getAP(apValue);
                 break;
                 
             case 'voltageBoost':
@@ -791,6 +820,12 @@ class GenericCard extends Card {
                     game.getVoltage(voltageGainValue);
                     break;
                     
+                case 'apGain':
+                    const apGainValue = this.skillValues[key] !== undefined ? 
+                        parseInt(this.skillValues[key]) : effect.value;
+                    game.getAP(apGainValue);
+                    break;
+                    
                 case 'voltagePenalty':
                     game.voltagePt -= effect.value;
                     if (game.verbose) {
@@ -1129,6 +1164,20 @@ function calculate() {
     
     document.getElementById('score').textContent = game.score.toLocaleString();
     document.getElementById('result').style.display = 'block';
+    
+    // Display AP summary
+    const apBalance = game.apAcquired - game.apConsumed;
+    const apSummaryHtml = `
+        <div class="ap-summary" style="margin-top: 10px; padding: 10px; background-color: ${apBalance >= 0 ? '#e8f5e9' : '#ffebee'}; border-radius: 5px;">
+            <h4 style="margin: 0 0 10px 0;">AP収支</h4>
+            <div>獲得AP: ${game.apAcquired}</div>
+            <div>消費AP: ${game.apConsumed}</div>
+            <div style="font-weight: bold; color: ${apBalance >= 0 ? '#2e7d32' : '#c62828'};">
+                差引: ${apBalance >= 0 ? '+' : ''}${apBalance} ${apBalance >= 0 ? '(足りています)' : '(不足しています)'}
+            </div>
+        </div>
+    `;
+    document.getElementById('apSummary').innerHTML = apSummaryHtml;
     
     // Use HTML log if available, otherwise fall back to text log
     const logElement = document.getElementById('turnLog');
