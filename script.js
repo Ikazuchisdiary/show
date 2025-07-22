@@ -72,10 +72,6 @@ class Game {
     }
 
     turnUp() {
-        // Natural AP acquisition per turn (基本AP獲得)
-        const baseAP = 15; // 基本的に毎ターン15AP獲得
-        this.getAP(baseAP);
-        
         // カードの選択を繰り返し、除外されていないカードを見つける
         let card = null;
         let attemptCount = 0;
