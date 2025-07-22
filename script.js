@@ -1038,12 +1038,19 @@ function toggleMusicInput() {
     } else {
         customMusic.style.display = 'none';
         
-        // Load state for the selected song
-        setTimeout(() => {
-            loadStateForSong(musicSelect.value);
-            // Update center character highlighting after loading state
-            updateCenterCharacterHighlight();
-        }, 50);
+        // Load state for the selected song (共有モードではスキップ)
+        if (!isShareMode) {
+            setTimeout(() => {
+                loadStateForSong(musicSelect.value);
+                // Update center character highlighting after loading state
+                updateCenterCharacterHighlight();
+            }, 50);
+        } else {
+            // 共有モードでもセンターキャラクターのハイライトは更新
+            setTimeout(() => {
+                updateCenterCharacterHighlight();
+            }, 50);
+        }
     }
 }
 
@@ -1308,8 +1315,8 @@ function updateCenterCharacterHighlight() {
             const infoDiv = document.createElement('div');
             infoDiv.className = 'center-skill-info';
             
-            // Add center skill level selector
-            const savedLevel = loadCardCenterSkillLevel(cardValue);
+            // Add center skill level selector (共有モードでは既に設定されている値を使用)
+            const savedLevel = !isShareMode ? loadCardCenterSkillLevel(cardValue) : 14;
             let centerSkillHtml = `
                 <div class="skill-param-row" style="align-items: flex-start; margin-bottom: 10px;">
                     <span style="display: inline-flex; align-items: center; gap: 8px;">
@@ -1327,8 +1334,9 @@ function updateCenterCharacterHighlight() {
             // Add center skill parameters if card has center skill
             if (cardData[cardValue].centerSkill) {
                 const centerSkill = cardData[cardValue].centerSkill;
-                // Use saved center skill level
-                const savedCenterSkillLevel = loadCardCenterSkillLevel(cardValue);
+                // Use saved center skill level (共有モードでは既存の値を使用)
+                const savedCenterSkillLevel = !isShareMode ? loadCardCenterSkillLevel(cardValue) : 
+                    parseInt(document.getElementById(`centerSkillLevel${i}`)?.value) || 14;
                 
                 // Add timing display
                 let timingText = '';
@@ -1390,9 +1398,11 @@ function onCardChange(slotNum) {
         generateSkillParams(slotNum, cardSelect.value);
         skillParams.style.display = 'block';
         
-        // Load saved skill level for this card
-        const savedSkillLevel = loadCardSkillLevel(cardSelect.value);
-        skillSelect.value = savedSkillLevel;
+        // Load saved skill level for this card (共有モードでは既に設定されている値を使用)
+        if (!isShareMode) {
+            const savedSkillLevel = loadCardSkillLevel(cardSelect.value);
+            skillSelect.value = savedSkillLevel;
+        }
         
         // Update skill level options to show which have unknown values
         updateSkillLevelOptions(slotNum);
@@ -1484,7 +1494,7 @@ function generateSkillParams(slotNum, cardType, skillLevel = null) {
     // Get skill level if not provided
     if (skillLevel === null) {
         const skillSelect = document.getElementById(`skill${slotNum}`);
-        skillLevel = parseInt(skillSelect?.value) || loadCardSkillLevel(cardType);
+        skillLevel = parseInt(skillSelect?.value) || (!isShareMode ? loadCardSkillLevel(cardType) : 14);
     }
     
     let html = '';
@@ -2175,7 +2185,7 @@ function updateCenterSkillValues(slotNum, centerSkill, skillLevel) {
 
 // Load state from localStorage
 function loadStateForSong(musicKey) {
-    if (musicKey === 'custom') return; // Don't load for custom music
+    if (musicKey === 'custom' || isShareMode) return; // Don't load for custom music or share mode
     
     const key = `sukushou_state_${musicKey}`;
     const savedState = localStorage.getItem(key);
