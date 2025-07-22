@@ -8,7 +8,20 @@
 </head>
 <body>
     <div class="container">
-        <h1>スクショウ スコア計算機</h1>
+        <div class="header-container">
+            <h1>スクショウ スコア計算機</h1>
+            <button onclick="showUpdateHistory()" class="update-history-button" title="アップデート履歴">
+                <span class="update-history-icon">📋</span>
+            </button>
+        </div>
+        
+        <div id="updateBanner" class="update-banner" onclick="showUpdateHistory()" style="display: none;">
+            <button class="update-close-button" onclick="event.stopPropagation(); dismissUpdateBanner()">×</button>
+            <div class="update-banner-content">
+                <span class="update-icon">🆕</span>
+                <span class="update-text">新しいアップデートがあります</span>
+            </div>
+        </div>
         
         <div id="shareMode" class="share-mode-banner" style="display: none;">
             <div class="share-mode-header">共有された編成を表示中</div>
@@ -327,8 +340,21 @@
         
         <div id="turnLog"></div>
     </div>
+    
+    <div id="updateHistoryModal" class="modal" onclick="closeUpdateHistory(event)" style="display: none;">
+        <div class="modal-content update-history-modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>アップデート履歴</h2>
+                <button class="modal-close" onclick="closeUpdateHistory()">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="updateHistoryContent"></div>
+            </div>
+        </div>
+    </div>
 
     <script src="cardData.js"></script>
+    <script src="updateHistory.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

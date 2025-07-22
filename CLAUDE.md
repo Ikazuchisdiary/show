@@ -57,3 +57,17 @@ When adding new cards or effects:
 2. For new effect types, implement handling in the `GenericCard.do()` method
 3. Update UI elements in `index.html` if needed
 4. Maintain the existing code style and patterns
+
+## Commit Message Guidelines
+
+When committing changes, include update information for the update banner system:
+1. Keep commit messages concise and descriptive
+2. When making user-facing changes, think about how they would appear in the update history
+3. The update history is manually maintained in `script.js` in the `updateHistory` array
+4. Format: Brief description of the change in Japanese (matching the app's language)
+
+Example commit messages:
+- "新カード追加: [カード名]キャラクター名"
+- "スキル値を修正: カード名"
+- "共有機能のバグを修正"
+- "UIの改善: 具体的な改善内容"

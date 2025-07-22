@@ -3115,6 +3115,7 @@ function exitShareMode() {
     location.reload();
 }
 
+
 // Initialize share mode on page load
 document.addEventListener('DOMContentLoaded', function() {
     // First, load card data
@@ -3149,6 +3150,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // Check for updates
+    checkForUpdates();
     
     // Check if in share mode first
     const urlParams = new URLSearchParams(window.location.search);
