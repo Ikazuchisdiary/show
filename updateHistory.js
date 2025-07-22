@@ -1,6 +1,14 @@
 // Update history data
 const updateHistory = [
     {
+        version: "2025.07.22.4",
+        date: "2025-07-22",
+        time: "18:04",
+        updates: [
+            "37.5度のファンタジーのデッキリセット回数をURL共有に含めるように修正"
+        ]
+    },
+    {
         version: "2025.07.22.3",
         date: "2025-07-22",
         time: "16:46",

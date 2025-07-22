@@ -2863,6 +2863,15 @@ function createShareURL() {
                 skill: parseInt(document.getElementById(`skill${i}`).value),
                 centerSkill: parseInt(document.getElementById(`centerSkillLevel${i}`)?.value || 14)
             };
+            
+            // Add special parameter for fantasyGin
+            if (cardId === 'fantasyGin') {
+                const mentalThreshold = document.getElementById(`skill${i}_mentalThreshold`);
+                if (mentalThreshold) {
+                    cardData.mentalThreshold = parseInt(mentalThreshold.value) || 999;
+                }
+            }
+            
             data.cards.push(cardData);
         }
     }
@@ -2982,6 +2991,16 @@ function loadShareData() {
                                     onCenterSkillLevelChange(slotNum);
                                 }
                             }, 200);
+                        }
+                        
+                        // Load special parameter for fantasyGin
+                        if (card.id === 'fantasyGin' && card.mentalThreshold !== undefined) {
+                            setTimeout(() => {
+                                const mentalThresholdInput = document.getElementById(`skill${slotNum}_mentalThreshold`);
+                                if (mentalThresholdInput) {
+                                    mentalThresholdInput.value = card.mentalThreshold;
+                                }
+                            }, 100);
                         }
                     }
                 });
