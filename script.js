@@ -3460,6 +3460,190 @@ function handleTouchCancel() {
 let isShareMode = false;
 let originalStateBeforeShare = null; // Store original state before entering share mode
 
+// Compress share data to shorter format
+function compressShareData(data) {
+    // Create a compact array format
+    const parts = [];
+    
+    // Mental and learning correction (omit if default)
+    if (data.mental !== '100') parts.push('m' + data.mental);
+    if (data.learningCorrection !== '1.5') parts.push('l' + data.learningCorrection);
+    
+    // Music (use index for built-in music)
+    const musicKeys = Object.keys(musicData);
+    const musicIndex = musicKeys.indexOf(data.music);
+    if (musicIndex >= 0) {
+        parts.push('M' + musicIndex);
+    } else if (data.music === 'custom') {
+        parts.push('Mc');
+        // Custom music phases
+        if (data.customMusic) {
+            parts.push('p' + data.customMusic.join(','));
+        }
+        // Center character (use abbreviation)
+        if (data.customCenter) {
+            const centerAbbr = {
+                '乙宗梢': 'k',
+                '夕霧綴理': 't',
+                '藤島慈': 'j',
+                '日野下花帆': 'h',
+                '村野さやか': 's',
+                '大沢瑠璃乃': 'r',
+                '百生吟子': 'g',
+                '徒町小鈴': 'o',
+                '安養寺姫芽': 'i',
+                '桂城泉': 'z',
+                'セラス 柳田 リリエンフェルト': 'c'
+            };
+            parts.push('c' + (centerAbbr[data.customCenter] || ''));
+        }
+        // Attribute
+        if (data.customAttribute) {
+            const attrAbbr = { 'smile': 's', 'pure': 'p', 'cool': 'c' };
+            parts.push('a' + (attrAbbr[data.customAttribute] || ''));
+        }
+        // Combos (only include if present)
+        if (data.customCombos) {
+            const comboStr = [
+                data.customCombos.normal || '',
+                data.customCombos.hard || '',
+                data.customCombos.expert || '',
+                data.customCombos.master || ''
+            ].join(',');
+            if (comboStr.replace(/,/g, '')) {
+                parts.push('b' + comboStr);
+            }
+        }
+    } else if (data.music && data.music.startsWith('custom_')) {
+        // For saved custom music, just save the ID
+        parts.push('Ms' + data.music);
+    }
+    
+    // Cards (format: cardIndex-skillLevel-centerSkillLevel)
+    const cardKeys = Object.keys(cardData);
+    for (const card of data.cards) {
+        const cardIndex = cardKeys.indexOf(card.id);
+        if (cardIndex >= 0) {
+            let cardStr = 'C' + cardIndex;
+            // Only add skill level if not 14
+            if (card.skill !== 14) cardStr += '-' + card.skill;
+            // Only add center skill if different from skill level
+            if (card.centerSkill !== card.skill && card.centerSkill !== 14) {
+                cardStr += '-' + card.centerSkill;
+            }
+            // Special parameters
+            if (card.mentalThreshold && card.mentalThreshold !== 999) {
+                cardStr += '-' + card.mentalThreshold;
+            }
+            parts.push(cardStr);
+        }
+    }
+    
+    // Join with underscores and encode
+    return btoa(parts.join('_')).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '.');
+}
+
+// Decompress share data from short format
+function decompressShareData(compressed) {
+    try {
+        // Decode base64 (restore padding)
+        const encoded = compressed.replace(/-/g, '+').replace(/\./g, '/');
+        const padding = '='.repeat((4 - encoded.length % 4) % 4);
+        const decoded = atob(encoded + padding);
+        
+        const parts = decoded.split('_');
+        const data = {
+            mental: '100',
+            learningCorrection: '1.5',
+            cards: []
+        };
+        
+        const musicKeys = Object.keys(musicData);
+        const cardKeys = Object.keys(cardData);
+        const centerNames = {
+            'k': '乙宗梢',
+            't': '夕霧綴理',
+            'j': '藤島慈',
+            'h': '日野下花帆',
+            's': '村野さやか',
+            'r': '大沢瑠璃乃',
+            'g': '百生吟子',
+            'o': '徒町小鈴',
+            'i': '安養寺姫芽',
+            'z': '桂城泉',
+            'c': 'セラス 柳田 リリエンフェルト'
+        };
+        const attrNames = { 's': 'smile', 'p': 'pure', 'c': 'cool' };
+        
+        for (const part of parts) {
+            if (!part) continue;
+            
+            const type = part[0];
+            const value = part.substring(1);
+            
+            switch (type) {
+                case 'm': // mental
+                    data.mental = value;
+                    break;
+                case 'l': // learning correction
+                    data.learningCorrection = value;
+                    break;
+                case 'M': // music
+                    if (value === 'c') {
+                        data.music = 'custom';
+                    } else if (value.startsWith('s')) {
+                        // Saved custom music
+                        data.music = value.substring(1);
+                    } else {
+                        const index = parseInt(value);
+                        if (index >= 0 && index < musicKeys.length) {
+                            data.music = musicKeys[index];
+                        }
+                    }
+                    break;
+                case 'p': // phases
+                    data.customMusic = value.split(',').map(v => parseInt(v));
+                    break;
+                case 'c': // center character
+                    data.customCenter = centerNames[value] || null;
+                    break;
+                case 'a': // attribute
+                    data.customAttribute = attrNames[value] || null;
+                    break;
+                case 'b': // combos
+                    const comboParts = value.split(',');
+                    data.customCombos = {};
+                    if (comboParts[0]) data.customCombos.normal = parseInt(comboParts[0]);
+                    if (comboParts[1]) data.customCombos.hard = parseInt(comboParts[1]);
+                    if (comboParts[2]) data.customCombos.expert = parseInt(comboParts[2]);
+                    if (comboParts[3]) data.customCombos.master = parseInt(comboParts[3]);
+                    break;
+                case 'C': // card
+                    const cardParts = value.split('-');
+                    const cardIndex = parseInt(cardParts[0]);
+                    if (cardIndex >= 0 && cardIndex < cardKeys.length) {
+                        const cardObj = {
+                            id: cardKeys[cardIndex],
+                            skill: parseInt(cardParts[1]) || 14,
+                            centerSkill: parseInt(cardParts[2]) || parseInt(cardParts[1]) || 14
+                        };
+                        // Special parameter for fantasyGin
+                        if (cardObj.id === 'fantasyGin' && cardParts[3]) {
+                            cardObj.mentalThreshold = parseInt(cardParts[3]);
+                        }
+                        data.cards.push(cardObj);
+                    }
+                    break;
+            }
+        }
+        
+        return data;
+    } catch (e) {
+        console.error('Failed to decompress share data:', e);
+        return null;
+    }
+}
+
 function createShareURL() {
     const data = {
         mental: document.getElementById('mental').value,
@@ -3534,14 +3718,13 @@ function createShareURL() {
         }
     }
     
-    // Compress and encode data
-    const json = JSON.stringify(data);
-    const compressed = btoa(encodeURIComponent(json));
+    // Compress data to shorter format
+    const compressedData = compressShareData(data);
     
     // Create share URL
     const url = new URL(window.location.href);
-    url.searchParams.set('share', '1');
-    url.searchParams.set('data', compressed);
+    url.searchParams.set('s', '1');
+    url.searchParams.set('d', compressedData);
     
     // Copy to clipboard
     navigator.clipboard.writeText(url.toString()).then(() => {
@@ -3554,7 +3737,8 @@ function createShareURL() {
 function loadShareData() {
     const urlParams = new URLSearchParams(window.location.search);
     
-    if (urlParams.get('share') === '1') {
+    // Check both old format (share=1) and new format (s=1)
+    if (urlParams.get('share') === '1' || urlParams.get('s') === '1') {
         isShareMode = true;
         document.getElementById('shareMode').style.display = 'block';
         document.body.classList.add('share-mode');
@@ -3569,11 +3753,29 @@ function loadShareData() {
             };
         }
         
-        const encodedData = urlParams.get('data');
-        if (encodedData) {
+        let data = null;
+        
+        // Try new compressed format first
+        const compressedData = urlParams.get('d');
+        if (compressedData) {
+            data = decompressShareData(compressedData);
+        }
+        
+        // Fall back to old format if new format fails or doesn't exist
+        if (!data) {
+            const encodedData = urlParams.get('data');
+            if (encodedData) {
+                try {
+                    const json = decodeURIComponent(atob(encodedData));
+                    data = JSON.parse(json);
+                } catch (e) {
+                    console.error('Failed to parse old format share data:', e);
+                }
+            }
+        }
+        
+        if (data) {
             try {
-                const json = decodeURIComponent(atob(encodedData));
-                const data = JSON.parse(json);
                 
                 // Appeal value is now calculated automatically
                 
@@ -3817,6 +4019,8 @@ function saveAsCustomMusic() {
     const url = new URL(window.location.href);
     url.searchParams.delete('share');
     url.searchParams.delete('data');
+    url.searchParams.delete('s');
+    url.searchParams.delete('d');
     window.history.replaceState({}, document.title, url.pathname);
     
     // Hide share mode banner
@@ -3832,6 +4036,8 @@ function exitShareMode() {
     const url = new URL(window.location.href);
     url.searchParams.delete('share');
     url.searchParams.delete('data');
+    url.searchParams.delete('s');
+    url.searchParams.delete('d');
     window.history.replaceState({}, document.title, url.pathname);
     
     // Hide share mode banner
@@ -3905,7 +4111,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Check if in share mode first
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('share') === '1') {
+    if (urlParams.get('share') === '1' || urlParams.get('s') === '1') {
         // Don't load from localStorage in share mode
         loadShareData();
     } else {
