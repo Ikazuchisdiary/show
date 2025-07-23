@@ -264,20 +264,22 @@ class Game {
         if (card.apCost) {
             let actualApCost = card.apCost;
             
-            // Check if center character is a Butoukai card
+            // Apply center characteristic AP reduction
             if (this.centerCharacter) {
-                // Find all cards with matching center character
-                const centerCards = this.cards.filter(c => 
+                // Find the center card
+                const centerCard = this.cards.find(c => 
                     c.config && c.config.character === this.centerCharacter
                 );
                 
-                // Check if any of them have "舞踏会" in their display name
-                const hasButoukaiCenter = centerCards.some(c => 
-                    c.config && c.config.displayName && c.config.displayName.includes('舞踏会')
-                );
-                
-                if (hasButoukaiCenter) {
-                    actualApCost = Math.max(0, actualApCost - 2);
+                // Check if center card has AP reduction in center characteristic
+                if (centerCard && centerCard.config.centerCharacteristic) {
+                    const apReduceEffect = centerCard.config.centerCharacteristic.effects.find(e => 
+                        e.type === 'apReduce'
+                    );
+                    
+                    if (apReduceEffect && apReduceEffect.target === 'all') {
+                        actualApCost = Math.max(0, actualApCost - apReduceEffect.value);
+                    }
                 }
             }
             
@@ -1741,6 +1743,12 @@ function onCardChange(slotNum) {
     const skillSelect = document.getElementById(`skill${slotNum}`);
     const skillParams = document.getElementById(`skillParams${slotNum}`);
     
+    // Remove existing center characteristic display
+    const existingCenterInfo = document.getElementById(`centerCharacteristic${slotNum}`);
+    if (existingCenterInfo) {
+        existingCenterInfo.remove();
+    }
+    
     if (cardSelect.value) {
         skillSelect.style.display = 'inline-block';
         generateSkillParams(slotNum, cardSelect.value);
@@ -1757,6 +1765,48 @@ function onCardChange(slotNum) {
         
         // Load default values for current skill level
         onSkillLevelChange(slotNum);
+        
+        // Add center characteristic display only for center card
+        const card = cardData[cardSelect.value];
+        const musicKey = document.getElementById('music').value;
+        const musicData_temp = musicData[musicKey] || getCustomMusicList()[musicKey];
+        const isCenter = musicData_temp && card && card.character === musicData_temp.centerCharacter;
+        
+        if (isCenter && card.centerCharacteristic) {
+            const centerDiv = document.createElement('div');
+            centerDiv.id = `centerCharacteristic${slotNum}`;
+            centerDiv.className = 'center-characteristic-info';
+            
+            let centerHtml = '<div class="center-characteristic-header">センター特性</div>';
+            centerHtml += '<div class="center-characteristic-content">';
+            
+            if (card.centerCharacteristic.effects) {
+                const effects = [];
+                for (const effect of card.centerCharacteristic.effects) {
+                    if (effect.type === 'appealBoost') {
+                        const percentage = Math.round(effect.value * 100);
+                        if (effect.target === 'all') {
+                            effects.push(`全員のアピール値+${percentage}%`);
+                        } else if (effect.target === card.character) {
+                            effects.push(`${card.character}のアピール値+${percentage}%`);
+                        } else {
+                            effects.push(`${effect.target}のアピール値+${percentage}%`);
+                        }
+                    } else if (effect.type === 'apReduce') {
+                        effects.push(`全てのスキルの消費AP-${effect.value}`);
+                    } else if (effect.type === 'ctReduce') {
+                        effects.push(`全てのスキルのCT-${effect.value}`);
+                    }
+                }
+                centerHtml += effects.join('<br>');
+            }
+            
+            centerHtml += '</div>';
+            centerDiv.innerHTML = centerHtml;
+            
+            // Insert after skill params
+            skillParams.parentNode.insertBefore(centerDiv, skillParams.nextSibling);
+        }
     } else {
         skillSelect.style.display = 'none';
         skillParams.style.display = 'none';
