@@ -1720,7 +1720,7 @@ const gameData = {
               "type": "apGain",
               "value": 8,
               "description": "AP獲得 (固定値)",
-              "levelValues": [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8]
+              "levelValues": [5, 5, 6, 6, 7, 7, 8, 8, 9, 10, 11, 12, 13, 15]
             }
           ]
         },
