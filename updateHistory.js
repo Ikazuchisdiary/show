@@ -1,6 +1,14 @@
 // Update history data
 const updateHistory = [
     {
+        version: "2025.07.24.2",
+        date: "2025-07-24",
+        time: "01:30",
+        updates: [
+            "アピール値計算のデバッグログを追加"
+        ]
+    },
+    {
         version: "2025.07.24.1",
         date: "2025-07-24",
         time: "01:15",

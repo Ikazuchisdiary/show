@@ -21,6 +21,9 @@ function calculateAppealValue() {
     const musicKey = document.getElementById('music').value;
     let musicAttribute = null;
     
+    console.log('=== アピール値計算開始 ===');
+    console.log('楽曲:', musicKey);
+    
     // Get music attribute
     if (musicKey === 'custom') {
         // For custom music, check if attribute is set
@@ -39,6 +42,8 @@ function calculateAppealValue() {
         }
     }
     
+    console.log('楽曲属性:', musicAttribute);
+    
     // Get center card for center characteristic
     let centerCard = null;
     for (let i = 1; i <= 6; i++) {
@@ -47,6 +52,10 @@ function calculateAppealValue() {
             const musicData_temp = musicData[musicKey] || getCustomMusicList()[musicKey];
             if (musicData_temp && cardData[cardType].character === musicData_temp.centerCharacter) {
                 centerCard = cardData[cardType];
+                console.log('センターカード:', cardData[cardType].displayName);
+                if (centerCard.centerCharacteristic) {
+                    console.log('センター特性:', centerCard.centerCharacteristic.name);
+                }
                 break;
             }
         }
@@ -64,61 +73,107 @@ function calculateAppealValue() {
             const stats = cardData[cardType].stats;
             const character = cardData[cardType].character;
             
+            console.log(`\nカード${i}: ${cardData[cardType].displayName}`);
+            console.log(`  基本ステータス - スマイル:${stats.smile}, ピュア:${stats.pure}, クール:${stats.cool}`);
+            
             // Apply center characteristic boost
             let boostMultiplier = 1.0;
             if (centerCard && centerCard.centerCharacteristic && centerCard.centerCharacteristic.effects) {
                 for (const effect of centerCard.centerCharacteristic.effects) {
                     if (effect.type === 'appealBoost') {
                         // Check if this card should receive the boost
+                        let shouldApplyBoost = false;
+                        let boostReason = '';
+                        
                         if (effect.target === 'all') {
-                            boostMultiplier += effect.value;
+                            shouldApplyBoost = true;
+                            boostReason = '全体対象';
                         } else if (effect.target === character) {
-                            boostMultiplier += effect.value;
+                            shouldApplyBoost = true;
+                            boostReason = `キャラクター一致 (${character})`;
                         } else if (effect.target === '102期' && ['乙宗梢', '藤島慈', '夕霧綴理'].includes(character)) {
-                            boostMultiplier += effect.value;
+                            shouldApplyBoost = true;
+                            boostReason = '102期生';
                         } else if (effect.target === '103期' && ['日野下花帆', '村野さやか', '大沢瑠璃乃'].includes(character)) {
-                            boostMultiplier += effect.value;
+                            shouldApplyBoost = true;
+                            boostReason = '103期生';
                         } else if (effect.target === '104期' && ['百生吟子', '徒町小鈴', '安養寺姫芽'].includes(character)) {
-                            boostMultiplier += effect.value;
+                            shouldApplyBoost = true;
+                            boostReason = '104期生';
                         } else if (effect.target === 'スリーズブーケ' && ['乙宗梢', '日野下花帆', '百生吟子'].includes(character)) {
-                            boostMultiplier += effect.value;
+                            shouldApplyBoost = true;
+                            boostReason = 'スリーズブーケ';
                         } else if (effect.target === 'DOLLCHESTRA' && ['夕霧綴理', '村野さやか', '徒町小鈴'].includes(character)) {
-                            boostMultiplier += effect.value;
+                            shouldApplyBoost = true;
+                            boostReason = 'DOLLCHESTRA';
                         } else if (effect.target === 'みらくらぱーく！' && ['藤島慈', '大沢瑠璃乃', '安養寺姫芽'].includes(character)) {
-                            boostMultiplier += effect.value;
+                            shouldApplyBoost = true;
+                            boostReason = 'みらくらぱーく！';
                         } else if (effect.target === 'Edel Note' && ['セラス 柳田 リリエンフェルト', '桂城泉'].includes(character)) {
+                            shouldApplyBoost = true;
+                            boostReason = 'Edel Note';
+                        }
+                        
+                        if (shouldApplyBoost) {
                             boostMultiplier += effect.value;
+                            console.log(`  センター特性適用: ${effect.description} (${boostReason})`);
+                            console.log(`  ブースト倍率: ${boostMultiplier.toFixed(1)}倍`);
                         }
                     }
                 }
             }
             
             // Calculate each attribute with boost and round up per card
-            totalSmile += Math.ceil((stats.smile || 0) * boostMultiplier);
-            totalPure += Math.ceil((stats.pure || 0) * boostMultiplier);
-            totalCool += Math.ceil((stats.cool || 0) * boostMultiplier);
+            const boostedSmile = Math.ceil((stats.smile || 0) * boostMultiplier);
+            const boostedPure = Math.ceil((stats.pure || 0) * boostMultiplier);
+            const boostedCool = Math.ceil((stats.cool || 0) * boostMultiplier);
+            
+            console.log(`  ブースト後ステータス - スマイル:${boostedSmile}, ピュア:${boostedPure}, クール:${boostedCool}`);
+            
+            totalSmile += boostedSmile;
+            totalPure += boostedPure;
+            totalCool += boostedCool;
         }
     }
+    
+    console.log('\n合計ステータス:');
+    console.log(`  スマイル合計: ${totalSmile}`);
+    console.log(`  ピュア合計: ${totalPure}`);
+    console.log(`  クール合計: ${totalCool}`);
     
     // Calculate final appeal based on music attribute
     let finalAppeal = 0;
     
     if (musicAttribute === 'smile') {
         // Smile is matching attribute (100%), others are 10%
-        finalAppeal = totalSmile + (totalPure + totalCool) * 0.1;
+        const mainAttr = totalSmile;
+        const otherAttr = (totalPure + totalCool) * 0.1;
+        finalAppeal = mainAttr + otherAttr;
+        console.log(`\n楽曲属性スマイル: メイン属性=${mainAttr}, その他属性=${otherAttr.toFixed(1)}`);
     } else if (musicAttribute === 'pure') {
         // Pure is matching attribute (100%), others are 10%
-        finalAppeal = (totalSmile + totalCool) * 0.1 + totalPure;
+        const mainAttr = totalPure;
+        const otherAttr = (totalSmile + totalCool) * 0.1;
+        finalAppeal = otherAttr + mainAttr;
+        console.log(`\n楽曲属性ピュア: メイン属性=${mainAttr}, その他属性=${otherAttr.toFixed(1)}`);
     } else if (musicAttribute === 'cool') {
         // Cool is matching attribute (100%), others are 10%
-        finalAppeal = (totalSmile + totalPure) * 0.1 + totalCool;
+        const mainAttr = totalCool;
+        const otherAttr = (totalSmile + totalPure) * 0.1;
+        finalAppeal = otherAttr + mainAttr;
+        console.log(`\n楽曲属性クール: メイン属性=${mainAttr}, その他属性=${otherAttr.toFixed(1)}`);
     } else {
         // No music attribute, all are 10%
         finalAppeal = (totalSmile + totalPure + totalCool) * 0.1;
+        console.log(`\n楽曲属性なし: 全属性10% = ${finalAppeal.toFixed(1)}`);
     }
     
     // Round up the final appeal
-    return Math.ceil(finalAppeal);
+    const result = Math.ceil(finalAppeal);
+    console.log(`\n最終アピール値: ${result}`);
+    console.log('=== アピール値計算終了 ===\n');
+    
+    return result;
 }
 
 // Update base AP display
