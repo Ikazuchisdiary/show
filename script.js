@@ -3458,6 +3458,7 @@ function handleTouchCancel() {
 
 // URL share functionality
 let isShareMode = false;
+let originalStateBeforeShare = null; // Store original state before entering share mode
 
 function createShareURL() {
     const data = {
@@ -3557,6 +3558,16 @@ function loadShareData() {
         isShareMode = true;
         document.getElementById('shareMode').style.display = 'block';
         document.body.classList.add('share-mode');
+        
+        // Store original state before loading share data
+        const currentMusic = document.getElementById('music').value;
+        if (!currentMusic.startsWith('custom')) {
+            originalStateBeforeShare = {
+                musicKey: currentMusic,
+                mental: document.getElementById('mental').value,
+                learningCorrection: document.getElementById('learningCorrection').value
+            };
+        }
         
         const encodedData = urlParams.get('data');
         if (encodedData) {
@@ -3828,8 +3839,28 @@ function exitShareMode() {
     document.body.classList.remove('share-mode');
     isShareMode = false;
     
-    // Reload the page to restore previous state
-    location.reload();
+    // Restore original state if available
+    if (originalStateBeforeShare) {
+        // First set music back to original
+        const musicSelect = document.getElementById('music');
+        musicSelect.value = originalStateBeforeShare.musicKey;
+        updateMusicDisplay(originalStateBeforeShare.musicKey);
+        toggleMusicInput();
+        
+        // Then restore mental and learning correction
+        document.getElementById('mental').value = originalStateBeforeShare.mental;
+        document.getElementById('learningCorrection').value = originalStateBeforeShare.learningCorrection;
+        
+        // Load the saved state for the original music
+        setTimeout(() => {
+            loadStateForSong(originalStateBeforeShare.musicKey);
+        }, 50);
+        
+        originalStateBeforeShare = null;
+    } else {
+        // If no original state was saved, reload the page
+        location.reload();
+    }
 }
 
 
