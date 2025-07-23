@@ -16,6 +16,111 @@ function calculateBaseAP(comboCount, initialMental) {
     return Math.round(baseAP * 100) / 100; // Round to 2 decimal places
 }
 
+// Calculate appeal value based on cards and music attribute
+function calculateAppealValue() {
+    const musicKey = document.getElementById('music').value;
+    let musicAttribute = null;
+    
+    // Get music attribute
+    if (musicKey === 'custom') {
+        // For custom music, check if attribute is set
+        const customAttribute = document.getElementById('customAttribute');
+        if (customAttribute && customAttribute.value) {
+            musicAttribute = customAttribute.value;
+        }
+        // If no attribute set, musicAttribute remains null
+    } else if (musicData[musicKey]) {
+        musicAttribute = musicData[musicKey].attribute;
+    } else {
+        // Check custom music list
+        const customList = getCustomMusicList();
+        if (customList[musicKey]) {
+            musicAttribute = customList[musicKey].attribute;
+        }
+    }
+    
+    // Get center card for center characteristic
+    let centerCard = null;
+    for (let i = 1; i <= 6; i++) {
+        const cardType = document.getElementById(`card${i}`).value;
+        if (cardType && cardData[cardType]) {
+            const musicData_temp = musicData[musicKey] || getCustomMusicList()[musicKey];
+            if (musicData_temp && cardData[cardType].character === musicData_temp.centerCharacter) {
+                centerCard = cardData[cardType];
+                break;
+            }
+        }
+    }
+    
+    // First, calculate total appeal for each attribute across all cards
+    let totalSmile = 0;
+    let totalPure = 0;
+    let totalCool = 0;
+    
+    // Calculate attribute totals for each card
+    for (let i = 1; i <= 6; i++) {
+        const cardType = document.getElementById(`card${i}`).value;
+        if (cardType && cardData[cardType] && cardData[cardType].stats) {
+            const stats = cardData[cardType].stats;
+            const character = cardData[cardType].character;
+            
+            // Apply center characteristic boost
+            let boostMultiplier = 1.0;
+            if (centerCard && centerCard.centerCharacteristic && centerCard.centerCharacteristic.effects) {
+                for (const effect of centerCard.centerCharacteristic.effects) {
+                    if (effect.type === 'appealBoost') {
+                        // Check if this card should receive the boost
+                        if (effect.target === 'all') {
+                            boostMultiplier += effect.value;
+                        } else if (effect.target === character) {
+                            boostMultiplier += effect.value;
+                        } else if (effect.target === '102期' && ['乙宗梢', '藤島慈', '夕霧綴理'].includes(character)) {
+                            boostMultiplier += effect.value;
+                        } else if (effect.target === '103期' && ['日野下花帆', '村野さやか', '大沢瑠璃乃'].includes(character)) {
+                            boostMultiplier += effect.value;
+                        } else if (effect.target === '104期' && ['百生吟子', '徒町小鈴', '安養寺姫芽'].includes(character)) {
+                            boostMultiplier += effect.value;
+                        } else if (effect.target === 'スリーズブーケ' && ['乙宗梢', '日野下花帆', '百生吟子'].includes(character)) {
+                            boostMultiplier += effect.value;
+                        } else if (effect.target === 'DOLLCHESTRA' && ['夕霧綴理', '村野さやか', '徒町小鈴'].includes(character)) {
+                            boostMultiplier += effect.value;
+                        } else if (effect.target === 'みらくらぱーく！' && ['藤島慈', '大沢瑠璃乃', '安養寺姫芽'].includes(character)) {
+                            boostMultiplier += effect.value;
+                        } else if (effect.target === 'Edel Note' && ['セラス 柳田 リリエンフェルト', '桂城泉'].includes(character)) {
+                            boostMultiplier += effect.value;
+                        }
+                    }
+                }
+            }
+            
+            // Calculate each attribute with boost and round up per card
+            totalSmile += Math.ceil((stats.smile || 0) * boostMultiplier);
+            totalPure += Math.ceil((stats.pure || 0) * boostMultiplier);
+            totalCool += Math.ceil((stats.cool || 0) * boostMultiplier);
+        }
+    }
+    
+    // Calculate final appeal based on music attribute
+    let finalAppeal = 0;
+    
+    if (musicAttribute === 'smile') {
+        // Smile is matching attribute (100%), others are 10%
+        finalAppeal = totalSmile + (totalPure + totalCool) * 0.1;
+    } else if (musicAttribute === 'pure') {
+        // Pure is matching attribute (100%), others are 10%
+        finalAppeal = (totalSmile + totalCool) * 0.1 + totalPure;
+    } else if (musicAttribute === 'cool') {
+        // Cool is matching attribute (100%), others are 10%
+        finalAppeal = (totalSmile + totalPure) * 0.1 + totalCool;
+    } else {
+        // No music attribute, all are 10%
+        finalAppeal = (totalSmile + totalPure + totalCool) * 0.1;
+    }
+    
+    // Round up the final appeal
+    return Math.ceil(finalAppeal);
+}
+
 // Update base AP display
 function updateBaseAP() {
     const musicSelect = document.getElementById('music').value;
@@ -1122,14 +1227,16 @@ function toggleMusicInput() {
         musicSelect.value = tempMusicValue;
     }
     
-    // If switching to custom, store the previous song's phase values, center, and combo counts
+    // If switching to custom, store the previous song's phase values, center, attribute, and combo counts
     if (musicSelect.value === 'custom' && previousMusic !== 'custom') {
         let previousPhases;
         let previousCenter;
+        let previousAttribute;
         let previousCombos;
         if (musicData[previousMusic]) {
             previousPhases = musicData[previousMusic].phases;
             previousCenter = musicData[previousMusic].centerCharacter;
+            previousAttribute = musicData[previousMusic].attribute;
             previousCombos = musicData[previousMusic].combos;
         } else {
             // Check custom music list
@@ -1137,6 +1244,7 @@ function toggleMusicInput() {
             if (customList[previousMusic]) {
                 previousPhases = customList[previousMusic].phases;
                 previousCenter = customList[previousMusic].centerCharacter;
+                previousAttribute = customList[previousMusic].attribute;
                 previousCombos = customList[previousMusic].combos;
             }
         }
@@ -1151,6 +1259,15 @@ function toggleMusicInput() {
         const centerSelect = document.getElementById('customCenterCharacter');
         if (centerSelect && previousCenter) {
             centerSelect.value = previousCenter;
+        }
+        
+        // Set attribute
+        const attributeSelect = document.getElementById('customAttribute');
+        if (attributeSelect && previousAttribute) {
+            attributeSelect.value = previousAttribute;
+        } else if (attributeSelect) {
+            // Default to 'smile' if no previous attribute
+            attributeSelect.value = 'smile';
         }
         
         // Set combo counts
@@ -1196,7 +1313,7 @@ function calculate() {
         return;
     }
     
-    const appeal = parseInt(document.getElementById('appeal').value) || 0;
+    const appeal = calculateAppealValue();
     const initialMental = parseInt(document.getElementById('mental').value);
     const learningCorrection = parseFloat(document.getElementById('learningCorrection').value);
     const musicKey = document.getElementById('music').value;
@@ -1300,6 +1417,9 @@ function calculate() {
     
     const apSummaryHtml = `
         <div class="ap-summary" style="margin-top: 10px; padding: 10px; background-color: ${apBalance >= 0 ? '#e8f5e9' : '#ffebee'}; border-radius: 5px;">
+            <div style="margin-bottom: 10px; padding: 10px; background-color: #f5f5f5; border-radius: 5px;">
+                <strong>アピール値: ${appeal.toLocaleString()}</strong>
+            </div>
             <h4 style="margin: 0 0 10px 0;">AP収支</h4>
             <div>基礎AP: ${formatAP(baseAP)}</div>
             <div>獲得AP: ${formatAP(game.apAcquired)}</div>
@@ -2352,7 +2472,6 @@ function saveCurrentState() {
     if (musicKey === 'custom') return; // Don't save custom music states
     
     const state = {
-        appeal: document.getElementById('appeal').value,
         mental: document.getElementById('mental').value,
         learningCorrection: document.getElementById('learningCorrection').value,
         cards: []
@@ -2474,8 +2593,7 @@ function loadStateForSong(musicKey) {
         const state = JSON.parse(savedState);
         console.log(`Parsed state for ${musicKey}`, state);
         
-        // Load appeal, mental, and learning correction
-        document.getElementById('appeal').value = state.appeal || 88146;
+        // Load mental and learning correction (appeal is calculated automatically)
         document.getElementById('mental').value = state.mental || 100;
         document.getElementById('learningCorrection').value = state.learningCorrection || 1.5;
         
@@ -2780,6 +2898,7 @@ function saveCustomMusic() {
     ];
     
     const centerCharacter = document.getElementById('customCenterCharacter').value;
+    const attribute = document.getElementById('customAttribute').value;
     
     // Generate a unique key for this custom music
     const key = 'custom_' + Date.now();
@@ -2801,6 +2920,7 @@ function saveCustomMusic() {
         name: name,
         phases: phases,
         centerCharacter: centerCharacter || null,
+        attribute: attribute || 'smile',
         description: `フィーバー前: ${phases[0]}, フィーバー中: ${phases[1]}, フィーバー後: ${phases[2]}`
     };
     
@@ -3118,12 +3238,13 @@ let isShareMode = false;
 
 function createShareURL() {
     const data = {
-        appeal: document.getElementById('appeal').value,
         mental: document.getElementById('mental').value,
         learningCorrection: document.getElementById('learningCorrection').value,
         music: document.getElementById('music').value,
         customMusic: null,
         customCenter: null,
+        customAttribute: null,
+        customMusicName: null,
         cards: []
     };
     
@@ -3135,6 +3256,7 @@ function createShareURL() {
             parseInt(document.getElementById('afterFever').value) || 0
         ];
         data.customCenter = document.getElementById('customCenterCharacter').value || null;
+        data.customAttribute = document.getElementById('customAttribute').value || null;
         
         // Save combo counts if they exist
         const combos = {};
@@ -3157,6 +3279,7 @@ function createShareURL() {
         if (customList[data.music]) {
             data.customMusic = customList[data.music].phases;
             data.customCenter = customList[data.music].centerCharacter;
+            data.customAttribute = customList[data.music].attribute;
             data.customMusicName = customList[data.music].name;
             // Include combos if they exist
             if (customList[data.music].combos) {
@@ -3189,7 +3312,7 @@ function createShareURL() {
     
     // Compress and encode data
     const json = JSON.stringify(data);
-    const compressed = btoa(unescape(encodeURIComponent(json)));
+    const compressed = btoa(encodeURIComponent(json));
     
     // Create share URL
     const url = new URL(window.location.href);
@@ -3215,13 +3338,10 @@ function loadShareData() {
         const encodedData = urlParams.get('data');
         if (encodedData) {
             try {
-                const json = decodeURIComponent(escape(atob(encodedData)));
+                const json = decodeURIComponent(atob(encodedData));
                 const data = JSON.parse(json);
                 
-                // Load appeal value
-                if (data.appeal) {
-                    document.getElementById('appeal').value = data.appeal;
-                }
+                // Appeal value is now calculated automatically
                 
                 // Load mental and learning correction
                 if (data.mental) {
@@ -3237,7 +3357,8 @@ function loadShareData() {
                     const tempCustomMusic = {
                         name: data.customMusicName || 'カスタム楽曲',
                         phases: data.customMusic,
-                        centerCharacter: data.customCenter || null
+                        centerCharacter: data.customCenter || null,
+                        attribute: data.customAttribute || null
                     };
                     // Include combos if they exist
                     if (data.customCombos) {
@@ -3269,6 +3390,11 @@ function loadShareData() {
                         // Trigger change event to update display
                         const event = new Event('change');
                         document.getElementById('customCenterCharacter').dispatchEvent(event);
+                    }
+                    
+                    // Set custom attribute if provided
+                    if (data.customAttribute) {
+                        document.getElementById('customAttribute').value = data.customAttribute;
                     }
                     
                     // Set custom combos if provided
@@ -3407,7 +3533,6 @@ function saveAsCustomMusic() {
     
     // Save card configuration for this custom music
     localStorage.setItem(`state_${customMusic.id}`, JSON.stringify({
-        appeal: document.getElementById('appeal').value,
         mental: document.getElementById('mental').value,
         learningCorrection: document.getElementById('learningCorrection').value,
         cards: cardState
@@ -3504,9 +3629,9 @@ document.addEventListener('DOMContentLoaded', function() {
         loadShareData();
     } else {
         // Normal mode - load from localStorage
-        loadAppeal();
-        loadMusic();
-        loadCardSelections();
+        // loadAppeal(); // Appeal is now calculated automatically
+        // loadMusic(); // Function not defined
+        // loadCardSelections(); // Function not defined
         
         // Check notice preference
         if (localStorage.getItem('noticeHidden') === 'true') {

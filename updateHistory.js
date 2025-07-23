@@ -1,6 +1,14 @@
 // Update history data
 const updateHistory = [
     {
+        version: "2025.07.24.1",
+        date: "2025-07-24",
+        time: "00:00",
+        updates: [
+            "【大型アップデート】アピール値の自動計算機能を実装"
+        ]
+    },
+    {
         version: "2025.07.23.1",
         date: "2025-07-23",
         time: "00:30",

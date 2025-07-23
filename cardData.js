@@ -12,6 +12,29 @@ const gameData = {
       "displayName": "［輪廻の銀河へ］乙宗梢",
       "character": "乙宗梢",
       "apCost": 10,
+      "stats": {
+        "smile": 5160,
+        "pure": 4680,
+        "cool": 7440,
+        "mental": 480
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（102期）＆APレデュース",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "102期",
+            "description": "102期生のアピール値が200%上昇"
+          },
+          {
+            "type": "apReduce",
+            "value": 2,
+            "target": "all",
+            "description": "全てのスキルの消費APが2減少"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "conditional",
@@ -42,6 +65,12 @@ const gameData = {
       "displayName": "［18th Birthday］乙宗梢",
       "character": "乙宗梢",
       "apCost": 10,
+      "stats": {
+        "smile": 5760,
+        "pure": 5760,
+        "cool": 5760,
+        "mental": 480
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -107,6 +136,35 @@ const gameData = {
       "displayName": "［be proud］乙宗梢",
       "character": "乙宗梢",
       "apCost": 5,
+      "stats": {
+        "smile": 8640,
+        "pure": 5640,
+        "cool": 5040,
+        "mental": 510
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（102期）&APレデュース&CTレデュース",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "102期",
+            "description": "102期生のアピール値が200%上昇"
+          },
+          {
+            "type": "apReduce",
+            "value": 1,
+            "target": "all",
+            "description": "全てのスキルの消費APが1減少"
+          },
+          {
+            "type": "ctReduce",
+            "value": 2,
+            "target": "all",
+            "description": "クールタイムが2秒減少"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "removeAfterUse",
@@ -129,6 +187,29 @@ const gameData = {
       "displayName": "［奇跡の舞踏会］乙宗梢",
       "character": "乙宗梢",
       "apCost": 8,
+      "stats": {
+        "smile": 7200,
+        "pure": 5160,
+        "cool": 4920,
+        "mental": 480
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（102期）＆APレデュース",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "102期",
+            "description": "102期生のアピール値が200%上昇"
+          },
+          {
+            "type": "apReduce",
+            "value": 2,
+            "target": "all",
+            "description": "全てのスキルの消費APが2減少"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "conditional",
@@ -160,6 +241,35 @@ const gameData = {
       "displayName": "［幸せのリボン］夕霧綴理",
       "character": "夕霧綴理",
       "apCost": 20,
+      "stats": {
+        "smile": 5760,
+        "pure": 5160,
+        "cool": 8520,
+        "mental": 500
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（102期）&APレデュース&CTレデュース",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "102期",
+            "description": "102期生のアピール値が200%上昇"
+          },
+          {
+            "type": "apReduce",
+            "value": 1,
+            "target": "all",
+            "description": "全てのスキルの消費APが1減少"
+          },
+          {
+            "type": "ctReduce",
+            "value": 2,
+            "target": "all",
+            "description": "クールタイムが2秒減少"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "removeAfterUse",
@@ -212,6 +322,23 @@ const gameData = {
       "displayName": "［18th Birthday］藤島慈",
       "character": "藤島慈",
       "apCost": 10,
+      "stats": {
+        "smile": 5760,
+        "pure": 5760,
+        "cool": 5760,
+        "mental": 480
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（藤島慈）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 4.0,
+            "target": "藤島慈",
+            "description": "藤島慈のアピール値が400%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -264,6 +391,35 @@ const gameData = {
       "displayName": "［やっぱ天使！］藤島慈",
       "character": "藤島慈",
       "apCost": 12,
+      "stats": {
+        "smile": 5580,
+        "pure": 8580,
+        "cool": 4800,
+        "mental": 540
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（102期）&APレデュース&CTレデュース",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "102期",
+            "description": "102期生のアピール値が200%上昇"
+          },
+          {
+            "type": "apReduce",
+            "value": 1,
+            "target": "all",
+            "description": "全てのスキルの消費APが1減少"
+          },
+          {
+            "type": "ctReduce",
+            "value": 2,
+            "target": "all",
+            "description": "クールタイムが2秒減少"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "scoreGain",
@@ -298,6 +454,29 @@ const gameData = {
       "displayName": "［久遠の銀河へ］藤島慈",
       "character": "藤島慈",
       "apCost": 10,
+      "stats": {
+        "smile": 7200,
+        "pure": 4920,
+        "cool": 4800,
+        "mental": 510
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（102期）＆APレデュース",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "102期",
+            "description": "102期生のアピール値が200%上昇"
+          },
+          {
+            "type": "apReduce",
+            "value": 2,
+            "target": "all",
+            "description": "全てのスキルの消費APが2減少"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "conditional",
@@ -351,6 +530,23 @@ const gameData = {
       "displayName": "［アイドゥーミー！］日野下花帆",
       "character": "日野下花帆",
       "apCost": 12,
+      "stats": {
+        "smile": 6000,
+        "pure": 6240,
+        "cool": 6960,
+        "mental": 520
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 0.72,
+            "target": "all",
+            "description": "全メンバーのアピール値が72%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "mentalRecover",
@@ -392,6 +588,29 @@ const gameData = {
       "displayName": "［軌跡の舞踏会］日野下花帆",
       "character": "日野下花帆",
       "apCost": 10,
+      "stats": {
+        "smile": 7680,
+        "pure": 5760,
+        "cool": 3960,
+        "mental": 470
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（103期）＆APレデュース",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "103期",
+            "description": "103期生のアピール値が200%上昇"
+          },
+          {
+            "type": "apReduce",
+            "value": 2,
+            "target": "all",
+            "description": "全てのスキルの消費APが2減少"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "conditional",
@@ -444,6 +663,23 @@ const gameData = {
       "displayName": "［アイドゥーミー！］村野さやか",
       "character": "村野さやか",
       "apCost": 14,
+      "stats": {
+        "smile": 6120,
+        "pure": 6960,
+        "cool": 6120,
+        "mental": 520
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（DOLLCHESTRA）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "DOLLCHESTRA",
+            "description": "DOLLCHESTRAに所属するメンバーのアピール値が200%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "conditional",
@@ -509,6 +745,23 @@ const gameData = {
       "displayName": "［ドルフィン〰ビーチ］村野さやか",
       "character": "村野さやか",
       "apCost": 8,
+      "stats": {
+        "smile": 6480,
+        "pure": 5280,
+        "cool": 6000,
+        "mental": 440
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 0.72,
+            "target": "all",
+            "description": "全メンバーのアピール値が72%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "voltageGain",
@@ -543,6 +796,29 @@ const gameData = {
       "displayName": "［真実の舞踏会］村野さやか",
       "character": "村野さやか",
       "apCost": 10,
+      "stats": {
+        "smile": 5160,
+        "pure": 4080,
+        "cool": 7920,
+        "mental": 490
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（103期）＆APレデュース",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "103期",
+            "description": "103期生のアピール値が200%上昇"
+          },
+          {
+            "type": "apReduce",
+            "value": 2,
+            "target": "all",
+            "description": "全てのスキルの消費APが2減少"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "conditional",
@@ -600,6 +876,29 @@ const gameData = {
       "displayName": "［悠久の舞踏会］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
       "apCost": 10,
+      "stats": {
+        "smile": 4320,
+        "pure": 7800,
+        "cool": 5160,
+        "mental": 480
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（103期）＆APレデュース",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "103期",
+            "description": "103期生のアピール値が200%上昇"
+          },
+          {
+            "type": "apReduce",
+            "value": 2,
+            "target": "all",
+            "description": "全てのスキルの消費APが2減少"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "conditional",
@@ -653,6 +952,12 @@ const gameData = {
       "displayName": "［17th Birthday］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
       "apCost": 10,
+      "stats": {
+        "smile": 5760,
+        "pure": 5760,
+        "cool": 5760,
+        "mental": 480
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -718,6 +1023,23 @@ const gameData = {
       "displayName": "［ジョーショーキリュー］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
       "apCost": 15,
+      "stats": {
+        "smile": 4680,
+        "pure": 4800,
+        "cool": 7200,
+        "mental": 530
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（みらくらぱーく！）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "みらくらぱーく！",
+            "description": "みらくらぱーく！に所属するメンバーのアピール値が200%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -765,6 +1087,23 @@ const gameData = {
       "displayName": "［紅葉乃舞姫］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
       "apCost": 12,
+      "stats": {
+        "smile": 6000,
+        "pure": 6480,
+        "cool": 4680,
+        "mental": 490
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 0.8,
+            "target": "all",
+            "description": "全メンバーのアピール値が80%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -812,6 +1151,23 @@ const gameData = {
       "displayName": "［ファンファーレ！！！］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
       "apCost": 8,
+      "stats": {
+        "smile": 6540,
+        "pure": 6060,
+        "cool": 4560,
+        "mental": 490
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 0.72,
+            "target": "all",
+            "description": "全メンバーのアピール値が72%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -847,6 +1203,23 @@ const gameData = {
       "displayName": "［Link to the FUTURE］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
       "apCost": 8,
+      "stats": {
+        "smile": 7200,
+        "pure": 6600,
+        "cool": 5040,
+        "mental": 550
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（みらくらぱーく！）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "みらくらぱーく！",
+            "description": "みらくらぱーく！に所属するメンバーのアピール値が200%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -894,6 +1267,23 @@ const gameData = {
       "displayName": "［アイデンティティ］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
       "apCost": 18,
+      "stats": {
+        "smile": 5760,
+        "pure": 6120,
+        "cool": 5280,
+        "mental": 490
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（みらくらぱーく！）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "みらくらぱーく！",
+            "description": "みらくらぱーく！に所属するメンバーのアピール値が200%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -930,6 +1320,23 @@ const gameData = {
       "displayName": "［yours ever］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
       "apCost": 12,
+      "stats": {
+        "smile": 6000,
+        "pure": 5460,
+        "cool": 5340,
+        "mental": 520
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 0.72,
+            "target": "all",
+            "description": "全メンバーのアピール値が72%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -954,6 +1361,23 @@ const gameData = {
       "displayName": "［夏めきペイン］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
       "apCost": 10,
+      "stats": {
+        "smile": 6600,
+        "pure": 5160,
+        "cool": 4800,
+        "mental": 540
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（みらくらぱーく！）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "みらくらぱーく！",
+            "description": "みらくらぱーく！に所属するメンバーのアピール値が200%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -990,6 +1414,23 @@ const gameData = {
       "displayName": "［Dream Believers］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
       "apCost": 8,
+      "stats": {
+        "smile": 6600,
+        "pure": 5400,
+        "cool": 4800,
+        "mental": 520
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 0.8,
+            "target": "all",
+            "description": "全メンバーのアピール値が80%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -1026,6 +1467,23 @@ const gameData = {
       "displayName": "［アイドゥーミー！］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
       "apCost": 5,
+      "stats": {
+        "smile": 6960,
+        "pure": 6360,
+        "cool": 5880,
+        "mental": 520
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（みらくらぱーく！）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "みらくらぱーく！",
+            "description": "みらくらぱーく！に所属するメンバーのアピール値が200%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "removeAfterUse",
@@ -1090,6 +1548,29 @@ const gameData = {
       "displayName": "［輝跡の舞踏会］百生吟子",
       "character": "百生吟子",
       "apCost": 10,
+      "stats": {
+        "smile": 4320,
+        "pure": 6720,
+        "cool": 6120,
+        "mental": 490
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（104期）＆APレデュース",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "104期",
+            "description": "104期生のアピール値が200%上昇"
+          },
+          {
+            "type": "apReduce",
+            "value": 2,
+            "target": "all",
+            "description": "全てのスキルの消費APが2減少"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "conditional",
@@ -1148,6 +1629,23 @@ const gameData = {
       "displayName": "［16th Birthday］百生吟子",
       "character": "百生吟子",
       "apCost": 10,
+      "stats": {
+        "smile": 5760,
+        "pure": 5760,
+        "cool": 5760,
+        "mental": 480
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（百生吟子）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 4.0,
+            "target": "百生吟子",
+            "description": "百生吟子のアピール値が400%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -1213,6 +1711,18 @@ const gameData = {
       "displayName": "［37.5℃のファンタジー］百生吟子",
       "character": "百生吟子",
       "apCost": 7,
+      "stats": {
+        "smile": 6720,
+        "pure": 6120,
+        "cool": 4440,
+        "mental": 480
+      },
+      "centerCharacteristic": {
+        "type": "appealBoost",
+        "value": 0.8,
+        "target": "all",
+        "description": "全メンバーのアピール値+80%"
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -1258,6 +1768,23 @@ const gameData = {
       "displayName": "［Link to the FUTURE］百生吟子",
       "character": "百生吟子",
       "apCost": 1,
+      "stats": {
+        "smile": 7560,
+        "pure": 6840,
+        "cool": 4800,
+        "mental": 520
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 0.72,
+            "target": "all",
+            "description": "全メンバーのアピール値が72%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "removeAfterUse",
@@ -1276,6 +1803,23 @@ const gameData = {
       "displayName": "［青嵐の鯉流し］百生吟子",
       "character": "百生吟子",
       "apCost": 15,
+      "stats": {
+        "smile": 5880,
+        "pure": 6720,
+        "cool": 4800,
+        "mental": 470
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 0.8,
+            "target": "all",
+            "description": "全メンバーのアピール値が80%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -1289,6 +1833,23 @@ const gameData = {
       "displayName": "［Reflection in the mirror］百生吟子",
       "character": "百生吟子",
       "apCost": 10,
+      "stats": {
+        "smile": 6480,
+        "pure": 5820,
+        "cool": 5040,
+        "mental": 475
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（スリーズブーケ）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "スリーズブーケ",
+            "description": "スリーズブーケに所属するメンバーのアピール値が200%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -1302,6 +1863,23 @@ const gameData = {
       "displayName": "［Dream Believers］百生吟子",
       "character": "百生吟子",
       "apCost": 10,
+      "stats": {
+        "smile": 5040,
+        "pure": 5640,
+        "cool": 6360,
+        "mental": 500
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 0.8,
+            "target": "all",
+            "description": "全メンバーのアピール値が80%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -1316,6 +1894,23 @@ const gameData = {
       "displayName": "［レディバグ］徒町小鈴",
       "character": "徒町小鈴",
       "apCost": 15,
+      "stats": {
+        "smile": 4440,
+        "pure": 5520,
+        "cool": 6840,
+        "mental": 520
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 0.8,
+            "target": "all",
+            "description": "全メンバーのアピール値が80%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "voltageGain",
@@ -1350,6 +1945,23 @@ const gameData = {
       "displayName": "［アイマイメーデー］徒町小鈴",
       "character": "徒町小鈴",
       "apCost": 8,
+      "stats": {
+        "smile": 4200,
+        "pure": 6120,
+        "cool": 6960,
+        "mental": 480
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 0.8,
+            "target": "all",
+            "description": "全メンバーのアピール値が80%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "removeAfterUse",
@@ -1401,6 +2013,23 @@ const gameData = {
       "displayName": "［BLAST!!］安養寺姫芽",
       "character": "安養寺姫芽",
       "apCost": 20,
+      "stats": {
+        "smile": 3720,
+        "pure": 7080,
+        "cool": 6240,
+        "mental": 500
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（みらくらぱーく！）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "みらくらぱーく！",
+            "description": "みらくらぱーく！に所属するメンバーのアピール値が200%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "conditional",
@@ -1454,6 +2083,23 @@ const gameData = {
       "displayName": "［天地黎明］桂城泉",
       "character": "桂城泉",
       "apCost": 17,
+      "stats": {
+        "smile": 7080,
+        "pure": 6240,
+        "cool": 3960,
+        "mental": 480
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 0.8,
+            "target": "all",
+            "description": "全メンバーのアピール値が80%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "conditional",
@@ -1503,6 +2149,23 @@ const gameData = {
       "displayName": "［16th Birthday］セラス 柳田 リリエンフェルト",
       "character": "セラス 柳田 リリエンフェルト",
       "apCost": 0,
+      "stats": {
+        "smile": 5760,
+        "pure": 5760,
+        "cool": 5760,
+        "mental": 480
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（セラス）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 4.0,
+            "target": "セラス 柳田 リリエンフェルト",
+            "description": "セラスのアピール値が400%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "removeAfterUse",
@@ -1531,6 +2194,23 @@ const gameData = {
       "displayName": "［天地黎明］セラス 柳田 リリエンフェルト",
       "character": "セラス 柳田 リリエンフェルト",
       "apCost": 20,
+      "stats": {
+        "smile": 6960,
+        "pure": 6480,
+        "cool": 3840,
+        "mental": 480
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 0.8,
+            "target": "all",
+            "description": "全メンバーのアピール値が80%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "conditional",
@@ -1579,6 +2259,23 @@ const gameData = {
       "displayName": "［十六夜セレーネ］セラス 柳田 リリエンフェルト",
       "character": "セラス 柳田 リリエンフェルト",
       "apCost": 12,
+      "stats": {
+        "smile": 4560,
+        "pure": 5280,
+        "cool": 7320,
+        "mental": 490
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（Edel Note）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "Edel Note",
+            "description": "Edel Noteに所属するメンバーのアピール値が200%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "conditional",
@@ -1630,6 +2327,12 @@ const gameData = {
       "displayName": "［Edelied］桂城泉＆セラス 柳田 リリエンフェルト",
       "character": "桂城泉＆セラス 柳田 リリエンフェルト",
       "apCost": 20,
+      "stats": {
+        "smile": 5040,
+        "pure": 5040,
+        "cool": 5040,
+        "mental": 420
+      },
       "effects": [
         {
           "type": "scoreGain",
@@ -1644,6 +2347,12 @@ const gameData = {
       "displayName": "［蓮ノ空女学院スクールアイドルクラブ101期生］大賀美沙知",
       "character": "大賀美沙知",
       "apCost": 0,
+      "stats": {
+        "smile": 5880,
+        "pure": 5700,
+        "cool": 5700,
+        "mental": 480
+      },
       "effects": [
         {
           "type": "removeAfterUse",
@@ -1665,6 +2374,7 @@ const gameData = {
       "phases": [18, 7, 6],
       "description": "フィーバー前: 18, フィーバー中: 7, フィーバー後: 6",
       "centerCharacter": "大沢瑠璃乃",
+      "attribute": "cool",
       "combos": {
         "normal": 287,
         "hard": 536,
@@ -1677,6 +2387,7 @@ const gameData = {
       "phases": [11, 6, 4],
       "description": "フィーバー前: 11, フィーバー中: 6, フィーバー後: 4",
       "centerCharacter": "日野下花帆",
+      "attribute": "cool",
       "combos": {
         "normal": 252,
         "hard": 423,
@@ -1689,6 +2400,7 @@ const gameData = {
       "phases": [15, 8, 0],
       "description": "フィーバー前: 15, フィーバー中: 8, フィーバー後: 0",
       "centerCharacter": "桂城泉",
+      "attribute": "smile",
       "combos": {
         "normal": 390,
         "hard": 555,
@@ -1701,6 +2413,7 @@ const gameData = {
       "phases": [12, 6, 5],
       "description": "フィーバー前: 12, フィーバー中: 6, フィーバー後: 5",
       "centerCharacter": "大沢瑠璃乃",
+      "attribute": "pure",
       "combos": {
         "normal": 373,
         "hard": 774,
@@ -1713,6 +2426,7 @@ const gameData = {
       "phases": [12, 8, 5],
       "description": "フィーバー前: 12, フィーバー中: 8, フィーバー後: 5",
       "centerCharacter": "村野さやか",
+      "attribute": "smile",
       "combos": {
         "normal": 420,
         "hard": 640,
@@ -1725,6 +2439,7 @@ const gameData = {
       "phases": [13, 6, 4],
       "description": "フィーバー前: 13, フィーバー中: 6, フィーバー後: 4",
       "centerCharacter": "セラス 柳田 リリエンフェルト",
+      "attribute": "cool",
       "combos": {
         "normal": 362,
         "hard": 585,
@@ -1737,6 +2452,7 @@ const gameData = {
       "phases": [19, 9, 0],
       "description": "フィーバー前: 19, フィーバー中: 9, フィーバー後: 0",
       "centerCharacter": "セラス 柳田 リリエンフェルト",
+      "attribute": "cool",
       "combos": {
         "normal": 344,
         "hard": 706,
@@ -1749,6 +2465,7 @@ const gameData = {
       "phases": [11, 3, 4],
       "description": "フィーバー前: 11, フィーバー中: 3, フィーバー後: 4",
       "centerCharacter": "桂城泉",
+      "attribute": "cool",
       "combos": {
         "normal": 291,
         "hard": 464,
@@ -1761,6 +2478,7 @@ const gameData = {
       "phases": [10, 5, 4],
       "description": "フィーバー前: 10, フィーバー中: 5, フィーバー後: 4",
       "centerCharacter": "桂城泉",
+      "attribute": "smile",
       "combos": {
         "normal": 290,
         "hard": 552,
@@ -1773,6 +2491,7 @@ const gameData = {
       "phases": [15, 5, 0],
       "description": "フィーバー前: 15, フィーバー中: 5, フィーバー後: 0",
       "centerCharacter": "セラス 柳田 リリエンフェルト",
+      "attribute": "cool",
       "combos": {
         "normal": 234,
         "hard": 418,
@@ -1785,6 +2504,7 @@ const gameData = {
       "phases": [10, 4, 4],
       "description": "フィーバー前: 10, フィーバー中: 4, フィーバー後: 4",
       "centerCharacter": "安養寺姫芽",
+      "attribute": "cool",
       "combos": {
         "normal": 259,
         "hard": 540,
@@ -1797,6 +2517,7 @@ const gameData = {
       "phases": [15, 5, 7],
       "description": "フィーバー前: 15, フィーバー中: 5, フィーバー後: 7",
       "centerCharacter": "日野下花帆",
+      "attribute": "smile",
       "combos": {
         "normal": 432,
         "hard": 901,
@@ -1809,6 +2530,7 @@ const gameData = {
       "phases": [11, 5, 5],
       "description": "フィーバー前: 11, フィーバー中: 5, フィーバー後: 5",
       "centerCharacter": "乙宗梢",
+      "attribute": "cool",
       "combos": {
         "normal": 402,
         "hard": 422,
@@ -1821,6 +2543,7 @@ const gameData = {
       "phases": [10, 8, 5],
       "description": "フィーバー前: 10, フィーバー中: 8, フィーバー後: 5",
       "centerCharacter": "夕霧綴理",
+      "attribute": "smile",
       "combos": {
         "normal": 267,
         "hard": 508,
@@ -1833,6 +2556,7 @@ const gameData = {
       "phases": [9, 6, 4],
       "description": "フィーバー前: 9, フィーバー中: 6, フィーバー後: 4",
       "centerCharacter": "藤島慈",
+      "attribute": "cool",
       "combos": {
         "normal": 237,
         "hard": 435,
@@ -1845,6 +2569,7 @@ const gameData = {
       "phases": [8, 5, 2],
       "description": "フィーバー前: 8, フィーバー中: 5, フィーバー後: 2",
       "centerCharacter": "日野下花帆",
+      "attribute": "smile",
       "combos": {
         "normal": 131,
         "hard": 279,
@@ -1857,6 +2582,7 @@ const gameData = {
       "phases": [10, 5, 3],
       "description": "フィーバー前: 10, フィーバー中: 5, フィーバー後: 3",
       "centerCharacter": "村野さやか",
+      "attribute": "cool",
       "combos": {
         "normal": 274,
         "hard": 509,
@@ -1869,6 +2595,7 @@ const gameData = {
       "phases": [14, 4, 5],
       "description": "フィーバー前: 14, フィーバー中: 4, フィーバー後: 5",
       "centerCharacter": "夕霧綴理",
+      "attribute": "cool",
       "combos": {
         "normal": 298,
         "hard": 488,
@@ -1881,6 +2608,7 @@ const gameData = {
       "phases": [11, 4, 4],
       "description": "フィーバー前: 11, フィーバー中: 4, フィーバー後: 4",
       "centerCharacter": "乙宗梢",
+      "attribute": "smile",
       "combos": {
         "normal": 261,
         "hard": 500,
@@ -1893,6 +2621,7 @@ const gameData = {
       "phases": [13, 5, 3],
       "description": "フィーバー前: 13, フィーバー中: 5, フィーバー後: 3",
       "centerCharacter": "藤島慈",
+      "attribute": "smile",
       "combos": {
         "normal": 225,
         "hard": 585,
@@ -1905,6 +2634,7 @@ const gameData = {
       "phases": [13, 3, 4],
       "description": "フィーバー前: 13, フィーバー中: 3, フィーバー後: 4",
       "centerCharacter": "夕霧綴理",
+      "attribute": "pure",
       "combos": {
         "normal": 293,
         "hard": 559,
@@ -1917,6 +2647,7 @@ const gameData = {
       "phases": [14, 4, 4],
       "description": "フィーバー前: 14, フィーバー中: 4, フィーバー後: 4",
       "centerCharacter": "乙宗梢",
+      "attribute": "smile",
       "combos": {
         "normal": 275,
         "hard": 435,
@@ -1929,6 +2660,7 @@ const gameData = {
       "phases": [10, 5, 4],
       "description": "フィーバー前: 10, フィーバー中: 5, フィーバー後: 4",
       "centerCharacter": "夕霧綴理",
+      "attribute": "cool",
       "combos": {
         "normal": 311,
         "hard": 563,
@@ -1941,6 +2673,7 @@ const gameData = {
       "phases": [12, 6, 0],
       "description": "フィーバー前: 12, フィーバー中: 6, フィーバー後: 0",
       "centerCharacter": "日野下花帆",
+      "attribute": "smile",
       "combos": {
         "normal": 337,
         "hard": 596,
@@ -1953,6 +2686,7 @@ const gameData = {
       "phases": [12, 4, 2],
       "description": "フィーバー前: 12, フィーバー中: 4, フィーバー後: 2",
       "centerCharacter": "大沢瑠璃乃",
+      "attribute": "smile",
       "combos": {
         "normal": 267,
         "hard": 484,
@@ -1965,6 +2699,7 @@ const gameData = {
       "phases": [11, 8, 4],
       "description": "フィーバー前: 11, フィーバー中: 8, フィーバー後: 4",
       "centerCharacter": "日野下花帆",
+      "attribute": "smile",
       "combos": {
         "normal": 404,
         "hard": 679,
@@ -1977,6 +2712,7 @@ const gameData = {
       "phases": [9, 6, 2],
       "description": "フィーバー前: 9, フィーバー中: 6, フィーバー後: 2",
       "centerCharacter": "大沢瑠璃乃",
+      "attribute": "smile",
       "combos": {
         "normal": 190,
         "hard": 448,
@@ -1989,6 +2725,7 @@ const gameData = {
       "phases": [11, 4, 3],
       "description": "フィーバー前: 11, フィーバー中: 4, フィーバー後: 3",
       "centerCharacter": "安養寺姫芽",
+      "attribute": "pure",
       "combos": {
         "normal": 274,
         "hard": 517,
@@ -2001,6 +2738,7 @@ const gameData = {
       "phases": [10, 5, 3],
       "description": "フィーバー前: 10, フィーバー中: 5, フィーバー後: 3",
       "centerCharacter": "安養寺姫芽",
+      "attribute": "cool",
       "combos": {
         "normal": 328,
         "hard": 459,
@@ -2013,6 +2751,7 @@ const gameData = {
       "phases": [12, 5, 3],
       "description": "フィーバー前: 12, フィーバー中: 5, フィーバー後: 3",
       "centerCharacter": "大沢瑠璃乃",
+      "attribute": "cool",
       "combos": {
         "normal": 315,
         "hard": 517,
@@ -2025,6 +2764,7 @@ const gameData = {
       "phases": [11, 6, 5],
       "description": "フィーバー前: 11, フィーバー中: 6, フィーバー後: 5",
       "centerCharacter": "夕霧綴理",
+      "attribute": "cool",
       "combos": {
         "normal": 263,
         "hard": 521,
@@ -2037,6 +2777,7 @@ const gameData = {
       "phases": [13, 5, 7],
       "description": "フィーバー前: 13, フィーバー中: 5, フィーバー後: 7",
       "centerCharacter": "徒町小鈴",
+      "attribute": "cool",
       "combos": {
         "normal": 322,
         "hard": 511,
@@ -2049,6 +2790,7 @@ const gameData = {
       "phases": [11, 4, 4],
       "description": "フィーバー前: 11, フィーバー中: 4, フィーバー後: 4",
       "centerCharacter": "百生吟子",
+      "attribute": "cool",
       "combos": {
         "normal": 243,
         "hard": 420,
@@ -2061,6 +2803,7 @@ const gameData = {
       "phases": [13, 5, 5],
       "description": "フィーバー前: 13, フィーバー中: 5, フィーバー後: 5",
       "centerCharacter": "百生吟子",
+      "attribute": "pure",
       "combos": {
         "normal": 285,
         "hard": 591,
@@ -2073,6 +2816,7 @@ const gameData = {
       "phases": [12, 4, 2],
       "description": "フィーバー前: 12, フィーバー中: 4, フィーバー後: 2",
       "centerCharacter": "乙宗梢",
+      "attribute": "pure",
       "combos": {
         "normal": 251,
         "hard": 463,
