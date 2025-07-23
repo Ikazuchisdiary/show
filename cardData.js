@@ -636,6 +636,18 @@ const gameData = {
               "description": "スコア486%ブースト (Lv.10)"
             }
           ]
+        },
+        {
+          "type": "conditional",
+          "condition": "skillLevel >= 12",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 2,
+              "description": "AP獲得 (Lv.12以上)",
+              "levelValues": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2]
+            }
+          ]
         }
       ],
       "centerSkill": {
