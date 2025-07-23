@@ -3472,7 +3472,12 @@ function compressShareData(data) {
     // Music (use index for built-in music)
     const musicKeys = Object.keys(musicData);
     const musicIndex = musicKeys.indexOf(data.music);
-    if (musicIndex >= 0) {
+    
+    // Check if this is a saved custom music first
+    if (data.music && data.music.startsWith('custom_')) {
+        // Handle below in the custom_ section
+    } else if (musicIndex >= 0 && !data.music.startsWith('custom_')) {
+        // Only use index for non-custom music
         parts.push('M' + musicIndex);
     } else if (data.music === 'custom') {
         parts.push('Mc');
@@ -3514,7 +3519,9 @@ function compressShareData(data) {
                 parts.push('b' + comboStr);
             }
         }
-    } else if (data.music && data.music.startsWith('custom_')) {
+    }
+    
+    if (data.music && data.music.startsWith('custom_')) {
         // For saved custom music, include all the data (not just ID)
         const customList = getCustomMusicList();
         if (customList[data.music]) {
@@ -3578,7 +3585,8 @@ function compressShareData(data) {
     }
     
     // Join with underscores and encode
-    return btoa(parts.join('_')).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '.');
+    const encoded = btoa(parts.join('_')).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '.');
+    return encoded;
 }
 
 // Decompress share data from short format
