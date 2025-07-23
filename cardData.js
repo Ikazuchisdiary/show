@@ -2598,7 +2598,7 @@ const gameData = {
       "phases": [11, 6, 4],
       "description": "フィーバー前: 11, フィーバー中: 6, フィーバー後: 4",
       "centerCharacter": "日野下花帆",
-      "attribute": "cool",
+      "attribute": "pure",
       "combos": {
         "normal": 252,
         "hard": 423,
