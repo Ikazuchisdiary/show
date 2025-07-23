@@ -1,6 +1,14 @@
 // Update history data
 const updateHistory = [
     {
+        version: "2025.07.24.1",
+        date: "2025-07-24",
+        time: "01:15",
+        updates: [
+            "新カード追加: ［ツキマカセ］夕霧綴理"
+        ]
+    },
+    {
         version: "2025.07.23.3",
         date: "2025-07-23",
         time: "23:55",

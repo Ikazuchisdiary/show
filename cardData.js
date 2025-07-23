@@ -465,6 +465,57 @@ const gameData = {
         ]
       }
     },
+    "tsukimakaseTsuzuri": {
+      "name": "Tsukimakase Tsuzuri",
+      "displayName": "［ツキマカセ］夕霧綴理",
+      "character": "夕霧綴理",
+      "apCost": 15,
+      "stats": {
+        "smile": 4680,
+        "pure": 6600,
+        "cool": 6360,
+        "mental": 450
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 0.8,
+            "target": "all",
+            "description": "全メンバーのアピール値が80%上昇"
+          }
+        ]
+      },
+      "effects": [
+        {
+          "type": "voltageGain",
+          "value": 318,
+          "description": "ボルテージ318獲得 (Lv.10)"
+        }
+      ],
+      "centerSkill": {
+        "when": "beforeFeverStart",
+        "effects": [
+          {
+            "type": "voltageGain",
+            "value": 113,
+            "description": "ボルテージ113獲得 (Lv.10)"
+          },
+          {
+            "type": "conditional",
+            "condition": "turn >= 3",
+            "then": [
+              {
+                "type": "voltageGain",
+                "value": 136,
+                "description": "ボルテージ136獲得 (Lv.10)"
+              }
+            ]
+          }
+        ]
+      }
+    },
     // 藤島慈
     "bdMegu": {
       "name": "BD Megu",
