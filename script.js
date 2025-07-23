@@ -3737,11 +3737,8 @@ function decompressShareData(compressed) {
 }
 
 function createShareURL() {
-    // Don't allow creating share URL in share mode
-    if (isShareMode) {
-        alert('共有モードでは新しい共有URLを作成できません。\n通常モードに戻ってから作成してください。');
-        return;
-    }
+    // Allow creating share URL in share mode
+    // (共有モードでも共有URL作成を許可)
     
     const data = {
         mental: document.getElementById('mental').value,
@@ -3841,13 +3838,8 @@ function loadShareData() {
         document.getElementById('shareMode').style.display = 'block';
         document.body.classList.add('share-mode');
         
-        // Disable share button in share mode
-        const shareButton = document.getElementById('shareButton');
-        if (shareButton) {
-            shareButton.disabled = true;
-            shareButton.style.opacity = '0.5';
-            shareButton.style.cursor = 'not-allowed';
-        }
+        // Share button is now enabled in share mode
+        // (共有モードでも共有ボタンを有効化)
         
         // Store original state before loading share data
         const currentMusic = document.getElementById('music').value;
