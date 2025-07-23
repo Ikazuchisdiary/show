@@ -3465,6 +3465,9 @@ function compressShareData(data) {
     // Create a compact array format
     const parts = [];
     
+    // Add version number to handle future changes
+    parts.push('v1');
+    
     // Mental and learning correction (omit if default)
     if (data.mental !== '100') parts.push('m' + data.mental);
     if (data.learningCorrection !== '1.5') parts.push('l' + data.learningCorrection);
@@ -3542,20 +3545,16 @@ function compressShareData(data) {
             }
         }
     } else {
-        // Built-in music - use index
-        const musicKeys = Object.keys(musicData);
-        const musicIndex = musicKeys.indexOf(data.music);
-        if (musicIndex >= 0) {
-            parts.push('M' + musicIndex);
+        // Built-in music - use the actual ID to avoid index issues
+        if (data.music) {
+            parts.push('M' + data.music);
         }
     }
     
-    // Cards (format: cardIndex-skillLevel-centerSkillLevel)
-    const cardKeys = Object.keys(cardData);
+    // Cards - use card ID directly
     for (const card of data.cards) {
-        const cardIndex = cardKeys.indexOf(card.id);
-        if (cardIndex >= 0) {
-            let cardStr = 'C' + cardIndex;
+        if (card.id) {
+            let cardStr = 'C' + card.id;
             // Only add skill level if not 14
             if (card.skill !== 14) cardStr += '-' + card.skill;
             // Only add center skill if different from skill level
@@ -3590,8 +3589,12 @@ function decompressShareData(compressed) {
             cards: []
         };
         
-        const musicKeys = Object.keys(musicData);
-        const cardKeys = Object.keys(cardData);
+        // Check version
+        let version = 'v0'; // default for old format
+        if (parts[0] && parts[0].startsWith('v')) {
+            version = parts.shift(); // Remove version from parts
+        }
+        
         const centerNames = {
             'k': '乙宗梢',
             't': '夕霧綴理',
@@ -3623,11 +3626,16 @@ function decompressShareData(compressed) {
                 case 'M': // music
                     if (value === 'c') {
                         data.music = 'custom';
-                    } else {
+                    } else if (version === 'v0') {
+                        // Old format - use index
+                        const musicKeys = Object.keys(musicData);
                         const index = parseInt(value);
                         if (index >= 0 && index < musicKeys.length) {
                             data.music = musicKeys[index];
                         }
+                    } else {
+                        // New format - use ID directly
+                        data.music = value;
                     }
                     break;
                 case 'p': // phases
@@ -3652,10 +3660,26 @@ function decompressShareData(compressed) {
                     break;
                 case 'C': // card
                     const cardParts = value.split('-');
-                    const cardIndex = parseInt(cardParts[0]);
-                    if (cardIndex >= 0 && cardIndex < cardKeys.length) {
+                    if (version === 'v0') {
+                        // Old format - use index
+                        const cardKeys = Object.keys(cardData);
+                        const cardIndex = parseInt(cardParts[0]);
+                        if (cardIndex >= 0 && cardIndex < cardKeys.length) {
+                            const cardObj = {
+                                id: cardKeys[cardIndex],
+                                skill: parseInt(cardParts[1]) || 14,
+                                centerSkill: parseInt(cardParts[2]) || parseInt(cardParts[1]) || 14
+                            };
+                            // Special parameter for fantasyGin
+                            if (cardObj.id === 'fantasyGin' && cardParts[3]) {
+                                cardObj.mentalThreshold = parseInt(cardParts[3]);
+                            }
+                            data.cards.push(cardObj);
+                        }
+                    } else {
+                        // New format - use ID directly
                         const cardObj = {
-                            id: cardKeys[cardIndex],
+                            id: cardParts[0],
                             skill: parseInt(cardParts[1]) || 14,
                             centerSkill: parseInt(cardParts[2]) || parseInt(cardParts[1]) || 14
                         };
