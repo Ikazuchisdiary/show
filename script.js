@@ -3844,6 +3844,10 @@ function createShareURL() {
     
     // Create share URL
     const url = new URL(window.location.href);
+    // Remove old format parameters if they exist
+    url.searchParams.delete('share');
+    url.searchParams.delete('data');
+    // Set new format parameters
     url.searchParams.set('s', '1');
     url.searchParams.set('d', compressedData);
     
