@@ -3515,8 +3515,46 @@ function compressShareData(data) {
             }
         }
     } else if (data.music && data.music.startsWith('custom_')) {
-        // For saved custom music, just save the ID
-        parts.push('Ms' + data.music);
+        // For saved custom music, include all the data (not just ID)
+        const customList = getCustomMusicList();
+        if (customList[data.music]) {
+            const savedMusic = customList[data.music];
+            parts.push('Mc'); // Treat as custom
+            parts.push('p' + savedMusic.phases.join(','));
+            if (savedMusic.centerCharacter) {
+                const centerAbbr = {
+                    '乙宗梢': 'k',
+                    '夕霧綴理': 't',
+                    '藤島慈': 'j',
+                    '日野下花帆': 'h',
+                    '村野さやか': 's',
+                    '大沢瑠璃乃': 'r',
+                    '百生吟子': 'g',
+                    '徒町小鈴': 'o',
+                    '安養寺姫芽': 'i',
+                    '桂城泉': 'z',
+                    'セラス 柳田 リリエンフェルト': 'c'
+                };
+                parts.push('c' + (centerAbbr[savedMusic.centerCharacter] || ''));
+            }
+            if (savedMusic.attribute) {
+                const attrAbbr = { 'smile': 's', 'pure': 'p', 'cool': 'c' };
+                parts.push('a' + (attrAbbr[savedMusic.attribute] || ''));
+            }
+            if (savedMusic.combos) {
+                const comboStr = [
+                    savedMusic.combos.normal || '',
+                    savedMusic.combos.hard || '',
+                    savedMusic.combos.expert || '',
+                    savedMusic.combos.master || ''
+                ].join(',');
+                if (comboStr.replace(/,/g, '')) {
+                    parts.push('b' + comboStr);
+                }
+            }
+            // Store the name for display
+            parts.push('n' + encodeURIComponent(savedMusic.name));
+        }
     }
     
     // Cards (format: cardIndex-skillLevel-centerSkillLevel)
@@ -3591,9 +3629,6 @@ function decompressShareData(compressed) {
                 case 'M': // music
                     if (value === 'c') {
                         data.music = 'custom';
-                    } else if (value.startsWith('s')) {
-                        // Saved custom music
-                        data.music = value.substring(1);
                     } else {
                         const index = parseInt(value);
                         if (index >= 0 && index < musicKeys.length) {
@@ -3617,6 +3652,9 @@ function decompressShareData(compressed) {
                     if (comboParts[1]) data.customCombos.hard = parseInt(comboParts[1]);
                     if (comboParts[2]) data.customCombos.expert = parseInt(comboParts[2]);
                     if (comboParts[3]) data.customCombos.master = parseInt(comboParts[3]);
+                    break;
+                case 'n': // custom music name
+                    data.customMusicName = decodeURIComponent(value);
                     break;
                 case 'C': // card
                     const cardParts = value.split('-');
@@ -3788,8 +3826,31 @@ function loadShareData() {
                 }
                 
                 // Load music
-                if (data.music && data.music.startsWith('custom_') && data.customMusic) {
-                    // 保存されたカスタム楽曲の場合、一時的にmusicDataに追加
+                if (data.customMusic && data.customMusicName) {
+                    // Saved custom music shared via new compressed format
+                    // Create a temporary ID for this session
+                    const tempId = 'custom_shared_' + Date.now();
+                    const tempCustomMusic = {
+                        name: data.customMusicName,
+                        phases: data.customMusic,
+                        centerCharacter: data.customCenter || null,
+                        attribute: data.customAttribute || null
+                    };
+                    // Include combos if they exist
+                    if (data.customCombos) {
+                        tempCustomMusic.combos = data.customCombos;
+                    }
+                    musicData[tempId] = tempCustomMusic;
+                    
+                    // ドロップダウンを更新
+                    updateMusicDropdown();
+                    rebuildMusicDropdown();
+                    
+                    // 楽曲を選択
+                    document.getElementById('music').value = tempId;
+                    toggleMusicInput();
+                } else if (data.music && data.music.startsWith('custom_') && data.customMusic) {
+                    // 保存されたカスタム楽曲の場合（旧形式）、一時的にmusicDataに追加
                     const tempCustomMusic = {
                         name: data.customMusicName || 'カスタム楽曲',
                         phases: data.customMusic,
