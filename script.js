@@ -3778,16 +3778,42 @@ function createShareURL() {
         }
     } else if (data.music && data.music.startsWith('custom_')) {
         // 保存されたカスタム楽曲の場合
+        // フォームの現在の値を使用（ユーザーが編集した値を反映）
+        data.customMusic = [
+            parseInt(document.getElementById('beforeFever').value) || 0,
+            parseInt(document.getElementById('duringFever').value) || 0,
+            parseInt(document.getElementById('afterFever').value) || 0
+        ];
+        data.customCenter = document.getElementById('customCenterCharacter').value || null;
+        data.customAttribute = document.getElementById('customAttribute').value || null;
+        
+        // Save combo counts if they exist
+        const combos = {};
+        const comboNormal = document.getElementById('customComboNormal').value;
+        const comboHard = document.getElementById('customComboHard').value;
+        const comboExpert = document.getElementById('customComboExpert').value;
+        const comboMaster = document.getElementById('customComboMaster').value;
+        
+        if (comboNormal) combos.normal = parseInt(comboNormal);
+        if (comboHard) combos.hard = parseInt(comboHard);
+        if (comboExpert) combos.expert = parseInt(comboExpert);
+        if (comboMaster) combos.master = parseInt(comboMaster);
+        
+        if (Object.keys(combos).length > 0) {
+            data.customCombos = combos;
+        }
+        
+        // Get the music name from saved data
         const customList = getCustomMusicList();
-        if (customList[data.music]) {
-            data.customMusic = customList[data.music].phases;
-            data.customCenter = customList[data.music].centerCharacter;
-            data.customAttribute = customList[data.music].attribute;
-            data.customMusicName = customList[data.music].name;
-            // Include combos if they exist
-            if (customList[data.music].combos) {
-                data.customCombos = customList[data.music].combos;
-            }
+        let savedMusic = customList[data.music];
+        
+        // If not in custom list, check musicData (for shared custom music)
+        if (!savedMusic && musicData[data.music]) {
+            savedMusic = musicData[data.music];
+        }
+        
+        if (savedMusic) {
+            data.customMusicName = savedMusic.name;
         }
     }
     
