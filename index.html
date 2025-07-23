@@ -171,10 +171,10 @@
                             </div>
                             
                             <div class="save-music-row">
-                                <input type="text" id="customMusicName" placeholder="カスタム楽曲名を入力">
-                                <button onclick="saveCustomMusic()" class="save-button">
+                                <input type="text" id="customMusicName" placeholder="カスタム楽曲名を入力" onkeyup="updateSaveButtonText()">
+                                <button id="customMusicSaveButton" onclick="saveCustomMusic()" class="save-button">
                                     <span class="save-icon">💾</span>
-                                    保存
+                                    <span id="saveButtonText">保存</span>
                                 </button>
                             </div>
                         </div>

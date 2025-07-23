@@ -632,6 +632,17 @@ body.share-mode .container {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
+/* Disable music selector in share mode */
+body.share-mode .music-select-display {
+    cursor: not-allowed;
+    opacity: 0.7;
+    background-color: #f5f5f5;
+}
+
+body.share-mode .music-select-arrow {
+    opacity: 0.5;
+}
+
 /* Share mode banner - centered save button */
 .share-mode-banner {
     margin: 0 0 20px 0;
@@ -877,6 +888,14 @@ body.share-mode .container {
 .save-button:hover {
     background: #45a049;
     transform: translateY(-1px);
+}
+
+.save-button.overwrite-mode {
+    background: #ff9800;
+}
+
+.save-button.overwrite-mode:hover {
+    background: #f57c00;
 }
 
 .save-icon {

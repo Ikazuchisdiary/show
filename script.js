@@ -25,7 +25,7 @@ function calculateAppealValue() {
     console.log('楽曲:', musicKey);
     
     // Get music attribute
-    if (musicKey === 'custom') {
+    if (musicKey === 'custom' || musicKey.startsWith('custom_')) {
         // For custom music, check if attribute is set
         const customAttribute = document.getElementById('customAttribute');
         if (customAttribute && customAttribute.value) {
@@ -1101,6 +1101,11 @@ function createCard(cardType, skillValues, skillLevel, centerSkillLevel, centerS
 
 // Toggle music dropdown
 function toggleMusicDropdown() {
+    // Don't allow music change in share mode
+    if (isShareMode) {
+        return;
+    }
+    
     const dropdown = document.getElementById('musicDropdown');
     const display = document.querySelector('.music-select-display');
     const searchInput = document.getElementById('musicSearchInput');
@@ -1339,9 +1344,49 @@ function toggleMusicInput() {
     // Update previous value
     musicSelect.setAttribute('data-previous-value', musicSelect.value);
     
-    if (musicSelect.value === 'custom') {
+    // Show custom settings for both 'custom' and saved custom music (custom_*)
+    if (musicSelect.value === 'custom' || musicSelect.value.startsWith('custom_')) {
         customMusic.style.display = 'block';
         updateSavedCustomMusicDisplay();
+        
+        // If it's a saved custom music, load its data into the form
+        if (musicSelect.value.startsWith('custom_')) {
+            const customList = getCustomMusicList();
+            const savedMusic = customList[musicSelect.value];
+            if (savedMusic) {
+                // Load phases
+                document.getElementById('beforeFever').value = savedMusic.phases[0];
+                document.getElementById('duringFever').value = savedMusic.phases[1];
+                document.getElementById('afterFever').value = savedMusic.phases[2];
+                
+                // Load center character
+                if (savedMusic.centerCharacter) {
+                    document.getElementById('customCenterCharacter').value = savedMusic.centerCharacter;
+                }
+                
+                // Load attribute
+                if (savedMusic.attribute) {
+                    document.getElementById('customAttribute').value = savedMusic.attribute;
+                }
+                
+                // Load combos
+                if (savedMusic.combos) {
+                    if (savedMusic.combos.normal) document.getElementById('customComboNormal').value = savedMusic.combos.normal;
+                    if (savedMusic.combos.hard) document.getElementById('customComboHard').value = savedMusic.combos.hard;
+                    if (savedMusic.combos.expert) document.getElementById('customComboExpert').value = savedMusic.combos.expert;
+                    if (savedMusic.combos.master) document.getElementById('customComboMaster').value = savedMusic.combos.master;
+                }
+                
+                // Load the music name for potential overwrite
+                document.getElementById('customMusicName').value = savedMusic.name;
+            }
+            // Update save button text after loading
+            updateSaveButtonText();
+        } else {
+            // Clear custom music name and update button for new custom music
+            document.getElementById('customMusicName').value = '';
+            updateSaveButtonText();
+        }
     } else {
         customMusic.style.display = 'none';
         
@@ -1377,7 +1422,7 @@ function calculate() {
     let music;
     let centerCharacter = null;
     
-    if (musicKey === 'custom') {
+    if (musicKey === 'custom' || musicKey.startsWith('custom_')) {
         music = [
             parseInt(document.getElementById('beforeFever').value),
             parseInt(document.getElementById('duringFever').value),
@@ -1441,7 +1486,7 @@ function calculate() {
     const difficulty = document.getElementById('difficulty').value;
     let comboCount = null;
     
-    if (musicKey === 'custom') {
+    if (musicKey === 'custom' || musicKey.startsWith('custom_')) {
         // For custom music, check if combo values are entered
         const comboInput = document.getElementById(`customCombo${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`);
         if (comboInput && comboInput.value) {
@@ -2574,7 +2619,7 @@ function saveCurrentState() {
     if (isShareMode) return;
     
     const musicKey = document.getElementById('music').value;
-    if (musicKey === 'custom') return; // Don't save custom music states
+    if (musicKey === 'custom' || musicKey.startsWith('custom_')) return; // Don't save custom music states
     
     const state = {
         mental: document.getElementById('mental').value,
@@ -2683,7 +2728,7 @@ function updateCenterSkillValues(slotNum, centerSkill, skillLevel) {
 
 // Load state from localStorage
 function loadStateForSong(musicKey) {
-    if (musicKey === 'custom' || isShareMode) return; // Don't load for custom music or share mode
+    if (musicKey === 'custom' || musicKey.startsWith('custom_') || isShareMode) return; // Don't load for custom music or share mode
     
     const key = `sukushou_state_${musicKey}`;
     const savedState = localStorage.getItem(key);
@@ -2989,6 +3034,34 @@ function saveCustomMusicList(list) {
     localStorage.setItem('sukushou_custom_music_list', JSON.stringify(list));
 }
 
+// Update save button text based on whether we're creating new or updating
+function updateSaveButtonText() {
+    const nameInput = document.getElementById('customMusicName');
+    const buttonText = document.getElementById('saveButtonText');
+    const button = document.getElementById('customMusicSaveButton');
+    const currentMusicKey = document.getElementById('music').value;
+    const customList = getCustomMusicList();
+    
+    if (!nameInput || !buttonText || !button) return;
+    
+    const name = nameInput.value.trim();
+    
+    // Check if we're updating existing music
+    if (currentMusicKey.startsWith('custom_') && customList[currentMusicKey] && customList[currentMusicKey].name === name) {
+        // Same name as current custom music - update mode
+        buttonText.textContent = '上書き保存';
+        button.classList.add('overwrite-mode');
+    } else if (name && Object.values(customList).some(music => music.name === name)) {
+        // Different custom music with same name exists - overwrite mode
+        buttonText.textContent = '上書き保存';
+        button.classList.add('overwrite-mode');
+    } else {
+        // New music
+        buttonText.textContent = '保存';
+        button.classList.remove('overwrite-mode');
+    }
+}
+
 function saveCustomMusic() {
     const name = document.getElementById('customMusicName').value.trim();
     if (!name) {
@@ -3005,8 +3078,31 @@ function saveCustomMusic() {
     const centerCharacter = document.getElementById('customCenterCharacter').value;
     const attribute = document.getElementById('customAttribute').value;
     
-    // Generate a unique key for this custom music
-    const key = 'custom_' + Date.now();
+    // Check if we're updating an existing custom music
+    const currentMusicKey = document.getElementById('music').value;
+    const customList = getCustomMusicList();
+    let key;
+    let isUpdate = false;
+    
+    // Check if currently selected music is a custom music with the same name
+    if (currentMusicKey.startsWith('custom_') && customList[currentMusicKey] && customList[currentMusicKey].name === name) {
+        // Update existing custom music
+        key = currentMusicKey;
+        isUpdate = true;
+    } else {
+        // Check if a custom music with this name already exists
+        const existingKey = Object.keys(customList).find(k => customList[k].name === name);
+        if (existingKey) {
+            if (!confirm(`「${name}」は既に存在します。上書きしますか？`)) {
+                return;
+            }
+            key = existingKey;
+            isUpdate = true;
+        } else {
+            // Generate a new key for new custom music
+            key = 'custom_' + Date.now();
+        }
+    }
     
     // Get combo values
     const combos = {};
@@ -3035,26 +3131,34 @@ function saveCustomMusic() {
     }
     
     // Save to custom music list
-    const customList = getCustomMusicList();
     customList[key] = customMusic;
     saveCustomMusicList(customList);
     
-    // Also add to musicData for immediate use
+    // Also add/update in musicData for immediate use
     musicData[key] = customMusic;
     
     // Update the music dropdown
     updateMusicDropdown();
     rebuildMusicDropdown();
     
-    // Select the newly saved custom music
+    // Select the saved custom music
     document.getElementById('music').value = key;
     toggleMusicInput();
     
-    // Clear the name input
-    document.getElementById('customMusicName').value = '';
+    // Clear the name input only if it was a new save
+    if (!isUpdate) {
+        document.getElementById('customMusicName').value = '';
+    }
     
     // Update saved custom music display
     updateSavedCustomMusicDisplay();
+    
+    // Show confirmation message
+    if (isUpdate) {
+        alert(`「${name}」を更新しました。`);
+    } else {
+        alert(`「${name}」を保存しました。`);
+    }
 }
 
 function deleteCustomMusic(key) {
@@ -3608,6 +3712,31 @@ function saveAsCustomMusic() {
         return;
     }
     
+    // Get attribute and combo data
+    let attribute = null;
+    let combos = {};
+    
+    if (musicValue === 'custom') {
+        // Get attribute from custom settings
+        const customAttribute = document.getElementById('customAttribute');
+        if (customAttribute && customAttribute.value) {
+            attribute = customAttribute.value;
+        }
+        
+        // Get combo values from custom settings
+        const difficulties = ['normal', 'hard', 'expert', 'master'];
+        difficulties.forEach(diff => {
+            const comboInput = document.getElementById(`customCombo${diff.charAt(0).toUpperCase() + diff.slice(1)}`);
+            if (comboInput && comboInput.value) {
+                combos[diff] = parseInt(comboInput.value);
+            }
+        });
+    } else if (currentMusic) {
+        // Get from existing music data
+        attribute = currentMusic.attribute;
+        combos = currentMusic.combos || {};
+    }
+    
     // Create custom music object
     const customMusic = {
         id: 'custom_' + Date.now(),
@@ -3615,6 +3744,8 @@ function saveAsCustomMusic() {
         phases: phases,
         center: center,
         centerCharacter: center,
+        attribute: attribute,
+        combos: combos,
         description: `フィーバー前: ${phases[0]}, フィーバー中: ${phases[1]}, フィーバー後: ${phases[2]}`
     };
     
