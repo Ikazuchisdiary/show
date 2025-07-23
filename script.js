@@ -3475,7 +3475,7 @@ function compressShareData(data) {
     const parts = [];
     
     // Add version number to handle future changes
-    parts.push('v1');
+    parts.push('v2'); // v2: uses short codes for cards
     
     // Mental and learning correction (omit if default)
     if (data.mental !== '100') parts.push('m' + data.mental);
@@ -3587,10 +3587,14 @@ function compressShareData(data) {
         }
     }
     
-    // Cards - use card ID directly
+    // Cards - use short code if available
     for (const card of data.cards) {
         if (card.id) {
-            let cardStr = 'C' + card.id;
+            // Get short code from cardData
+            const cardInfo = cardData[card.id];
+            const cardCode = cardInfo && cardInfo.shortCode ? cardInfo.shortCode : card.id;
+            
+            let cardStr = 'C' + cardCode;
             // Only add skill level if not 14
             if (card.skill !== 14) cardStr += '-' + card.skill;
             // Only add center skill if different from skill level
@@ -3713,9 +3717,26 @@ function decompressShareData(compressed) {
                             data.cards.push(cardObj);
                         }
                     } else {
-                        // New format - use ID directly
+                        // New format - use ID or short code
+                        let cardId = cardParts[0];
+                        
+                        // Check if it's a short code and convert to full ID
+                        if (cardId.length <= 3) {
+                            // Create reverse mapping of short codes to IDs
+                            let shortCodeToId = null;
+                            for (const [id, card] of Object.entries(cardData)) {
+                                if (card.shortCode === cardId) {
+                                    shortCodeToId = id;
+                                    break;
+                                }
+                            }
+                            if (shortCodeToId) {
+                                cardId = shortCodeToId;
+                            }
+                        }
+                        
                         const cardObj = {
-                            id: cardParts[0],
+                            id: cardId,
                             skill: parseInt(cardParts[1]) || 14,
                             centerSkill: parseInt(cardParts[2]) || parseInt(cardParts[1]) || 14
                         };

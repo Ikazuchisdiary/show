@@ -11,6 +11,7 @@ const gameData = {
       "name": "Ginga Kozu",
       "displayName": "［輪廻の銀河へ］乙宗梢",
       "character": "乙宗梢",
+      "shortCode": "Kg",
       "apCost": 10,
       "stats": {
         "smile": 5160,
@@ -64,6 +65,7 @@ const gameData = {
       "name": "BD Kozu",
       "displayName": "［18th Birthday］乙宗梢",
       "character": "乙宗梢",
+      "shortCode": "Kb",
       "apCost": 10,
       "stats": {
         "smile": 5760,
@@ -146,6 +148,7 @@ const gameData = {
       "name": "Be Proud Kozu",
       "displayName": "［be proud］乙宗梢",
       "character": "乙宗梢",
+      "shortCode": "Kp",
       "apCost": 5,
       "stats": {
         "smile": 8640,
@@ -197,6 +200,7 @@ const gameData = {
       "name": "Kiseki Kozu",
       "displayName": "［奇跡の舞踏会］乙宗梢",
       "character": "乙宗梢",
+      "shortCode": "Kk",
       "apCost": 8,
       "stats": {
         "smile": 7200,
@@ -251,6 +255,7 @@ const gameData = {
       "name": "LR Tsuzuri",
       "displayName": "［幸せのリボン］夕霧綴理",
       "character": "夕霧綴理",
+      "shortCode": "Tr",
       "apCost": 20,
       "stats": {
         "smile": 5760,
@@ -331,6 +336,7 @@ const gameData = {
       "name": "BD18 Tsuzuri",
       "displayName": "［18th Birthday］夕霧綴理",
       "character": "夕霧綴理",
+      "shortCode": "Tb",
       "apCost": 3,
       "stats": {
         "smile": 5760,
@@ -407,6 +413,7 @@ const gameData = {
       "name": "Fukuin Tsuzuri",
       "displayName": "［福音の銀河へ］夕霧綴理",
       "character": "夕霧綴理",
+      "shortCode": "Tf",
       "apCost": 10,
       "stats": {
         "smile": 4800,
@@ -469,6 +476,7 @@ const gameData = {
       "name": "Tsukimakase Tsuzuri",
       "displayName": "［ツキマカセ］夕霧綴理",
       "character": "夕霧綴理",
+      "shortCode": "Tt",
       "apCost": 15,
       "stats": {
         "smile": 4680,
@@ -521,6 +529,7 @@ const gameData = {
       "name": "BD Megu",
       "displayName": "［18th Birthday］藤島慈",
       "character": "藤島慈",
+      "shortCode": "Mb",
       "apCost": 10,
       "stats": {
         "smile": 5760,
@@ -590,6 +599,7 @@ const gameData = {
       "name": "Angel Megu",
       "displayName": "［やっぱ天使！］藤島慈",
       "character": "藤島慈",
+      "shortCode": "Ma",
       "apCost": 12,
       "stats": {
         "smile": 5580,
@@ -659,6 +669,7 @@ const gameData = {
       "name": "Kuon Megu",
       "displayName": "［久遠の銀河へ］藤島慈",
       "character": "藤島慈",
+      "shortCode": "Mk",
       "apCost": 10,
       "stats": {
         "smile": 7200,
@@ -735,6 +746,7 @@ const gameData = {
       "name": "I Do Me Kaho",
       "displayName": "［アイドゥーミー！］日野下花帆",
       "character": "日野下花帆",
+      "shortCode": "Ki",
       "apCost": 12,
       "stats": {
         "smile": 6000,
@@ -793,6 +805,7 @@ const gameData = {
       "name": "Kiseki Kaho",
       "displayName": "［軌跡の舞踏会］日野下花帆",
       "character": "日野下花帆",
+      "shortCode": "Kks",
       "apCost": 10,
       "stats": {
         "smile": 7680,
@@ -868,6 +881,7 @@ const gameData = {
       "name": "I Do Me Sayaka",
       "displayName": "［アイドゥーミー！］村野さやか",
       "character": "村野さやか",
+      "shortCode": "Si",
       "apCost": 14,
       "stats": {
         "smile": 6120,
@@ -950,6 +964,7 @@ const gameData = {
       "name": "Dolphin Sayaka",
       "displayName": "［ドルフィン〰ビーチ］村野さやか",
       "character": "村野さやか",
+      "shortCode": "Sd",
       "apCost": 8,
       "stats": {
         "smile": 6480,
@@ -1001,6 +1016,7 @@ const gameData = {
       "name": "Shinjitsu Sayaka",
       "displayName": "［真実の舞踏会］村野さやか",
       "character": "村野さやか",
+      "shortCode": "Ss",
       "apCost": 10,
       "stats": {
         "smile": 5160,
@@ -1081,6 +1097,7 @@ const gameData = {
       "name": "Buto Ruri",
       "displayName": "［悠久の舞踏会］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
+      "shortCode": "Rb",
       "apCost": 10,
       "stats": {
         "smile": 4320,
@@ -1157,6 +1174,7 @@ const gameData = {
       "name": "BD Rurino",
       "displayName": "［17th Birthday］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
+      "shortCode": "Rbd",
       "apCost": 10,
       "stats": {
         "smile": 5760,
@@ -1239,6 +1257,7 @@ const gameData = {
       "name": "Josho Rurino",
       "displayName": "［ジョーショーキリュー］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
+      "shortCode": "Rj",
       "apCost": 15,
       "stats": {
         "smile": 4680,
@@ -1303,6 +1322,7 @@ const gameData = {
       "name": "Momijidani Rurino",
       "displayName": "［紅葉乃舞姫］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
+      "shortCode": "Rm",
       "apCost": 12,
       "stats": {
         "smile": 6000,
@@ -1367,6 +1387,7 @@ const gameData = {
       "name": "Fanfare Rurino",
       "displayName": "［ファンファーレ！！！］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
+      "shortCode": "Rf",
       "apCost": 8,
       "stats": {
         "smile": 6540,
@@ -1419,6 +1440,7 @@ const gameData = {
       "name": "Link Future Rurino",
       "displayName": "［Link to the FUTURE］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
+      "shortCode": "Rl",
       "apCost": 8,
       "stats": {
         "smile": 7200,
@@ -1483,6 +1505,7 @@ const gameData = {
       "name": "Identity Rurino",
       "displayName": "［アイデンティティ］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
+      "shortCode": "Ri",
       "apCost": 18,
       "stats": {
         "smile": 5760,
@@ -1536,6 +1559,7 @@ const gameData = {
       "name": "Yours Ever Rurino",
       "displayName": "［yours ever］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
+      "shortCode": "Ry",
       "apCost": 12,
       "stats": {
         "smile": 6000,
@@ -1577,6 +1601,7 @@ const gameData = {
       "name": "Natsumeki Rurino",
       "displayName": "［夏めきペイン］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
+      "shortCode": "Rn",
       "apCost": 10,
       "stats": {
         "smile": 6600,
@@ -1630,6 +1655,7 @@ const gameData = {
       "name": "Dream Rurino",
       "displayName": "［Dream Believers］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
+      "shortCode": "Rd",
       "apCost": 8,
       "stats": {
         "smile": 6600,
@@ -1683,6 +1709,7 @@ const gameData = {
       "name": "I Do Me Rurino",
       "displayName": "［アイドゥーミー！］大沢瑠璃乃",
       "character": "大沢瑠璃乃",
+      "shortCode": "Rid",
       "apCost": 5,
       "stats": {
         "smile": 6960,
@@ -1764,6 +1791,7 @@ const gameData = {
       "name": "Buto Gin",
       "displayName": "［輝跡の舞踏会］百生吟子",
       "character": "百生吟子",
+      "shortCode": "Gb",
       "apCost": 10,
       "stats": {
         "smile": 4320,
@@ -1845,6 +1873,7 @@ const gameData = {
       "name": "BD Gin", 
       "displayName": "［16th Birthday］百生吟子",
       "character": "百生吟子",
+      "shortCode": "Gbd",
       "apCost": 10,
       "stats": {
         "smile": 5760,
@@ -1927,6 +1956,7 @@ const gameData = {
       "name": "Fantasy Gin",
       "displayName": "［37.5℃のファンタジー］百生吟子",
       "character": "百生吟子",
+      "shortCode": "Gf",
       "apCost": 7,
       "stats": {
         "smile": 6720,
@@ -1984,6 +2014,7 @@ const gameData = {
       "name": "Link Future Gin",
       "displayName": "［Link to the FUTURE］百生吟子",
       "character": "百生吟子",
+      "shortCode": "Gl",
       "apCost": 1,
       "stats": {
         "smile": 7560,
@@ -2019,6 +2050,7 @@ const gameData = {
       "name": "Seiran Gin",
       "displayName": "［青嵐の鯉流し］百生吟子",
       "character": "百生吟子",
+      "shortCode": "Gs",
       "apCost": 15,
       "stats": {
         "smile": 5880,
@@ -2049,6 +2081,7 @@ const gameData = {
       "name": "Reflection Gin",
       "displayName": "［Reflection in the mirror］百生吟子",
       "character": "百生吟子",
+      "shortCode": "Gr",
       "apCost": 10,
       "stats": {
         "smile": 6480,
@@ -2079,6 +2112,7 @@ const gameData = {
       "name": "Dream Gin",
       "displayName": "［Dream Believers］百生吟子",
       "character": "百生吟子",
+      "shortCode": "Gd",
       "apCost": 10,
       "stats": {
         "smile": 5040,
@@ -2110,6 +2144,7 @@ const gameData = {
       "name": "Ladybug Kosuzu",
       "displayName": "［レディバグ］徒町小鈴",
       "character": "徒町小鈴",
+      "shortCode": "Ksl",
       "apCost": 15,
       "stats": {
         "smile": 4440,
@@ -2161,6 +2196,7 @@ const gameData = {
       "name": "Aimai Kosuzu",
       "displayName": "［アイマイメーデー］徒町小鈴",
       "character": "徒町小鈴",
+      "shortCode": "Ksa",
       "apCost": 8,
       "stats": {
         "smile": 4200,
@@ -2229,6 +2265,7 @@ const gameData = {
       "name": "Blast Hime",
       "displayName": "［BLAST!!］安養寺姫芽",
       "character": "安養寺姫芽",
+      "shortCode": "Hb",
       "apCost": 20,
       "stats": {
         "smile": 3720,
@@ -2299,6 +2336,7 @@ const gameData = {
       "name": "Tenchi Izumi",
       "displayName": "［天地黎明］桂城泉",
       "character": "桂城泉",
+      "shortCode": "It",
       "apCost": 17,
       "stats": {
         "smile": 7080,
@@ -2365,6 +2403,7 @@ const gameData = {
       "name": "BD Celestine",
       "displayName": "［16th Birthday］セラス 柳田 リリエンフェルト",
       "character": "セラス 柳田 リリエンフェルト",
+      "shortCode": "Cb",
       "apCost": 0,
       "stats": {
         "smile": 5760,
@@ -2410,6 +2449,7 @@ const gameData = {
       "name": "Tenchi Celestine",
       "displayName": "［天地黎明］セラス 柳田 リリエンフェルト",
       "character": "セラス 柳田 リリエンフェルト",
+      "shortCode": "Ct",
       "apCost": 20,
       "stats": {
         "smile": 6960,
@@ -2475,6 +2515,7 @@ const gameData = {
       "name": "Izayoi Celestine",
       "displayName": "［十六夜セレーネ］セラス 柳田 リリエンフェルト",
       "character": "セラス 柳田 リリエンフェルト",
+      "shortCode": "Ci",
       "apCost": 12,
       "stats": {
         "smile": 4560,
@@ -2543,6 +2584,7 @@ const gameData = {
       "name": "Edelied Izumi & Celestine",
       "displayName": "［Edelied］桂城泉＆セラス 柳田 リリエンフェルト",
       "character": "桂城泉＆セラス 柳田 リリエンフェルト",
+      "shortCode": "EIC",
       "apCost": 20,
       "stats": {
         "smile": 5040,
@@ -2563,6 +2605,7 @@ const gameData = {
       "name": "Sachi",
       "displayName": "［蓮ノ空女学院スクールアイドルクラブ101期生］大賀美沙知",
       "character": "大賀美沙知",
+      "shortCode": "Sa",
       "apCost": 0,
       "stats": {
         "smile": 5880,
