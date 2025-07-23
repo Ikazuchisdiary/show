@@ -2624,7 +2624,7 @@ const gameData = {
       "phases": [12, 6, 5],
       "description": "フィーバー前: 12, フィーバー中: 6, フィーバー後: 5",
       "centerCharacter": "大沢瑠璃乃",
-      "attribute": "pure",
+      "attribute": "cool",
       "combos": {
         "normal": 373,
         "hard": 774,
@@ -2702,7 +2702,7 @@ const gameData = {
       "phases": [15, 5, 0],
       "description": "フィーバー前: 15, フィーバー中: 5, フィーバー後: 0",
       "centerCharacter": "セラス 柳田 リリエンフェルト",
-      "attribute": "cool",
+      "attribute": "pure",
       "combos": {
         "normal": 234,
         "hard": 418,
@@ -2715,7 +2715,7 @@ const gameData = {
       "phases": [10, 4, 4],
       "description": "フィーバー前: 10, フィーバー中: 4, フィーバー後: 4",
       "centerCharacter": "安養寺姫芽",
-      "attribute": "cool",
+      "attribute": "pure",
       "combos": {
         "normal": 259,
         "hard": 540,
@@ -2767,7 +2767,7 @@ const gameData = {
       "phases": [9, 6, 4],
       "description": "フィーバー前: 9, フィーバー中: 6, フィーバー後: 4",
       "centerCharacter": "藤島慈",
-      "attribute": "cool",
+      "attribute": "pure",
       "combos": {
         "normal": 237,
         "hard": 435,
