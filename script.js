@@ -3493,15 +3493,41 @@ function compressShareData(data) {
         };
         const attrAbbr = { 'smile': 's', 'pure': 'p', 'cool': 'c' };
         
-        // For saved custom music, get data from storage
+        // For saved custom music, get data from storage OR use provided data
         if (data.music.startsWith('custom_')) {
-            const customList = getCustomMusicList();
-            if (customList[data.music]) {
-                const savedMusic = customList[data.music];
-                
-                // Use saved music data
-                parts.push('p' + savedMusic.phases.join(','));
-                if (savedMusic.centerCharacter) {
+            // First check if data is already provided (from createShareURL)
+            if (data.customMusic && data.customMusic.length > 0) {
+                // Use provided data
+                parts.push('p' + data.customMusic.join(','));
+                if (data.customCenter) {
+                    parts.push('c' + (centerAbbr[data.customCenter] || ''));
+                }
+                if (data.customAttribute) {
+                    parts.push('a' + (attrAbbr[data.customAttribute] || ''));
+                }
+                if (data.customCombos) {
+                    const comboStr = [
+                        data.customCombos.normal || '',
+                        data.customCombos.hard || '',
+                        data.customCombos.expert || '',
+                        data.customCombos.master || ''
+                    ].join(',');
+                    if (comboStr.replace(/,/g, '')) {
+                        parts.push('b' + comboStr);
+                    }
+                }
+                if (data.customMusicName) {
+                    parts.push('n' + encodeURIComponent(data.customMusicName));
+                }
+            } else {
+                // Fall back to getting from storage
+                const customList = getCustomMusicList();
+                if (customList[data.music]) {
+                    const savedMusic = customList[data.music];
+                    
+                    // Use saved music data
+                    parts.push('p' + savedMusic.phases.join(','));
+                    if (savedMusic.centerCharacter) {
                     parts.push('c' + (centerAbbr[savedMusic.centerCharacter] || ''));
                 }
                 if (savedMusic.attribute) {
@@ -3520,6 +3546,7 @@ function compressShareData(data) {
                 }
                 // Store the name for display
                 parts.push('n' + encodeURIComponent(savedMusic.name));
+                }
             }
         } else {
             // For regular custom music, use form data
