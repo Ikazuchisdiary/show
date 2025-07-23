@@ -1,6 +1,14 @@
 // Update history data
 const updateHistory = [
     {
+        version: "2025.07.24.3",
+        date: "2025-07-24",
+        time: "03:14",
+        updates: [
+            "共有URLを大幅に短縮"
+        ]
+    },
+    {
         version: "2025.07.24.2",
         date: "2025-07-24",
         time: "02:48",
