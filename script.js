@@ -3728,6 +3728,12 @@ function decompressShareData(compressed) {
 }
 
 function createShareURL() {
+    // Don't allow creating share URL in share mode
+    if (isShareMode) {
+        alert('共有モードでは新しい共有URLを作成できません。\n通常モードに戻ってから作成してください。');
+        return;
+    }
+    
     const data = {
         mental: document.getElementById('mental').value,
         learningCorrection: document.getElementById('learningCorrection').value,
@@ -3825,6 +3831,14 @@ function loadShareData() {
         isShareMode = true;
         document.getElementById('shareMode').style.display = 'block';
         document.body.classList.add('share-mode');
+        
+        // Disable share button in share mode
+        const shareButton = document.getElementById('shareButton');
+        if (shareButton) {
+            shareButton.disabled = true;
+            shareButton.style.opacity = '0.5';
+            shareButton.style.cursor = 'not-allowed';
+        }
         
         // Store original state before loading share data
         const currentMusic = document.getElementById('music').value;
@@ -4150,6 +4164,14 @@ function exitShareMode() {
     document.getElementById('shareMode').style.display = 'none';
     document.body.classList.remove('share-mode');
     isShareMode = false;
+    
+    // Re-enable share button
+    const shareButton = document.getElementById('shareButton');
+    if (shareButton) {
+        shareButton.disabled = false;
+        shareButton.style.opacity = '';
+        shareButton.style.cursor = '';
+    }
     
     // Restore original state if available
     if (originalStateBeforeShare) {
