@@ -3469,98 +3469,84 @@ function compressShareData(data) {
     if (data.mental !== '100') parts.push('m' + data.mental);
     if (data.learningCorrection !== '1.5') parts.push('l' + data.learningCorrection);
     
-    // Music (use index for built-in music)
-    const musicKeys = Object.keys(musicData);
-    const musicIndex = musicKeys.indexOf(data.music);
-    
-    // Check if this is a saved custom music first
-    if (data.music && data.music.startsWith('custom_')) {
-        // Handle below in the custom_ section
-    } else if (musicIndex >= 0 && !data.music.startsWith('custom_')) {
-        // Only use index for non-custom music
-        parts.push('M' + musicIndex);
-    } else if (data.music === 'custom') {
+    // Music handling
+    if (data.music === 'custom' || (data.music && data.music.startsWith('custom_'))) {
+        // Custom music (both 'custom' and saved custom music)
         parts.push('Mc');
-        // Custom music phases
-        if (data.customMusic) {
-            parts.push('p' + data.customMusic.join(','));
-        }
-        // Center character (use abbreviation)
-        if (data.customCenter) {
-            const centerAbbr = {
-                '乙宗梢': 'k',
-                '夕霧綴理': 't',
-                '藤島慈': 'j',
-                '日野下花帆': 'h',
-                '村野さやか': 's',
-                '大沢瑠璃乃': 'r',
-                '百生吟子': 'g',
-                '徒町小鈴': 'o',
-                '安養寺姫芽': 'i',
-                '桂城泉': 'z',
-                'セラス 柳田 リリエンフェルト': 'c'
-            };
-            parts.push('c' + (centerAbbr[data.customCenter] || ''));
-        }
-        // Attribute
-        if (data.customAttribute) {
-            const attrAbbr = { 'smile': 's', 'pure': 'p', 'cool': 'c' };
-            parts.push('a' + (attrAbbr[data.customAttribute] || ''));
-        }
-        // Combos (only include if present)
-        if (data.customCombos) {
-            const comboStr = [
-                data.customCombos.normal || '',
-                data.customCombos.hard || '',
-                data.customCombos.expert || '',
-                data.customCombos.master || ''
-            ].join(',');
-            if (comboStr.replace(/,/g, '')) {
-                parts.push('b' + comboStr);
+        
+        // Define abbreviation maps
+        const centerAbbr = {
+            '乙宗梢': 'k',
+            '夕霧綴理': 't',
+            '藤島慈': 'j',
+            '日野下花帆': 'h',
+            '村野さやか': 's',
+            '大沢瑠璃乃': 'r',
+            '百生吟子': 'g',
+            '徒町小鈴': 'o',
+            '安養寺姫芽': 'i',
+            '桂城泉': 'z',
+            'セラス 柳田 リリエンフェルト': 'c'
+        };
+        const attrAbbr = { 'smile': 's', 'pure': 'p', 'cool': 'c' };
+        
+        // For saved custom music, get data from storage
+        if (data.music.startsWith('custom_')) {
+            const customList = getCustomMusicList();
+            if (customList[data.music]) {
+                const savedMusic = customList[data.music];
+                
+                // Use saved music data
+                parts.push('p' + savedMusic.phases.join(','));
+                if (savedMusic.centerCharacter) {
+                    parts.push('c' + (centerAbbr[savedMusic.centerCharacter] || ''));
+                }
+                if (savedMusic.attribute) {
+                    parts.push('a' + (attrAbbr[savedMusic.attribute] || ''));
+                }
+                if (savedMusic.combos) {
+                    const comboStr = [
+                        savedMusic.combos.normal || '',
+                        savedMusic.combos.hard || '',
+                        savedMusic.combos.expert || '',
+                        savedMusic.combos.master || ''
+                    ].join(',');
+                    if (comboStr.replace(/,/g, '')) {
+                        parts.push('b' + comboStr);
+                    }
+                }
+                // Store the name for display
+                parts.push('n' + encodeURIComponent(savedMusic.name));
             }
-        }
-    }
-    
-    if (data.music && data.music.startsWith('custom_')) {
-        // For saved custom music, include all the data (not just ID)
-        const customList = getCustomMusicList();
-        if (customList[data.music]) {
-            const savedMusic = customList[data.music];
-            parts.push('Mc'); // Treat as custom
-            parts.push('p' + savedMusic.phases.join(','));
-            if (savedMusic.centerCharacter) {
-                const centerAbbr = {
-                    '乙宗梢': 'k',
-                    '夕霧綴理': 't',
-                    '藤島慈': 'j',
-                    '日野下花帆': 'h',
-                    '村野さやか': 's',
-                    '大沢瑠璃乃': 'r',
-                    '百生吟子': 'g',
-                    '徒町小鈴': 'o',
-                    '安養寺姫芽': 'i',
-                    '桂城泉': 'z',
-                    'セラス 柳田 リリエンフェルト': 'c'
-                };
-                parts.push('c' + (centerAbbr[savedMusic.centerCharacter] || ''));
+        } else {
+            // For regular custom music, use form data
+            if (data.customMusic) {
+                parts.push('p' + data.customMusic.join(','));
             }
-            if (savedMusic.attribute) {
-                const attrAbbr = { 'smile': 's', 'pure': 'p', 'cool': 'c' };
-                parts.push('a' + (attrAbbr[savedMusic.attribute] || ''));
+            if (data.customCenter) {
+                parts.push('c' + (centerAbbr[data.customCenter] || ''));
             }
-            if (savedMusic.combos) {
+            if (data.customAttribute) {
+                parts.push('a' + (attrAbbr[data.customAttribute] || ''));
+            }
+            if (data.customCombos) {
                 const comboStr = [
-                    savedMusic.combos.normal || '',
-                    savedMusic.combos.hard || '',
-                    savedMusic.combos.expert || '',
-                    savedMusic.combos.master || ''
+                    data.customCombos.normal || '',
+                    data.customCombos.hard || '',
+                    data.customCombos.expert || '',
+                    data.customCombos.master || ''
                 ].join(',');
                 if (comboStr.replace(/,/g, '')) {
                     parts.push('b' + comboStr);
                 }
             }
-            // Store the name for display
-            parts.push('n' + encodeURIComponent(savedMusic.name));
+        }
+    } else {
+        // Built-in music - use index
+        const musicKeys = Object.keys(musicData);
+        const musicIndex = musicKeys.indexOf(data.music);
+        if (musicIndex >= 0) {
+            parts.push('M' + musicIndex);
         }
     }
     
