@@ -1349,6 +1349,12 @@ function toggleMusicInput() {
         customMusic.style.display = 'block';
         updateSavedCustomMusicDisplay();
         
+        // Hide save row in share mode
+        const saveRow = document.getElementById('saveMusicRow');
+        if (saveRow) {
+            saveRow.style.display = isShareMode ? 'none' : 'flex';
+        }
+        
         // If it's a saved custom music, load its data into the form
         if (musicSelect.value.startsWith('custom_')) {
             const customList = getCustomMusicList();
@@ -3221,6 +3227,13 @@ function updateMusicDropdown() {
 
 function updateSavedCustomMusicDisplay() {
     const container = document.getElementById('savedCustomMusic');
+    
+    // Don't show saved custom music in share mode
+    if (isShareMode) {
+        container.innerHTML = '';
+        return;
+    }
+    
     const customList = getCustomMusicList();
     const entries = Object.entries(customList);
     

@@ -1,6 +1,14 @@
 // Update history data
 const updateHistory = [
     {
+        version: "2025.07.24.4",
+        date: "2025-07-24",
+        time: "01:45",
+        updates: [
+            "共有モードでカスタム楽曲の保存機能を非表示に"
+        ]
+    },
+    {
         version: "2025.07.24.3",
         date: "2025-07-24",
         time: "01:40",
