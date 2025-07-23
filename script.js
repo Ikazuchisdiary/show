@@ -1358,7 +1358,13 @@ function toggleMusicInput() {
         // If it's a saved custom music, load its data into the form
         if (musicSelect.value.startsWith('custom_')) {
             const customList = getCustomMusicList();
-            const savedMusic = customList[musicSelect.value];
+            let savedMusic = customList[musicSelect.value];
+            
+            // If not in custom list, check musicData (for shared custom music)
+            if (!savedMusic && musicData[musicSelect.value]) {
+                savedMusic = musicData[musicSelect.value];
+            }
+            
             if (savedMusic) {
                 // Load phases
                 document.getElementById('beforeFever').value = savedMusic.phases[0];
@@ -1385,6 +1391,9 @@ function toggleMusicInput() {
                 
                 // Load the music name for potential overwrite
                 document.getElementById('customMusicName').value = savedMusic.name;
+                
+                // Update card highlighting for center character
+                updateCardHighlighting();
             }
             // Update save button text after loading
             updateSaveButtonText();
@@ -3855,6 +3864,7 @@ function loadShareData() {
         // Try new compressed format first
         const compressedData = urlParams.get('d');
         if (compressedData) {
+            console.log('Trying new format with compressed data:', compressedData);
             data = decompressShareData(compressedData);
         }
         
@@ -3862,9 +3872,12 @@ function loadShareData() {
         if (!data) {
             const encodedData = urlParams.get('data');
             if (encodedData) {
+                console.log('Trying old format with encoded data:', encodedData);
                 try {
                     const json = decodeURIComponent(atob(encodedData));
+                    console.log('Decoded JSON:', json);
                     data = JSON.parse(json);
+                    console.log('Parsed data:', data);
                 } catch (e) {
                     console.error('Failed to parse old format share data:', e);
                 }
@@ -3872,6 +3885,7 @@ function loadShareData() {
         }
         
         if (data) {
+            console.log('Processing share data:', data);
             try {
                 
                 // Appeal value is now calculated automatically
@@ -3885,7 +3899,9 @@ function loadShareData() {
                 }
                 
                 // Load music
+                console.log('Loading music from data:', data.music, 'customMusic:', data.customMusic);
                 if (data.customMusic && data.customMusicName) {
+                    console.log('Loading saved custom music with name');
                     // Saved custom music shared via new compressed format
                     // Create a temporary ID for this session
                     const tempId = 'custom_shared_' + Date.now();
