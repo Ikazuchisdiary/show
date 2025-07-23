@@ -71,3 +71,12 @@ Example commit messages:
 - "スキル値を修正: カード名"
 - "共有機能のバグを修正"
 - "UIの改善: 具体的な改善内容"
+
+## Development Best Practices
+
+- **User Confirmation**: 
+  - pushする前にユーザに確認をとってください
+
+## Memory Notes
+
+- updateHistoryを更新するときは、現在時刻を取得して指定してください

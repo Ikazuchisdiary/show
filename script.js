@@ -3149,6 +3149,7 @@ function saveCustomMusic() {
     
     // Select the saved custom music
     document.getElementById('music').value = key;
+    updateMusicDisplay(key);  // Update the visual display
     toggleMusicInput();
     
     // Clear the name input only if it was a new save
