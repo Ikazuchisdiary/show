@@ -316,6 +316,144 @@ const gameData = {
         ]
       }
     },
+    "bd18Tsuzuri": {
+      "name": "BD18 Tsuzuri",
+      "displayName": "［18th Birthday］夕霧綴理",
+      "character": "夕霧綴理",
+      "apCost": 3,
+      "stats": {
+        "smile": 5760,
+        "pure": 5760,
+        "cool": 5760,
+        "mental": 480
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（夕霧綴理）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 4.0,
+            "target": "夕霧綴理",
+            "description": "夕霧綴理のアピール値が400%上昇"
+          }
+        ]
+      },
+      "effects": [
+        {
+          "type": "voltageGain",
+          "value": 159,
+          "description": "ボルテージ159獲得 (Lv.10)"
+        },
+        {
+          "type": "conditional",
+          "condition": "count <= 4",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 5,
+              "description": "AP獲得",
+              "levelValues": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+            }
+          ]
+        },
+        {
+          "type": "conditional",
+          "condition": "count <= 2",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 5,
+              "description": "追加AP獲得",
+              "levelValues": [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+            }
+          ]
+        }
+      ],
+      "centerSkill": {
+        "when": "beforeFeverStart",
+        "effects": [
+          {
+            "type": "voltageGain",
+            "value": 204,
+            "description": "ボルテージ204獲得 (Lv.10)"
+          },
+          {
+            "type": "conditional",
+            "condition": "turn >= 6",
+            "then": [
+              {
+                "type": "apGain",
+                "value": 2,
+                "description": "AP獲得",
+                "levelValues": [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "fukuinTsuzuri": {
+      "name": "Fukuin Tsuzuri",
+      "displayName": "［福音の銀河へ］夕霧綴理",
+      "character": "夕霧綴理",
+      "apCost": 10,
+      "stats": {
+        "smile": 4800,
+        "pure": 7320,
+        "cool": 5040,
+        "mental": 490
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（102期）&APレデュース",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "102期",
+            "description": "102期生のアピール値が200%上昇"
+          },
+          {
+            "type": "apReduce",
+            "value": 2,
+            "target": "all",
+            "description": "全てのスキルの消費APが2減少"
+          }
+        ]
+      },
+      "effects": [
+        {
+          "type": "removeAfterUse",
+          "condition": "count == 3",
+          "description": "3回使用後はデッキから除外"
+        },
+        {
+          "type": "voltageGain",
+          "value": 181,
+          "description": "ボルテージ271獲得 (Lv.10)"
+        }
+      ],
+      "centerSkill": {
+        "when": "beforeFeverStart",
+        "effects": [
+          {
+            "type": "voltageGain",
+            "value": 113,
+            "description": "ボルテージ113獲得 (Lv.10)"
+          },
+          {
+            "type": "conditional",
+            "condition": "voltageLevel >= 4",
+            "then": [
+              {
+                "type": "voltageGain",
+                "value": 159,
+                "description": "ボルテージ159獲得 (Lv.10)"
+              }
+            ]
+          }
+        ]
+      }
+    },
     // 藤島慈
     "bdMegu": {
       "name": "BD Megu",

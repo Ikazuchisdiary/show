@@ -1,6 +1,16 @@
 // Update history data
 const updateHistory = [
     {
+        version: "2025.07.23.2",
+        date: "2025-07-23",
+        time: "23:48",
+        updates: [
+            "新カード追加: ［18th Birthday］夕霧綴理",
+            "新カード追加: ［福音の銀河へ］夕霧綴理",
+            "AP削減処理をセンター特性データを参照する方式に改善"
+        ]
+    },
+    {
         version: "2025.07.24.1",
         date: "2025-07-24",
         time: "00:00",
