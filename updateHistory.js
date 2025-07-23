@@ -1,6 +1,15 @@
 // Update history data
 const updateHistory = [
     {
+        version: "2025.07.23.3",
+        date: "2025-07-23",
+        time: "23:55",
+        updates: [
+            "センター特性を追加: ［18th Birthday］乙宗梢",
+            "センター特性を追加: ［17th Birthday］大沢瑠璃乃"
+        ]
+    },
+    {
         version: "2025.07.23.2",
         date: "2025-07-23",
         time: "23:48",

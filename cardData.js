@@ -71,6 +71,17 @@ const gameData = {
         "cool": 5760,
         "mental": 480
       },
+      "centerCharacteristic": {
+        "name": "アピールアップ（乙宗梢）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 4.0,
+            "target": "乙宗梢",
+            "description": "乙宗梢のアピール値が400%上昇"
+          }
+        ]
+      },
       "effects": [
         {
           "type": "scoreBoost",
@@ -1095,6 +1106,17 @@ const gameData = {
         "pure": 5760,
         "cool": 5760,
         "mental": 480
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（大沢瑠璃乃）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 4.0,
+            "target": "大沢瑠璃乃",
+            "description": "大沢瑠璃乃のアピール値が400%上昇"
+          }
+        ]
       },
       "effects": [
         {
