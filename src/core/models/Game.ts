@@ -27,6 +27,7 @@ export interface TurnResult {
     center: number
     total: number
   }
+  logs?: string[]  // v1形式の詳細ログ
 }
 
 export interface GameState {
@@ -44,10 +45,21 @@ export interface GameState {
   totalVoltage: number
   
   // Multipliers and boosts
-  scoreBoost: number
-  voltageBoost: number
+  scoreBoost: number[]
+  scoreBoostCount: number
+  voltageBoost: number[]
+  voltageBoostCount: number
   skillInvocationBoost: number
   centerSkillMultiplier: number
+  learningCorrection: number
+  
+  // Game resources
+  mental: number
+  apAcquired: number
+  apConsumed: number
+  
+  // Card management
+  removedCards: Set<string>
   
   // Turn tracking
   turnResults: TurnResult[]

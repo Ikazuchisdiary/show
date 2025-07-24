@@ -77,6 +77,15 @@ Example commit messages:
 - **User Confirmation**: 
   - pushする前にユーザに確認をとってください
 
+## Temporary Work Instructions (2025-07-24)
+
+- ユーザーが6時間ほど離席中
+- 定期的に各種markdownを確認しながら、許可を得ずに作業を進める
+- 主な作業内容:
+  1. ログ表示形式をv1に準拠させる
+  2. AP不足計算と参考スコア表示機能の実装
+  3. その他のpendingタスクの処理
+
 ## Memory Notes
 
 - updateHistoryを更新するときは、現在時刻を取得して指定してください

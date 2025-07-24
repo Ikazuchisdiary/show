@@ -5,9 +5,8 @@
 }
 
 button {
-  flex: 1;
   padding: 15px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 8px;
@@ -39,7 +38,7 @@ button:disabled {
 
 /* Secondary buttons */
 button.secondary {
-  background-color: #2196F3;
+  background-color: #2196f3;
   font-size: 14px;
   padding: 10px 20px;
   flex: initial;
@@ -48,7 +47,7 @@ button.secondary {
 }
 
 button.secondary:hover:not(:disabled) {
-  background-color: #1976D2;
+  background-color: #1976d2;
   box-shadow: 0 6px 12px rgba(33, 150, 243, 0.3);
 }
 

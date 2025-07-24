@@ -4,13 +4,16 @@
   border: 1px solid #e0e0e0;
   border-radius: 12px;
   margin-bottom: 20px;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
 }
 
 .section-header {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   padding: 15px 20px;
   border-bottom: 1px solid #e0e0e0;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }
 
 .section-header h3 {
@@ -22,19 +25,12 @@
 
 .section-content {
   padding: 20px;
+  background: white;
 }
 
 /* フォームグループ */
 .form-group {
   margin-bottom: 0;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 14px;
-  color: #555;
-  font-weight: 500;
 }
 
 /* 楽曲選択ドロップダウン */
@@ -47,21 +43,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 12px 16px;
   background: white;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 10px 15px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .music-select-display:hover {
-  border-color: #4CAF50;
+  border-color: #4caf50;
   background: #fafafa;
 }
 
 .music-select-display.active {
-  border-color: #4CAF50;
+  border-color: #4caf50;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
@@ -101,15 +97,15 @@
   top: 100%;
   left: 0;
   right: 0;
-  background: white;
-  border: 1px solid #4CAF50;
-  border-top: none;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  z-index: 1000;
-  display: none;
   max-height: 400px;
+  background: white;
+  border: 2px solid #4caf50;
+  border-top: none;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: none;
+  z-index: 1000;
   overflow: hidden;
 }
 
@@ -131,14 +127,15 @@
   width: 100%;
   padding: 8px 12px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 14px;
   background: white;
 }
 
 .music-search-input:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: #4caf50;
+  background: white;
 }
 
 /* ドロップダウンアイテム */
@@ -167,24 +164,82 @@
 }
 
 .music-dropdown-item.custom-item {
-  background: #fffbf0;
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
   font-weight: 500;
 }
 
 .music-dropdown-item.custom-item:hover {
-  background: #fff8e1;
+  background: linear-gradient(135deg, #ffecb3 0%, #ffe082 100%);
 }
 
 /* 楽曲アイテム情報 */
-.music-item-title {
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 2px;
+.music-item-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
 }
 
-.music-item-info {
+.music-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.music-phases {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.phase-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 4px;
+  background: #e0e0e0;
+  color: #333;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 3px;
+}
+
+.phase-tag.fever {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.phase-arrow {
+  color: #999;
+  font-size: 10px;
+}
+
+.music-item-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
+}
+
+.center-label {
   color: #666;
+  font-weight: 500;
+}
+
+.center-name {
+  color: #ff9800;
+  font-weight: 600;
+}
+
+.custom-icon {
+  font-size: 18px;
+}
+
+.custom-description {
+  color: #666;
+  font-size: 12px;
 }
 
 /* Stats Row */
@@ -202,26 +257,10 @@
 
 .stats-group label {
   display: block;
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 5px;
-}
-
-.stats-group input,
-.stats-group select {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-  background: white;
-  transition: all 0.2s ease;
-}
-
-.stats-group input:focus,
-.stats-group select:focus {
-  outline: none;
-  border-color: #4CAF50;
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 6px;
+  font-weight: 500;
 }
 
 /* カスタム楽曲セクション */
@@ -235,24 +274,23 @@
   background: white;
   border: none;
   border-radius: 0;
-  box-shadow: none;
-  padding: 0;
+  overflow: hidden;
+  margin: 0;
 }
 
 .custom-music-header {
   background: transparent;
   padding: 0 0 10px 0;
-  border: none;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .custom-music-header h3 {
   margin: 0;
   font-size: 14px;
-  color: #333;
+  color: #666;
   font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* フェーズ入力セクション */
@@ -264,8 +302,10 @@
 .section-label {
   font-size: 13px;
   color: #666;
-  margin-bottom: 12px;
   font-weight: 600;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .phase-inputs-container {
@@ -287,21 +327,23 @@
   font-weight: 500;
 }
 
-.phase-input-group input[type="number"] {
+.phase-input-group input[type='number'] {
   width: 70px;
   text-align: center;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 16px;
+  padding: 10px 8px;
+  font-size: 18px;
   font-weight: 600;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
   transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
-.phase-input-group input[type="number"]:focus {
-  border-color: #4CAF50;
+.phase-input-group input[type='number']:focus {
+  border-color: #4caf50;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+  transform: scale(1.05);
 }
 
 /* フィーバーフェーズ特別スタイル */
@@ -321,7 +363,7 @@
 
 .phase-separator {
   font-size: 20px;
-  color: #999;
+  color: #ccc;
   font-weight: 300;
 }
 
@@ -353,41 +395,127 @@
   background: white;
 }
 
-.custom-attribute-section {
-  margin-top: 15px;
+/* コンボ入力セクション */
+.combo-inputs-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
 }
 
-.custom-attribute-section label {
-  display: block;
-  font-size: 13px;
+.combo-inputs-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 30px;
+  max-width: none;
+}
+
+.combo-input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.combo-input-group label {
+  font-size: 12px;
   color: #666;
-  margin-bottom: 8px;
   font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.combo-input-group input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.combo-input-group input:focus {
+  outline: none;
+  border-color: #4caf50;
 }
 
 /* カスタム楽曲保存セクション */
 .custom-music-save-section {
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid #e0e0e0;
 }
 
-.custom-music-save-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #4CAF50;
+.save-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 16px;
+  background: #4caf50;
   color: white;
   border: none;
   border-radius: 6px;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  min-width: auto;
+  width: auto;
+}
+
+.save-button.overwrite-mode {
+  background: #ff9800;
+}
+
+.save-button.overwrite-mode:hover {
+  background: #f57c00;
+}
+
+.custom-music-save-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: auto;
+  width: auto;
+  white-space: nowrap;
 }
 
 .custom-music-save-button:hover {
-  background-color: #45a049;
+  background: #45a049;
   transform: translateY(-1px);
+}
+
+.custom-music-save-button.overwrite-mode {
+  background: #ff9800;
+}
+
+.custom-music-save-button.overwrite-mode:hover {
+  background: #f57c00;
+}
+
+/* 保存入力グループ */
+.save-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.custom-music-name-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.custom-music-name-input:focus {
+  outline: none;
+  border-color: #4caf50;
 }
 
 .custom-music-save-form {
@@ -406,7 +534,7 @@
 
 .custom-music-name-input:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: #4caf50;
 }
 
 .custom-music-save-actions {
@@ -415,7 +543,6 @@
 }
 
 .custom-music-save-actions button {
-  flex: 1;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -425,9 +552,9 @@
 }
 
 .custom-music-save-actions button:first-child {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
-  border-color: #4CAF50;
+  border-color: #4caf50;
 }
 
 .custom-music-save-actions button:first-child:hover {
@@ -461,8 +588,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
-  padding: 10px;
+  margin-bottom: 6px;
+  padding: 8px 10px;
   background: #f8f9fa;
   border-radius: 6px;
   border: 1px solid #e0e0e0;
@@ -470,8 +597,8 @@
 }
 
 .saved-music-item:hover {
-  border-color: #4CAF50;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  border-color: #4caf50;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .saved-music-item:last-child {
@@ -508,22 +635,48 @@
   background: #fff8e1;
   padding: 2px 8px;
   border-radius: 4px;
+  border: 1px solid #ffd54f;
+}
+
+/* 属性バッジ */
+.saved-music-attribute {
+  font-size: 12px;
+  color: #fff;
+  font-weight: normal;
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-left: 10px;
+}
+
+.saved-music-attribute.smile {
+  background: #ff6b6b;
+}
+
+.saved-music-attribute.pure {
+  background: #4ecdc4;
+}
+
+.saved-music-attribute.cool {
+  background: #5c7cfa;
 }
 
 /* 削除ボタン */
 .delete-button {
-  width: 24px;
-  height: 24px;
-  min-width: 24px;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
   padding: 0;
   background: #f44336;
   color: white;
   border: none;
-  border-radius: 50%;
-  font-size: 18px;
+  border-radius: 4px;
+  font-size: 14px;
   line-height: 1;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .delete-button:hover {
@@ -537,23 +690,23 @@
     border-radius: 8px;
     margin-bottom: 15px;
   }
-  
+
   .section-header {
     padding: 12px 15px;
   }
-  
+
   .section-header h3 {
     font-size: 15px;
   }
-  
+
   .section-content {
     padding: 15px;
   }
-  
+
   .phase-inputs-container {
     flex-wrap: wrap;
   }
-  
+
   .phase-separator {
     display: none;
   }
@@ -564,7 +717,7 @@
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .stats-group {
     width: 100%;
   }

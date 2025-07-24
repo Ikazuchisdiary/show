@@ -9,6 +9,7 @@ const KEYS = {
 } as const
 
 // カードのスキルレベルを保存
+// cardTypeはカードのキー（例："gingaKozu"）を使用する
 export function saveCardSkillLevel(cardType: string, skillLevel: number): void {
   if (!cardType) return
   const key = KEYS.cardSkillLevel(cardType)
@@ -16,6 +17,7 @@ export function saveCardSkillLevel(cardType: string, skillLevel: number): void {
 }
 
 // カードのスキルレベルを読み込み
+// cardTypeはカードのキー（例："gingaKozu"）を使用する
 export function loadCardSkillLevel(cardType: string): number {
   if (!cardType) return 14
   const key = KEYS.cardSkillLevel(cardType)
@@ -24,6 +26,7 @@ export function loadCardSkillLevel(cardType: string): number {
 }
 
 // センタースキルレベルを保存
+// cardTypeはカードのキー（例："gingaKozu"）を使用する
 export function saveCardCenterSkillLevel(cardType: string, skillLevel: number): void {
   if (!cardType) return
   const key = KEYS.cardCenterSkillLevel(cardType)
@@ -31,6 +34,7 @@ export function saveCardCenterSkillLevel(cardType: string, skillLevel: number): 
 }
 
 // センタースキルレベルを読み込み
+// cardTypeはカードのキー（例："gingaKozu"）を使用する
 export function loadCardCenterSkillLevel(cardType: string): number {
   if (!cardType) return 14
   const key = KEYS.cardCenterSkillLevel(cardType)
@@ -75,18 +79,6 @@ export function loadMusicState(musicKey: string): {
   return savedState ? JSON.parse(savedState) : null
 }
 
-// 現在の編成を保存（汎用）
-export function saveCurrentFormation(cards: string[]): void {
-  if (isShareMode()) return
-  localStorage.setItem('sukushou_current_formation', JSON.stringify(cards))
-}
-
-// 現在の編成を読み込み（汎用）
-export function loadCurrentFormation(): string[] | null {
-  if (isShareMode()) return null
-  const saved = localStorage.getItem('sukushou_current_formation')
-  return saved ? JSON.parse(saved) : null
-}
 
 // すべてのカードのスキルレベルを読み込み
 export function loadAllCardSkillLevels(): Record<string, number> {

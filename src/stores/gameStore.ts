@@ -3,7 +3,7 @@ import { Card } from '../core/models/Card'
 import { Music } from '../core/models/Music'
 import { GameState, SimulationOptions } from '../core/models/Game'
 import { GameSimulator } from '../core/simulation/GameSimulator'
-import { cardData } from '../data/index'
+import { cardData, musicData } from '../data/index'
 import {
   saveCardSkillLevel,
   loadCardSkillLevel,
@@ -11,8 +11,6 @@ import {
   loadCardCenterSkillLevel,
   loadAllCardSkillLevels,
   loadAllCenterSkillLevels,
-  saveCurrentFormation,
-  loadCurrentFormation,
   saveMusicState,
   loadMusicState,
   isShareMode
@@ -45,8 +43,6 @@ interface GameStore {
   setCardSkillLevel: (index: number, level: number) => void
   setCenterSkillLevel: (index: number, level: number) => void
   loadStoredSkillLevels: () => void
-  saveFormation: () => void
-  loadFormation: () => void
   setCustomSkillValue: (cardIndex: number, effectKey: string, value: number) => void
   clearCustomSkillValues: (cardIndex: number) => void
   setCustomCenterSkillValue: (cardIndex: number, effectKey: string, value: number) => void
@@ -61,6 +57,16 @@ interface GameStore {
   loadFromShareUrl: (params: URLSearchParams) => void
   swapCards: (fromIndex: number, toIndex: number) => void
   insertCard: (fromIndex: number, toIndex: number, insertBefore: boolean) => void
+}
+
+// Helper function to get music key from music object
+const getMusicKey = (music: Music): string => {
+  if (!music || music.name === 'カスタム' || music.name.startsWith('custom_')) {
+    return music.name
+  }
+  // Find the key in musicData that corresponds to this music
+  const musicKey = Object.keys(musicData).find(key => musicData[key].name === music.name)
+  return musicKey || music.name
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -84,10 +90,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
     
     // ローカルストレージから保存されたスキルレベルを読み込む
     if (card && !isShareMode()) {
-      const savedSkillLevel = loadCardSkillLevel(card.name)
-      const savedCenterSkillLevel = loadCardCenterSkillLevel(card.name)
+      const cardKey = Object.keys(cardData).find(key => cardData[key] === card) || ''
+      const savedSkillLevel = loadCardSkillLevel(cardKey)
+      const savedCenterSkillLevel = loadCardCenterSkillLevel(cardKey)
       
-      console.log(`Loading skill levels for ${card.name}:`, { savedSkillLevel, savedCenterSkillLevel })
+      console.log(`Loading skill levels for ${cardKey}:`, { savedSkillLevel, savedCenterSkillLevel })
       
       const newSkillLevels = [...state.cardSkillLevels]
       const newCenterSkillLevels = [...state.centerSkillLevels]
@@ -98,9 +105,17 @@ export const useGameStore = create<GameStore>((set, get) => ({
       // 楽曲ごとに編成を保存
       if (state.selectedMusic && state.selectedMusic.name !== 'カスタム' && 
           !state.selectedMusic.name.startsWith('custom_')) {
-        const cardNames = newCards.map(c => c?.name || '')
-        saveMusicState(state.selectedMusic.name, {
-          cards: cardNames,
+        // カードのキーを取得する関数
+        const getCardKey = (card: Card | null) => {
+          if (!card) return ''
+          // cardDataから該当するキーを探す
+          return Object.keys(cardData).find(key => cardData[key] === card) || ''
+        }
+        
+        const cardKeys = newCards.map(getCardKey)
+        const musicKey = getMusicKey(state.selectedMusic)
+        saveMusicState(musicKey, {
+          cards: cardKeys,
           mental: state.initialMental,
           learningCorrection: 1.5
         })
@@ -117,9 +132,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (!isShareMode() && state.selectedMusic && 
         state.selectedMusic.name !== 'カスタム' && 
         !state.selectedMusic.name.startsWith('custom_')) {
-      const cardNames = newCards.map(c => c?.name || '')
-      saveMusicState(state.selectedMusic.name, {
-        cards: cardNames,
+      // カードのキーを取得する関数
+      const getCardKey = (card: Card | null) => {
+        if (!card) return ''
+        return Object.keys(cardData).find(key => cardData[key] === card) || ''
+      }
+      
+      const cardKeys = newCards.map(getCardKey)
+      const musicKey = getMusicKey(state.selectedMusic)
+      saveMusicState(musicKey, {
+        cards: cardKeys,
         mental: state.initialMental,
         learningCorrection: 1.5
       })
@@ -135,8 +157,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // ローカルストレージに保存
     const card = state.selectedCards[index]
     if (card && !isShareMode()) {
-      console.log('Saving skill level:', card.name, level)
-      saveCardSkillLevel(card.name, level)
+      const cardKey = Object.keys(cardData).find(key => cardData[key] === card) || ''
+      console.log('Saving skill level:', cardKey, level)
+      saveCardSkillLevel(cardKey, level)
     }
     
     return { cardSkillLevels: newLevels }
@@ -149,7 +172,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // ローカルストレージに保存
     const card = state.selectedCards[index]
     if (card && !isShareMode()) {
-      saveCardCenterSkillLevel(card.name, level)
+      const cardKey = Object.keys(cardData).find(key => cardData[key] === card) || ''
+      saveCardCenterSkillLevel(cardKey, level)
     }
     
     return { centerSkillLevels: newLevels }
@@ -172,11 +196,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
     
     // 現在選択されているカードのスキルレベルを更新
     state.selectedCards.forEach((card, index) => {
-      if (card && storedSkillLevels[card.name] !== undefined) {
-        newSkillLevels[index] = storedSkillLevels[card.name]
-      }
-      if (card && storedCenterSkillLevels[card.name] !== undefined) {
-        newCenterSkillLevels[index] = storedCenterSkillLevels[card.name]
+      if (card) {
+        const cardKey = Object.keys(cardData).find(key => cardData[key] === card) || ''
+        if (storedSkillLevels[cardKey] !== undefined) {
+          newSkillLevels[index] = storedSkillLevels[cardKey]
+        }
+        if (storedCenterSkillLevels[cardKey] !== undefined) {
+          newCenterSkillLevels[index] = storedCenterSkillLevels[cardKey]
+        }
       }
     })
     
@@ -184,60 +211,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       cardSkillLevels: newSkillLevels,
       centerSkillLevels: newCenterSkillLevels
     }
-  }),
-  
-  saveFormation: () => {
-    const state = get()
-    if (isShareMode()) return
-    
-    const cardNames = state.selectedCards.map(card => card?.name || '')
-    saveCurrentFormation(cardNames)
-    
-    // 楽曲ごとの編成も保存
-    if (state.selectedMusic) {
-      const musicKey = state.selectedMusic.name
-      saveMusicState(musicKey, {
-        cards: cardNames,
-        skillLevels: state.cardSkillLevels,
-        centerSkillLevels: state.centerSkillLevels
-      })
-    }
-  },
-  
-  loadFormation: () => set((state) => {
-    if (isShareMode()) return state
-    
-    // まず汎用的な編成を読み込む
-    const savedFormation = loadCurrentFormation()
-    console.log('Loading formation:', savedFormation)
-    
-    if (savedFormation && savedFormation.length === 6) {
-      const newCards: (Card | null)[] = savedFormation.map(cardName => {
-        if (!cardName) return null
-        return cardData[cardName] || null
-      })
-      
-      const newSkillLevels = [...state.cardSkillLevels]
-      const newCenterSkillLevels = [...state.centerSkillLevels]
-      
-      // 各カードのスキルレベルを読み込む
-      newCards.forEach((card, index) => {
-        if (card) {
-          const savedSkillLevel = loadCardSkillLevel(card.name)
-          const savedCenterSkillLevel = loadCardCenterSkillLevel(card.name)
-          newSkillLevels[index] = savedSkillLevel
-          newCenterSkillLevels[index] = savedCenterSkillLevel
-        }
-      })
-      
-      return {
-        selectedCards: newCards,
-        cardSkillLevels: newSkillLevels,
-        centerSkillLevels: newCenterSkillLevels
-      }
-    }
-    
-    return state
   }),
   
   setCustomSkillValue: (cardIndex, effectKey, value) => set((state) => {
@@ -271,14 +244,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
   }),
   
   setMusic: (music) => set((state) => {
+    // カードのキーを取得する関数
+    const getCardKey = (card: Card | null) => {
+      if (!card) return ''
+      return Object.keys(cardData).find(key => cardData[key] === card) || ''
+    }
+    
     // 現在の楽曲の編成を保存（カスタム楽曲は除く）
     if (state.selectedMusic && !isShareMode() && 
         state.selectedMusic.name !== 'カスタム' && 
         !state.selectedMusic.name.startsWith('custom_')) {
-      const currentMusicKey = state.selectedMusic.name
-      const cardNames = state.selectedCards.map(card => card?.name || '')
-      saveMusicState(currentMusicKey, {
-        cards: cardNames,
+      const musicKey = getMusicKey(state.selectedMusic)
+      const cardKeys = state.selectedCards.map(getCardKey)
+      saveMusicState(musicKey, {
+        cards: cardKeys,
         mental: state.initialMental,
         learningCorrection: 1.5 // v1互換のため固定値
       })
@@ -286,7 +265,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     
     // 新しい楽曲の編成を読み込む
     if (music && !isShareMode() && music.name !== 'カスタム' && !music.name.startsWith('custom_')) {
-      const newMusicKey = music.name
+      const newMusicKey = getMusicKey(music)
       const savedState = loadMusicState(newMusicKey)
       
       if (savedState) {
@@ -294,7 +273,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
         
         const newCards: (Card | null)[] = savedState.cards.map(cardName => {
           if (!cardName) return null
-          return cardData[cardName] || null
+          const card = cardData[cardName]
+          if (!card) {
+            console.warn(`Card not found in music state: ${cardName}`)
+          }
+          return card || null
         })
         
         // 各カードのスキルレベルを個別に読み込む
@@ -303,8 +286,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         
         newCards.forEach((card, index) => {
           if (card) {
-            newSkillLevels[index] = loadCardSkillLevel(card.name)
-            newCenterSkillLevels[index] = loadCardCenterSkillLevel(card.name)
+            const cardKey = Object.keys(cardData).find(key => cardData[key] === card) || ''
+            newSkillLevels[index] = loadCardSkillLevel(cardKey)
+            newCenterSkillLevels[index] = loadCardCenterSkillLevel(cardKey)
           }
         })
         
@@ -326,14 +310,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
   setDifficulty: (difficulty) => set({ selectedDifficulty: difficulty }),
   
   setInitialMental: (mental) => set((state) => {
+    // カードのキーを取得する関数
+    const getCardKey = (card: Card | null) => {
+      if (!card) return ''
+      return Object.keys(cardData).find(key => cardData[key] === card) || ''
+    }
+    
     // 現在の楽曲の設定を保存（カスタム楽曲は除く）
     if (state.selectedMusic && !isShareMode() && 
         state.selectedMusic.name !== 'カスタム' && 
         !state.selectedMusic.name.startsWith('custom_')) {
-      const musicKey = state.selectedMusic.name
-      const cardNames = state.selectedCards.map(card => card?.name || '')
+      const musicKey = getMusicKey(state.selectedMusic)
+      const cardKeys = state.selectedCards.map(getCardKey)
       saveMusicState(musicKey, {
-        cards: cardNames,
+        cards: cardKeys,
         mental: mental,
         learningCorrection: 1.5
       })

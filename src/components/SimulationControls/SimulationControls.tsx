@@ -25,6 +25,7 @@ export const SimulationControls: React.FC = () => {
   return (
     <div className="button-container">
       <button
+        className="primary-button"
         onClick={runSimulation}
         disabled={!hasValidSelection || isSimulating}
       >

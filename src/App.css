@@ -56,12 +56,13 @@ select {
 input[type="number"] {
   width: 100%;
   padding: 10px;
-  font-size: 14px;
   border: 1px solid #ddd;
   border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
 }
 
-button {
+button.primary-button {
   background-color: #4CAF50;
   color: white;
   padding: 12px 20px;
@@ -72,17 +73,17 @@ button {
   width: 100%;
 }
 
-button:hover {
+button.primary-button:hover {
   background-color: #45a049;
 }
 
-button:active {
+button.primary-button:active {
   transform: scale(0.98);
 }
 
 .card-slots {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: 1fr;
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -116,8 +117,9 @@ button:active {
 .music-info-section {
   background-color: #f0f0f0;
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible;
   margin-bottom: 20px;
+  position: relative;
 }
 
 .section-header {

@@ -41,6 +41,10 @@ export function convertCardData(): CardData {
         name: card.centerCharacteristic.name,
         effects: convertEffects(card.centerCharacteristic.effects)
       } : undefined,
+      centerSkill: card.centerSkill ? {
+        when: card.centerSkill.when,
+        effects: convertEffects(card.centerSkill.effects)
+      } : undefined,
       effects: convertEffects(card.effects)
     }
   }

@@ -26,8 +26,28 @@ export const MusicSelector: React.FC = () => {
     duringFever: 7,
     afterFever: 5
   })
-  const [isSavingCustom, setIsSavingCustom] = useState(false)
+  const [customCombos, setCustomCombos] = useState({
+    normal: 287,
+    hard: 536,
+    expert: 1278,
+    master: 1857
+  })
   const [customMusicName, setCustomMusicName] = useState('')
+  
+  // Determine if we're in overwrite mode
+  const isOverwriteMode = () => {
+    const name = customMusicName.trim()
+    if (!name) return false
+    
+    // Check if we're updating the current custom music
+    if (selectedMusic?.name.startsWith('custom_') && 
+        Object.values(customMusicList).find(m => m.name === selectedMusic.name)?.name === name) {
+      return true
+    }
+    
+    // Check if a different custom music with this name exists
+    return Object.values(customMusicList).some(music => music.name === name)
+  }
   const dropdownRef = useRef<HTMLDivElement>(null)
   const displayRef = useRef<HTMLDivElement>(null)
   
@@ -65,8 +85,27 @@ export const MusicSelector: React.FC = () => {
     setMusic(music)
     setShowDropdown(false)
     setIsActiveDropdown(false)
-    setShowCustomMusic(false)
     setSearchQuery('')
+    
+    // If it's a custom music, show the editor
+    if (music.id && music.id.startsWith('custom_')) {
+      setShowCustomMusic(true)
+      // Load the custom music data into the form
+      setCustomPhases({
+        beforeFever: music.phases[0],
+        duringFever: music.phases[1],
+        afterFever: music.phases[2]
+      })
+      setCustomCombos(music.combos || {
+        normal: 287,
+        hard: 536,
+        expert: 1278,
+        master: 1857
+      })
+      setCustomMusicName(music.name)
+    } else {
+      setShowCustomMusic(false)
+    }
   }
   
   const toggleDropdown = () => {
@@ -81,12 +120,32 @@ export const MusicSelector: React.FC = () => {
     setShowCustomMusic(true)
     setShowDropdown(false)
     setIsActiveDropdown(false)
-    // Set custom music immediately
+    
+    // Inherit phases from previous music if available
+    if (selectedMusic && selectedMusic.phases) {
+      setCustomPhases({
+        beforeFever: selectedMusic.phases[0],
+        duringFever: selectedMusic.phases[1],
+        afterFever: selectedMusic.phases[2]
+      })
+    }
+    
+    // Inherit combo values from previous music if available
+    if (selectedMusic && 'combos' in selectedMusic) {
+      setCustomCombos({
+        normal: selectedMusic.combos?.normal || 287,
+        hard: selectedMusic.combos?.hard || 536,
+        expert: selectedMusic.combos?.expert || 1278,
+        master: selectedMusic.combos?.master || 1857
+      })
+    }
+    
+    // Set custom music immediately, inheriting all values from previous selection
     const customMusic = {
       name: 'カスタム',
-      centerCharacter: '',
-      attribute: 'smile' as const,
-      phases: [customPhases.beforeFever, customPhases.duringFever, customPhases.afterFever] as [number, number, number]
+      centerCharacter: selectedMusic?.centerCharacter || '',
+      attribute: selectedMusic?.attribute || 'smile' as const,
+      phases: selectedMusic?.phases || [customPhases.beforeFever, customPhases.duringFever, customPhases.afterFever] as [number, number, number]
     }
     setMusic(customMusic)
   }
@@ -99,18 +158,18 @@ export const MusicSelector: React.FC = () => {
     const newPhases = { ...customPhases, [field]: value }
     setCustomPhases(newPhases)
     
-    // Update the music if custom is selected
-    if (selectedMusic && selectedMusic.name === 'カスタム') {
+    // Update the music if custom is selected or editing a saved custom music
+    if (selectedMusic && (selectedMusic.name === 'カスタム' || selectedMusic.id?.startsWith('custom_'))) {
       const customMusic = {
         ...selectedMusic,
-        phases: [newPhases.beforeFever, newPhases.duringFever, newPhases.afterFever]
+        phases: [newPhases.beforeFever, newPhases.duringFever, newPhases.afterFever] as [number, number, number]
       }
       setMusic(customMusic)
     }
   }
   
   const handleCustomCenterChange = (center: string) => {
-    if (selectedMusic && selectedMusic.name === 'カスタム') {
+    if (selectedMusic && (selectedMusic.name === 'カスタム' || selectedMusic.id?.startsWith('custom_'))) {
       const customMusic = {
         ...selectedMusic,
         centerCharacter: center
@@ -120,12 +179,26 @@ export const MusicSelector: React.FC = () => {
   }
   
   const handleCustomAttributeChange = (attribute: string) => {
-    if (selectedMusic && selectedMusic.name === 'カスタム') {
+    if (selectedMusic && (selectedMusic.name === 'カスタム' || selectedMusic.id?.startsWith('custom_'))) {
       const customMusic = {
         ...selectedMusic,
         attribute: attribute as 'smile' | 'pure' | 'cool'
       }
       setMusic(customMusic)
+    }
+  }
+  
+  const handleCustomComboChange = (difficulty: string, value: number) => {
+    const newCombos = { ...customCombos, [difficulty]: value }
+    setCustomCombos(newCombos)
+    
+    // Update the music if editing a saved custom music
+    if (selectedMusic && selectedMusic.id?.startsWith('custom_')) {
+      const customMusic = {
+        ...selectedMusic,
+        combos: newCombos
+      }
+      setMusic(customMusic as any)
     }
   }
   
@@ -135,25 +208,27 @@ export const MusicSelector: React.FC = () => {
       return
     }
     
+    // Check if we're updating an existing custom music
+    let musicId = generateCustomMusicId()
+    const existingMusic = Object.entries(customMusicList).find(([_, m]) => m.name === customMusicName)
+    if (existingMusic) {
+      musicId = existingMusic[0]
+    }
+    
     const customMusic: CustomMusic = {
-      id: generateCustomMusicId(),
+      id: musicId,
       name: customMusicName,
       phases: [customPhases.beforeFever, customPhases.duringFever, customPhases.afterFever] as [number, number, number],
       centerCharacter: selectedMusic?.centerCharacter || '',
       attribute: (selectedMusic?.attribute || 'smile') as 'smile' | 'pure' | 'cool',
-      combos: {
-        normal: 100,
-        hard: 200,
-        expert: 300,
-        master: 400
-      }
+      combos: customCombos
     }
     
     addCustomMusic(customMusic)
     setMusic(customMusic)
-    setIsSavingCustom(false)
     setCustomMusicName('')
-    setShowCustomMusic(false)
+    const isUpdate = isOverwriteMode()
+    alert(`「${customMusicName}」を${isUpdate ? '更新' : '保存'}しました`)
   }
   
   return (
@@ -203,9 +278,19 @@ export const MusicSelector: React.FC = () => {
                       className="music-dropdown-item"
                       onClick={() => handleMusicSelect(music)}
                     >
-                      <div className="music-item-title">{music.name}</div>
-                      <div className="music-item-info">
-                        {formatPhases(music.phases)} • {music.centerCharacter}
+                      <div className="music-item-main">
+                        <span className="music-title">{music.name}</span>
+                        <div className="music-phases">
+                          <span className="phase-tag">{music.phases[0]}</span>
+                          <span className="phase-arrow">→</span>
+                          <span className="phase-tag fever">{music.phases[1]}</span>
+                          <span className="phase-arrow">→</span>
+                          <span className="phase-tag">{music.phases[2]}</span>
+                        </div>
+                      </div>
+                      <div className="music-item-sub">
+                        <span className="center-label">センター:</span>
+                        <span className="center-name">{music.centerCharacter}</span>
                       </div>
                     </div>
                   ))}
@@ -213,7 +298,13 @@ export const MusicSelector: React.FC = () => {
                     className="music-dropdown-item custom-item"
                     onClick={handleCustomSelect}
                   >
-                    <div className="music-item-title">📝 カスタム入力</div>
+                    <div className="music-item-main">
+                      <span className="music-title">カスタム入力</span>
+                      <span className="custom-icon">✏️</span>
+                    </div>
+                    <div className="music-item-sub">
+                      <span className="custom-description">楽曲データを自由に設定</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -323,8 +414,8 @@ export const MusicSelector: React.FC = () => {
                   </select>
                 </div>
                 
-                <div className="custom-attribute-section">
-                  <label htmlFor="customAttribute">楽曲属性</label>
+                <div className="setting-row">
+                  <label className="setting-label">楽曲属性</label>
                   <select 
                     id="customAttribute"
                     value={selectedMusic?.attribute || 'smile'}
@@ -335,32 +426,70 @@ export const MusicSelector: React.FC = () => {
                     <option value="cool">クール</option>
                   </select>
                 </div>
+                
+                <div className="combo-inputs-section">
+                  <div className="section-label">コンボ数設定</div>
+                  <div className="combo-inputs-container">
+                    <div className="combo-input-group">
+                      <label>NORMAL</label>
+                      <input 
+                        type="number" 
+                        value={customCombos.normal}
+                        placeholder="287"
+                        min="0"
+                        onChange={(e) => handleCustomComboChange('normal', parseInt(e.target.value) || 0)}
+                      />
+                    </div>
+                    <div className="combo-input-group">
+                      <label>HARD</label>
+                      <input 
+                        type="number" 
+                        value={customCombos.hard}
+                        placeholder="536"
+                        min="0"
+                        onChange={(e) => handleCustomComboChange('hard', parseInt(e.target.value) || 0)}
+                      />
+                    </div>
+                    <div className="combo-input-group">
+                      <label>EXPERT</label>
+                      <input 
+                        type="number" 
+                        value={customCombos.expert}
+                        placeholder="1278"
+                        min="0"
+                        onChange={(e) => handleCustomComboChange('expert', parseInt(e.target.value) || 0)}
+                      />
+                    </div>
+                    <div className="combo-input-group">
+                      <label>MASTER</label>
+                      <input 
+                        type="number" 
+                        value={customCombos.master}
+                        placeholder="1857"
+                        min="0"
+                        onChange={(e) => handleCustomComboChange('master', parseInt(e.target.value) || 0)}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
               
               <div className="custom-music-save-section">
-                {!isSavingCustom ? (
+                <div className="save-input-group">
+                  <input
+                    type="text"
+                    className="custom-music-name-input"
+                    placeholder="カスタム楽曲名を入力"
+                    value={customMusicName}
+                    onChange={(e) => setCustomMusicName(e.target.value)}
+                  />
                   <button 
-                    className="custom-music-save-button"
-                    onClick={() => setIsSavingCustom(true)}
+                    className={`custom-music-save-button ${isOverwriteMode() ? 'overwrite-mode' : ''}`}
+                    onClick={handleSaveCustomMusic}
                   >
-                    この設定を保存
+                    💾 {isOverwriteMode() ? '上書き保存' : '保存'}
                   </button>
-                ) : (
-                  <div className="custom-music-save-form">
-                    <input
-                      type="text"
-                      className="custom-music-name-input"
-                      placeholder="楽曲名を入力"
-                      value={customMusicName}
-                      onChange={(e) => setCustomMusicName(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleSaveCustomMusic()}
-                    />
-                    <div className="custom-music-save-actions">
-                      <button onClick={handleSaveCustomMusic}>保存</button>
-                      <button onClick={() => { setIsSavingCustom(false); setCustomMusicName(''); }}>キャンセル</button>
-                    </div>
-                  </div>
-                )}
+                </div>
               </div>
             </div>
             
@@ -373,6 +502,11 @@ export const MusicSelector: React.FC = () => {
                     <div className="saved-music-info">
                       <span className="saved-music-name">{music.name}</span>
                       <span className="saved-music-phases">{formatPhases(music.phases)}</span>
+                      <span className={`saved-music-attribute ${music.attribute}`}>
+                        {music.attribute === 'smile' ? 'スマイル' : 
+                         music.attribute === 'pure' ? 'ピュア' : 
+                         'クール'}
+                      </span>
                       {music.centerCharacter && (
                         <span className="saved-music-center">{music.centerCharacter}</span>
                       )}
