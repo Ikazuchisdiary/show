@@ -112,9 +112,18 @@
   border-radius: 4px;
 }
 
-.log-details {
-  margin-left: 20px;
+.turn-number.center-skill {
+  background: #9C27B0;
+  color: white;
+  padding: 0 10px;
+  min-width: auto;
 }
+
+.fever-icon {
+  color: #ff5722;
+  font-size: 16px;
+}
+
 
 .log-action {
   margin: 2px 0 2px 20px;
@@ -196,7 +205,7 @@
 }
 
 .log-ap-gain {
-  color: #9C27B0;
+  color: #4CAF50;
 }
 
 .boost-values,
@@ -274,6 +283,18 @@
 }
 
 /* 条件付きエフェクトのインデント */
+.conditional-effects {
+  margin-left: 35px;
+  padding-left: 12px;
+  border-left: 2px solid #e0e0e0;
+  position: relative;
+}
+
+.conditional-effects .log-action {
+  margin-bottom: 2px;
+  margin-left: 0;
+}
+
 .log-conditional-indent {
   margin-left: 40px !important;
   position: relative;

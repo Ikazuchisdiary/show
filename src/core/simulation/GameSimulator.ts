@@ -159,13 +159,25 @@ export class GameSimulator {
     
     // Add turn header log with card name (v1 style)
     const phase = this.getPhaseStr()
-    const apDisplay = card.apCost > 0 ? `<span class="log-ap-inline">AP-${card.apCost}</span>` : ''
+    const apBefore = this.state.apAcquired - this.state.apConsumed
+    const apAfter = apBefore - card.apCost
+    let apDisplayHtml = ''
+    if (card.apCost > 0) {
+      if (apBefore >= 0 && apAfter < 0) {
+        // APが不足に転じる場合
+        apDisplayHtml = `<span class="log-ap-inline" style="background-color: #ffebee; color: #e74c3c;">${apBefore} → ${apAfter}</span>`
+      } else {
+        // 通常のAP消費
+        apDisplayHtml = `<span class="log-ap-inline">${apBefore} → ${apAfter}</span>`
+      }
+    }
+    const shortCode = card.shortCode ? `[${card.shortCode}] ` : ''
     this.currentTurnLogs.push(
       `<div class="log-turn-header">
         <span class="turn-number">${this.state.currentTurn + 1}</span>
         ${phase}
-        <span class="log-card-name">${card.displayName || card.name}</span>
-        ${apDisplay}
+        <span class="log-card-name">${shortCode}${card.displayName || card.name}</span>
+        ${apDisplayHtml}
       </div>`
     )
     
@@ -437,22 +449,18 @@ export class GameSimulator {
     const effectsToProcess = conditionMet ? effect.then : (effect.else || [])
     const pathPrefix = conditionMet ? 'then' : 'else'
     
-    // Process effects with proper indentation in logs
-    const originalLogs = [...this.currentTurnLogs]
-    for (let i = 0; i < effectsToProcess.length; i++) {
-      const subEffect = effectsToProcess[i]
-      const result = this.processEffect(subEffect, card, cardIndex, `${effectPath}_${pathPrefix}_${i}`)
-      if (result.skipTurn) skipTurn = true
-      if (result.resetCardTurn) resetCardTurn = true
-    }
-    
-    // Add indentation to conditional effect logs
-    const newLogs = this.currentTurnLogs.slice(originalLogs.length)
-    for (const log of newLogs) {
-      const index = this.currentTurnLogs.indexOf(log)
-      if (index >= 0) {
-        this.currentTurnLogs[index] = log.replace('class="log-', 'class="log-conditional-indent log-')
+    // Process effects with v1-style conditional effects wrapper
+    if (effectsToProcess.length > 0) {
+      this.currentTurnLogs.push(`<div class="conditional-effects">`)
+      
+      for (let i = 0; i < effectsToProcess.length; i++) {
+        const subEffect = effectsToProcess[i]
+        const result = this.processEffect(subEffect, card, cardIndex, `${effectPath}_${pathPrefix}_${i}`)
+        if (result.skipTurn) skipTurn = true
+        if (result.resetCardTurn) resetCardTurn = true
       }
+      
+      this.currentTurnLogs.push(`</div>`)
     }
     
     return { skipTurn, resetCardTurn }
@@ -850,6 +858,22 @@ export class GameSimulator {
     
     // Process center skill effects
     if (centerCard.centerSkill && centerCard.centerSkill.when === timing) {
+      // Reset turn logs for center skill
+      this.currentTurnLogs = []
+      
+      // Add center skill header log
+      const isFeverTiming = timing === 'beforeFeverStart' || 
+        (timing === 'afterLastTurn' && this.state.music && this.state.music.phases[1] >= this.getTotalTurns() - this.state.music.phases[0])
+      const feverIcon = isFeverTiming ? '<span class="fever-icon">🔥</span>' : ''
+      const shortCode = centerCard.shortCode ? `[${centerCard.shortCode}] ` : ''
+      this.currentTurnLogs.push(
+        `<div class="log-turn-header">
+          <span class="turn-number center-skill">センタースキル</span>
+          ${feverIcon}
+          <span class="log-card-name">${shortCode}${centerCard.displayName || centerCard.name}</span>
+        </div>`
+      )
+      
       const centerSkillLevel = this.centerSkillLevels[centerIndex]
       const skillMultiplier = SKILL_LEVEL_MULTIPLIERS[centerSkillLevel - 1] || 1
       
@@ -857,6 +881,36 @@ export class GameSimulator {
         const effect = centerCard.centerSkill.effects[i]
         this.processCenterSkillEffect(effect, centerIndex, skillMultiplier, `center_effect_${i}`)
       }
+      
+      // Add center skill log to turn results
+      if (this.currentTurnLogs.length > 1) { // More than just header
+        this.state.turnResults.push({
+          turn: this.state.currentTurn,
+          cardIndex: centerIndex,
+          cardName: centerCard.name,
+          cardCharacter: centerCard.character,
+          appeal: 0,
+          scoreGain: this.currentTurnScoreGain,
+          voltageGain: this.currentTurnVoltageGain,
+          voltageLevel: getVoltageLevel(this.state.totalVoltage, this.state.currentTurn, this.state.music),
+          apUsed: 0,
+          isSkipped: false,
+          multipliers: {
+            base: 0,
+            skill: skillMultiplier,
+            skillBoost: 0,
+            voltage: 0,
+            fever: 0,
+            center: 0,
+            total: 0
+          },
+          logs: [...this.currentTurnLogs]
+        })
+      }
+      
+      // Reset turn gains
+      this.currentTurnScoreGain = 0
+      this.currentTurnVoltageGain = 0
     }
     
     // Process center characteristic effects (keep for compatibility)
