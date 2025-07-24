@@ -1,66 +1,82 @@
-/* 楽曲選択セクション */
+/* 楽曲情報セクション */
 .music-info-section {
-  background-color: #f0f0f0;
-  border-radius: 10px;
-  overflow: hidden;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
   margin-bottom: 20px;
+  overflow: hidden;
 }
 
 .section-header {
-  background-color: #e0e0e0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   padding: 15px 20px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .section-header h3 {
   margin: 0;
   font-size: 16px;
   color: #333;
+  font-weight: 600;
 }
 
 .section-content {
   padding: 20px;
 }
 
+/* フォームグループ */
+.form-group {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #555;
+  font-weight: 500;
+}
+
 /* 楽曲選択ドロップダウン */
 .music-select-wrapper {
   position: relative;
   width: 100%;
-  margin-bottom: 15px;
 }
 
 .music-select-display {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 12px 15px;
+  align-items: center;
   background: white;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 6px;
+  padding: 10px 15px;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-height: 50px;
 }
 
 .music-select-display:hover {
   border-color: #4CAF50;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  background: #fafafa;
 }
 
+.music-select-display.active {
+  border-color: #4CAF50;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* 楽曲選択値表示 */
 .music-select-value {
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
 .music-select-title {
+  font-weight: 600;
   font-size: 15px;
   color: #333;
-  font-weight: 500;
 }
 
 .music-select-info {
@@ -68,88 +84,101 @@
   color: #666;
 }
 
+/* ドロップダウン矢印 */
 .music-select-arrow {
   color: #666;
-  font-size: 12px;
+  font-size: 14px;
   transition: transform 0.2s ease;
 }
 
-.music-select-display:hover .music-select-arrow {
-  transform: translateY(1px);
+.music-select-display.active .music-select-arrow {
+  transform: rotate(180deg);
 }
 
 /* ドロップダウンメニュー */
 .music-dropdown {
   position: absolute;
-  top: calc(100% + 5px);
+  top: 100%;
   left: 0;
   right: 0;
   background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: 1px solid #4CAF50;
+  border-top: none;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   z-index: 1000;
+  display: none;
   max-height: 400px;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 
+.music-dropdown.show {
+  display: block;
+}
+
+/* 検索コンテナ */
 .music-search-container {
-  padding: 10px;
-  border-bottom: 1px solid #f0f0f0;
-  background: #fafafa;
+  padding: 8px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .music-search-input {
   width: 100%;
-  padding: 10px 15px;
+  padding: 8px 12px;
   border: 1px solid #ddd;
-  border-radius: 6px;
+  border-radius: 4px;
   font-size: 14px;
-  transition: all 0.2s ease;
+  background: white;
 }
 
 .music-search-input:focus {
   outline: none;
   border-color: #4CAF50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
 }
 
+/* ドロップダウンアイテム */
 .music-dropdown-items {
-  flex: 1;
+  max-height: calc(400px - 50px);
   overflow-y: auto;
-  max-height: 300px;
 }
 
 .music-dropdown-item {
-  padding: 12px 15px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  border-bottom: 1px solid #f5f5f5;
+  transition: background 0.2s ease;
+}
+
+.music-dropdown-item:last-child {
+  border-bottom: none;
 }
 
 .music-dropdown-item:hover {
-  background-color: #f5f5f5;
+  background: #f5f5f5;
 }
 
-.music-dropdown-item:active {
-  background-color: #e8f5e9;
+.music-dropdown-item.selected {
+  background: #e8f5e9;
 }
 
 .music-dropdown-item.custom-item {
-  background-color: #f9fbe7;
-  border-bottom: 2px solid #e6ee9c;
+  background: #fffbf0;
+  font-weight: 500;
 }
 
 .music-dropdown-item.custom-item:hover {
-  background-color: #f0f4c3;
+  background: #fff8e1;
 }
 
+/* 楽曲アイテム情報 */
 .music-item-title {
-  font-size: 14px;
-  color: #333;
   font-weight: 500;
+  color: #333;
   margin-bottom: 2px;
 }
 
@@ -158,81 +187,85 @@
   color: #666;
 }
 
-/* 統計情報の行 */
+/* Stats Row */
 .stats-row {
   display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
+  gap: 15px;
+  margin-top: 15px;
 }
 
 .stats-group {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .stats-group label {
   display: block;
-  font-size: 13px;
-  color: #666;
+  font-size: 14px;
+  color: #555;
   margin-bottom: 5px;
-  font-weight: 500;
 }
 
-.stats-group select,
-.stats-group input {
+.stats-group input,
+.stats-group select {
   width: 100%;
-  padding: 10px;
+  padding: 8px 12px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 6px;
   font-size: 14px;
   background: white;
   transition: all 0.2s ease;
 }
 
-.stats-group select:focus,
-.stats-group input:focus {
+.stats-group input:focus,
+.stats-group select:focus {
   outline: none;
   border-color: #4CAF50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
 }
 
-/* カスタム楽曲設定 */
+/* カスタム楽曲セクション */
 .custom-music-inner {
   margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
 }
 
 .custom-music-card {
   background: white;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
 }
 
 .custom-music-header {
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-  color: white;
-  padding: 15px 20px;
+  background: transparent;
+  padding: 0 0 10px 0;
+  border: none;
 }
 
 .custom-music-header h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 14px;
+  color: #333;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* ターン数設定 */
+/* フェーズ入力セクション */
 .phase-inputs-section {
-  padding: 20px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 20px 0;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .section-label {
   font-size: 13px;
-  font-weight: 600;
   color: #666;
-  margin-bottom: 15px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  font-weight: 600;
 }
 
 .phase-inputs-container {
@@ -250,28 +283,28 @@
   display: block;
   font-size: 12px;
   color: #666;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   font-weight: 500;
 }
 
-.phase-input-group input {
-  width: 80px;
-  padding: 10px;
+.phase-input-group input[type="number"] {
+  width: 70px;
   text-align: center;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  background: white;
-  transition: all 0.2s ease;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
   font-size: 16px;
   font-weight: 600;
+  transition: all 0.2s ease;
 }
 
-.phase-input-group input:focus {
+.phase-input-group input[type="number"]:focus {
   border-color: #4CAF50;
   outline: none;
-  transform: scale(1.05);
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
 }
 
+/* フィーバーフェーズ特別スタイル */
 .phase-input-group.fever label {
   color: #ff6b6b;
   font-weight: 600;
@@ -288,13 +321,13 @@
 
 .phase-separator {
   font-size: 20px;
-  color: #ccc;
+  color: #999;
   font-weight: 300;
 }
 
 /* カスタム楽曲設定 */
 .custom-music-settings {
-  padding: 20px;
+  padding: 20px 0 0 0;
 }
 
 .setting-row {
@@ -345,7 +378,7 @@
   background-color: #4CAF50;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 14px;
   font-weight: bold;
   cursor: pointer;
@@ -354,6 +387,7 @@
 
 .custom-music-save-button:hover {
   background-color: #45a049;
+  transform: translateY(-1px);
 }
 
 .custom-music-save-form {
@@ -366,7 +400,7 @@
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 14px;
 }
 
@@ -384,7 +418,7 @@
   flex: 1;
   padding: 8px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
@@ -409,6 +443,94 @@
   background-color: #f5f5f5;
 }
 
+/* 保存済みカスタム楽曲リスト */
+.saved-music-container {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.saved-music-header {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.saved-music-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  transition: all 0.2s ease;
+}
+
+.saved-music-item:hover {
+  border-color: #4CAF50;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.saved-music-item:last-child {
+  margin-bottom: 0;
+}
+
+.saved-music-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.saved-music-name {
+  font-weight: 500;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.saved-music-phases {
+  font-size: 13px;
+  color: #666;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.saved-music-center {
+  font-size: 12px;
+  color: #ff9800;
+  font-weight: 600;
+  background: #fff8e1;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* 削除ボタン */
+.delete-button {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  padding: 0;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-button:hover {
+  background: #d32f2f;
+  transform: scale(1.1);
+}
+
 /* モバイル対応 */
 @media (max-width: 768px) {
   .music-info-section {
@@ -428,6 +550,16 @@
     padding: 15px;
   }
   
+  .phase-inputs-container {
+    flex-wrap: wrap;
+  }
+  
+  .phase-separator {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
   .stats-row {
     flex-direction: column;
     gap: 15px;
@@ -436,18 +568,15 @@
   .stats-group {
     width: 100%;
   }
-  
-  .phase-inputs-container {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .phase-input-group input {
-    width: 70px;
-    font-size: 14px;
-  }
-  
-  .phase-separator {
-    display: none;
-  }
+}
+
+/* 共有モードスタイル */
+body.share-mode .music-select-display {
+  cursor: not-allowed;
+  opacity: 0.7;
+  background: #f5f5f5;
+}
+
+body.share-mode .music-select-arrow {
+  opacity: 0.5;
 }

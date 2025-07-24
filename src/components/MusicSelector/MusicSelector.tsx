@@ -15,11 +15,12 @@ export const MusicSelector: React.FC = () => {
     setInitialMental
   } = useGameStore()
   
-  const { customMusicList, addCustomMusic, generateCustomMusicId } = useMusicStore()
+  const { customMusicList, addCustomMusic, deleteCustomMusic, generateCustomMusicId } = useMusicStore()
   
   const [showDropdown, setShowDropdown] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [showCustomMusic, setShowCustomMusic] = useState(false)
+  const [isActiveDropdown, setIsActiveDropdown] = useState(false)
   const [customPhases, setCustomPhases] = useState({
     beforeFever: 11,
     duringFever: 7,
@@ -33,12 +34,20 @@ export const MusicSelector: React.FC = () => {
   const allMusic = getAllMusic()
   const customMusicArray = Object.values(customMusicList)
   
+  // Set default music if none selected
+  useEffect(() => {
+    if (!selectedMusic && allMusic.length > 0) {
+      setMusic(allMusic[0])
+    }
+  }, [selectedMusic, allMusic, setMusic])
+  
   // Handle clicks outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node) &&
           displayRef.current && !displayRef.current.contains(e.target as Node)) {
         setShowDropdown(false)
+        setIsActiveDropdown(false)
       }
     }
     
@@ -55,18 +64,29 @@ export const MusicSelector: React.FC = () => {
   const handleMusicSelect = (music: any) => {
     setMusic(music)
     setShowDropdown(false)
+    setIsActiveDropdown(false)
     setShowCustomMusic(false)
+    setSearchQuery('')
+  }
+  
+  const toggleDropdown = () => {
+    if (!showDropdown) {
+      setSearchQuery('')
+    }
+    setShowDropdown(!showDropdown)
+    setIsActiveDropdown(!showDropdown)
   }
   
   const handleCustomSelect = () => {
     setShowCustomMusic(true)
     setShowDropdown(false)
+    setIsActiveDropdown(false)
     // Set custom music immediately
     const customMusic = {
       name: 'カスタム',
       centerCharacter: '',
       attribute: 'smile' as const,
-      phases: [customPhases.beforeFever, customPhases.duringFever, customPhases.afterFever]
+      phases: [customPhases.beforeFever, customPhases.duringFever, customPhases.afterFever] as [number, number, number]
     }
     setMusic(customMusic)
   }
@@ -147,8 +167,8 @@ export const MusicSelector: React.FC = () => {
           <div className="music-select-wrapper">
             <div 
               ref={displayRef}
-              className="music-select-display" 
-              onClick={() => setShowDropdown(!showDropdown)}
+              className={`music-select-display ${isActiveDropdown ? 'active' : ''}`}
+              onClick={toggleDropdown}
             >
               <div className="music-select-value">
                 <span className="music-select-title">
@@ -166,7 +186,7 @@ export const MusicSelector: React.FC = () => {
             </div>
             
             {showDropdown && (
-              <div ref={dropdownRef} className="music-dropdown">
+              <div ref={dropdownRef} className={`music-dropdown ${showDropdown ? 'show' : ''}`}>
                 <div className="music-search-container">
                   <input 
                     type="text" 
@@ -177,12 +197,6 @@ export const MusicSelector: React.FC = () => {
                   />
                 </div>
                 <div className="music-dropdown-items">
-                  <div 
-                    className="music-dropdown-item custom-item"
-                    onClick={handleCustomSelect}
-                  >
-                    <div className="music-item-title">カスタム入力</div>
-                  </div>
                   {filteredMusic.map((music) => (
                     <div 
                       key={music.name}
@@ -195,6 +209,12 @@ export const MusicSelector: React.FC = () => {
                       </div>
                     </div>
                   ))}
+                  <div 
+                    className="music-dropdown-item custom-item"
+                    onClick={handleCustomSelect}
+                  >
+                    <div className="music-item-title">📝 カスタム入力</div>
+                  </div>
                 </div>
               </div>
             )}
@@ -343,6 +363,38 @@ export const MusicSelector: React.FC = () => {
                 )}
               </div>
             </div>
+            
+            {/* 保存済みカスタム楽曲リスト */}
+            {Object.keys(customMusicList).length > 0 && (
+              <div className="saved-music-container">
+                <div className="saved-music-header">保存済みカスタム楽曲</div>
+                {Object.entries(customMusicList).map(([id, music]) => (
+                  <div key={id} className="saved-music-item">
+                    <div className="saved-music-info">
+                      <span className="saved-music-name">{music.name}</span>
+                      <span className="saved-music-phases">{formatPhases(music.phases)}</span>
+                      {music.centerCharacter && (
+                        <span className="saved-music-center">{music.centerCharacter}</span>
+                      )}
+                    </div>
+                    <button
+                      className="delete-button"
+                      onClick={() => {
+                        if (confirm(`「${music.name}」を削除しますか？`)) {
+                          deleteCustomMusic(id)
+                          if (selectedMusic?.name === music.name) {
+                            setMusic(null)
+                          }
+                        }
+                      }}
+                      title="削除"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
