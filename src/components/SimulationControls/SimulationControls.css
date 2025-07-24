@@ -1,0 +1,57 @@
+.button-container {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+button {
+  flex: 1;
+  padding: 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(76, 175, 80, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+button:hover:not(:disabled) {
+  background-color: #45a049;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Secondary buttons */
+button.secondary {
+  background-color: #2196F3;
+  font-size: 14px;
+  padding: 10px 20px;
+  flex: initial;
+  width: auto;
+  box-shadow: 0 4px 6px rgba(33, 150, 243, 0.2);
+}
+
+button.secondary:hover:not(:disabled) {
+  background-color: #1976D2;
+  box-shadow: 0 6px 12px rgba(33, 150, 243, 0.3);
+}
+
+.share-button {
+  min-width: 150px;
+}

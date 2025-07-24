@@ -1,0 +1,165 @@
+/* 結果表示セクション */
+#result {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f0f8ff;
+  border-radius: 5px;
+  text-align: center;
+  display: none;
+}
+
+#result h2 {
+  margin-top: 0;
+  color: #333;
+  font-size: 24px;
+}
+
+#score {
+  font-size: 36px;
+  font-weight: bold;
+  color: #2196F3;
+  margin: 10px 0;
+}
+
+#apSummary {
+  margin: 15px 0;
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.toggle-log {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #666;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-log:hover {
+  background-color: #555;
+}
+
+/* ターンログ */
+#turnLog {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  max-height: 400px;
+  overflow-y: auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  display: none;
+  border: 1px solid #e0e0e0;
+}
+
+.log-turn {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
+  border-left: 3px solid #4CAF50;
+  position: relative;
+}
+
+.log-turn-header {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.log-turn-header .log-card-name {
+  font-weight: bold;
+  color: #2196F3;
+  font-size: 13px;
+  flex: 1;
+}
+
+.log-ap-inline {
+  position: absolute;
+  right: 0;
+  top: 0;
+  color: #e74c3c;
+  font-size: 12px;
+  font-weight: 600;
+  background: #ffebee;
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.turn-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  background: #f0f0f0;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.log-details {
+  margin-left: 20px;
+}
+
+.log-action {
+  margin: 2px 0 2px 20px;
+  color: #666;
+}
+
+.log-calculation {
+  font-size: 12px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-left: 40px;
+  margin-top: 5px;
+}
+
+.calc-value {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  position: relative;
+}
+
+.calc-label {
+  font-size: 10px;
+  margin-top: 2px;
+  opacity: 0.8;
+  font-weight: normal;
+}
+
+.calc-base {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.calc-multiplier {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.calc-voltage {
+  background-color: #fff3e0;
+  color: #f57c00;
+}

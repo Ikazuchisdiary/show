@@ -1,0 +1,10 @@
+dist
+docs
+node_modules
+*.min.js
+*.min.css
+coverage
+.husky
+package-lock.json
+pnpm-lock.yaml
+yarn.lock

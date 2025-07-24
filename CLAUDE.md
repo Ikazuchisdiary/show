@@ -80,3 +80,87 @@ Example commit messages:
 ## Memory Notes
 
 - updateHistoryを更新するときは、現在時刻を取得して指定してください
+- v2開発時は必ずv1の実装を確認してから実装する
+- インラインスタイルはCSSクラスに移行する
+- font-family: inheritなどのグローバルスタイルに注意
+
+## v2 Development Methodology
+
+### Code Analysis and Documentation
+When improving v2 to match v1 quality:
+1. **Analyze v1 implementation** - Study CSS, HTML, and JS in detail
+2. **Create analysis markdown** - Document findings in dedicated markdown files
+3. **Track differences** - Maintain detailed comparisons between v1 and v2
+4. **Update systematically** - Make changes based on documented analysis
+
+### Key Analysis Files
+- `V1_FEATURE_ANALYSIS.md` - Comprehensive v1 feature list and implementation status
+- `V2_IMPLEMENTATION_GAPS.md` - Features marked complete but actually incomplete
+- `V2_IMPLEMENTATION_TASKS.md` - Prioritized task list with time estimates
+- `V1_IMPLEMENTATION_REFERENCE.md` - Detailed code locations in v1
+- `V1_CARD_SELECTOR_ANALYSIS.md` - Deep dive into card selection UI differences
+
+### v1 Reference Location
+Reference files from v1 are stored in `/v1-reference/` directory for easy comparison.
+
+## UI Implementation Guidelines
+
+### Card Selection UI (Based on v1 Analysis) ✅ COMPLETED
+1. **Card numbers**: Square with rounded corners (32x32px, border-radius: 6px, white background)
+2. **Font family**: System fonts with proper font-weights
+3. **Conditional effects**: Gray background (#f0f0f0) with proper indentation
+4. **Success/Failure colors**: Success (#2196F3), Failure (#f44336)
+5. **Label width**: 150px fixed width with font-weight: 700 for skill parameters
+6. **No shortCodes**: Display only card names without [Kg] style prefixes
+7. **Character order**: Fixed order matching v1 (102期 → 103期 → 104期 → Others)
+8. **Drag & Drop**: Insert behavior with green position indicators (not swap)
+
+### Development Approach
+1. Always compare with v1 before implementing UI changes
+2. Document findings in markdown before coding
+3. Update CLAUDE.md with new guidelines discovered
+4. Maintain consistency with v1's visual design language
+
+## Architecture Migration Plan
+
+A comprehensive architecture migration plan has been created in `ARCHITECTURE_PLAN.md`. The migration involves:
+
+### Technology Stack (Planned)
+- **TypeScript**: For type safety and better developer experience
+- **Vite**: Modern build tool with fast HMR and optimized builds
+- **React**: Component-based UI architecture
+- **Zustand**: Lightweight state management
+- **Vitest**: Testing framework integrated with Vite
+
+### Migration Phases
+1. **Phase 1**: Development environment setup (1-2 weeks)
+2. **Phase 2**: Core logic migration to TypeScript (2-3 weeks)
+3. **Phase 3**: UI layer reconstruction with React (2-3 weeks)
+4. **Phase 4**: Optimization and new features (1-2 weeks)
+
+### Important Notes
+- The migration will be gradual to minimize risk
+- GitHub Pages deployment will be maintained (output to `docs/` folder)
+- Old and new versions will run in parallel during transition
+- All changes should maintain backward compatibility where possible
+
+See `ARCHITECTURE_PLAN.md` for detailed implementation plan.
+
+## v2 Progress Tracking
+
+### Completed Features (2025-07-24)
+1. **Card Selection UI** - Fully matches v1 appearance and behavior
+   - Skill parameter editing with custom values
+   - Conditional effect display formatting
+   - Character ordering (102期 → 103期 → 104期 → Others)
+   - Font weights and sizes matching v1
+   - Drag & drop with insertion indicators
+2. **Center Character System** - Highlight and bonus calculations
+   - Orange border (#ff9800) highlighting for center character cards
+   - Center characteristic appeal boost calculations (already implemented in GameSimulator)
+
+### Next Priority Tasks
+1. **Center Skill System** - Level selection and parameter inputs
+2. **AP Balance Details** - Income/expense breakdown
+3. **Local Storage** - Save skill levels and custom songs
+4. **Turn Log Improvements** - Show calculation formulas
