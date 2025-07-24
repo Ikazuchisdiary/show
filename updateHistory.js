@@ -1,6 +1,14 @@
 // Update history data
 const updateHistory = [
     {
+        version: "2025.07.24.5",
+        date: "2025-07-24",
+        time: "20:10",
+        updates: [
+            "AP不足時の参考スコア計算機能を追加"
+        ]
+    },
+    {
         version: "2025.07.24.4",
         date: "2025-07-24",
         time: "13:45",

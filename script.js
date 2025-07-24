@@ -230,6 +230,7 @@ class Game {
         // AP tracking
         this.apConsumed = 0; // 消費したAPの総量
         this.apAcquired = 0; // 獲得したAPの総量
+        this.cardActivationLog = []; // カード発動ログ（順番、AP消費、ターン数を記録）
     }
 
     doGame() {
@@ -320,9 +321,41 @@ class Game {
             if (this.verbose) {
                 this.currentTurnLog.push(`<div class="log-ap">AP消費: ${actualApCost} (累計消費: ${this.apConsumed})</div>`);
             }
+            
+            // Record card activation in log
+            this.cardActivationLog.push({
+                turn: this.turn,
+                card: card,
+                cardIndex: foundIndex,
+                apCost: actualApCost,
+                apConsumedTotal: this.apConsumed,
+                apAcquiredBefore: this.apAcquired,
+                scoreBoostBefore: [...this.scoreBoost],
+                scoreBoostCountBefore: this.scoreBoostCount,
+                voltageBoostBefore: [...this.voltageBoost],
+                voltageBoostCountBefore: this.voltageBoostCount,
+                voltagePtBefore: this.voltagePt,
+                scoreBefore: this.score,
+                mentalBefore: this.mental
+            });
         }
         
         card.do(this);
+        
+        // Update the log entry with after values
+        if (this.cardActivationLog.length > 0) {
+            const lastEntry = this.cardActivationLog[this.cardActivationLog.length - 1];
+            if (lastEntry.turn === this.turn) {
+                lastEntry.apAcquiredAfter = this.apAcquired;
+                lastEntry.scoreAfter = this.score;
+                lastEntry.voltagePtAfter = this.voltagePt;
+                lastEntry.mentalAfter = this.mental;
+                lastEntry.scoreBoostAfter = [...this.scoreBoost];
+                lastEntry.scoreBoostCountAfter = this.scoreBoostCount;
+                lastEntry.voltageBoostAfter = [...this.voltageBoost];
+                lastEntry.voltageBoostCountAfter = this.voltageBoostCount;
+            }
+        }
         
         // Create log entry only if we have content
         if (this.verbose && this.currentTurnLog.length > 0) {
@@ -485,10 +518,43 @@ class Game {
                     this.currentTurnLog.push(`<div class="log-turn-header"><span class="turn-number center-skill">センタースキル</span>${feverIcon} <span class="log-card-name">${card.displayName}</span></div>`);
                 }
                 
+                // Record center skill activation in log (with 0 AP cost)
+                this.cardActivationLog.push({
+                    turn: this.turn,
+                    card: card,
+                    cardIndex: -1, // センタースキルは特別なインデックス
+                    apCost: 0, // センタースキルはAPコスト0
+                    apConsumedTotal: this.apConsumed,
+                    apAcquiredBefore: this.apAcquired,
+                    scoreBoostBefore: [...this.scoreBoost],
+                    scoreBoostCountBefore: this.scoreBoostCount,
+                    voltageBoostBefore: [...this.voltageBoost],
+                    voltageBoostCountBefore: this.voltageBoostCount,
+                    voltagePtBefore: this.voltagePt,
+                    scoreBefore: this.score,
+                    mentalBefore: this.mental,
+                    isCenterSkill: true // センタースキルであることを示すフラグ
+                });
+                
                 // Process center skill effects
                 const centerSkill = card.config.centerSkill;
                 for (let i = 0; i < centerSkill.effects.length; i++) {
                     this.processCenterSkillEffect(centerSkill.effects[i], card.centerSkillLevel, card.centerSkillValues, i);
+                }
+                
+                // Update the log entry with after values
+                if (this.cardActivationLog.length > 0) {
+                    const lastEntry = this.cardActivationLog[this.cardActivationLog.length - 1];
+                    if (lastEntry.isCenterSkill) {
+                        lastEntry.apAcquiredAfter = this.apAcquired;
+                        lastEntry.scoreAfter = this.score;
+                        lastEntry.voltagePtAfter = this.voltagePt;
+                        lastEntry.mentalAfter = this.mental;
+                        lastEntry.scoreBoostAfter = [...this.scoreBoost];
+                        lastEntry.scoreBoostCountAfter = this.scoreBoostCount;
+                        lastEntry.voltageBoostAfter = [...this.voltageBoost];
+                        lastEntry.voltageBoostCountAfter = this.voltageBoostCount;
+                    }
                 }
                 
                 if (this.verbose) {
@@ -1510,22 +1576,122 @@ function calculate() {
         return rounded.toString();
     };
     
-    const apSummaryHtml = `
-        <div class="ap-summary" style="margin-top: 10px; padding: 10px; background-color: ${apBalance >= 0 ? '#e8f5e9' : '#ffebee'}; border-radius: 5px;">
-            <div style="margin-bottom: 10px; padding: 10px; background-color: #f5f5f5; border-radius: 5px;">
-                <strong>アピール値: ${appeal.toLocaleString()}</strong>
+    // Get center card for AP shortage calculation
+    let centerCard = null;
+    for (let i = 0; i < cards.length; i++) {
+        if (cards[i].config && cards[i].config.character === centerCharacter) {
+            centerCard = cards[i];
+            break;
+        }
+    }
+    
+    // Display appeal value separately
+    const appealHtml = `
+        <div class="appeal-box">
+            <div class="box-label">アピール値</div>
+            <div class="box-value">${appeal.toLocaleString()}</div>
+        </div>
+    `;
+    
+    let apSummaryHtml = `
+        <div class="ap-summary ${apBalance >= 0 ? 'positive' : 'negative'}">
+            <div class="ap-balance ${apBalance >= 0 ? 'positive' : 'negative'}">
+                <div class="box-label">AP収支</div>
+                <div class="box-value">${apBalance >= 0 ? '+' : ''}${formatAP(apBalance)}</div>
             </div>
-            <h4 style="margin: 0 0 10px 0;">AP収支</h4>
-            <div>基礎AP: ${formatAP(baseAP)}</div>
-            <div>獲得AP: ${formatAP(game.apAcquired)}</div>
-            <div style="font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 5px;">合計AP: ${formatAP(totalAP)}</div>
-            <div>消費AP: ${formatAP(game.apConsumed)}</div>
-            <div style="font-weight: bold; color: ${apBalance >= 0 ? '#2e7d32' : '#c62828'}; margin-top: 10px;">
-                差引: ${apBalance >= 0 ? '+' : ''}${formatAP(apBalance)} ${apBalance >= 0 ? '(足りています)' : '(不足しています)'}
+            <span class="ap-info-icon" onclick="toggleAPDetails()" title="詳細を表示">ⓘ</span>
+            <div id="apDetails">
+                <div class="ap-detail-columns">
+                    <div class="ap-detail-section ap-income">
+                        <div class="ap-detail-label">獲得AP</div>
+                        <div class="ap-detail-item">
+                            <span class="ap-detail-name">基礎AP</span>
+                            <span class="ap-detail-value">+${formatAP(baseAP)}</span>
+                        </div>
+                        <div class="ap-detail-item">
+                            <span class="ap-detail-name">スキルAP</span>
+                            <span class="ap-detail-value">+${formatAP(game.apAcquired)}</span>
+                        </div>
+                        <div class="ap-detail-total">
+                            <span class="ap-detail-name">合計</span>
+                            <span class="ap-detail-value">${formatAP(totalAP)}</span>
+                        </div>
+                    </div>
+                    <div class="ap-detail-section ap-expense">
+                        <div class="ap-detail-label">消費AP</div>
+                        <div class="ap-detail-item">
+                            <span class="ap-detail-name">スキル発動</span>
+                            <span class="ap-detail-value">-${formatAP(game.apConsumed)}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     `;
-    document.getElementById('apSummary').innerHTML = apSummaryHtml;
+    
+    // If AP is insufficient, calculate with excluding cards from the end
+    if (apBalance < 0 && cards.length > 1) {
+        const apShortageResults = calculateWithAPShortage(appeal, music, totalAP, game, centerCard);
+        
+        if (apShortageResults.length > 0) {
+            for (const result of apShortageResults) {
+                const excludedDisplay = result.excludedActivations.map(a => 
+                    `ターン${a.turn}: ${a.card} (AP${a.apCost})`
+                ).join('<br>');
+                
+                apSummaryHtml += `
+                    <div class="ap-shortage-box">
+                        <div class="ap-shortage-main">
+                            <div class="box-label">AP不足参考スコア</div>
+                            <div class="box-value">${result.score.toLocaleString()}</div>
+                        </div>
+                        <span class="ap-shortage-info-icon" onclick="toggleAPShortageDetails(this)" title="詳細を表示">ⓘ</span>
+                        <div class="ap-shortage-details" style="display: none;">
+                            <div class="ap-shortage-detail-header">
+                                <span class="detail-icon">🚫</span>
+                                <span class="detail-title">除外した発動</span>
+                            </div>
+                            <div class="ap-shortage-excluded-list">
+                                ${result.excludedActivations.map(a => `
+                                    <div class="excluded-item">
+                                        <span class="turn-badge">T${a.turn}</span>
+                                        <span class="card-name">${a.card}</span>
+                                        <span class="ap-cost">AP ${a.apCost}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="ap-shortage-stats">
+                                <div class="stat-item">
+                                    <span class="stat-label">消費AP</span>
+                                    <span class="stat-value">${formatAP(result.apConsumed)}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">節約AP</span>
+                                    <span class="stat-value highlight">+${formatAP(result.apSaved)}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">最終収支</span>
+                                    <span class="stat-value positive">+${formatAP(result.apBalance)}</span>
+                                </div>
+                            </div>
+                            ${result.logHtml ? `
+                                <div class="ap-shortage-log-section">
+                                    <button class="ap-shortage-log-toggle" onclick="toggleAPShortageLog(this)">
+                                        詳細ログを表示
+                                    </button>
+                                    <div class="ap-shortage-log" style="display: none;">
+                                        ${result.logHtml}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    }
+    
+    document.getElementById('apSummary').innerHTML = appealHtml + apSummaryHtml;
     
     // Use HTML log if available, otherwise fall back to text log
     const logElement = document.getElementById('turnLog');
@@ -1546,6 +1712,252 @@ function toggleLog() {
         log.style.display = 'none';
         document.querySelector('.toggle-log').textContent = '詳細ログを表示';
     }
+}
+
+// Toggle AP details display
+function toggleAPDetails() {
+    const details = document.getElementById('apDetails');
+    if (details.style.display === 'none' || details.style.display === '') {
+        details.style.display = 'block';
+    } else {
+        details.style.display = 'none';
+    }
+}
+
+// Toggle AP shortage details display
+function toggleAPShortageDetails(element) {
+    // Find the parent .ap-shortage-box and then find .ap-shortage-details within it
+    const shortageBox = element.closest('.ap-shortage-box');
+    if (shortageBox) {
+        const details = shortageBox.querySelector('.ap-shortage-details');
+        if (details) {
+            if (details.style.display === 'none' || details.style.display === '') {
+                details.style.display = 'block';
+            } else {
+                details.style.display = 'none';
+            }
+        }
+    }
+}
+
+// Toggle AP shortage log display
+function toggleAPShortageLog(button) {
+    const logSection = button.closest('.ap-shortage-log-section');
+    if (logSection) {
+        const log = logSection.querySelector('.ap-shortage-log');
+        if (log) {
+            if (log.style.display === 'none' || log.style.display === '') {
+                log.style.display = 'block';
+                button.textContent = '詳細ログを隠す';
+            } else {
+                log.style.display = 'none';
+                button.textContent = '詳細ログを表示';
+            }
+        }
+    }
+}
+
+
+// Calculate scores with AP shortage (excluding activations from the end of log)
+function calculateWithAPShortage(appeal, music, totalAP, originalGame, centerCard) {
+    const results = [];
+    
+    // Get the card activation log from the original game
+    const activationLog = originalGame.cardActivationLog;
+    
+    // Calculate how much AP we need to save
+    const apShortage = originalGame.apConsumed - totalAP;
+    
+    if (apShortage <= 0 || activationLog.length === 0) {
+        return results; // No shortage or no activations
+    }
+    
+    // Find how many activations to exclude from the end
+    let apSaved = 0;
+    const excludedActivations = [];
+    
+    // Go through activation log from the end and find which activations to exclude
+    for (let i = activationLog.length - 1; i >= 0; i--) {
+        const activation = activationLog[i];
+        
+        // Skip center skills
+        if (activation.isCenterSkill) {
+            continue;
+        }
+        
+        // Add this activation to excluded list
+        excludedActivations.unshift({
+            turn: activation.turn,
+            card: activation.card,
+            apCost: activation.apCost
+        });
+        
+        // Add up the AP saved
+        if (activation.apCost > 0) {
+            apSaved += activation.apCost;
+            
+            if (apSaved >= apShortage) {
+                // We've saved enough AP
+                break;
+            }
+        }
+    }
+    
+    if (excludedActivations.length === 0) {
+        return results; // No activations to exclude
+    }
+    
+    // Create a set of excluded activation indices for easy lookup
+    const excludedIndices = new Set();
+    let excludedCount = 0;
+    
+    // Mark activations to exclude (from the end)
+    for (let i = activationLog.length - 1; i >= 0 && excludedCount < excludedActivations.length; i--) {
+        const activation = activationLog[i];
+        if (!activation.isCenterSkill) {
+            excludedIndices.add(i);
+            excludedCount++;
+        }
+    }
+    
+    
+    // Calculate final score and AP consumed
+    let finalScore = 0;
+    let finalApConsumed = 0;
+    
+    // Go through activation log and sum up only non-excluded activations
+    for (let i = 0; i < activationLog.length; i++) {
+        if (!excludedIndices.has(i) && !activationLog[i].isCenterSkill) {
+            finalApConsumed += activationLog[i].apCost;
+        }
+    }
+    
+    // Find the first excluded activation to get the score at that point
+    let firstExcludedIndex = -1;
+    for (let i = 0; i < activationLog.length; i++) {
+        if (excludedIndices.has(i) && !activationLog[i].isCenterSkill) {
+            firstExcludedIndex = i;
+            break;
+        }
+    }
+    
+    if (firstExcludedIndex >= 0) {
+        // Use the scoreBefore from the first excluded activation
+        const firstExcludedActivation = activationLog[firstExcludedIndex];
+        finalScore = firstExcludedActivation.scoreBefore;
+        
+        // Check if there are center skills that would activate after this point
+        const totalTurns = music.reduce((a, b) => a + b, 0);
+        const lastExcludedTurn = firstExcludedActivation.turn;
+        
+        // Get game state at the exclusion point
+        const currentBoosts = firstExcludedActivation.scoreBoostBefore || [];
+        const currentVoltage = firstExcludedActivation.voltagePtBefore || 0;
+        
+        // Calculate voltage level using the same logic as Game.getVoltageLevel
+        const voltageLevels = [0, 10, 30, 60, 100, 150, 210, 280, 360, 450, 550, 660, 780, 910, 1050, 1200, 1360, 1530, 1710, 1900];
+        let voltageLevel = 0;
+        if (currentVoltage >= 10) {
+            if (currentVoltage < 1900) {
+                for (let i = 1; i < voltageLevels.length; i++) {
+                    if (currentVoltage < voltageLevels[i]) {
+                        voltageLevel = i - 1;
+                        break;
+                    }
+                }
+            } else {
+                voltageLevel = 19 + Math.floor((currentVoltage - 1900) / 200);
+            }
+        }
+        
+        // Note: Don't double voltage level here - it depends on when center skill activates
+        
+        const voltageMultiplier = 1.0 + voltageLevel / 10;
+        
+        // Get the boost multiplier at the point of exclusion
+        const scoreBoostCount = firstExcludedActivation.scoreBoostCountBefore || 0;
+        const boostValue = currentBoosts[scoreBoostCount] || 0;
+        const boostMultiplier = 1.0 + boostValue;
+        
+        let centerSkillScoreAdded = 0;
+        
+        // Check for center skill that would still activate
+        if (centerCard && centerCard.config && centerCard.config.centerSkill) {
+            const centerSkill = centerCard.config.centerSkill;
+            let shouldActivate = false;
+            
+            // Check if this center skill would activate based on timing
+            
+            if (centerSkill.when === 'beforeFeverStart') {
+                // beforeFeverStart activates when reaching the fever start turn
+                // Check if we didn't exclude activations before the fever start
+                if (firstExcludedActivation.turn <= music[0]) {
+                    // We excluded activations after fever start, so beforeFeverStart would have activated
+                    shouldActivate = true;
+                }
+            } else if (centerSkill.when === 'afterLastTurn') {
+                // afterLastTurn center skills activate after all turns are completed
+                // Since we're only excluding card activations (not the game flow),
+                // the game still completes and afterLastTurn activates
+                shouldActivate = true;
+            }
+            
+            if (shouldActivate && centerSkill.effects) {
+                for (const effect of centerSkill.effects) {
+                    if (effect.type === 'scoreGain' && effect.value) {
+                        // Get the skill level multiplier for center skill
+                        const centerSkillLevel = centerCard.centerSkillLevel || centerCard.skillLevel || 10;
+                        const skillMultiplier = SKILL_LEVEL_MULTIPLIERS[centerSkillLevel - 1];
+                        
+                        // Determine if voltage level should be doubled based on center skill timing
+                        let actualVoltageLevel = voltageLevel;
+                        if (centerSkill.when === 'beforeFeverStart') {
+                            // beforeFeverStart always happens during fever, so double voltage level
+                            actualVoltageLevel *= 2;
+                        } else if (centerSkill.when === 'afterLastTurn' && music[2] === 0) {
+                            // afterLastTurn during fever if afterFever phase is 0
+                            actualVoltageLevel *= 2;
+                        }
+                        // beforeFirstTurn is always before fever, so no doubling
+                        
+                        const actualVoltageMultiplier = 1.0 + actualVoltageLevel / 10;
+                        
+                        // Calculate the score gain with current game state and learning correction
+                        const learningCorrection = originalGame.learningCorrection;
+                        const baseScore = appeal * actualVoltageMultiplier * boostMultiplier * learningCorrection;
+                        const adjustedValue = effect.value * skillMultiplier / 2;
+                        const scoreGain = Math.ceil(baseScore * adjustedValue);
+                        centerSkillScoreAdded += scoreGain;
+                        finalScore += scoreGain;
+                    }
+                }
+            }
+        }
+        
+    } else {
+        // No activations were excluded - use original score
+        finalScore = originalGame.score;
+    }
+    
+    
+    // Create result using the calculated values
+    const apBalance = totalAP - finalApConsumed;
+    
+    results.push({
+        activationsCutoff: activationLog.length - excludedActivations.length,
+        excludedActivations: excludedActivations.map(a => ({
+            turn: a.turn + 1,
+            card: a.card.displayName || a.card.name,
+            apCost: a.apCost
+        })),
+        score: finalScore,
+        apConsumed: finalApConsumed,
+        apBalance: apBalance,
+        apSaved: apSaved,
+        logHtml: null // ログ表示は諦める
+    });
+    
+    return results;
 }
 
 // Load card data from global variable
