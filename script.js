@@ -1903,34 +1903,74 @@ function calculateWithAPShortage(appeal, music, totalAP, originalGame, centerCar
             }
             
             if (shouldActivate && centerSkill.effects) {
-                for (const effect of centerSkill.effects) {
-                    if (effect.type === 'scoreGain' && effect.value) {
-                        // Get the skill level multiplier for center skill
-                        const centerSkillLevel = centerCard.centerSkillLevel || centerCard.skillLevel || 10;
-                        const skillMultiplier = SKILL_LEVEL_MULTIPLIERS[centerSkillLevel - 1];
-                        
-                        // Determine if voltage level should be doubled based on center skill timing
-                        let actualVoltageLevel = voltageLevel;
-                        if (centerSkill.when === 'beforeFeverStart') {
-                            // beforeFeverStart always happens during fever, so double voltage level
-                            actualVoltageLevel *= 2;
-                        } else if (centerSkill.when === 'afterLastTurn' && music[2] === 0) {
-                            // afterLastTurn during fever if afterFever phase is 0
-                            actualVoltageLevel *= 2;
-                        }
-                        // beforeFirstTurn is always before fever, so no doubling
-                        
-                        const actualVoltageMultiplier = 1.0 + actualVoltageLevel / 10;
-                        
-                        // Calculate the score gain with current game state and learning correction
-                        const learningCorrection = originalGame.learningCorrection;
-                        const baseScore = appeal * actualVoltageMultiplier * boostMultiplier * learningCorrection;
-                        const adjustedValue = effect.value * skillMultiplier / 2;
-                        const scoreGain = Math.ceil(baseScore * adjustedValue);
-                        centerSkillScoreAdded += scoreGain;
-                        finalScore += scoreGain;
-                    }
+                // Get the skill level multiplier for center skill
+                const centerSkillLevel = centerCard.centerSkillLevel || centerCard.skillLevel || 10;
+                const skillMultiplier = SKILL_LEVEL_MULTIPLIERS[centerSkillLevel - 1];
+                
+                // Determine if voltage level should be doubled based on center skill timing
+                let actualVoltageLevel = voltageLevel;
+                if (centerSkill.when === 'beforeFeverStart') {
+                    // beforeFeverStart always happens during fever, so double voltage level
+                    actualVoltageLevel *= 2;
+                } else if (centerSkill.when === 'afterLastTurn' && music[2] === 0) {
+                    // afterLastTurn during fever if afterFever phase is 0
+                    actualVoltageLevel *= 2;
                 }
+                // beforeFirstTurn is always before fever, so no doubling
+                
+                const actualVoltageMultiplier = 1.0 + actualVoltageLevel / 10;
+                
+                // Process center skill effects recursively to handle conditionals
+                const processEffects = (effects) => {
+                    for (const effect of effects) {
+                        if (effect.type === 'scoreGain' && effect.value) {
+                            // Calculate the score gain with current game state and learning correction
+                            const learningCorrection = originalGame.learningCorrection;
+                            const baseScore = appeal * actualVoltageMultiplier * boostMultiplier * learningCorrection;
+                            const adjustedValue = effect.value * skillMultiplier / 2;
+                            const scoreGain = Math.ceil(baseScore * adjustedValue);
+                            centerSkillScoreAdded += scoreGain;
+                            finalScore += scoreGain;
+                        } else if (effect.type === 'conditional') {
+                            // Evaluate condition for center skills
+                            let conditionMet = false;
+                            
+                            // Simple condition evaluation for center skills
+                            if (effect.condition) {
+                                const condition = effect.condition;
+                                
+                                // Evaluate common conditions
+                                if (condition.includes('voltageLevel')) {
+                                    // Replace voltageLevel with actual value
+                                    const evalCondition = condition.replace(/voltageLevel/g, actualVoltageLevel);
+                                    try {
+                                        conditionMet = eval(evalCondition);
+                                    } catch (e) {
+                                        conditionMet = false;
+                                    }
+                                } else if (condition.includes('turn')) {
+                                    // Use the turn at exclusion point
+                                    const turn = firstExcludedActivation.turn - 1;
+                                    const evalCondition = condition.replace(/turn/g, turn);
+                                    try {
+                                        conditionMet = eval(evalCondition);
+                                    } catch (e) {
+                                        conditionMet = false;
+                                    }
+                                }
+                            }
+                            
+                            // Process conditional effects
+                            if (conditionMet && effect.then) {
+                                processEffects(effect.then);
+                            } else if (!conditionMet && effect.else) {
+                                processEffects(effect.else);
+                            }
+                        }
+                    }
+                };
+                
+                processEffects(centerSkill.effects);
             }
         }
         
