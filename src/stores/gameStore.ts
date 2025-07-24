@@ -3,6 +3,7 @@ import { Card } from '../core/models/Card'
 import { Music } from '../core/models/Music'
 import { GameState, SimulationOptions } from '../core/models/Game'
 import { GameSimulator } from '../core/simulation/GameSimulator'
+import { cardData } from '../data/index'
 import {
   saveCardSkillLevel,
   loadCardSkillLevel,
@@ -211,9 +212,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
     console.log('Loading formation:', savedFormation)
     
     if (savedFormation && savedFormation.length === 6) {
-      // カードデータをインポート
-      const { cardData } = require('../data/index')
-      
       const newCards: (Card | null)[] = savedFormation.map(cardName => {
         if (!cardName) return null
         return cardData[cardName] || null
@@ -294,9 +292,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       if (savedState) {
         console.log(`Loading saved state for ${newMusicKey}:`, savedState)
         
-        // カードデータをインポート
-        const { cardData } = require('../data/index')
-        
         const newCards: (Card | null)[] = savedState.cards.map(cardName => {
           if (!cardName) return null
           return cardData[cardName] || null
@@ -319,7 +314,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
           cardSkillLevels: newSkillLevels,
           centerSkillLevels: newCenterSkillLevels,
           selectedDifficulty: state.selectedDifficulty,
-          initialMental: savedState.mental || state.initialMental,
+          initialMental: savedState.mental !== undefined ? savedState.mental : state.initialMental,
           comboCount: state.comboCount
         }
       }
