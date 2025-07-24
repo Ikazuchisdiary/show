@@ -2175,7 +2175,7 @@ const gameData = {
         },
         {
           "type": "conditional",
-          "condition": "mentalPercent <= 1",
+          "condition": "mental <= 1",
           "then": [
             {
               "type": "apGain",
