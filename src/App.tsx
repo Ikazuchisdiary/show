@@ -8,7 +8,7 @@ import { useMusicStore } from './stores/musicStore'
 import './App.css'
 
 function App() {
-  const { loadFromShareUrl, swapCards, insertCard, selectedMusic, selectedCards, loadStoredSkillLevels } = useGameStore()
+  const { loadFromShareUrl, swapCards, insertCard, selectedMusic, selectedCards, loadStoredSkillLevels, loadFormation } = useGameStore()
   const { loadCustomMusic } = useMusicStore()
   const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null)
   
@@ -18,11 +18,12 @@ function App() {
     if (params.toString()) {
       loadFromShareUrl(params)
     } else {
-      // Load saved skill levels and custom music from localStorage
-      loadStoredSkillLevels()
-      loadCustomMusic()
+      // Load saved data from localStorage
+      loadFormation() // 編成を読み込む
+      loadStoredSkillLevels() // スキルレベルを読み込む
+      loadCustomMusic() // カスタム楽曲を読み込む
     }
-  }, [loadFromShareUrl, loadStoredSkillLevels, loadCustomMusic])
+  }, [loadFromShareUrl, loadStoredSkillLevels, loadFormation, loadCustomMusic])
   
   const handleDragStart = (index: number) => {
     setDraggedIndex(index)

@@ -10,6 +10,10 @@ import {
   loadCardCenterSkillLevel,
   loadAllCardSkillLevels,
   loadAllCenterSkillLevels,
+  saveCurrentFormation,
+  loadCurrentFormation,
+  saveMusicState,
+  loadMusicState,
   isShareMode
 } from '../services/localStorageService'
 
@@ -40,6 +44,8 @@ interface GameStore {
   setCardSkillLevel: (index: number, level: number) => void
   setCenterSkillLevel: (index: number, level: number) => void
   loadStoredSkillLevels: () => void
+  saveFormation: () => void
+  loadFormation: () => void
   setCustomSkillValue: (cardIndex: number, effectKey: string, value: number) => void
   clearCustomSkillValues: (cardIndex: number) => void
   setCustomCenterSkillValue: (cardIndex: number, effectKey: string, value: number) => void
@@ -80,17 +86,42 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const savedSkillLevel = loadCardSkillLevel(card.name)
       const savedCenterSkillLevel = loadCardCenterSkillLevel(card.name)
       
+      console.log(`Loading skill levels for ${card.name}:`, { savedSkillLevel, savedCenterSkillLevel })
+      
       const newSkillLevels = [...state.cardSkillLevels]
       const newCenterSkillLevels = [...state.centerSkillLevels]
       
       newSkillLevels[index] = savedSkillLevel
       newCenterSkillLevels[index] = savedCenterSkillLevel
       
+      // 楽曲ごとに編成を保存
+      if (state.selectedMusic && state.selectedMusic.name !== 'カスタム' && 
+          !state.selectedMusic.name.startsWith('custom_')) {
+        const cardNames = newCards.map(c => c?.name || '')
+        saveMusicState(state.selectedMusic.name, {
+          cards: cardNames,
+          mental: state.initialMental,
+          learningCorrection: 1.5
+        })
+      }
+      
       return { 
         selectedCards: newCards,
         cardSkillLevels: newSkillLevels,
         centerSkillLevels: newCenterSkillLevels
       }
+    }
+    
+    // 楽曲ごとに編成を保存（カードをnullにした場合も）
+    if (!isShareMode() && state.selectedMusic && 
+        state.selectedMusic.name !== 'カスタム' && 
+        !state.selectedMusic.name.startsWith('custom_')) {
+      const cardNames = newCards.map(c => c?.name || '')
+      saveMusicState(state.selectedMusic.name, {
+        cards: cardNames,
+        mental: state.initialMental,
+        learningCorrection: 1.5
+      })
     }
     
     return { selectedCards: newCards }
@@ -103,6 +134,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // ローカルストレージに保存
     const card = state.selectedCards[index]
     if (card && !isShareMode()) {
+      console.log('Saving skill level:', card.name, level)
       saveCardSkillLevel(card.name, level)
     }
     
@@ -123,10 +155,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
   }),
   
   loadStoredSkillLevels: () => set((state) => {
-    if (isShareMode()) return state
+    if (isShareMode()) {
+      console.log('Share mode detected, skipping localStorage load')
+      return state
+    }
     
     const storedSkillLevels = loadAllCardSkillLevels()
     const storedCenterSkillLevels = loadAllCenterSkillLevels()
+    
+    console.log('Loading stored skill levels:', storedSkillLevels)
+    console.log('Loading stored center skill levels:', storedCenterSkillLevels)
     
     const newSkillLevels = [...state.cardSkillLevels]
     const newCenterSkillLevels = [...state.centerSkillLevels]
@@ -145,6 +183,63 @@ export const useGameStore = create<GameStore>((set, get) => ({
       cardSkillLevels: newSkillLevels,
       centerSkillLevels: newCenterSkillLevels
     }
+  }),
+  
+  saveFormation: () => {
+    const state = get()
+    if (isShareMode()) return
+    
+    const cardNames = state.selectedCards.map(card => card?.name || '')
+    saveCurrentFormation(cardNames)
+    
+    // 楽曲ごとの編成も保存
+    if (state.selectedMusic) {
+      const musicKey = state.selectedMusic.name
+      saveMusicState(musicKey, {
+        cards: cardNames,
+        skillLevels: state.cardSkillLevels,
+        centerSkillLevels: state.centerSkillLevels
+      })
+    }
+  },
+  
+  loadFormation: () => set((state) => {
+    if (isShareMode()) return state
+    
+    // まず汎用的な編成を読み込む
+    const savedFormation = loadCurrentFormation()
+    console.log('Loading formation:', savedFormation)
+    
+    if (savedFormation && savedFormation.length === 6) {
+      // カードデータをインポート
+      const { cardData } = require('../data/index')
+      
+      const newCards: (Card | null)[] = savedFormation.map(cardName => {
+        if (!cardName) return null
+        return cardData[cardName] || null
+      })
+      
+      const newSkillLevels = [...state.cardSkillLevels]
+      const newCenterSkillLevels = [...state.centerSkillLevels]
+      
+      // 各カードのスキルレベルを読み込む
+      newCards.forEach((card, index) => {
+        if (card) {
+          const savedSkillLevel = loadCardSkillLevel(card.name)
+          const savedCenterSkillLevel = loadCardCenterSkillLevel(card.name)
+          newSkillLevels[index] = savedSkillLevel
+          newCenterSkillLevels[index] = savedCenterSkillLevel
+        }
+      })
+      
+      return {
+        selectedCards: newCards,
+        cardSkillLevels: newSkillLevels,
+        centerSkillLevels: newCenterSkillLevels
+      }
+    }
+    
+    return state
   }),
   
   setCustomSkillValue: (cardIndex, effectKey, value) => set((state) => {
@@ -177,11 +272,79 @@ export const useGameStore = create<GameStore>((set, get) => ({
     return { customCenterSkillValues: newCustomValues }
   }),
   
-  setMusic: (music) => set({ selectedMusic: music }),
+  setMusic: (music) => set((state) => {
+    // 現在の楽曲の編成を保存（カスタム楽曲は除く）
+    if (state.selectedMusic && !isShareMode() && 
+        state.selectedMusic.name !== 'カスタム' && 
+        !state.selectedMusic.name.startsWith('custom_')) {
+      const currentMusicKey = state.selectedMusic.name
+      const cardNames = state.selectedCards.map(card => card?.name || '')
+      saveMusicState(currentMusicKey, {
+        cards: cardNames,
+        mental: state.initialMental,
+        learningCorrection: 1.5 // v1互換のため固定値
+      })
+    }
+    
+    // 新しい楽曲の編成を読み込む
+    if (music && !isShareMode() && music.name !== 'カスタム' && !music.name.startsWith('custom_')) {
+      const newMusicKey = music.name
+      const savedState = loadMusicState(newMusicKey)
+      
+      if (savedState) {
+        console.log(`Loading saved state for ${newMusicKey}:`, savedState)
+        
+        // カードデータをインポート
+        const { cardData } = require('../data/index')
+        
+        const newCards: (Card | null)[] = savedState.cards.map(cardName => {
+          if (!cardName) return null
+          return cardData[cardName] || null
+        })
+        
+        // 各カードのスキルレベルを個別に読み込む
+        const newSkillLevels = [...state.cardSkillLevels]
+        const newCenterSkillLevels = [...state.centerSkillLevels]
+        
+        newCards.forEach((card, index) => {
+          if (card) {
+            newSkillLevels[index] = loadCardSkillLevel(card.name)
+            newCenterSkillLevels[index] = loadCardCenterSkillLevel(card.name)
+          }
+        })
+        
+        return {
+          selectedMusic: music,
+          selectedCards: newCards,
+          cardSkillLevels: newSkillLevels,
+          centerSkillLevels: newCenterSkillLevels,
+          selectedDifficulty: state.selectedDifficulty,
+          initialMental: savedState.mental || state.initialMental,
+          comboCount: state.comboCount
+        }
+      }
+    }
+    
+    return { selectedMusic: music }
+  }),
   
   setDifficulty: (difficulty) => set({ selectedDifficulty: difficulty }),
   
-  setInitialMental: (mental) => set({ initialMental: mental }),
+  setInitialMental: (mental) => set((state) => {
+    // 現在の楽曲の設定を保存（カスタム楽曲は除く）
+    if (state.selectedMusic && !isShareMode() && 
+        state.selectedMusic.name !== 'カスタム' && 
+        !state.selectedMusic.name.startsWith('custom_')) {
+      const musicKey = state.selectedMusic.name
+      const cardNames = state.selectedCards.map(card => card?.name || '')
+      saveMusicState(musicKey, {
+        cards: cardNames,
+        mental: mental,
+        learningCorrection: 1.5
+      })
+    }
+    return { initialMental: mental }
+  }),
   
   setComboCount: (count) => set({ comboCount: count }),
   

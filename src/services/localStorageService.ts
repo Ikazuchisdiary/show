@@ -49,28 +49,43 @@ export function saveCustomMusicList(list: Record<string, CustomMusic>): void {
   localStorage.setItem(KEYS.customMusicList, JSON.stringify(list))
 }
 
-// 楽曲ごとの編成状態を保存
+// 楽曲ごとの編成状態を保存（v1互換）
 export function saveMusicState(
   musicKey: string,
   state: {
     cards: string[]
-    skillLevels: number[]
-    centerSkillLevels?: number[]
+    mental: number
+    learningCorrection: number
   }
 ): void {
+  if (!musicKey || isShareMode()) return
   const key = KEYS.musicState(musicKey)
   localStorage.setItem(key, JSON.stringify(state))
 }
 
-// 楽曲ごとの編成状態を読み込み
+// 楽曲ごとの編成状態を読み込み（v1互換）
 export function loadMusicState(musicKey: string): {
   cards: string[]
-  skillLevels: number[]
-  centerSkillLevels?: number[]
+  mental?: number
+  learningCorrection?: number
 } | null {
+  if (!musicKey || isShareMode()) return null
   const key = KEYS.musicState(musicKey)
   const savedState = localStorage.getItem(key)
   return savedState ? JSON.parse(savedState) : null
+}
+
+// 現在の編成を保存（汎用）
+export function saveCurrentFormation(cards: string[]): void {
+  if (isShareMode()) return
+  localStorage.setItem('sukushou_current_formation', JSON.stringify(cards))
+}
+
+// 現在の編成を読み込み（汎用）
+export function loadCurrentFormation(): string[] | null {
+  if (isShareMode()) return null
+  const saved = localStorage.getItem('sukushou_current_formation')
+  return saved ? JSON.parse(saved) : null
 }
 
 // すべてのカードのスキルレベルを読み込み

@@ -251,7 +251,7 @@ export const MusicSelector: React.FC = () => {
             <input 
               type="number" 
               id="learningCorrection" 
-              value="1.5" 
+              defaultValue="1.5" 
               min="0" 
               step="0.01"
             />
