@@ -2186,7 +2186,7 @@ const gameData = {
           ]
         },
         {
-          "type": "resetDeck",
+          "type": "resetCardTurn",
           "description": "次に発動するスキルをデッキの1枚目から順に戻す"
         },
         {
