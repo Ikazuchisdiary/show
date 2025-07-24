@@ -1,8 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CardSelector } from './components/CardSelector'
 import { MusicSelector } from './components/MusicSelector'
 import { SimulationControls } from './components/SimulationControls'
 import { ScoreDisplay } from './components/ScoreDisplay'
+import { UpdateBanner } from './components/UpdateBanner'
+import { UpdateHistoryButton } from './components/UpdateHistoryButton'
+import { UpdateHistoryModal } from './components/UpdateHistoryModal'
 import { useGameStore } from './stores/gameStore'
 import { useMusicStore } from './stores/musicStore'
 import './App.css'
@@ -11,6 +14,7 @@ function App() {
   const { loadFromShareUrl, swapCards, insertCard, selectedMusic, selectedCards, loadStoredSkillLevels } = useGameStore()
   const { loadCustomMusic } = useMusicStore()
   const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null)
+  const [showUpdateHistory, setShowUpdateHistory] = useState(false)
   
   useEffect(() => {
     // Load from URL parameters on mount
@@ -98,7 +102,10 @@ function App() {
       <div className="container">
         <div className="header-container">
           <h1>スクショウ計算ツール</h1>
+          <UpdateHistoryButton onClick={() => setShowUpdateHistory(true)} />
         </div>
+        
+        <UpdateBanner onShowHistory={() => setShowUpdateHistory(true)} />
         
         <MusicSelector />
         
@@ -125,6 +132,11 @@ function App() {
         
         <ScoreDisplay />
       </div>
+      
+      <UpdateHistoryModal 
+        isOpen={showUpdateHistory} 
+        onClose={() => setShowUpdateHistory(false)} 
+      />
     </div>
   )
 }

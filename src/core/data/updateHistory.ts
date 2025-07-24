@@ -1,0 +1,49 @@
+export interface UpdateEntry {
+  version: string
+  date: string
+  changes: string[]
+}
+
+export const updateHistory: UpdateEntry[] = [
+  {
+    version: '2.0.0',
+    date: '2025-07-24',
+    changes: [
+      'React/TypeScriptによる完全な再実装',
+      'パフォーマンスとコード品質の大幅改善',
+      'モダンなUIコンポーネントアーキテクチャ',
+      'v1との完全な互換性を維持',
+      'AP不足時の参考スコア計算機能を追加',
+      'アップデートバナーと履歴機能を実装'
+    ]
+  },
+  {
+    version: '1.9.0',
+    date: '2025-07-23',
+    changes: [
+      'AP不足時の参考スコア計算機能を追加',
+      '詳細ログの表示改善（計算式、色分け）',
+      'カード除外シミュレーション機能'
+    ]
+  },
+  {
+    version: '1.8.0',
+    date: '2025-07-22',
+    changes: [
+      'センタースキル機能の実装',
+      'センターキャラクターのハイライト表示',
+      'スキルパラメータの編集機能'
+    ]
+  },
+  {
+    version: '1.7.0',
+    date: '2025-07-21',
+    changes: [
+      'カスタム楽曲の保存/削除機能',
+      'ローカルストレージによる設定保存',
+      'ドラッグ&ドロップの改善'
+    ]
+  }
+]
+
+export const CURRENT_VERSION = '2.0.0'

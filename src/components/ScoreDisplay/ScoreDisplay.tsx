@@ -1,10 +1,60 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useGameStore } from '@stores/gameStore'
+import { APShortageDisplay } from '@components/APShortageDisplay'
+import { GameSimulator } from '@core/simulation/GameSimulator'
 import './ScoreDisplay.css'
 
 export const ScoreDisplay: React.FC = () => {
-  const { simulationResult } = useGameStore()
+  const { 
+    simulationResult,
+    cards,
+    cardSkillLevels,
+    centerSkillLevels,
+    customSkillValues,
+    customCenterSkillValues,
+    selectedMusic,
+    musicAttribute,
+    centerCharacter,
+    mental,
+    comboCount
+  } = useGameStore()
   const [showLog, setShowLog] = useState(false)
+  
+  // Calculate AP shortage result if needed
+  const apShortageResult = useMemo(() => {
+    if (!simulationResult || !selectedMusic) return null
+    
+    const netAP = simulationResult.apAcquired - simulationResult.apConsumed
+    if (netAP >= 0) return null
+    
+    // Run AP shortage simulation
+    const simulator = new GameSimulator({
+      cards,
+      cardSkillLevels,
+      centerSkillLevels,
+      customSkillValues,
+      customCenterSkillValues,
+      music: selectedMusic,
+      musicAttribute,
+      centerCharacter,
+      initialMental: mental,
+      comboCount
+    })
+    
+    return simulator.simulateWithAPShortage(0) // Assuming starting AP is 0
+  }, [
+    simulationResult,
+    cards,
+    cardSkillLevels,
+    centerSkillLevels,
+    customSkillValues,
+    customCenterSkillValues,
+    selectedMusic,
+    musicAttribute,
+    centerCharacter,
+    mental,
+    comboCount
+  ])
   
   if (!simulationResult) {
     return null
@@ -13,7 +63,7 @@ export const ScoreDisplay: React.FC = () => {
   const totalScore = simulationResult.totalScore
   const totalVoltage = simulationResult.totalVoltage
   const voltageLevel = Math.max(...simulationResult.turnResults.map(t => t.voltageLevel))
-  const totalAP = simulationResult.turnResults.reduce((sum, turn) => sum + turn.apUsed, 0)
+  const netAP = simulationResult.apAcquired - simulationResult.apConsumed
   
   return (
     <>
@@ -25,12 +75,16 @@ export const ScoreDisplay: React.FC = () => {
         <div id="apSummary">
           <div>総ボルテージ: {totalVoltage.toLocaleString()}</div>
           <div>最大ボルテージLv: {voltageLevel}</div>
-          <div>消費AP: {totalAP}</div>
+          <div>AP収支: <span style={{ color: netAP >= 0 ? '#28a745' : '#dc3545' }}>{netAP >= 0 ? '+' : ''}{netAP}</span></div>
         </div>
         <button className="toggle-log" onClick={() => setShowLog(!showLog)}>
           {showLog ? '詳細ログを隠す' : '詳細ログを表示'}
         </button>
       </div>
+      
+      {apShortageResult && (
+        <APShortageDisplay result={apShortageResult} totalAP={0} />
+      )}
       
       {showLog && (
         <div id="turnLog" style={{ display: 'block' }}>

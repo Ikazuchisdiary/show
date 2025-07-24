@@ -1,0 +1,37 @@
+.update-history-button {
+  position: absolute;
+  right: 0;
+  background: transparent;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.update-history-button:hover {
+  background: #f5f5f5;
+  border-color: #bbb;
+  transform: scale(1.05);
+}
+
+.update-history-icon {
+  font-size: 16px;
+}
+
+/* Mobile responsive */
+@media (max-width: 767px) {
+  .update-history-button {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .update-history-icon {
+    font-size: 14px;
+  }
+}

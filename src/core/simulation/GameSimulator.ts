@@ -5,7 +5,9 @@ import {
   TurnResult, 
   SimulationOptions,
   Effect,
-  ConditionalEffect
+  ConditionalEffect,
+  APShortageResult,
+  CardActivationLog
 } from '../models'
 import {
   calculateAppealValue,
@@ -93,6 +95,7 @@ export class GameSimulator {
       turnResults: [],
       cardTurnCounts: new Array(6).fill(0),
       totalCardUses: new Array(6).fill(0),
+      cardActivationLog: [],
       
       // Phase info
       phases,
@@ -180,6 +183,19 @@ export class GameSimulator {
         ${apDisplayHtml}
       </div>`
     )
+    
+    // Record card activation log BEFORE processing effects
+    this.state.cardActivationLog.push({
+      turn: this.state.currentTurn,
+      cardName: card.name,
+      cardIndex: this.state.currentCardIndex,
+      apCost: card.apCost,
+      isCenterSkill: false,
+      scoreBefore: this.state.totalScore,
+      scoreBoostBefore: [...this.state.scoreBoost],
+      scoreBoostCountBefore: this.state.scoreBoostCount,
+      voltagePtBefore: this.state.totalVoltage
+    })
     
     // Increment card usage count BEFORE processing effects (v1 compatibility)
     this.state.cardTurnCounts[this.state.currentCardIndex]++
@@ -398,7 +414,6 @@ export class GameSimulator {
         break
         
       case 'removeAfterUse':
-      case 'skipTurn': // 後方互換性のため
         // Evaluate condition for removal
         const shouldRemove = this.evaluateRemoveCondition(effect, card, cardIndex)
         if (shouldRemove) {
@@ -848,6 +863,167 @@ export class GameSimulator {
     }
   }
   
+  /**
+   * Calculate score with AP shortage
+   */
+  simulateWithAPShortage(totalAP: number): APShortageResult | null {
+    // First, do a normal simulation to get the activation log
+    const normalState = this.simulate()
+    const apShortage = normalState.apConsumed - normalState.apAcquired - totalAP
+    
+    if (apShortage <= 0) {
+      // No AP shortage
+      return null
+    }
+    
+    // Determine which activations to exclude
+    const activationLog = [...normalState.cardActivationLog]
+    const excludedActivations: Array<{ turn: number; cardName: string; apCost: number }> = []
+    let apSaved = 0
+    const excludedIndices = new Set<number>()
+    
+    // Start from the last activation and work backwards
+    for (let i = activationLog.length - 1; i >= 0 && apSaved < apShortage; i--) {
+      const activation = activationLog[i]
+      
+      // Skip center skills
+      if (activation.isCenterSkill) {
+        continue
+      }
+      
+      // Skip if no AP cost
+      if (activation.apCost === 0) {
+        continue
+      }
+      
+      excludedIndices.add(i)
+      excludedActivations.unshift({
+        turn: activation.turn,
+        cardName: activation.cardName,
+        apCost: activation.apCost
+      })
+      
+      apSaved += activation.apCost
+    }
+    
+    if (excludedActivations.length === 0) {
+      return null // No activations to exclude
+    }
+    
+    // Find the first excluded activation to get the score at that point
+    let firstExcludedIndex = -1
+    let finalScore = 0
+    let finalApConsumed = 0
+    
+    for (let i = 0; i < activationLog.length; i++) {
+      if (excludedIndices.has(i) && !activationLog[i].isCenterSkill) {
+        firstExcludedIndex = i
+        const firstExcludedActivation = activationLog[firstExcludedIndex]
+        finalScore = firstExcludedActivation.scoreBefore
+        break
+      }
+    }
+    
+    // Calculate AP consumed up to the first excluded activation
+    for (let i = 0; i < activationLog.length; i++) {
+      if (!excludedIndices.has(i) && !activationLog[i].isCenterSkill) {
+        finalApConsumed += activationLog[i].apCost
+      }
+    }
+    
+    // If no excluded index found, use the final score
+    if (firstExcludedIndex === -1) {
+      finalScore = normalState.totalScore
+    }
+    
+    // Get the state at the exclusion point
+    const firstExcluded = firstExcludedIndex >= 0 ? activationLog[firstExcludedIndex] : null
+    const currentBoosts = firstExcluded?.scoreBoostBefore || normalState.scoreBoost
+    const currentVoltage = firstExcluded?.voltagePtBefore || normalState.totalVoltage
+    const scoreBoostCount = firstExcluded?.scoreBoostCountBefore || normalState.scoreBoostCount
+    const lastExcludedTurn = firstExcluded?.turn || normalState.currentTurn
+    
+    // Calculate voltage level using the same logic as getVoltageLevel
+    let voltageLevel = this.calculateVoltageLevel(currentVoltage)
+    
+    // Check for center skills that would still activate after excluded activations
+    const centerCard = this.getCenterCard()
+    if (centerCard && centerCard.centerSkill) {
+      const centerSkill = centerCard.centerSkill
+      const centerIndex = this.state.cards.findIndex(card => card === centerCard)
+      const centerSkillLevel = this.centerSkillLevels[centerIndex]
+      const skillMultiplier = SKILL_LEVEL_MULTIPLIERS[centerSkillLevel - 1] || 1
+      
+      // Check timing for center skill activation
+      let shouldActivate = false
+      const music = this.state.music!
+      const totalTurns = music.phases.reduce((sum, phase) => sum + phase, 0)
+      
+      if (centerSkill.when === 'beforeFeverStart') {
+        // Check if we haven't excluded activations before fever start
+        if (lastExcludedTurn <= music.phases[0]) {
+          shouldActivate = true
+        }
+      } else if (centerSkill.when === 'afterLastTurn') {
+        // afterLastTurn always activates since the game flow completes
+        shouldActivate = true
+      }
+      
+      if (shouldActivate && centerSkill.effects) {
+        // Apply center skill effects to calculate additional score
+        for (const effect of centerSkill.effects) {
+          if (effect.type === 'scoreGain') {
+            // Get custom value if available
+            const customKey = `center_effect_${centerSkill.effects.indexOf(effect)}_value`
+            const customValue = this.customCenterSkillValues[centerIndex]?.[customKey]
+            const effectValue = customValue !== undefined ? customValue : 
+              (effect.levelValues?.[centerSkillLevel - 1] ?? effect.value)
+            
+            const voltageMultiplier = 1.0 + voltageLevel / 10
+            const boostMultiplier = 1.0 + (currentBoosts[scoreBoostCount] || 0)
+            const appeal = this.calculateAppeal(centerCard, centerIndex)
+            
+            const scoreGain = Math.floor(
+              appeal * effectValue * boostMultiplier * voltageMultiplier * this.state.learningCorrection
+            )
+            finalScore += scoreGain
+          }
+        }
+      }
+    }
+    
+    // Create turn results by filtering out excluded turns
+    const filteredTurnResults = normalState.turnResults.filter(turn => {
+      return !excludedActivations.some(ex => ex.turn === turn.turn)
+    })
+    
+    return {
+      score: finalScore,
+      voltage: currentVoltage,
+      voltageLevel,
+      apSaved,
+      realAPConsumption: finalApConsumed + normalState.apAcquired,
+      excludedActivations,
+      turnResults: filteredTurnResults
+    }
+  }
+  
+  private calculateVoltageLevel(voltage: number): number {
+    const voltageLevels = [0, 10, 30, 60, 100, 150, 210, 280, 360, 450, 550, 660, 780, 910, 1050, 1200, 1360, 1530, 1710, 1900]
+    
+    if (voltage < 10) return 0
+    
+    if (voltage < 1900) {
+      for (let i = 1; i < voltageLevels.length; i++) {
+        if (voltage < voltageLevels[i]) {
+          return i - 1
+        }
+      }
+    }
+    
+    return 19 + Math.floor((voltage - 1900) / 200)
+  }
+  
   private applyCenterSkillsAtTiming(timing: string): void {
     const centerCard = this.getCenterCard()
     if (!centerCard) return
@@ -873,6 +1049,19 @@ export class GameSimulator {
           <span class="log-card-name">${shortCode}${centerCard.displayName || centerCard.name}</span>
         </div>`
       )
+      
+      // Record center skill activation log
+      this.state.cardActivationLog.push({
+        turn: this.state.currentTurn,
+        cardName: centerCard.name,
+        cardIndex: centerIndex,
+        apCost: 0,
+        isCenterSkill: true,
+        scoreBefore: this.state.totalScore,
+        scoreBoostBefore: [...this.state.scoreBoost],
+        scoreBoostCountBefore: this.state.scoreBoostCount,
+        voltagePtBefore: this.state.totalVoltage
+      })
       
       const centerSkillLevel = this.centerSkillLevels[centerIndex]
       const skillMultiplier = SKILL_LEVEL_MULTIPLIERS[centerSkillLevel - 1] || 1

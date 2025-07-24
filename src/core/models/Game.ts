@@ -30,6 +30,18 @@ export interface TurnResult {
   logs?: string[]  // v1形式の詳細ログ
 }
 
+export interface CardActivationLog {
+  turn: number
+  cardName: string
+  cardIndex: number
+  apCost: number
+  isCenterSkill: boolean
+  scoreBefore: number
+  scoreBoostBefore: number[]
+  scoreBoostCountBefore: number
+  voltagePtBefore: number
+}
+
 export interface GameState {
   // Core state
   cards: (Card | null)[]
@@ -65,10 +77,25 @@ export interface GameState {
   turnResults: TurnResult[]
   cardTurnCounts: number[]
   totalCardUses: number[]
+  cardActivationLog: CardActivationLog[]
   
   // Phase info
   phases: GamePhase[]
   currentPhase: GamePhase | null
+}
+
+export interface APShortageResult {
+  score: number
+  voltage: number
+  voltageLevel: number
+  apSaved: number
+  realAPConsumption: number
+  excludedActivations: Array<{
+    turn: number
+    cardName: string
+    apCost: number
+  }>
+  turnResults: TurnResult[]
 }
 
 export interface SimulationOptions {
