@@ -1,6 +1,15 @@
 // Update history data
 const updateHistory = [
     {
+        version: "2025.07.24.4",
+        date: "2025-07-24",
+        time: "13:45",
+        updates: [
+            "共有モードでの複数の不具合を修正",
+            "センタースキルレベルが正しく共有されるように改善"
+        ]
+    },
+    {
         version: "2025.07.24.3",
         date: "2025-07-24",
         time: "03:14",

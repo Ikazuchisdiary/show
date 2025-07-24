@@ -1738,15 +1738,37 @@ function updateCenterCharacterHighlight() {
     let centerCharacter = null;
     
     // Get center character for current music
-    if (musicSelect.value === 'custom') {
+    if (musicSelect.value === 'custom' || musicSelect.value.startsWith('custom_')) {
         // For custom music, check the customCenterCharacter select
-        centerCharacter = document.getElementById('customCenterCharacter').value || null;
+        const customCenterElement = document.getElementById('customCenterCharacter');
+        if (customCenterElement) {
+            centerCharacter = customCenterElement.value || null;
+        }
+        
+        // If not found in form, check saved data
+        if (!centerCharacter && musicSelect.value.startsWith('custom_')) {
+            // Check custom list first
+            const customList = getCustomMusicList();
+            if (customList[musicSelect.value]) {
+                centerCharacter = customList[musicSelect.value].centerCharacter;
+            }
+            // If not in custom list, check musicData (for shared custom music)
+            if (!centerCharacter && musicData[musicSelect.value]) {
+                centerCharacter = musicData[musicSelect.value].centerCharacter;
+            }
+        }
     } else if (musicData[musicSelect.value]) {
         centerCharacter = musicData[musicSelect.value].centerCharacter;
-    } else {
-        const customList = getCustomMusicList();
-        if (customList[musicSelect.value]) {
-            centerCharacter = customList[musicSelect.value].centerCharacter;
+    }
+    
+    // Store existing center skill levels before updating
+    const existingCenterSkillLevels = {};
+    if (isShareMode) {
+        for (let i = 1; i <= 6; i++) {
+            const existingElement = document.getElementById(`centerSkillLevel${i}`);
+            if (existingElement) {
+                existingCenterSkillLevels[i] = parseInt(existingElement.value);
+            }
         }
     }
     
@@ -1770,8 +1792,14 @@ function updateCenterCharacterHighlight() {
             const infoDiv = document.createElement('div');
             infoDiv.className = 'center-skill-info';
             
-            // Add center skill level selector (共有モードでは既に設定されている値を使用)
-            const savedLevel = !isShareMode ? loadCardCenterSkillLevel(cardValue) : 14;
+            // Add center skill level selector
+            // In share mode, use stored value if available
+            let savedLevel = 14;
+            if (isShareMode && existingCenterSkillLevels[i]) {
+                savedLevel = existingCenterSkillLevels[i];
+            } else if (!isShareMode) {
+                savedLevel = loadCardCenterSkillLevel(cardValue);
+            }
             let centerSkillHtml = `
                 <div class="skill-param-row" style="align-items: flex-start; margin-bottom: 10px;">
                     <span style="display: inline-flex; align-items: center; gap: 8px;">
@@ -1796,8 +1824,8 @@ function updateCenterCharacterHighlight() {
                     // Element exists, use its current value
                     savedCenterSkillLevel = parseInt(centerSkillElement.value);
                 } else if (isShareMode) {
-                    // In share mode, default to 14 (will be overridden by share data later)
-                    savedCenterSkillLevel = 14;
+                    // In share mode, use the same value as savedLevel
+                    savedCenterSkillLevel = savedLevel;
                 } else {
                     // Normal mode, load from localStorage
                     savedCenterSkillLevel = loadCardCenterSkillLevel(cardValue);
@@ -2696,10 +2724,12 @@ function onCenterSkillLevelChange(slotNum) {
     
     if (!cardType || !cardData[cardType]) return;
     
-    // Save center skill level for this card
-    saveCardCenterSkillLevel(cardType, centerSkillLevel);
+    // Save center skill level for this card (not in share mode)
+    if (!isShareMode) {
+        saveCardCenterSkillLevel(cardType, centerSkillLevel);
+    }
     
-    // Regenerate the entire center character display to update AP gain displays
+    // Regenerate the entire center character display to update all displays
     updateCenterCharacterHighlight();
 }
 
@@ -3583,7 +3613,8 @@ function compressShareData(data) {
     } else {
         // Built-in music - use the actual ID to avoid index issues
         if (data.music) {
-            parts.push('M' + data.music);
+            // Replace underscores in music ID to avoid splitting issues
+            parts.push('M' + data.music.replace(/_/g, '-'));
         }
     }
     
@@ -3597,13 +3628,13 @@ function compressShareData(data) {
             let cardStr = 'C' + cardCode;
             // Only add skill level if not 14
             if (card.skill !== 14) cardStr += '-' + card.skill;
-            // Only add center skill if different from skill level
+            // Add center skill if different from skill level (use + instead of -)
             if (card.centerSkill !== card.skill && card.centerSkill !== 14) {
-                cardStr += '-' + card.centerSkill;
+                cardStr += '+' + card.centerSkill;
             }
-            // Special parameters
+            // Special parameters (use * instead of -)
             if (card.mentalThreshold && card.mentalThreshold !== 999) {
-                cardStr += '-' + card.mentalThreshold;
+                cardStr += '*' + card.mentalThreshold;
             }
             parts.push(cardStr);
         }
@@ -3674,8 +3705,8 @@ function decompressShareData(compressed) {
                             data.music = musicKeys[index];
                         }
                     } else {
-                        // New format - use ID directly
-                        data.music = value;
+                        // New format - use ID directly (restore underscores)
+                        data.music = value.replace(/-/g, '_');
                     }
                     break;
                 case 'p': // phases
@@ -3699,7 +3730,27 @@ function decompressShareData(compressed) {
                     data.customMusicName = decodeURIComponent(value);
                     break;
                 case 'C': // card
-                    const cardParts = value.split('-');
+                    // Split by special characters in order: * for mentalThreshold, + for centerSkill
+                    let baseValue = value;
+                    let mentalThreshold = null;
+                    let centerSkillLevel = null;
+                    
+                    // Extract mentalThreshold if exists
+                    const mentalParts = baseValue.split('*');
+                    if (mentalParts.length > 1) {
+                        baseValue = mentalParts[0];
+                        mentalThreshold = parseInt(mentalParts[1]);
+                    }
+                    
+                    // Extract center skill level if exists
+                    const centerParts = baseValue.split('+');
+                    if (centerParts.length > 1) {
+                        baseValue = centerParts[0];
+                        centerSkillLevel = parseInt(centerParts[1]);
+                    }
+                    
+                    // Split remaining by - for card code and skill level
+                    const cardParts = baseValue.split('-');
                     if (version === 'v0') {
                         // Old format - use index
                         const cardKeys = Object.keys(cardData);
@@ -3708,11 +3759,11 @@ function decompressShareData(compressed) {
                             const cardObj = {
                                 id: cardKeys[cardIndex],
                                 skill: parseInt(cardParts[1]) || 14,
-                                centerSkill: parseInt(cardParts[2]) || parseInt(cardParts[1]) || 14
+                                centerSkill: centerSkillLevel || parseInt(cardParts[2]) || parseInt(cardParts[1]) || 14
                             };
                             // Special parameter for fantasyGin
-                            if (cardObj.id === 'fantasyGin' && cardParts[3]) {
-                                cardObj.mentalThreshold = parseInt(cardParts[3]);
+                            if (cardObj.id === 'fantasyGin' && mentalThreshold) {
+                                cardObj.mentalThreshold = mentalThreshold;
                             }
                             data.cards.push(cardObj);
                         }
@@ -3738,11 +3789,11 @@ function decompressShareData(compressed) {
                         const cardObj = {
                             id: cardId,
                             skill: parseInt(cardParts[1]) || 14,
-                            centerSkill: parseInt(cardParts[2]) || parseInt(cardParts[1]) || 14
+                            centerSkill: centerSkillLevel || parseInt(cardParts[1]) || 14
                         };
                         // Special parameter for fantasyGin
-                        if (cardObj.id === 'fantasyGin' && cardParts[3]) {
-                            cardObj.mentalThreshold = parseInt(cardParts[3]);
+                        if (cardObj.id === 'fantasyGin' && mentalThreshold) {
+                            cardObj.mentalThreshold = mentalThreshold;
                         }
                         data.cards.push(cardObj);
                     }
@@ -4068,6 +4119,24 @@ function loadShareData() {
                         }
                     }
                 });
+                
+                // Update center character highlighting after loading all cards
+                setTimeout(() => {
+                    updateCenterCharacterHighlight();
+                    
+                    // Re-apply center skill levels after UI is recreated
+                    setTimeout(() => {
+                        data.cards.forEach((card, index) => {
+                            if (index < 6 && card.centerSkill) {
+                                const slotNum = index + 1;
+                                const centerSkillSelect = document.getElementById(`centerSkillLevel${slotNum}`);
+                                if (centerSkillSelect) {
+                                    centerSkillSelect.value = card.centerSkill;
+                                }
+                            }
+                        });
+                    }, 100);
+                }, 300);
                 
             } catch (e) {
                 console.error('Failed to load share data:', e);
