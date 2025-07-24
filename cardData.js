@@ -2144,7 +2144,7 @@ const gameData = {
       "displayName": "［フルーツパンチ］百生吟子",
       "character": "百生吟子",
       "shortCode": "Gfp",
-      "apCost": 10,
+      "apCost": 4,
       "stats": {
         "smile": 7680,
         "pure": 5760,
@@ -2164,7 +2164,7 @@ const gameData = {
       },
       "effects": [
         {
-          "type": "mentalDamagePercent",
+          "type": "mentalReduction",
           "value": 25,
           "description": "最大値の25%のメンタルを減少"
         },
