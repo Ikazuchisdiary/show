@@ -1124,6 +1124,11 @@ const gameData = {
       },
       "effects": [
         {
+          "type": "mentalReduction",
+          "value": 10,
+          "description": "メンタル10%減少"
+        },
+        {
           "type": "conditional",
           "condition": "voltageLevel <= 8",
           "then": [
