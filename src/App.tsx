@@ -8,6 +8,8 @@ import { UpdateHistoryButton } from './components/UpdateHistoryButton'
 import { UpdateHistoryModal } from './components/UpdateHistoryModal'
 import { useGameStore } from './stores/gameStore'
 import { useMusicStore } from './stores/musicStore'
+import { useTouchDrag } from './hooks/useTouchDrag'
+import { useDuplicateCharacterDetection } from './hooks/useDuplicateCharacterDetection'
 import './App.css'
 
 function App() {
@@ -15,6 +17,9 @@ function App() {
   const { loadCustomMusic } = useMusicStore()
   const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null)
   const [showUpdateHistory, setShowUpdateHistory] = useState(false)
+  
+  // Detect duplicate characters
+  const duplicateIndices = useDuplicateCharacterDetection(selectedCards)
   
   useEffect(() => {
     // Load from URL parameters on mount
@@ -30,6 +35,8 @@ function App() {
   
   const handleDragStart = (index: number) => {
     setDraggedIndex(index)
+    // Hide drag hint after first drag
+    document.body.classList.add('has-dragged')
   }
   
   const handleDragEnd = () => {
@@ -97,6 +104,15 @@ function App() {
       slot.classList.remove('drop-before', 'drop-after', 'drag-over')
     })
   }
+  
+  // Touch drag handlers
+  const { handleTouchStart, handleTouchMove, handleTouchEnd, handleTouchCancel } = useTouchDrag({
+    onDragStart: handleDragStart,
+    onDragEnd: handleDragEnd,
+    onDrop: (fromIndex, toIndex, insertBefore) => {
+      insertCard(fromIndex, toIndex, insertBefore)
+    }
+  })
   return (
     <div className="app">
       <div className="container">
@@ -121,8 +137,13 @@ function App() {
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
+                onTouchStart={(e) => handleTouchStart(e, i)}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                onTouchCancel={handleTouchCancel}
                 isDragging={draggedIndex === i}
                 isCenter={selectedMusic?.centerCharacter === selectedCards[i]?.character}
+                isDuplicate={duplicateIndices.has(i)}
               />
             ))}
           </div>

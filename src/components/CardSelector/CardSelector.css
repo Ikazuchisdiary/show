@@ -356,6 +356,70 @@
 .stat--pure { color: #4ECDC4; }
 .stat--cool { color: #5C7CFA; }
 
+/* ドラッグクローン用のスタイル */
+#drag-clone {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  transform: scale(1.05);
+  transition: none !important;
+}
+
+#drag-clone .card-row {
+  opacity: 0.95;
+}
+
+/* Duplicate character warning */
+.card-slot.duplicate-character {
+  background-color: #ffebee !important;
+  border: 2px solid #f44336;
+}
+
+.card-slot.duplicate-character .card-row label {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.card-slot.duplicate-character .card-number {
+  background: #ffebee;
+  color: #d32f2f;
+  border-color: #f44336;
+}
+
+/* Ensure duplicate styling takes precedence over center character styling */
+.card-slot.center-character.duplicate-character {
+  background-color: #ffebee !important;
+  background: #ffebee !important;
+  border: 2px solid #f44336;
+  box-shadow: none;
+}
+
+.card-slot.center-character.duplicate-character .card-row label {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.card-slot.center-character.duplicate-character .card-number {
+  background: #ffebee !important;
+  color: #d32f2f !important;
+  border-color: #f44336 !important;
+}
+
+/* タッチデバイス用のドラッグヒント */
+@media (hover: none) and (pointer: coarse) {
+  .card-slot::after {
+    content: "長押しで移動";
+    position: absolute;
+    bottom: -18px;
+    right: 5px;
+    font-size: 10px;
+    color: #999;
+    opacity: 0.6;
+  }
+  
+  body.has-dragged .card-slot::after {
+    display: none;
+  }
+}
+
 /* モバイル対応 */
 @media (max-width: 768px) {
   .card-slot {

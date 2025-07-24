@@ -11,9 +11,13 @@ interface CardSelectorProps {
   onDragOver?: (e: React.DragEvent, index: number) => void
   onDragLeave?: (e: React.DragEvent) => void
   onDrop?: (e: React.DragEvent, index: number) => void
+  onTouchStart?: (e: React.TouchEvent) => void
+  onTouchMove?: (e: React.TouchEvent) => void
+  onTouchEnd?: (e: React.TouchEvent) => void
+  onTouchCancel?: (e: React.TouchEvent) => void
   isDragging?: boolean
   isCenter?: boolean
-}
+  isDuplicate?: boolean}
 
 // 条件を日本語にフォーマットする共通関数
 const formatConditionToJapanese = (condition: string): string => {
@@ -68,8 +72,13 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
   onDragOver,
   onDragLeave,
   onDrop,
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
+  onTouchCancel,
   isDragging,
-  isCenter 
+  isCenter,
+  isDuplicate 
 }) => {
   const { 
     selectedCards, 
@@ -184,7 +193,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
   
   return (
     <div 
-      className={`card-slot ${isDragging ? 'dragging' : ''} ${isCenter ? 'center-character' : ''}`} 
+      className={`card-slot ${isDragging ? 'dragging' : ''} ${isCenter ? 'center-character' : ''} ${isDuplicate ? 'duplicate-character' : ''}`} 
       draggable="true" 
       data-slot={index + 1}
       onDragStart={() => onDragStart?.(index)}
@@ -192,6 +201,10 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
       onDragOver={(e) => onDragOver?.(e, index)}
       onDragLeave={(e) => onDragLeave?.(e)}
       onDrop={(e) => onDrop?.(e, index)}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      onTouchCancel={onTouchCancel}
     >
       <div className="card-row">
         <div className="card-number">{index + 1}</div>

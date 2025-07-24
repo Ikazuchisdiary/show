@@ -1,5 +1,6 @@
 import React from 'react'
 import { useGameStore } from '@stores/gameStore'
+import { useDuplicateCharacterDetection } from '@hooks/useDuplicateCharacterDetection'
 import './SimulationControls.css'
 
 export const SimulationControls: React.FC = () => {
@@ -12,6 +13,16 @@ export const SimulationControls: React.FC = () => {
   } = useGameStore()
   
   const hasValidSelection = selectedMusic && selectedCards.some(card => card !== null)
+  const duplicateIndices = useDuplicateCharacterDetection(selectedCards)
+  
+  const handleCalculate = () => {
+    // Check for duplicate characters first
+    if (duplicateIndices.size > 0) {
+      alert('同じキャラクターのカードが複数選択されています。\nキャラクターの重複を解消してから計算してください。')
+      return
+    }
+    runSimulation()
+  }
   
   const handleShare = () => {
     const shareUrl = generateShareUrl()
@@ -26,7 +37,7 @@ export const SimulationControls: React.FC = () => {
     <div className="button-container">
       <button
         className="primary-button"
-        onClick={runSimulation}
+        onClick={handleCalculate}
         disabled={!hasValidSelection || isSimulating}
       >
         {isSimulating ? 'スコア計算中...' : 'スコア計算'}
