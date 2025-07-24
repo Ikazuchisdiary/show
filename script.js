@@ -21,8 +21,6 @@ function calculateAppealValue() {
     const musicKey = document.getElementById('music').value;
     let musicAttribute = null;
     
-    console.log('=== アピール値計算開始 ===');
-    console.log('楽曲:', musicKey);
     
     // Get music attribute
     if (musicKey === 'custom' || musicKey.startsWith('custom_')) {
@@ -42,7 +40,6 @@ function calculateAppealValue() {
         }
     }
     
-    console.log('楽曲属性:', musicAttribute);
     
     // Get center card for center characteristic
     let centerCard = null;
@@ -52,10 +49,6 @@ function calculateAppealValue() {
             const musicData_temp = musicData[musicKey] || getCustomMusicList()[musicKey];
             if (musicData_temp && cardData[cardType].character === musicData_temp.centerCharacter) {
                 centerCard = cardData[cardType];
-                console.log('センターカード:', cardData[cardType].displayName);
-                if (centerCard.centerCharacteristic) {
-                    console.log('センター特性:', centerCard.centerCharacteristic.name);
-                }
                 break;
             }
         }
@@ -73,8 +66,6 @@ function calculateAppealValue() {
             const stats = cardData[cardType].stats;
             const character = cardData[cardType].character;
             
-            console.log(`\nカード${i}: ${cardData[cardType].displayName}`);
-            console.log(`  基本ステータス - スマイル:${stats.smile}, ピュア:${stats.pure}, クール:${stats.cool}`);
             
             // Apply center characteristic boost
             let boostMultiplier = 1.0;
@@ -116,8 +107,6 @@ function calculateAppealValue() {
                         
                         if (shouldApplyBoost) {
                             boostMultiplier += effect.value;
-                            console.log(`  センター特性適用: ${effect.description} (${boostReason})`);
-                            console.log(`  ブースト倍率: ${boostMultiplier.toFixed(1)}倍`);
                         }
                     }
                 }
@@ -128,7 +117,6 @@ function calculateAppealValue() {
             const boostedPure = Math.ceil((stats.pure || 0) * boostMultiplier);
             const boostedCool = Math.ceil((stats.cool || 0) * boostMultiplier);
             
-            console.log(`  ブースト後ステータス - スマイル:${boostedSmile}, ピュア:${boostedPure}, クール:${boostedCool}`);
             
             totalSmile += boostedSmile;
             totalPure += boostedPure;
@@ -136,10 +124,6 @@ function calculateAppealValue() {
         }
     }
     
-    console.log('\n合計ステータス:');
-    console.log(`  スマイル合計: ${totalSmile}`);
-    console.log(`  ピュア合計: ${totalPure}`);
-    console.log(`  クール合計: ${totalCool}`);
     
     // Calculate final appeal based on music attribute
     let finalAppeal = 0;
@@ -149,29 +133,23 @@ function calculateAppealValue() {
         const mainAttr = totalSmile;
         const otherAttr = (totalPure + totalCool) * 0.1;
         finalAppeal = mainAttr + otherAttr;
-        console.log(`\n楽曲属性スマイル: メイン属性=${mainAttr}, その他属性=${otherAttr.toFixed(1)}`);
     } else if (musicAttribute === 'pure') {
         // Pure is matching attribute (100%), others are 10%
         const mainAttr = totalPure;
         const otherAttr = (totalSmile + totalCool) * 0.1;
         finalAppeal = otherAttr + mainAttr;
-        console.log(`\n楽曲属性ピュア: メイン属性=${mainAttr}, その他属性=${otherAttr.toFixed(1)}`);
     } else if (musicAttribute === 'cool') {
         // Cool is matching attribute (100%), others are 10%
         const mainAttr = totalCool;
         const otherAttr = (totalSmile + totalPure) * 0.1;
         finalAppeal = otherAttr + mainAttr;
-        console.log(`\n楽曲属性クール: メイン属性=${mainAttr}, その他属性=${otherAttr.toFixed(1)}`);
     } else {
         // No music attribute, all are 10%
         finalAppeal = (totalSmile + totalPure + totalCool) * 0.1;
-        console.log(`\n楽曲属性なし: 全属性10% = ${finalAppeal.toFixed(1)}`);
     }
     
     // Round up the final appeal
     const result = Math.ceil(finalAppeal);
-    console.log(`\n最終アピール値: ${result}`);
-    console.log('=== アピール値計算終了 ===\n');
     
     return result;
 }
@@ -2682,7 +2660,6 @@ function saveCurrentState() {
     // Save state for this specific song
     const key = `sukushou_state_${musicKey}`;
     localStorage.setItem(key, JSON.stringify(state));
-    console.log(`Saved state for ${musicKey}`, state);
 }
 
 // Save skill level for a specific card type
@@ -2777,16 +2754,13 @@ function loadStateForSong(musicKey) {
     
     const key = `sukushou_state_${musicKey}`;
     const savedState = localStorage.getItem(key);
-    console.log(`Loading state for ${musicKey}`, savedState);
     
     if (!savedState) {
-        console.log(`No saved state found for ${musicKey}`);
         return;
     }
     
     try {
         const state = JSON.parse(savedState);
-        console.log(`Parsed state for ${musicKey}`, state);
         
         // Load mental and learning correction (appeal is calculated automatically)
         document.getElementById('mental').value = state.mental || 100;
@@ -3958,7 +3932,6 @@ function loadShareData() {
         // Try new compressed format first
         const compressedData = urlParams.get('d');
         if (compressedData) {
-            console.log('Trying new format with compressed data:', compressedData);
             data = decompressShareData(compressedData);
         }
         
@@ -3966,12 +3939,9 @@ function loadShareData() {
         if (!data) {
             const encodedData = urlParams.get('data');
             if (encodedData) {
-                console.log('Trying old format with encoded data:', encodedData);
                 try {
                     const json = decodeURIComponent(atob(encodedData));
-                    console.log('Decoded JSON:', json);
                     data = JSON.parse(json);
-                    console.log('Parsed data:', data);
                 } catch (e) {
                     console.error('Failed to parse old format share data:', e);
                 }
@@ -3979,7 +3949,6 @@ function loadShareData() {
         }
         
         if (data) {
-            console.log('Processing share data:', data);
             try {
                 
                 // Appeal value is now calculated automatically
@@ -3993,9 +3962,7 @@ function loadShareData() {
                 }
                 
                 // Load music
-                console.log('Loading music from data:', data.music, 'customMusic:', data.customMusic);
                 if (data.customMusic && data.customMusicName) {
-                    console.log('Loading saved custom music with name');
                     // Saved custom music shared via new compressed format
                     // Create a temporary ID for this session
                     const tempId = 'custom_shared_' + Date.now();
