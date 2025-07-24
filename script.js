@@ -288,7 +288,35 @@ class Game {
             this.currentTurnLog = [];
             const phase = this.getCurrentPhase();
             const cardName = card.displayName || card.name;
-            this.currentTurnLog.push(`<div class="log-turn-header"><span class="turn-number">${this.turn + 1}</span> ${phase} <span class="log-card-name">${cardName}</span></div>`);
+            
+            // Calculate AP display values
+            let apDisplayHtml = '';
+            if (card.apCost) {
+                let actualApCost = card.apCost;
+                
+                // Apply center characteristic AP reduction
+                if (this.centerCharacter) {
+                    const centerCard = this.cards.find(c => 
+                        c.config && c.config.character === this.centerCharacter
+                    );
+                    
+                    if (centerCard && centerCard.config.centerCharacteristic) {
+                        const apReduceEffect = centerCard.config.centerCharacteristic.effects.find(e => 
+                            e.type === 'apReduce'
+                        );
+                        
+                        if (apReduceEffect && apReduceEffect.target === 'all') {
+                            actualApCost = Math.max(0, actualApCost - apReduceEffect.value);
+                        }
+                    }
+                }
+                
+                const apBefore = this.apConsumed;
+                const apAfter = this.apConsumed + actualApCost;
+                apDisplayHtml = `<span class="log-ap-inline">${apBefore} → ${apAfter}</span>`;
+            }
+            
+            this.currentTurnLog.push(`<div class="log-turn-header"><span class="turn-number">${this.turn + 1}</span> ${phase} <span class="log-card-name">${cardName}</span>${apDisplayHtml}</div>`);
         }
         
         // 次のカード使用のためのフラグ
@@ -318,9 +346,6 @@ class Game {
             }
             
             this.apConsumed += actualApCost;
-            if (this.verbose) {
-                this.currentTurnLog.push(`<div class="log-ap">AP消費: ${actualApCost} (累計消費: ${this.apConsumed})</div>`);
-            }
             
             // Record card activation in log
             this.cardActivationLog.push({
