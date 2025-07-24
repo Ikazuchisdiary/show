@@ -1,6 +1,14 @@
 // Update history data
 const updateHistory = [
     {
+        version: "2025.07.25.1",
+        date: "2025-07-25",
+        time: "02:02",
+        updates: [
+            "新カード追加: ［フルーツパンチ］百生吟子"
+        ]
+    },
+    {
         version: "2025.07.24.5",
         date: "2025-07-24",
         time: "20:10",
