@@ -2139,6 +2139,69 @@ const gameData = {
         }
       ]
     },
+    "fruitsPunchGin": {
+      "name": "Fruits Punch Gin",
+      "displayName": "［フルーツパンチ］百生吟子",
+      "character": "百生吟子",
+      "shortCode": "Gfp",
+      "apCost": 10,
+      "stats": {
+        "smile": 7680,
+        "pure": 5760,
+        "cool": 3720,
+        "mental": 490
+      },
+      "centerCharacteristic": {
+        "name": "アピールアップ（スリーズブーケ）",
+        "effects": [
+          {
+            "type": "appealBoost",
+            "value": 2.0,
+            "target": "スリーズブーケ",
+            "description": "スリーズブーケに所属するメンバーのアピール値が200%上昇"
+          }
+        ]
+      },
+      "effects": [
+        {
+          "type": "mentalDamagePercent",
+          "value": 25,
+          "description": "最大値の25%のメンタルを減少"
+        },
+        {
+          "type": "conditional",
+          "condition": "mentalPercent <= 1",
+          "then": [
+            {
+              "type": "apGain",
+              "value": 2,
+              "description": "AP回復",
+              "levelValues": [2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 6]
+            }
+          ]
+        },
+        {
+          "type": "resetDeck",
+          "description": "次に発動するスキルをデッキの1枚目から順に戻す"
+        },
+        {
+          "type": "removeAfterUse",
+          "condition": "count >= 4",
+          "description": "このカードのスキル発動回数が4回以上の時、このカードを除外する"
+        }
+      ],
+      "centerSkill": {
+        "when": "beforeFirstTurn",
+        "effects": [
+          {
+            "type": "apGain",
+            "value": 4,
+            "description": "ライブ開始時にAP回復",
+            "levelValues": [4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 9, 10, 12]
+          }
+        ]
+      }
+    },
     // 徒町小鈴
     "ladybugKosuzu": {
       "name": "Ladybug Kosuzu",
