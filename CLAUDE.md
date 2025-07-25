@@ -85,6 +85,7 @@ Example commit messages:
 - インラインスタイルはCSSクラスに移行する
 - font-family: inheritなどのグローバルスタイルに注意
 - 2025-07-25: ユーザー離席中にv1実装との差異を埋める作業を継続的に実施
+  - タスクがなくなったら自主的にv1とv2のコードを比較し差異を埋めていく
 
 ## v2 Development Methodology
 

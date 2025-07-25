@@ -6,6 +6,7 @@ const KEYS = {
   cardCenterSkillLevel: (cardType: string) => `sukushou_card_center_skill_${cardType}`,
   customMusicList: 'sukushou_custom_music_list',
   musicState: (musicKey: string) => `sukushou_state_${musicKey}`,
+  lastVersion: 'sukushou_lastVersion',
 } as const
 
 // カードのスキルレベルを保存
@@ -122,4 +123,14 @@ export function loadAllCenterSkillLevels(): Record<string, number> {
 export function isShareMode(): boolean {
   const params = new URLSearchParams(window.location.search)
   return params.has('share')
+}
+
+// 最後に表示したバージョンを保存
+export function saveLastVersion(version: string): void {
+  localStorage.setItem(KEYS.lastVersion, version)
+}
+
+// 最後に表示したバージョンを取得
+export function getLastVersion(): string | null {
+  return localStorage.getItem(KEYS.lastVersion)
 }

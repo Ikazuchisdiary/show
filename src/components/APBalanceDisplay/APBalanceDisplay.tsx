@@ -74,7 +74,7 @@ export const APBalanceDisplay: React.FC<APBalanceDisplayProps> = ({
         <div className="ap-details">
           <div className="ap-detail-columns">
             <div className="ap-detail-section ap-income">
-              <div className="ap-detail-label">収入</div>
+              <div className="ap-detail-label">獲得AP</div>
               {apBreakdown.income.map((item, index) => (
                 <div key={index} className="ap-detail-item">
                   <span className="ap-detail-name">{item.name}</span>
@@ -83,7 +83,7 @@ export const APBalanceDisplay: React.FC<APBalanceDisplayProps> = ({
               ))}
               <div className="ap-detail-total">
                 <span className="ap-detail-name">合計</span>
-                <span className="ap-detail-value">+{formatAP(totalAP)}</span>
+                <span className="ap-detail-value">{formatAP(totalAP)}</span>
               </div>
             </div>
             
@@ -92,7 +92,7 @@ export const APBalanceDisplay: React.FC<APBalanceDisplayProps> = ({
               {apBreakdown.expense.map((item, index) => (
                 <div key={index} className="ap-detail-item">
                   <span className="ap-detail-name">{item.name}</span>
-                  <span className="ap-detail-value">-{formatAP(item.value)}</span>
+                  <span className="ap-detail-value">{formatAP(item.value)}</span>
                 </div>
               ))}
             </div>
