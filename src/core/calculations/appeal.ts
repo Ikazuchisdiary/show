@@ -1,6 +1,5 @@
 import { Card, CardStats } from '../models/Card'
 import { MusicAttribute } from '../models/Music'
-import { CENTER_ATTRIBUTE_BONUS } from './constants'
 import { CenterCharacteristic } from '../models/Effect'
 
 interface AppealCalculationOptions {
@@ -16,76 +15,92 @@ interface AppealCalculationOptions {
 export function calculateAppealValue(options: AppealCalculationOptions): number {
   const { cards, musicAttribute, centerCard } = options
   
+  console.log('[Appeal Calculation] Starting with:', {
+    musicAttribute,
+    centerCard: centerCard?.name,
+    centerCharacteristic: options.centerCharacteristic
+  })
+  
   // Calculate total appeal for each attribute
   let totalSmile = 0
   let totalPure = 0
   let totalCool = 0
   
-  // Sum up base stats from all cards
-  for (const card of cards) {
+  // Calculate appeal for each card with center characteristic boosts
+  for (let i = 0; i < cards.length; i++) {
+    const card = cards[i]
     if (card && card.stats) {
-      totalSmile += card.stats.smile
-      totalPure += card.stats.pure
-      totalCool += card.stats.cool
-    }
-  }
-  
-  // Apply center characteristic boosts
-  if (options.centerCharacteristic) {
-    for (const effect of options.centerCharacteristic.effects) {
-      if (effect.type === 'appealBoost') {
-        // Apply appeal boost to matching cards
-        for (const card of cards) {
-          if (card && shouldApplyBoost(card, effect.target)) {
-            const boostMultiplier = effect.value
-            totalSmile += card.stats.smile * (boostMultiplier - 1)
-            totalPure += card.stats.pure * (boostMultiplier - 1)
-            totalCool += card.stats.cool * (boostMultiplier - 1)
+      // Calculate boost multiplier for this card
+      let boostMultiplier = 1.0
+      
+      if (options.centerCharacteristic) {
+        for (const effect of options.centerCharacteristic.effects) {
+          if (effect.type === 'appealBoost' && shouldApplyBoost(card, effect.target)) {
+            console.log(`[Appeal Calculation] Card ${i+1} (${card.name}): Applying boost ${effect.value} from ${effect.target}`)
+            // v1 adds the boost value to the multiplier (not sets it)
+            boostMultiplier += effect.value
           }
         }
       }
+      
+      // Apply boost and ceil per card (v1 behavior)
+      const boostedSmile = Math.ceil(card.stats.smile * boostMultiplier)
+      const boostedPure = Math.ceil(card.stats.pure * boostMultiplier)
+      const boostedCool = Math.ceil(card.stats.cool * boostMultiplier)
+      
+      console.log(`[Appeal Calculation] Card ${i+1} (${card.name}):`, {
+        baseStats: { smile: card.stats.smile, pure: card.stats.pure, cool: card.stats.cool },
+        boostMultiplier,
+        boostedStats: { smile: boostedSmile, pure: boostedPure, cool: boostedCool }
+      })
+      
+      totalSmile += boostedSmile
+      totalPure += boostedPure
+      totalCool += boostedCool
     }
   }
   
-  // Apply center attribute bonus (14%)
-  if (centerCard && musicAttribute) {
-    const centerAttribute = getCardAttribute(centerCard)
-    if (centerAttribute === musicAttribute) {
-      switch (musicAttribute) {
-        case 'smile':
-          totalSmile *= 1 + CENTER_ATTRIBUTE_BONUS
-          break
-        case 'pure':
-          totalPure *= 1 + CENTER_ATTRIBUTE_BONUS
-          break
-        case 'cool':
-          totalCool *= 1 + CENTER_ATTRIBUTE_BONUS
-          break
-      }
-    }
-  }
+  console.log('[Appeal Calculation] Total stats after boost:', {
+    totalSmile,
+    totalPure,
+    totalCool
+  })
   
-  // Determine final appeal value
-  let appeal: number
-  if (musicAttribute) {
-    switch (musicAttribute) {
-      case 'smile':
-        appeal = totalSmile
-        break
-      case 'pure':
-        appeal = totalPure
-        break
-      case 'cool':
-        appeal = totalCool
-        break
-      default:
-        appeal = Math.max(totalSmile, totalPure, totalCool)
-    }
+  // Calculate final appeal based on music attribute
+  let finalAppeal: number
+  let mainAttr = 0
+  let otherAttr = 0
+  
+  if (musicAttribute === 'smile') {
+    // Smile is matching attribute (100%), others are 10%
+    mainAttr = totalSmile
+    otherAttr = (totalPure + totalCool) * 0.1
+    finalAppeal = mainAttr + otherAttr
+  } else if (musicAttribute === 'pure') {
+    // Pure is matching attribute (100%), others are 10%
+    mainAttr = totalPure
+    otherAttr = (totalSmile + totalCool) * 0.1
+    finalAppeal = mainAttr + otherAttr
+  } else if (musicAttribute === 'cool') {
+    // Cool is matching attribute (100%), others are 10%
+    mainAttr = totalCool
+    otherAttr = (totalSmile + totalPure) * 0.1
+    finalAppeal = mainAttr + otherAttr
   } else {
-    appeal = Math.max(totalSmile, totalPure, totalCool)
+    // No music attribute, all are 10%
+    finalAppeal = (totalSmile + totalPure + totalCool) * 0.1
   }
   
-  return Math.floor(appeal)
+  console.log('[Appeal Calculation] Final calculation:', {
+    musicAttribute,
+    mainAttr,
+    otherAttr,
+    finalAppeal,
+    finalAppealRounded: Math.ceil(finalAppeal)
+  })
+  
+  // Round up the final appeal
+  return Math.ceil(finalAppeal)
 }
 
 /**

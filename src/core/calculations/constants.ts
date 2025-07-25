@@ -12,7 +12,7 @@ export const SKILL_LEVEL_MULTIPLIERS = [
   2.0,  // Lv.10
   2.2,  // Lv.11
   2.4,  // Lv.12
-  2.7,  // Lv.13
+  2.6,  // Lv.13
   3.0   // Lv.14
 ] as const
 

@@ -77,14 +77,6 @@ Example commit messages:
 - **User Confirmation**: 
   - pushする前にユーザに確認をとってください
 
-## Temporary Work Instructions (2025-07-24)
-
-- ユーザーが6時間ほど離席中
-- 定期的に各種markdownを確認しながら、許可を得ずに作業を進める
-- 主な作業内容:
-  1. ログ表示形式をv1に準拠させる
-  2. AP不足計算と参考スコア表示機能の実装
-  3. その他のpendingタスクの処理
 
 ## Memory Notes
 
@@ -92,6 +84,7 @@ Example commit messages:
 - v2開発時は必ずv1の実装を確認してから実装する
 - インラインスタイルはCSSクラスに移行する
 - font-family: inheritなどのグローバルスタイルに注意
+- 2025-07-25: ユーザー離席中にv1実装との差異を埋める作業を継続的に実施
 
 ## v2 Development Methodology
 
@@ -167,9 +160,20 @@ See `ARCHITECTURE_PLAN.md` for detailed implementation plan.
 2. **Center Character System** - Highlight and bonus calculations
    - Orange border (#ff9800) highlighting for center character cards
    - Center characteristic appeal boost calculations (already implemented in GameSimulator)
+3. **Center Skill System** - Level selection and parameter inputs
+4. **Local Storage** - v1 key compatibility for all settings
+5. **Complete Game Logic** - All v1 card effects implemented
+6. **Detailed Turn Logs** - v1-style HTML formatted logs
+7. **AP Shortage Calculation** - Reference score with exclusions
+8. **Update Banner & History** - Version notifications
+9. **Mobile Support** - Touch drag with 500ms long press
+10. **Duplicate Character Detection** - Red warnings and validation
 
-### Next Priority Tasks
-1. **Center Skill System** - Level selection and parameter inputs
-2. **AP Balance Details** - Income/expense breakdown
-3. **Local Storage** - Save skill levels and custom songs
-4. **Turn Log Improvements** - Show calculation formulas
+### Work Completed During 6-Hour Session
+1. **AP不足計算機能** - v1準拠のスコア計算ロジックで実装
+2. **アップデートバナー** - バージョン通知と履歴表示
+3. **モバイル対応** - タッチドラッグ（500ms長押し）
+4. **重複キャラクター検出** - 赤い警告表示と計算時のバリデーション
+
+### Final Status
+v2 is now functionally complete with all major v1 features implemented. The remaining tasks (real-time preview, undo/redo) are new features not present in v1.

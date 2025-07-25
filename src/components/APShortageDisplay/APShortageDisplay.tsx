@@ -29,8 +29,7 @@ export const APShortageDisplay: React.FC<APShortageDisplayProps> = ({ result, to
         ⓘ
       </span>
       
-      {showDetails && (
-        <div className="ap-shortage-details">
+      <div className="ap-shortage-details" style={{ display: showDetails ? 'block' : 'none' }}>
           <div className="ap-shortage-detail-header">
             <span className="detail-icon">🚫</span>
             <span className="detail-title">除外した発動</span>
@@ -84,9 +83,8 @@ export const APShortageDisplay: React.FC<APShortageDisplayProps> = ({ result, to
                 })}
               </div>
             )}
-          </div>}
+          </div>
         </div>
-      )}
-    </div>
+      </div>
   )
 }

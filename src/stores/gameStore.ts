@@ -4,6 +4,7 @@ import { Music } from '../core/models/Music'
 import { GameState, SimulationOptions } from '../core/models/Game'
 import { GameSimulator } from '../core/simulation/GameSimulator'
 import { cardData, musicData } from '../data/index'
+import { calculateBaseAP } from '../utils/calculateBaseAP'
 import {
   saveCardSkillLevel,
   loadCardSkillLevel,
@@ -33,6 +34,7 @@ interface GameStore {
   // Game settings
   initialMental: number
   comboCount: number
+  centerCharacter: string | null
   
   // Simulation results
   simulationResult: GameState | null
@@ -51,6 +53,7 @@ interface GameStore {
   setDifficulty: (difficulty: 'normal' | 'hard' | 'expert' | 'master') => void
   setInitialMental: (mental: number) => void
   setComboCount: (count: number) => void
+  setCenterCharacter: (character: string | null) => void
   runSimulation: () => void
   clearSimulation: () => void
   generateShareUrl: () => string
@@ -80,6 +83,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   selectedDifficulty: 'master',
   initialMental: 100,
   comboCount: 100,
+  centerCharacter: null,
   simulationResult: null,
   isSimulating: false,
   
@@ -333,6 +337,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   
   setComboCount: (count) => set({ comboCount: count }),
   
+  setCenterCharacter: (character) => set({ centerCharacter: character }),
+  
   runSimulation: () => {
     const state = get()
     
@@ -345,6 +351,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({ isSimulating: true })
     
     try {
+      // Get combo count from music based on difficulty
+      let comboCount = state.comboCount
+      if (state.selectedMusic.combos && state.selectedMusic.combos[state.selectedDifficulty]) {
+        comboCount = state.selectedMusic.combos[state.selectedDifficulty]!
+      }
+      
+      // Calculate base AP
+      const baseAP = calculateBaseAP(comboCount, state.initialMental)
+      
       const options: SimulationOptions = {
         cards: state.selectedCards,
         cardSkillLevels: state.cardSkillLevels,
@@ -355,7 +370,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         musicAttribute: state.selectedMusic.attribute,
         centerCharacter: state.selectedMusic.centerCharacter,
         initialMental: state.initialMental,
-        comboCount: state.comboCount
+        comboCount: comboCount,
+        baseAP: baseAP
       }
       
       const simulator = new GameSimulator(options)

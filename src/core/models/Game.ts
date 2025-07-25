@@ -40,6 +40,10 @@ export interface CardActivationLog {
   scoreBoostBefore: number[]
   scoreBoostCountBefore: number
   voltagePtBefore: number
+  scoreGain: number
+  scoreBoostAfter: number[]
+  scoreBoostCountAfter: number
+  voltagePtAfter: number
 }
 
 export interface GameState {
@@ -67,6 +71,7 @@ export interface GameState {
   
   // Game resources
   mental: number
+  baseAP?: number
   apAcquired: number
   apConsumed: number
   
@@ -109,4 +114,5 @@ export interface SimulationOptions {
   centerCharacter?: string
   initialMental?: number
   comboCount?: number
+  baseAP?: number
 }

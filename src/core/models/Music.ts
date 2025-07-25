@@ -1,5 +1,12 @@
 export type MusicAttribute = 'smile' | 'pure' | 'cool'
 
+export interface MusicCombos {
+  normal?: number
+  hard?: number
+  expert?: number
+  master?: number
+}
+
 export interface Music {
   name: string
   centerCharacter?: string
@@ -7,6 +14,7 @@ export interface Music {
   phases: number[] // [beforeFever, duringFever, afterFever]
   baseFeverAppeal?: number
   baseFeverAppealLv10?: number
+  combos?: MusicCombos
 }
 
 export interface MusicData {

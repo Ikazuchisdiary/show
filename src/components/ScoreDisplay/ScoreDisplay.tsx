@@ -1,35 +1,57 @@
 import React, { useState, useMemo } from 'react'
 import { useGameStore } from '@stores/gameStore'
+import { APBalanceDisplay } from '@components/APBalanceDisplay'
 import { APShortageDisplay } from '@components/APShortageDisplay'
+import { AppealDisplay } from '@components/AppealDisplay'
 import { GameSimulator } from '@core/simulation/GameSimulator'
+import { calculateBaseAP } from '@utils/calculateBaseAP'
 import './ScoreDisplay.css'
 
 export const ScoreDisplay: React.FC = () => {
   const { 
     simulationResult,
-    cards,
+    selectedCards,
     cardSkillLevels,
     centerSkillLevels,
     customSkillValues,
     customCenterSkillValues,
     selectedMusic,
+    selectedDifficulty,
     musicAttribute,
     centerCharacter,
     mental,
-    comboCount
+    comboCount,
+    initialMental
   } = useGameStore()
   const [showLog, setShowLog] = useState(false)
+  
+  // Calculate base AP first
+  const baseAP = useMemo(() => {
+    // Get combo count from music based on difficulty
+    let actualComboCount = comboCount
+    if (selectedMusic?.combos && selectedMusic.combos[selectedDifficulty]) {
+      actualComboCount = selectedMusic.combos[selectedDifficulty]!
+    }
+    return calculateBaseAP(actualComboCount, initialMental)
+  }, [comboCount, initialMental, selectedMusic, selectedDifficulty])
   
   // Calculate AP shortage result if needed
   const apShortageResult = useMemo(() => {
     if (!simulationResult || !selectedMusic) return null
     
-    const netAP = simulationResult.apAcquired - simulationResult.apConsumed
+    const totalAvailableAP = baseAP + simulationResult.apAcquired
+    const netAP = totalAvailableAP - simulationResult.apConsumed
     if (netAP >= 0) return null
+    
+    // Get combo count from music based on difficulty
+    let actualComboCount = comboCount
+    if (selectedMusic.combos && selectedMusic.combos[selectedDifficulty]) {
+      actualComboCount = selectedMusic.combos[selectedDifficulty]!
+    }
     
     // Run AP shortage simulation
     const simulator = new GameSimulator({
-      cards,
+      cards: selectedCards,
       cardSkillLevels,
       centerSkillLevels,
       customSkillValues,
@@ -38,22 +60,24 @@ export const ScoreDisplay: React.FC = () => {
       musicAttribute,
       centerCharacter,
       initialMental: mental,
-      comboCount
+      comboCount: actualComboCount
     })
     
-    return simulator.simulateWithAPShortage(0) // Assuming starting AP is 0
+    return simulator.simulateWithAPShortage(baseAP) // Include base AP
   }, [
     simulationResult,
-    cards,
+    selectedCards,
     cardSkillLevels,
     centerSkillLevels,
     customSkillValues,
     customCenterSkillValues,
     selectedMusic,
+    selectedDifficulty,
     musicAttribute,
     centerCharacter,
     mental,
-    comboCount
+    comboCount,
+    baseAP
   ])
   
   if (!simulationResult) {
@@ -61,30 +85,30 @@ export const ScoreDisplay: React.FC = () => {
   }
   
   const totalScore = simulationResult.totalScore
-  const totalVoltage = simulationResult.totalVoltage
-  const voltageLevel = Math.max(...simulationResult.turnResults.map(t => t.voltageLevel))
-  const netAP = simulationResult.apAcquired - simulationResult.apConsumed
   
   return (
     <>
       <div id="result" style={{ display: 'block' }}>
         <h2>計算結果</h2>
         <div id="score">
-          スコア: {totalScore.toLocaleString()}
+          {totalScore.toLocaleString()}
         </div>
-        <div id="apSummary">
-          <div>総ボルテージ: {totalVoltage.toLocaleString()}</div>
-          <div>最大ボルテージLv: {voltageLevel}</div>
-          <div>AP収支: <span style={{ color: netAP >= 0 ? '#28a745' : '#dc3545' }}>{netAP >= 0 ? '+' : ''}{netAP}</span></div>
+        <div className="result-details">
+          <AppealDisplay />
+          
+          <APBalanceDisplay 
+            simulationResult={simulationResult}
+            baseAP={baseAP}
+          />
+          
+          {apShortageResult && (
+            <APShortageDisplay result={apShortageResult} totalAP={baseAP} />
+          )}
         </div>
         <button className="toggle-log" onClick={() => setShowLog(!showLog)}>
           {showLog ? '詳細ログを隠す' : '詳細ログを表示'}
         </button>
       </div>
-      
-      {apShortageResult && (
-        <APShortageDisplay result={apShortageResult} totalAP={0} />
-      )}
       
       {showLog && (
         <div id="turnLog" style={{ display: 'block' }}>
