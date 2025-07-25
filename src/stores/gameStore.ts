@@ -233,9 +233,10 @@ const decompressShareData = (compressed: string): any => {
     }
     
     // Check version
-    let _version = 'v0'
+    // let _version = 'v0'
     if (parts[0] && parts[0].startsWith('v')) {
-      _version = parts.shift()!
+      // _version = parts.shift()!
+      parts.shift()!
     }
     
     const centerNames: Record<string, string> = {

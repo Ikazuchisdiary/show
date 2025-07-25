@@ -13,6 +13,9 @@ export type EffectType =
   | 'voltageGain'
   | 'apGain'
   | 'mentalReduction'
+  | 'mentalRecover'
+  | 'voltagePenalty'
+  | 'removeAfterUse'
 
 export type ConditionType = 
   | 'count'
@@ -66,6 +69,7 @@ export interface ApReduceEffect extends BaseEffect {
 export interface ScoreGainEffect extends BaseEffect {
   type: 'scoreGain'
   value: number
+  levelValues?: number[] // For center skills that have level-specific values
 }
 
 export interface VoltageGainEffect extends BaseEffect {
@@ -82,6 +86,21 @@ export interface ApGainEffect extends BaseEffect {
 export interface MentalReductionEffect extends BaseEffect {
   type: 'mentalReduction'
   value: number
+}
+
+export interface MentalRecoverEffect extends BaseEffect {
+  type: 'mentalRecover'
+  value: number
+}
+
+export interface VoltagePenaltyEffect extends BaseEffect {
+  type: 'voltagePenalty'
+  value: number
+}
+
+export interface RemoveAfterUseEffect extends BaseEffect {
+  type: 'removeAfterUse'
+  condition?: string
 }
 
 export interface CenterSkillEffect extends BaseEffect {
@@ -109,6 +128,9 @@ export type Effect =
   | VoltageGainEffect
   | ApGainEffect
   | MentalReductionEffect
+  | MentalRecoverEffect
+  | VoltagePenaltyEffect
+  | RemoveAfterUseEffect
   | CenterSkillEffect
   | ConditionalEffect
 

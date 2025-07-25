@@ -56,7 +56,7 @@ export const ScoreDisplay: React.FC = () => {
       customCenterSkillValues,
       music: selectedMusic,
       musicAttribute: selectedMusic?.attribute,
-      centerCharacter: selectedMusic?.centerCharacter || centerCharacter,
+      centerCharacter: selectedMusic?.centerCharacter ?? centerCharacter ?? undefined,
       initialMental,
       comboCount: actualComboCount
     })

@@ -24,7 +24,6 @@ export class GameSimulator {
   private currentTurnVoltageGain: number = 0
   private currentTurnLogs: string[] = []
   // Store turn start values for condition evaluation
-  private turnStartVoltage: number = 0
   private turnStartVoltageLevel: number = 0
   private turnStartMental: number = 100
   
@@ -177,7 +176,6 @@ export class GameSimulator {
     }
     
     // Store turn start values for condition evaluation (v1 behavior)
-    this.turnStartVoltage = this.state.totalVoltage
     this.turnStartVoltageLevel = getVoltageLevel(this.state.totalVoltage, this.state.currentTurn, this.state.music)
     this.turnStartMental = this.state.mental
     
