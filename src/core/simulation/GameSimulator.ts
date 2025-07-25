@@ -195,19 +195,18 @@ export class GameSimulator {
     // Add turn header log with card name (v1 style)
     const phase = this.getPhaseStr()
     // Show only consumed AP in the log (not the balance)
-    const apBefore = -this.state.apConsumed
-    const apAfter = -(this.state.apConsumed + effectiveAPCost)
+    const apBefore = this.state.apConsumed
+    const apAfter = this.state.apConsumed + effectiveAPCost
     let apDisplayHtml = ''
     if (effectiveAPCost > 0) {
-      // Always show consumed AP in red since it's a cost
-      apDisplayHtml = `<span class="log-ap-inline" style="color: #e74c3c;">${apBefore} → ${apAfter}</span>`
+      // Show consumed AP like v1 (positive values, red color from CSS)
+      apDisplayHtml = `<span class="log-ap-inline">${apBefore} → ${apAfter}</span>`
     }
-    const shortCode = card.shortCode ? `[${card.shortCode}] ` : ''
     this.currentTurnLogs.push(
       `<div class="log-turn-header">
         <span class="turn-number">${this.state.currentTurn + 1}</span>
         ${phase}
-        <span class="log-card-name">${shortCode}${card.displayName || card.name}</span>
+        <span class="log-card-name">${card.displayName || card.name}</span>
         ${apDisplayHtml}
       </div>`
     )
@@ -1218,12 +1217,11 @@ export class GameSimulator {
       const isFeverTiming = timing === 'beforeFeverStart' || 
         (timing === 'afterLastTurn' && this.state.music && this.state.music.phases[1] >= this.getTotalTurns() - this.state.music.phases[0])
       const feverIcon = isFeverTiming ? '<span class="fever-icon">🔥</span>' : ''
-      const shortCode = centerCard.shortCode ? `[${centerCard.shortCode}] ` : ''
       this.currentTurnLogs.push(
         `<div class="log-turn-header">
           <span class="turn-number center-skill">センタースキル</span>
           ${feverIcon}
-          <span class="log-card-name">${shortCode}${centerCard.displayName || centerCard.name}</span>
+          <span class="log-card-name">${centerCard.displayName || centerCard.name}</span>
         </div>`
       )
       
