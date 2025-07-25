@@ -1,10 +1,10 @@
 // Convert existing gameData to TypeScript format
-import { Card, CardData } from '../core/models/Card'
-import { Music, MusicData } from '../core/models/Music'
+import { CardData } from '../core/models/Card'
+import { MusicData } from '../core/models/Music'
 import { Effect } from '../core/models/Effect'
 
 // Import the original data
-// @ts-ignore
+// @ts-expect-error - gameDataJS has dynamic structure
 import gameDataJS from '../../cardData.js'
 
 // Type assertion for the imported data

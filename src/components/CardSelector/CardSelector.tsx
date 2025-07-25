@@ -86,7 +86,6 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     centerSkillLevels,
     customSkillValues,
     customCenterSkillValues,
-    selectedMusic,
     setCard, 
     setCardSkillLevel,
     setCenterSkillLevel,

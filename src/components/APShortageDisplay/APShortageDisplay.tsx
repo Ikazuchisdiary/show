@@ -11,8 +11,8 @@ export const APShortageDisplay: React.FC<APShortageDisplayProps> = ({ result, to
   const [showDetails, setShowDetails] = useState(false)
   const [showLog, setShowLog] = useState(false)
   
-  const apDeficit = result.realAPConsumption - totalAP
-  const excludedCount = result.excludedActivations.length
+  // const apDeficit = result.realAPConsumption - totalAP
+  // const excludedCount = result.excludedActivations.length
   const apBalance = totalAP - result.realAPConsumption + result.apSaved
   
   return (

@@ -14,7 +14,7 @@ import { useDuplicateCharacterDetection } from './hooks/useDuplicateCharacterDet
 import './App.css'
 
 function App() {
-  const { loadFromShareUrl, swapCards, insertCard, selectedMusic, selectedCards, loadStoredSkillLevels, loadCustomMusicList, isShareMode } = useGameStore()
+  const { loadFromShareUrl, insertCard, selectedMusic, selectedCards, loadStoredSkillLevels, loadCustomMusicList, isShareMode } = useGameStore()
   const { loadCustomMusic } = useMusicStore()
   const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null)
   const [showUpdateHistory, setShowUpdateHistory] = useState(false)
@@ -64,7 +64,7 @@ function App() {
     })
   }
   
-  const handleDragOver = (e: React.DragEvent, index: number) => {
+  const handleDragOver = (e: React.DragEvent, _index: number) => {
     e.preventDefault()
     e.dataTransfer.dropEffect = 'move'
     

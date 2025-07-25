@@ -1,4 +1,4 @@
-import { Card, CardStats } from '../models/Card'
+import { Card } from '../models/Card'
 import { MusicAttribute } from '../models/Music'
 import { CenterCharacteristic } from '../models/Effect'
 
@@ -13,7 +13,7 @@ interface AppealCalculationOptions {
  * Calculate total appeal value based on cards and music attribute
  */
 export function calculateAppealValue(options: AppealCalculationOptions): number {
-  const { cards, musicAttribute, centerCard } = options
+  const { cards, musicAttribute } = options
   
   // Calculate total appeal for each attribute
   let totalSmile = 0
@@ -76,18 +76,18 @@ export function calculateAppealValue(options: AppealCalculationOptions): number 
   return Math.ceil(finalAppeal)
 }
 
-/**
- * Determine a card's primary attribute based on its stats
- */
-function getCardAttribute(card: Card): MusicAttribute | null {
-  const { smile, pure, cool } = card.stats
-  
-  if (smile >= pure && smile >= cool) return 'smile'
-  if (pure >= smile && pure >= cool) return 'pure'
-  if (cool >= smile && cool >= pure) return 'cool'
-  
-  return null
-}
+// /**
+//  * Determine a card's primary attribute based on its stats
+//  */
+// function getCardAttribute(card: Card): MusicAttribute | null {
+//   const { smile, pure, cool } = card.stats
+//   
+//   if (smile >= pure && smile >= cool) return 'smile'
+//   if (pure >= smile && pure >= cool) return 'pure'
+//   if (cool >= smile && cool >= pure) return 'cool'
+//   
+//   return null
+// }
 
 /**
  * Check if appeal boost should be applied to a card

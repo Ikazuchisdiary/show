@@ -179,7 +179,7 @@ const compressShareData = (data: any): string => {
   for (const cardInfo of data.cards) {
     // Find card in global cardData to get short code
     let shortCode = cardInfo.card
-    for (const [key, cardItem] of Object.entries(cardData)) {
+    for (const [_key, cardItem] of Object.entries(cardData)) {
       if (cardItem.name === cardInfo.card || cardItem.displayName === cardInfo.card) {
         shortCode = cardItem.shortCode || cardInfo.card
         break
@@ -233,9 +233,9 @@ const decompressShareData = (compressed: string): any => {
     }
     
     // Check version
-    let version = 'v0'
+    let _version = 'v0'
     if (parts[0] && parts[0].startsWith('v')) {
-      version = parts.shift()!
+      _version = parts.shift()!
     }
     
     const centerNames: Record<string, string> = {
@@ -283,7 +283,7 @@ const decompressShareData = (compressed: string): any => {
         case 'a': // attribute
           data.customAttribute = attrNames[value] || null
           break
-        case 'b': // combos
+        case 'b': { // combos
           const comboParts = value.split(',')
           data.customCombos = {}
           if (comboParts[0]) data.customCombos.normal = parseInt(comboParts[0])
@@ -291,10 +291,11 @@ const decompressShareData = (compressed: string): any => {
           if (comboParts[2]) data.customCombos.expert = parseInt(comboParts[2])
           if (comboParts[3]) data.customCombos.master = parseInt(comboParts[3])
           break
+        }
         case 'n': // custom music name
           data.customMusicName = decodeURIComponent(value)
           break
-        case 'C': // card
+        case 'C': { // card
           let baseValue = value
           let skillLevel = 14 // v1 default
           let centerSkillLevel = 14 // v1 default
@@ -345,6 +346,7 @@ const decompressShareData = (compressed: string): any => {
           
           data.cards.push(cardData)
           break
+        }
       }
     }
     
@@ -823,7 +825,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
           
           // Find card by short code or name
           let foundCard: Card | null = null
-          for (const [key, card] of Object.entries(cardData)) {
+          for (const [_key, card] of Object.entries(cardData)) {
             if (card.shortCode === cardInfo.card || card.name === cardInfo.card) {
               foundCard = card
               break
@@ -885,7 +887,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       if (cardName) {
         // Find card by name
         let foundCard: Card | null = null
-        for (const [key, card] of Object.entries(cardData)) {
+        for (const [_key, card] of Object.entries(cardData)) {
           if (card.name === cardName) {
             foundCard = card
             break

@@ -6,15 +6,12 @@ import {
   SimulationOptions,
   Effect,
   ConditionalEffect,
-  APShortageResult,
-  CardActivationLog
+  APShortageResult
 } from '../models'
 import { roundSkillValue } from '../../utils/skillValueRounding'
 import {
   calculateAppealValue,
-  calculateScore,
   getVoltageLevel,
-  calculateSkillInvocationMultiplier,
   SKILL_LEVEL_MULTIPLIERS
 } from '../calculations'
 
@@ -237,7 +234,7 @@ export class GameSimulator {
     // Process card effects
     let skipTurn = false
     let resetCardRequested = false
-    let removeAfterUseEffects: Array<{effect: Effect, index: number}> = []
+    const removeAfterUseEffects: Array<{effect: Effect, index: number}> = []
     
     // Process all effects except removeAfterUse first
     for (let i = 0; i < card.effects.length; i++) {
@@ -388,13 +385,14 @@ export class GameSimulator {
     const skillMultiplier = SKILL_LEVEL_MULTIPLIERS[skillLevel - 1] || 1
     
     switch (effect.type) {
-      case 'conditional':
+      case 'conditional': {
         const conditionalResult = this.processConditionalEffect(effect as ConditionalEffect, card, cardIndex, effectPath)
         skipTurn = conditionalResult.skipTurn
         resetCardTurn = conditionalResult.resetCardTurn
         break
+      }
         
-      case 'scoreGain':
+      case 'scoreGain': {
         // Calculate score immediately like v1
         let scoreGainValue: number
         if (customValue !== undefined) {
@@ -407,8 +405,9 @@ export class GameSimulator {
         // Note: skill multiplier is applied in getScore method, not here
         this.getScore(scoreGainValue)
         break
+      }
         
-      case 'voltageGain':
+      case 'voltageGain': {
         // Calculate voltage immediately like v1
         let voltageGainValue: number
         if (customValue !== undefined) {
@@ -421,8 +420,9 @@ export class GameSimulator {
         // No skill multiplier applied to voltage gain
         this.getVoltage(voltageGainValue)
         break
+      }
         
-      case 'scoreBoost':
+      case 'scoreBoost': {
         let scoreBoostValue: number
         if (customValue !== undefined) {
           scoreBoostValue = customValue
@@ -439,8 +439,9 @@ export class GameSimulator {
           `<div class="log-action log-boost-action"><div class="log-score-boost">スコアブースト</div><div class="boost-values">+${percent}% → ${total}%</div></div>`
         )
         break
+      }
         
-      case 'voltageBoost':
+      case 'voltageBoost': {
         let voltageBoostValue: number
         if (customValue !== undefined) {
           voltageBoostValue = customValue
@@ -457,8 +458,9 @@ export class GameSimulator {
           `<div class="log-action log-boost-action"><div class="log-voltage-boost">ボルテージブースト</div><div class="boost-values">+${vPercent}% → ${vTotal}%</div></div>`
         )
         break
+      }
         
-      case 'skillInvocationBoost':
+      case 'skillInvocationBoost': {
         let skillInvocationValue: number
         if (customValue !== undefined) {
           skillInvocationValue = customValue
@@ -469,6 +471,7 @@ export class GameSimulator {
         // No skill multiplier applied to boost values in v1
         this.state.skillInvocationBoost += skillInvocationValue
         break
+      }
         
       case 'skipTurn':
         skipTurn = true
@@ -481,7 +484,7 @@ export class GameSimulator {
         )
         break
         
-      case 'apGain':
+      case 'apGain': {
         // AP gain is handled differently - use effect value or level values
         let apValue: number
         const apEffect = effect as any // TODO: add proper type
@@ -497,16 +500,18 @@ export class GameSimulator {
         }
         this.getAP(apValue)
         break
+      }
         
-      case 'mentalReduction':
+      case 'mentalReduction': {
         const reduction = Math.floor(this.state.mental * (effect.value / 100))
         this.state.mental = Math.max(0, this.state.mental - reduction)
         this.currentTurnLogs.push(
           `<div class="log-action"><span style="color: #e74c3c;">メンタル${effect.value}%減少 → ${this.state.mental}%</span></div>`
         )
         break
+      }
         
-      case 'mentalRecover':
+      case 'mentalRecover': {
         const mentalRecoverValue = customValue !== undefined ? customValue : effect.value
         // No skill multiplier applied to mental recover in v1
         this.state.mental += mentalRecoverValue
@@ -514,8 +519,9 @@ export class GameSimulator {
           `<div class="log-action log-mental">メンタル回復: +${mentalRecoverValue} → ${this.state.mental}%</div>`
         )
         break
+      }
         
-      case 'voltagePenalty':
+      case 'voltagePenalty': {
         const voltagePenaltyValue = customValue !== undefined ? customValue : effect.value
         // No skill multiplier applied to voltage penalty in v1
         this.state.totalVoltage = Math.max(0, this.state.totalVoltage - voltagePenaltyValue)
@@ -523,8 +529,9 @@ export class GameSimulator {
           `<div class="log-action" style="color: #e74c3c;">ボルテージペナルティ: -${voltagePenaltyValue}</div>`
         )
         break
+      }
         
-      case 'removeAfterUse':
+      case 'removeAfterUse': {
         // Evaluate condition for removal
         const shouldRemove = this.evaluateRemoveCondition(effect, card, cardIndex)
         if (shouldRemove) {
@@ -536,6 +543,7 @@ export class GameSimulator {
           )
         }
         break
+      }
     }
     
     return { skipTurn, resetCardTurn }
@@ -592,12 +600,11 @@ export class GameSimulator {
     return { skipTurn, resetCardTurn }
   }
   
-  private formatCondition(condition: string, card: Card): string {
+  private formatCondition(condition: string, _card: Card): string {
     const cardIndex = this.state.currentCardIndex
     // Use totalCardUses for count (total times card has been used in the game)
     const turnCount = this.state.totalCardUses[cardIndex]
     // Use turn start values for display (v1 behavior)
-    const voltage = this.turnStartVoltage
     const voltageLevel = this.turnStartVoltageLevel
     const skillLevel = this.state.cardSkillLevels[cardIndex]
     
@@ -798,7 +805,7 @@ export class GameSimulator {
     return false
   }
   
-  private evaluateRemoveCondition(effect: any, card: Card, cardIndex: number): boolean {
+  private evaluateRemoveCondition(effect: any, card: Card, _cardIndex: number): boolean {
     // For cards with conditions
     if (effect.condition) {
       return this.evaluateCondition(effect.condition, card)
@@ -895,7 +902,7 @@ export class GameSimulator {
     // Build voltage calculation display
     let calcHtml = '<div class="log-calculation">'
     calcHtml += `<span class="calc-value calc-base">${value}<span class="calc-label">基本値</span></span>`
-    calcHtml += '<span class="calc-operator">×</span>'
+    calcHtml += '<span class="calc-operator">&times;</span>'
     calcHtml += `<span class="calc-value calc-voltage-boost">${((1 + this.state.voltageBoost[this.state.voltageBoostCount - 1]) * 100).toFixed(2)}%<span class="calc-label">ブースト</span></span>`
     calcHtml += '</div>'
     
@@ -903,7 +910,7 @@ export class GameSimulator {
     
     if (oldLevel !== newLevel) {
       this.currentTurnLogs.push(
-        `<div class="log-action" style="color: #e74c3c; font-weight: bold;">　→ ボルテージレベル ${oldLevel} → ${newLevel}</div>`
+        `<div class="log-action" style="color: #e74c3c; font-weight: bold;">&nbsp;&rarr; ボルテージレベル ${oldLevel} → ${newLevel}</div>`
       )
     }
   }
@@ -1074,7 +1081,7 @@ export class GameSimulator {
     const lastExcludedTurn = firstExcluded?.turn || normalState.currentTurn
     
     // Calculate voltage level using the same logic as getVoltageLevel
-    let voltageLevel = this.calculateVoltageLevel(currentVoltage)
+    const voltageLevel = this.calculateVoltageLevel(currentVoltage)
     
     // Check for center skills that would still activate after excluded activations
     const centerCard = this.getCenterCard()
@@ -1086,7 +1093,6 @@ export class GameSimulator {
       
       // Calculate total turns
       const music = this.state.music!
-      const totalTurns = music.phases.reduce((sum, phase) => sum + phase, 0)
       
       // Check timing for center skill activation
       let shouldActivate = false
@@ -1310,7 +1316,7 @@ export class GameSimulator {
     const customValue = this.customCenterSkillValues[centerIndex]?.[effectPath]
     
     switch (effect.type) {
-      case 'apGain':
+      case 'apGain': {
         // AP gain with level values support
         let apValue: number
         const apEffect = effect as any
@@ -1325,8 +1331,9 @@ export class GameSimulator {
         }
         this.getAP(apValue)
         break
+      }
         
-      case 'scoreGain':
+      case 'scoreGain': {
         let scoreValue: number
         if (customValue !== undefined) {
           scoreValue = customValue
@@ -1338,8 +1345,9 @@ export class GameSimulator {
         // Center skill score gain uses getScore method like regular cards
         this.getScore(scoreValue)
         break
+      }
         
-      case 'scoreBoost':
+      case 'scoreBoost': {
         let boostValue: number
         if (customValue !== undefined) {
           boostValue = customValue
@@ -1350,8 +1358,9 @@ export class GameSimulator {
         }
         this.state.scoreBoost[this.state.scoreBoostCount] += boostValue
         break
+      }
         
-      case 'voltageGain':
+      case 'voltageGain': {
         let voltageValue: number
         if (customValue !== undefined) {
           voltageValue = customValue
@@ -1366,8 +1375,9 @@ export class GameSimulator {
         // Increment voltage boost counter after use
         this.state.voltageBoostCount = Math.min(this.state.voltageBoostCount + 1, 99)
         break
+      }
         
-      case 'voltageBoost':
+      case 'voltageBoost': {
         let voltageBoostValue: number
         if (customValue !== undefined) {
           voltageBoostValue = customValue
@@ -1378,13 +1388,14 @@ export class GameSimulator {
         }
         this.state.voltageBoost[this.state.voltageBoostCount] += voltageBoostValue
         break
+      }
         
       case 'mentalReduction':
         // Mental reduction is a fixed percentage, not affected by skill level
         // Handled in game initialization
         break
         
-      case 'conditional':
+      case 'conditional': {
         const conditionalEffect = effect as ConditionalEffect
         const conditionMet = this.evaluateCenterSkillCondition(conditionalEffect.condition)
         const effectsToProcess = conditionMet ? conditionalEffect.then : (conditionalEffect.else || [])
@@ -1394,6 +1405,7 @@ export class GameSimulator {
           this.processCenterSkillEffect(effectsToProcess[i], centerIndex, skillMultiplier, `${effectPath}_${pathPrefix}_${i}`)
         }
         break
+      }
         
       case 'voltagePenalty':
         this.state.totalVoltage = Math.max(0, this.state.totalVoltage - effect.value)
