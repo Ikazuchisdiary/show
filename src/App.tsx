@@ -6,6 +6,7 @@ import { ScoreDisplay } from './components/ScoreDisplay'
 import { UpdateBanner } from './components/UpdateBanner'
 import { UpdateHistoryButton } from './components/UpdateHistoryButton'
 import { UpdateHistoryModal } from './components/UpdateHistoryModal'
+import { ShareModeBanner } from './components/ShareModeBanner'
 import { useGameStore } from './stores/gameStore'
 import { useMusicStore } from './stores/musicStore'
 import { useTouchDrag } from './hooks/useTouchDrag'
@@ -13,7 +14,7 @@ import { useDuplicateCharacterDetection } from './hooks/useDuplicateCharacterDet
 import './App.css'
 
 function App() {
-  const { loadFromShareUrl, swapCards, insertCard, selectedMusic, selectedCards, loadStoredSkillLevels } = useGameStore()
+  const { loadFromShareUrl, swapCards, insertCard, selectedMusic, selectedCards, loadStoredSkillLevels, loadCustomMusicList, isShareMode } = useGameStore()
   const { loadCustomMusic } = useMusicStore()
   const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null)
   const [showUpdateHistory, setShowUpdateHistory] = useState(false)
@@ -24,14 +25,30 @@ function App() {
   useEffect(() => {
     // Load from URL parameters on mount
     const params = new URLSearchParams(window.location.search)
-    if (params.toString()) {
+    if (params.has('share') || params.has('s') || params.has('d') || params.has('data')) {
       loadFromShareUrl(params)
+      // Add share-mode class to body
+      document.body.classList.add('share-mode')
     } else {
       // Load saved data from localStorage
       loadStoredSkillLevels() // スキルレベルを読み込む
       loadCustomMusic() // カスタム楽曲を読み込む
+      loadCustomMusicList() // カスタム楽曲リストを読み込む
     }
-  }, [loadFromShareUrl, loadStoredSkillLevels, loadCustomMusic])
+  }, [loadFromShareUrl, loadStoredSkillLevels, loadCustomMusic, loadCustomMusicList])
+  
+  // Update body class when share mode changes
+  useEffect(() => {
+    if (isShareMode) {
+      document.body.classList.add('share-mode')
+    } else {
+      document.body.classList.remove('share-mode')
+    }
+    
+    return () => {
+      document.body.classList.remove('share-mode')
+    }
+  }, [isShareMode])
   
   const handleDragStart = (index: number) => {
     setDraggedIndex(index)
@@ -122,6 +139,8 @@ function App() {
         </div>
         
         <UpdateBanner onShowHistory={() => setShowUpdateHistory(true)} />
+        
+        <ShareModeBanner />
         
         <MusicSelector />
         

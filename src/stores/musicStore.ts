@@ -18,11 +18,10 @@ interface MusicStore {
 }
 
 export const useMusicStore = create<MusicStore>((set, get) => ({
-  customMusicList: {},
+  customMusicList: getCustomMusicList(), // Initialize with saved custom music
   
-  loadCustomMusic: () => set(() => {
-    if (isShareMode()) return { customMusicList: {} }
-    
+  loadCustomMusic: () => set((state) => {
+    // Always load the saved list, regardless of share mode
     const savedList = getCustomMusicList()
     return { customMusicList: savedList }
   }),

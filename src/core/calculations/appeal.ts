@@ -15,12 +15,6 @@ interface AppealCalculationOptions {
 export function calculateAppealValue(options: AppealCalculationOptions): number {
   const { cards, musicAttribute, centerCard } = options
   
-  console.log('[Appeal Calculation] Starting with:', {
-    musicAttribute,
-    centerCard: centerCard?.name,
-    centerCharacteristic: options.centerCharacteristic
-  })
-  
   // Calculate total appeal for each attribute
   let totalSmile = 0
   let totalPure = 0
@@ -36,7 +30,6 @@ export function calculateAppealValue(options: AppealCalculationOptions): number 
       if (options.centerCharacteristic) {
         for (const effect of options.centerCharacteristic.effects) {
           if (effect.type === 'appealBoost' && shouldApplyBoost(card, effect.target)) {
-            console.log(`[Appeal Calculation] Card ${i+1} (${card.name}): Applying boost ${effect.value} from ${effect.target}`)
             // v1 adds the boost value to the multiplier (not sets it)
             boostMultiplier += effect.value
           }
@@ -48,23 +41,11 @@ export function calculateAppealValue(options: AppealCalculationOptions): number 
       const boostedPure = Math.ceil(card.stats.pure * boostMultiplier)
       const boostedCool = Math.ceil(card.stats.cool * boostMultiplier)
       
-      console.log(`[Appeal Calculation] Card ${i+1} (${card.name}):`, {
-        baseStats: { smile: card.stats.smile, pure: card.stats.pure, cool: card.stats.cool },
-        boostMultiplier,
-        boostedStats: { smile: boostedSmile, pure: boostedPure, cool: boostedCool }
-      })
-      
       totalSmile += boostedSmile
       totalPure += boostedPure
       totalCool += boostedCool
     }
   }
-  
-  console.log('[Appeal Calculation] Total stats after boost:', {
-    totalSmile,
-    totalPure,
-    totalCool
-  })
   
   // Calculate final appeal based on music attribute
   let finalAppeal: number
@@ -90,14 +71,6 @@ export function calculateAppealValue(options: AppealCalculationOptions): number 
     // No music attribute, all are 10%
     finalAppeal = (totalSmile + totalPure + totalCool) * 0.1
   }
-  
-  console.log('[Appeal Calculation] Final calculation:', {
-    musicAttribute,
-    mainAttr,
-    otherAttr,
-    finalAppeal,
-    finalAppealRounded: Math.ceil(finalAppeal)
-  })
   
   // Round up the final appeal
   return Math.ceil(finalAppeal)

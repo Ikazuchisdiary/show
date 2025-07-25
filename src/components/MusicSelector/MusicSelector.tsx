@@ -10,12 +10,15 @@ export const MusicSelector: React.FC = () => {
     selectedMusic, 
     selectedDifficulty, 
     initialMental,
+    learningCorrection,
     setMusic, 
     setDifficulty,
-    setInitialMental
+    setInitialMental,
+    setLearningCorrection,
+    isShareMode
   } = useGameStore()
   
-  const { customMusicList, addCustomMusic, deleteCustomMusic, generateCustomMusicId } = useMusicStore()
+  const { customMusicList, addCustomMusic, updateCustomMusic, deleteCustomMusic, generateCustomMusicId, loadCustomMusic } = useMusicStore()
   
   const [showDropdown, setShowDropdown] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -40,8 +43,9 @@ export const MusicSelector: React.FC = () => {
     if (!name) return false
     
     // Check if we're updating the current custom music
-    if (selectedMusic?.name.startsWith('custom_') && 
-        Object.values(customMusicList).find(m => m.name === selectedMusic.name)?.name === name) {
+    const selectedMusicWithId = selectedMusic as any
+    if (selectedMusicWithId?.id?.startsWith('custom_') && 
+        customMusicList[selectedMusicWithId.id]?.name === name) {
       return true
     }
     
@@ -54,12 +58,60 @@ export const MusicSelector: React.FC = () => {
   const allMusic = getAllMusic()
   const customMusicArray = Object.values(customMusicList)
   
-  // Set default music if none selected
+  // Load custom music list and set default music if none selected
   useEffect(() => {
+    // Load custom music list from localStorage
+    loadCustomMusic()
+    
     if (!selectedMusic && allMusic.length > 0) {
       setMusic(allMusic[0])
     }
-  }, [selectedMusic, allMusic, setMusic])
+  }, []) // Only run on mount
+  
+  // Handle custom music UI state
+  useEffect(() => {
+    // Check if it's a custom music - following v1 logic
+    const musicWithId = selectedMusic as any
+    const isCustomMusic = selectedMusic && (
+      selectedMusic.name === 'カスタム' || 
+      musicWithId.id === 'custom' ||
+      musicWithId.id?.startsWith('custom_')
+    )
+    
+    if (isCustomMusic) {
+      setShowCustomMusic(true)
+      // Load custom music data if available
+      if (selectedMusic.phases) {
+        setCustomPhases({
+          beforeFever: selectedMusic.phases[0],
+          duringFever: selectedMusic.phases[1],
+          afterFever: selectedMusic.phases[2]
+        })
+      }
+      // Load combo data if available
+      if (selectedMusic.combos) {
+        setCustomCombos({
+          normal: selectedMusic.combos.normal || 287,
+          hard: selectedMusic.combos.hard || 536,
+          expert: selectedMusic.combos.expert || 1278,
+          master: selectedMusic.combos.master || 1857
+        })
+      }
+      // For saved custom music, set the name
+      if (musicWithId.id?.startsWith('custom_')) {
+        // Saved custom music - the name is already the display name
+        setCustomMusicName(selectedMusic.name)
+      } else if (selectedMusic.name === 'カスタム' || musicWithId.id === 'custom') {
+        // For new custom music or shared custom without a name
+        setCustomMusicName(selectedMusic.displayName || '')
+      } else {
+        // For shared custom music with a name
+        setCustomMusicName(selectedMusic.displayName || selectedMusic.name)
+      }
+    } else {
+      setShowCustomMusic(false)
+    }
+  }, [selectedMusic, customMusicList])
   
   // Handle clicks outside to close dropdown
   useEffect(() => {
@@ -75,7 +127,18 @@ export const MusicSelector: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
   
-  const filteredMusic = [...allMusic, ...customMusicArray].filter(music => {
+  // Create combined music list without duplicates
+  const combinedMusic: any[] = [...allMusic]
+  
+  // Add custom music only if not already in the list
+  customMusicArray.forEach(customMusic => {
+    // Don't add if it's already in allMusic (shouldn't happen but just in case)
+    if (!allMusic.find(m => m.name === customMusic.name)) {
+      combinedMusic.push(customMusic)
+    }
+  })
+  
+  const filteredMusic = combinedMusic.filter(music => {
     const query = searchQuery.toLowerCase()
     return music.name.toLowerCase().includes(query) ||
            (music.centerCharacter && music.centerCharacter.toLowerCase().includes(query))
@@ -87,8 +150,8 @@ export const MusicSelector: React.FC = () => {
     setIsActiveDropdown(false)
     setSearchQuery('')
     
-    // If it's a custom music, show the editor
-    if (music.id && music.id.startsWith('custom_')) {
+    // If it's a custom music, show the editor - following v1 logic
+    if (music.id?.startsWith('custom_') || music.id === 'custom' || music.name === 'カスタム') {
       setShowCustomMusic(true)
       // Load the custom music data into the form
       setCustomPhases({
@@ -102,13 +165,17 @@ export const MusicSelector: React.FC = () => {
         expert: 1278,
         master: 1857
       })
-      setCustomMusicName(music.name)
+      // For saved custom music, use the display name
+      setCustomMusicName(music.id?.startsWith('custom_') ? music.name : '')
     } else {
       setShowCustomMusic(false)
     }
   }
   
   const toggleDropdown = () => {
+    // Prevent dropdown in share mode
+    if (isShareMode) return
+    
     if (!showDropdown) {
       setSearchQuery('')
     }
@@ -140,8 +207,9 @@ export const MusicSelector: React.FC = () => {
       })
     }
     
-    // Set custom music immediately, inheriting all values from previous selection
+    // Set custom music immediately, inheriting all values from previous selection - following v1
     const customMusic = {
+      id: 'custom',
       name: 'カスタム',
       centerCharacter: selectedMusic?.centerCharacter || '',
       attribute: selectedMusic?.attribute || 'smile' as const,
@@ -158,8 +226,9 @@ export const MusicSelector: React.FC = () => {
     const newPhases = { ...customPhases, [field]: value }
     setCustomPhases(newPhases)
     
-    // Update the music if custom is selected or editing a saved custom music
-    if (selectedMusic && (selectedMusic.name === 'カスタム' || selectedMusic.id?.startsWith('custom_'))) {
+    // Update the music if custom is selected or editing a saved custom music - following v1
+    const musicWithId = selectedMusic as any
+    if (selectedMusic && (musicWithId.id === 'custom' || musicWithId.id?.startsWith('custom_'))) {
       const customMusic = {
         ...selectedMusic,
         phases: [newPhases.beforeFever, newPhases.duringFever, newPhases.afterFever] as [number, number, number]
@@ -169,7 +238,8 @@ export const MusicSelector: React.FC = () => {
   }
   
   const handleCustomCenterChange = (center: string) => {
-    if (selectedMusic && (selectedMusic.name === 'カスタム' || selectedMusic.id?.startsWith('custom_'))) {
+    const musicWithId = selectedMusic as any
+    if (selectedMusic && (musicWithId.id === 'custom' || musicWithId.id?.startsWith('custom_'))) {
       const customMusic = {
         ...selectedMusic,
         centerCharacter: center
@@ -179,7 +249,8 @@ export const MusicSelector: React.FC = () => {
   }
   
   const handleCustomAttributeChange = (attribute: string) => {
-    if (selectedMusic && (selectedMusic.name === 'カスタム' || selectedMusic.id?.startsWith('custom_'))) {
+    const musicWithId = selectedMusic as any
+    if (selectedMusic && (musicWithId.id === 'custom' || musicWithId.id?.startsWith('custom_'))) {
       const customMusic = {
         ...selectedMusic,
         attribute: attribute as 'smile' | 'pure' | 'cool'
@@ -193,7 +264,8 @@ export const MusicSelector: React.FC = () => {
     setCustomCombos(newCombos)
     
     // Update the music if editing a saved custom music
-    if (selectedMusic && selectedMusic.id?.startsWith('custom_')) {
+    const musicWithId = selectedMusic as any
+    if (selectedMusic && musicWithId.id?.startsWith('custom_')) {
       const customMusic = {
         ...selectedMusic,
         combos: newCombos
@@ -210,24 +282,45 @@ export const MusicSelector: React.FC = () => {
     
     // Check if we're updating an existing custom music
     let musicId = generateCustomMusicId()
-    const existingMusic = Object.entries(customMusicList).find(([_, m]) => m.name === customMusicName)
+    let isUpdate = false
+    
+    // Find existing music with the same name
+    const existingMusic = Object.entries(customMusicList).find(([_, m]) => m.name === customMusicName.trim())
+    
     if (existingMusic) {
-      musicId = existingMusic[0]
+      // If updating the currently selected custom music
+      const selectedMusicWithId = selectedMusic as any
+      if (selectedMusicWithId?.id === existingMusic[0]) {
+        musicId = existingMusic[0]
+        isUpdate = true
+      } else {
+        // If a different custom music with the same name exists
+        const confirmUpdate = confirm(`「${customMusicName}」という名前のカスタム楽曲は既に存在します。上書きしますか？`)
+        if (!confirmUpdate) {
+          return
+        }
+        musicId = existingMusic[0]
+        isUpdate = true
+      }
     }
     
     const customMusic: CustomMusic = {
       id: musicId,
-      name: customMusicName,
+      name: customMusicName.trim(),
       phases: [customPhases.beforeFever, customPhases.duringFever, customPhases.afterFever] as [number, number, number],
       centerCharacter: selectedMusic?.centerCharacter || '',
       attribute: (selectedMusic?.attribute || 'smile') as 'smile' | 'pure' | 'cool',
       combos: customCombos
     }
     
-    addCustomMusic(customMusic)
+    if (isUpdate) {
+      updateCustomMusic(musicId, customMusic)
+    } else {
+      addCustomMusic(customMusic)
+    }
+    
     setMusic(customMusic)
     setCustomMusicName('')
-    const isUpdate = isOverwriteMode()
     alert(`「${customMusicName}」を${isUpdate ? '更新' : '保存'}しました`)
   }
   
@@ -242,16 +335,16 @@ export const MusicSelector: React.FC = () => {
           <div className="music-select-wrapper">
             <div 
               ref={displayRef}
-              className={`music-select-display ${isActiveDropdown ? 'active' : ''}`}
+              className={`music-select-display ${isActiveDropdown ? 'active' : ''} ${isShareMode ? 'share-mode-disabled' : ''}`}
               onClick={toggleDropdown}
             >
               <div className="music-select-value">
                 <span className="music-select-title">
-                  {selectedMusic ? selectedMusic.name : 'カスタム入力'}
+                  {selectedMusic ? (selectedMusic.displayName || selectedMusic.name) : 'カスタム入力'}
                 </span>
                 <span className="music-select-info">
                   {selectedMusic ? 
-                    (selectedMusic.name === 'カスタム' ? 
+                    ((selectedMusic as any).id === 'custom' || selectedMusic.name === 'カスタム' ? 
                       `${formatPhases(selectedMusic.phases)}${selectedMusic.centerCharacter ? ' • ' + selectedMusic.centerCharacter : ''}` :
                       `${formatPhases(selectedMusic.phases)} • ${selectedMusic.centerCharacter}`
                     ) : ''}
@@ -274,7 +367,7 @@ export const MusicSelector: React.FC = () => {
                 <div className="music-dropdown-items">
                   {filteredMusic.map((music) => (
                     <div 
-                      key={music.name}
+                      key={music.id || music.name}
                       className="music-dropdown-item"
                       onClick={() => handleMusicSelect(music)}
                     >
@@ -342,7 +435,8 @@ export const MusicSelector: React.FC = () => {
             <input 
               type="number" 
               id="learningCorrection" 
-              defaultValue="1.5" 
+              value={learningCorrection}
+              onChange={(e) => setLearningCorrection(parseFloat(e.target.value) || 1.5)}
               min="0" 
               step="0.01"
             />
@@ -474,27 +568,29 @@ export const MusicSelector: React.FC = () => {
                 </div>
               </div>
               
-              <div className="custom-music-save-section">
-                <div className="save-input-group">
-                  <input
-                    type="text"
-                    className="custom-music-name-input"
-                    placeholder="カスタム楽曲名を入力"
-                    value={customMusicName}
-                    onChange={(e) => setCustomMusicName(e.target.value)}
-                  />
-                  <button 
-                    className={`custom-music-save-button ${isOverwriteMode() ? 'overwrite-mode' : ''}`}
-                    onClick={handleSaveCustomMusic}
-                  >
-                    💾 {isOverwriteMode() ? '上書き保存' : '保存'}
-                  </button>
+              {!isShareMode && (
+                <div className="custom-music-save-section">
+                  <div className="save-input-group">
+                    <input
+                      type="text"
+                      className="custom-music-name-input"
+                      placeholder="カスタム楽曲名を入力"
+                      value={customMusicName}
+                      onChange={(e) => setCustomMusicName(e.target.value)}
+                    />
+                    <button 
+                      className={`custom-music-save-button ${isOverwriteMode() ? 'overwrite-mode' : ''}`}
+                      onClick={handleSaveCustomMusic}
+                    >
+                      💾 {isOverwriteMode() ? '上書き保存' : '保存'}
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
             
             {/* 保存済みカスタム楽曲リスト */}
-            {Object.keys(customMusicList).length > 0 && (
+            {!isShareMode && Object.keys(customMusicList).length > 0 && (
               <div className="saved-music-container">
                 <div className="saved-music-header">保存済みカスタム楽曲</div>
                 {Object.entries(customMusicList).map(([id, music]) => (
@@ -516,7 +612,9 @@ export const MusicSelector: React.FC = () => {
                       onClick={() => {
                         if (confirm(`「${music.name}」を削除しますか？`)) {
                           deleteCustomMusic(id)
-                          if (selectedMusic?.name === music.name) {
+                          // Check if the deleted music is currently selected
+                          const selectedMusicWithId = selectedMusic as any
+                          if (selectedMusicWithId?.id === id) {
                             setMusic(null)
                           }
                         }

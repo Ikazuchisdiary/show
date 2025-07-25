@@ -17,9 +17,7 @@ export const ScoreDisplay: React.FC = () => {
     customCenterSkillValues,
     selectedMusic,
     selectedDifficulty,
-    musicAttribute,
     centerCharacter,
-    mental,
     comboCount,
     initialMental
   } = useGameStore()
@@ -49,7 +47,7 @@ export const ScoreDisplay: React.FC = () => {
       actualComboCount = selectedMusic.combos[selectedDifficulty]!
     }
     
-    // Run AP shortage simulation
+    // Create a new simulator with the same configuration
     const simulator = new GameSimulator({
       cards: selectedCards,
       cardSkillLevels,
@@ -57,13 +55,14 @@ export const ScoreDisplay: React.FC = () => {
       customSkillValues,
       customCenterSkillValues,
       music: selectedMusic,
-      musicAttribute,
-      centerCharacter,
-      initialMental: mental,
+      musicAttribute: selectedMusic?.attribute,
+      centerCharacter: selectedMusic?.centerCharacter || centerCharacter,
+      initialMental,
       comboCount: actualComboCount
     })
     
-    return simulator.simulateWithAPShortage(baseAP) // Include base AP
+    // Pass the existing simulation result to avoid re-simulation
+    return simulator.simulateWithAPShortage(baseAP, simulationResult) // Include base AP and previous state
   }, [
     simulationResult,
     selectedCards,
@@ -73,11 +72,10 @@ export const ScoreDisplay: React.FC = () => {
     customCenterSkillValues,
     selectedMusic,
     selectedDifficulty,
-    musicAttribute,
     centerCharacter,
-    mental,
     comboCount,
-    baseAP
+    baseAP,
+    initialMental
   ])
   
   if (!simulationResult) {

@@ -84,8 +84,6 @@ Example commit messages:
 - v2開発時は必ずv1の実装を確認してから実装する
 - インラインスタイルはCSSクラスに移行する
 - font-family: inheritなどのグローバルスタイルに注意
-- 2025-07-25: ユーザー離席中にv1実装との差異を埋める作業を継続的に実施
-  - タスクがなくなったら自主的にv1とv2のコードを比較し差異を埋めていく
 
 ## v2 Development Methodology
 
@@ -151,7 +149,7 @@ See `ARCHITECTURE_PLAN.md` for detailed implementation plan.
 
 ## v2 Progress Tracking
 
-### Completed Features (2025-07-24)
+### Completed Features (2025-07-25)
 1. **Card Selection UI** - Fully matches v1 appearance and behavior
    - Skill parameter editing with custom values
    - Conditional effect display formatting
@@ -160,21 +158,67 @@ See `ARCHITECTURE_PLAN.md` for detailed implementation plan.
    - Drag & drop with insertion indicators
 2. **Center Character System** - Highlight and bonus calculations
    - Orange border (#ff9800) highlighting for center character cards
-   - Center characteristic appeal boost calculations (already implemented in GameSimulator)
-3. **Center Skill System** - Level selection and parameter inputs
-4. **Local Storage** - v1 key compatibility for all settings
-5. **Complete Game Logic** - All v1 card effects implemented
-6. **Detailed Turn Logs** - v1-style HTML formatted logs
-7. **AP Shortage Calculation** - Reference score with exclusions
-8. **Update Banner & History** - Version notifications
-9. **Mobile Support** - Touch drag with 500ms long press
-10. **Duplicate Character Detection** - Red warnings and validation
+   - Center characteristic appeal boost calculations
+   - AP reduction effects properly applied
+3. **Score Calculation** - Complete v1 parity
+   - Base AP calculation with actual combo count
+   - Skill level multipliers correctly applied
+   - Appeal value calculation with attribute matching
+   - AP shortage reference score calculation
+   - Center skill processing with voltage level doubling
+4. **URL Sharing** - v1-compatible compression and encoding
+   - Share mode with background visual feedback
+   - Custom music support in shared URLs
+   - Learning correction parameter support
+5. **Custom Music** - Full v1 compatibility
+   - id='custom' for new custom music
+   - Saved custom music with unique IDs
+   - No formation saving for custom music (v1 behavior)
+   - Proper duplicate handling in music list
+6. **UI Improvements**
+   - AP balance display with correct formatting
+   - Appeal value display in results
+   - Voltage summary removed for cleaner UI
+   - Skill value rounding (integers use Math.floor, decimals truncate at 4 places)
 
-### Work Completed During 6-Hour Session
-1. **AP不足計算機能** - v1準拠のスコア計算ロジックで実装
-2. **アップデートバナー** - バージョン通知と履歴表示
-3. **モバイル対応** - タッチドラッグ（500ms長押し）
-4. **重複キャラクター検出** - 赤い警告表示と計算時のバリデーション
+### Recent Bug Fixes (2025-07-25)
+1. **AP Calculation Issues**
+   - Fixed base AP not being included in calculations
+   - Fixed trailing zeros being removed from AP display
+   - Fixed center characteristic AP reduction not being applied
+   - Fixed skill AP gains not being multiplied by 1.5x
+   - Fixed incorrect combo count usage in base AP calculation
+2. **Skill Value Issues**
+   - Fixed BLAST姫芽 values not matching v1
+   - Fixed skill level multipliers being incorrectly applied
+   - Fixed skill value rounding rules to match v1
+3. **URL Sharing Issues**
+   - Fixed custom music not loading from URLs
+   - Fixed learning correction not being loaded
+   - Fixed share mode UI state management
+4. **Custom Music Issues**
+   - Fixed duplicate entries in dropdown
+   - Fixed shared custom music handling
+   - Fixed music list showing duplicates
+   - Aligned custom music detection with v1 (id='custom' or id.startsWith('custom_'))
 
-### Final Status
-v2 is now functionally complete with all major v1 features implemented. The remaining tasks (real-time preview, undo/redo) are new features not present in v1.
+### Current Tasks (2025-07-25 Long-term work session)
+1. **Fix IME Enter key issue** - 編成保存時の名前入力でIME確定Enterが保存を実行してしまう問題
+2. **Match v1 detailed log display** - 詳細ログの表示形式をv1準拠に修正
+3. **Fix pnpm lint errors** - ESLintエラーの修正
+4. **Fix pnpm type-check errors** - TypeScriptエラーの修正
+5. **Run pnpm format** - コードフォーマット
+6. **Implement tests** - 現在の実装に対するテストを作成
+7. **Performance optimization** - Code splittingなどの最適化
+8. **Other necessary tasks** - 時間があれば必要と感じるタスク
+
+### Next Priority Tasks (After current work session)
+1. **Card Collection Management** - スキルレベル管理機能
+   - カード一覧画面から所持カードのスキルレベルを登録
+   - ユーザーの所持カード情報をローカルストレージに保存
+   - カード選択時に所持カードのみ表示するフィルター機能
+2. **Optimal Formation Search** - 最適編成探索機能
+   - 指定楽曲でのスコア最大化編成を自動探索
+   - AP制約を考慮した実現可能な編成の提案
+   - 複数の候補編成の比較表示
+3. **Other New Features** - Real-time preview, undo/redo (not in v1)

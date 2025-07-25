@@ -8,7 +8,9 @@ export interface MusicCombos {
 }
 
 export interface Music {
+  id?: string // For custom music identification (v1 compatible)
   name: string
+  displayName?: string // For custom music display names
   centerCharacter?: string
   attribute?: MusicAttribute
   phases: number[] // [beforeFever, duringFever, afterFever]
@@ -22,5 +24,5 @@ export interface MusicData {
 }
 
 export interface CustomMusic extends Music {
-  customId: string
+  id?: string
 }
