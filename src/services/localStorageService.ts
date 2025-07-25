@@ -61,7 +61,7 @@ export function saveMusicState(
     cards: string[]
     mental: number
     learningCorrection: number
-  }
+  },
 ): void {
   if (!musicKey || isShareMode()) return
   const key = KEYS.musicState(musicKey)
@@ -80,11 +80,10 @@ export function loadMusicState(musicKey: string): {
   return savedState ? JSON.parse(savedState) : null
 }
 
-
 // すべてのカードのスキルレベルを読み込み
 export function loadAllCardSkillLevels(): Record<string, number> {
   const skillLevels: Record<string, number> = {}
-  
+
   // localStorageのすべてのキーを確認
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i)
@@ -96,14 +95,14 @@ export function loadAllCardSkillLevels(): Record<string, number> {
       }
     }
   }
-  
+
   return skillLevels
 }
 
 // すべてのカードのセンタースキルレベルを読み込み
 export function loadAllCenterSkillLevels(): Record<string, number> {
   const centerSkillLevels: Record<string, number> = {}
-  
+
   // localStorageのすべてのキーを確認
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i)
@@ -115,7 +114,7 @@ export function loadAllCenterSkillLevels(): Record<string, number> {
       }
     }
   }
-  
+
   return centerSkillLevels
 }
 

@@ -9,7 +9,7 @@ interface SkillParameterDisplayProps {
 export const SkillParameterDisplay: React.FC<SkillParameterDisplayProps> = ({
   label,
   value,
-  style
+  style,
 }) => {
   const spanStyle = {
     flex: 1,
@@ -22,9 +22,9 @@ export const SkillParameterDisplay: React.FC<SkillParameterDisplayProps> = ({
     boxSizing: 'border-box' as const,
     height: '32px',
     lineHeight: '20px',
-    ...style
+    ...style,
   }
-  
+
   return (
     <div className="skill-param-row">
       <label>{label}:</label>

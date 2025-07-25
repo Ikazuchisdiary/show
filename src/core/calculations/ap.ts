@@ -6,18 +6,18 @@ import { AP_CONSTANTS } from './constants'
 export function calculateBaseAP(comboCount: number, initialMental: number): number {
   // 実際のコンボ数 = 切り捨て(コンボ数 - (1-初期メンタル) / 0.04685)
   const actualComboCount = Math.floor(
-    comboCount - (1 - initialMental / 100) / AP_CONSTANTS.MENTAL_FACTOR
+    comboCount - (1 - initialMental / 100) / AP_CONSTANTS.MENTAL_FACTOR,
   )
-  
+
   // 1コンボ当たりAP = 小数点以下第4位切り上げ(60/コンボ数)
   const apPerCombo = Math.ceil((AP_CONSTANTS.BASE_AP / comboCount) * 10000) / 10000
-  
+
   // 基礎AP = (59 + 1.5 * (実際のコンボ数 - 49)) * 1コンボ当たりAP
-  const baseAP = (
-    AP_CONSTANTS.BASE_VALUE + 
-    AP_CONSTANTS.COMBO_MULTIPLIER * (actualComboCount - AP_CONSTANTS.BASE_COMBO)
-  ) * apPerCombo
-  
+  const baseAP =
+    (AP_CONSTANTS.BASE_VALUE +
+      AP_CONSTANTS.COMBO_MULTIPLIER * (actualComboCount - AP_CONSTANTS.BASE_COMBO)) *
+    apPerCombo
+
   // Round to 2 decimal places
   return Math.round(baseAP * 100) / 100
 }

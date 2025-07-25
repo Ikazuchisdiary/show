@@ -9,7 +9,9 @@
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .update-banner:hover {
@@ -41,9 +43,15 @@
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .update-text {
@@ -85,18 +93,18 @@
     margin-bottom: 15px;
     padding: 10px 35px 10px 12px;
   }
-  
+
   .update-banner-content {
     gap: 8px;
   }
-  
+
   .update-text {
     font-size: 13px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  
+
   .update-icon {
     font-size: 1rem;
     flex-shrink: 0;

@@ -7,16 +7,16 @@ interface APBalanceDisplayProps {
   baseAP?: number
 }
 
-export const APBalanceDisplay: React.FC<APBalanceDisplayProps> = ({ 
-  simulationResult, 
-  baseAP = 0 
+export const APBalanceDisplay: React.FC<APBalanceDisplayProps> = ({
+  simulationResult,
+  baseAP = 0,
 }) => {
   const [showDetails, setShowDetails] = useState(false)
-  
+
   const totalAP = baseAP + simulationResult.apAcquired
   const apBalance = totalAP - simulationResult.apConsumed
   const isPositive = apBalance >= 0
-  
+
   // Format AP values to 2 decimal places without zero padding
   const formatAP = (value: number): string => {
     if (value === 0) return '0'
@@ -29,47 +29,48 @@ export const APBalanceDisplay: React.FC<APBalanceDisplayProps> = ({
     }
     return str
   }
-  
+
   // Calculate AP income and expense breakdown
   const apBreakdown = React.useMemo(() => {
     const income: Array<{ name: string; value: number }> = []
     const expense: Array<{ name: string; value: number }> = []
-    
+
     // Base AP
     if (baseAP > 0) {
       income.push({ name: '基礎AP', value: baseAP })
     }
-    
+
     // AP acquired from cards/effects (skill AP)
     if (simulationResult.apAcquired > 0) {
       income.push({ name: 'スキルAP', value: simulationResult.apAcquired })
     }
-    
+
     // AP consumed by cards
     if (simulationResult.apConsumed > 0) {
       expense.push({ name: 'スキル発動', value: simulationResult.apConsumed })
     }
-    
+
     return { income, expense }
   }, [simulationResult, baseAP])
-  
+
   return (
     <div className={`ap-summary ${isPositive ? 'positive' : 'negative'}`}>
       <div className={`ap-balance ${isPositive ? 'positive' : 'negative'}`}>
         <div className="box-label">AP収支</div>
         <div className="box-value">
-          {apBalance >= 0 ? '+' : ''}{formatAP(apBalance)}
+          {apBalance >= 0 ? '+' : ''}
+          {formatAP(apBalance)}
         </div>
       </div>
-      
-      <span 
-        className="ap-info-icon" 
+
+      <span
+        className="ap-info-icon"
         onClick={() => setShowDetails(!showDetails)}
         title="詳細を表示"
       >
         ⓘ
       </span>
-      
+
       {showDetails && (
         <div className="ap-details">
           <div className="ap-detail-columns">
@@ -86,7 +87,7 @@ export const APBalanceDisplay: React.FC<APBalanceDisplayProps> = ({
                 <span className="ap-detail-value">{formatAP(totalAP)}</span>
               </div>
             </div>
-            
+
             <div className="ap-detail-section ap-expense">
               <div className="ap-detail-label">消費AP</div>
               {apBreakdown.expense.map((item, index) => (

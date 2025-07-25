@@ -6,18 +6,14 @@ export function calculateScore(
   appeal: number,
   scoreBoost: number,
   voltageLevel: number,
-  learningCorrection: number = 1.0
+  learningCorrection: number = 1.0,
 ): number {
   const voltageMultiplier = 1 + voltageLevel / 10
-  
+
   const score = Math.floor(
-    appeal *
-    baseMultiplier *
-    (1 + scoreBoost) *
-    voltageMultiplier *
-    learningCorrection
+    appeal * baseMultiplier * (1 + scoreBoost) * voltageMultiplier * learningCorrection,
   )
-  
+
   return score
 }
 
@@ -26,7 +22,7 @@ export function calculateScore(
  */
 export function calculateSkillInvocationMultiplier(
   baseMultiplier: number,
-  skillInvocationBoost: number
+  skillInvocationBoost: number,
 ): number {
   return baseMultiplier * (1 + skillInvocationBoost)
 }

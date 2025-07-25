@@ -6,7 +6,7 @@ interface SettingsStore {
   showDetailedLog: boolean
   showApCalculation: boolean
   theme: 'light' | 'dark' | 'auto'
-  
+
   // Calculation settings
   useCustomMusic: boolean
   customMusicData: {
@@ -15,7 +15,7 @@ interface SettingsStore {
     attribute: 'smile' | 'pure' | 'cool' | null
     centerCharacter: string | null
   } | null
-  
+
   // Actions
   toggleDetailedLog: () => void
   toggleApCalculation: () => void
@@ -33,26 +33,29 @@ export const useSettingsStore = create<SettingsStore>()(
       theme: 'auto',
       useCustomMusic: false,
       customMusicData: null,
-      
+
       // Actions
-      toggleDetailedLog: () => set((state) => ({ 
-        showDetailedLog: !state.showDetailedLog 
-      })),
-      
-      toggleApCalculation: () => set((state) => ({ 
-        showApCalculation: !state.showApCalculation 
-      })),
-      
+      toggleDetailedLog: () =>
+        set((state) => ({
+          showDetailedLog: !state.showDetailedLog,
+        })),
+
+      toggleApCalculation: () =>
+        set((state) => ({
+          showApCalculation: !state.showApCalculation,
+        })),
+
       setTheme: (theme) => set({ theme }),
-      
+
       setCustomMusic: (data) => set({ customMusicData: data }),
-      
-      toggleCustomMusic: () => set((state) => ({ 
-        useCustomMusic: !state.useCustomMusic 
-      }))
+
+      toggleCustomMusic: () =>
+        set((state) => ({
+          useCustomMusic: !state.useCustomMusic,
+        })),
     }),
     {
-      name: 'sukushou-settings'
-    }
-  )
+      name: 'sukushou-settings',
+    },
+  ),
 )

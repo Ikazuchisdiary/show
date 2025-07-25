@@ -3,12 +3,12 @@ import { CustomMusic } from '../core/models/Music'
 import {
   getCustomMusicList,
   saveCustomMusicList,
-  isShareMode
+  isShareMode,
 } from '../services/localStorageService'
 
 interface MusicStore {
   customMusicList: Record<string, CustomMusic>
-  
+
   // Actions
   loadCustomMusic: () => void
   addCustomMusic: (music: CustomMusic) => void
@@ -19,39 +19,43 @@ interface MusicStore {
 
 export const useMusicStore = create<MusicStore>((set) => ({
   customMusicList: getCustomMusicList(), // Initialize with saved custom music
-  
-  loadCustomMusic: () => set(() => {
-    // Always load the saved list, regardless of share mode
-    const savedList = getCustomMusicList()
-    return { customMusicList: savedList }
-  }),
-  
-  addCustomMusic: (music) => set((state) => {
-    if (isShareMode()) return state
-    
-    const newList = { ...state.customMusicList, [music.id!]: music }
-    saveCustomMusicList(newList)
-    return { customMusicList: newList }
-  }),
-  
-  updateCustomMusic: (id, music) => set((state) => {
-    if (isShareMode()) return state
-    
-    const newList = { ...state.customMusicList, [id]: music }
-    saveCustomMusicList(newList)
-    return { customMusicList: newList }
-  }),
-  
-  deleteCustomMusic: (id) => set((state) => {
-    if (isShareMode()) return state
-    
-    const newList = { ...state.customMusicList }
-    delete newList[id]
-    saveCustomMusicList(newList)
-    return { customMusicList: newList }
-  }),
-  
+
+  loadCustomMusic: () =>
+    set(() => {
+      // Always load the saved list, regardless of share mode
+      const savedList = getCustomMusicList()
+      return { customMusicList: savedList }
+    }),
+
+  addCustomMusic: (music) =>
+    set((state) => {
+      if (isShareMode()) return state
+
+      const newList = { ...state.customMusicList, [music.id!]: music }
+      saveCustomMusicList(newList)
+      return { customMusicList: newList }
+    }),
+
+  updateCustomMusic: (id, music) =>
+    set((state) => {
+      if (isShareMode()) return state
+
+      const newList = { ...state.customMusicList, [id]: music }
+      saveCustomMusicList(newList)
+      return { customMusicList: newList }
+    }),
+
+  deleteCustomMusic: (id) =>
+    set((state) => {
+      if (isShareMode()) return state
+
+      const newList = { ...state.customMusicList }
+      delete newList[id]
+      saveCustomMusicList(newList)
+      return { customMusicList: newList }
+    }),
+
   generateCustomMusicId: () => {
     return `custom_${Date.now()}`
-  }
+  },
 }))

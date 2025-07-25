@@ -4,8 +4,8 @@ import { Card, CardData } from '../core/models/Card'
 import { Music, MusicData } from '../core/models/Music'
 
 interface GameDataRaw {
-  cards: Record<string, any>
-  music: Record<string, any>
+  cards: Record<string, Card>
+  music: Record<string, Music>
 }
 
 const gameData = gameDataRaw as GameDataRaw
@@ -32,5 +32,5 @@ export function getAllMusic(): Music[] {
 }
 
 export function getCardsByCharacter(character: string): Card[] {
-  return Object.values(cardData).filter(card => card.character === character)
+  return Object.values(cardData).filter((card) => card.character === character)
 }

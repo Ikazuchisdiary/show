@@ -4,35 +4,35 @@ import { useDuplicateCharacterDetection } from '@hooks/useDuplicateCharacterDete
 import './SimulationControls.css'
 
 export const SimulationControls: React.FC = () => {
-  const { 
-    runSimulation, 
-    isSimulating,
-    selectedMusic,
-    selectedCards,
-    generateShareUrl
-  } = useGameStore()
-  
-  const hasValidSelection = selectedMusic && selectedCards.some(card => card !== null)
+  const { runSimulation, isSimulating, selectedMusic, selectedCards, generateShareUrl } =
+    useGameStore()
+
+  const hasValidSelection = selectedMusic && selectedCards.some((card) => card !== null)
   const duplicateIndices = useDuplicateCharacterDetection(selectedCards)
-  
+
   const handleCalculate = () => {
     // Check for duplicate characters first
     if (duplicateIndices.size > 0) {
-      alert('同じキャラクターのカードが複数選択されています。\nキャラクターの重複を解消してから計算してください。')
+      alert(
+        '同じキャラクターのカードが複数選択されています。\nキャラクターの重複を解消してから計算してください。',
+      )
       return
     }
     runSimulation()
   }
-  
+
   const handleShare = () => {
     const shareUrl = generateShareUrl()
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      alert('共有URLがクリップボードにコピーされました！')
-    }).catch(() => {
-      prompt('共有URL:', shareUrl)
-    })
+    navigator.clipboard
+      .writeText(shareUrl)
+      .then(() => {
+        alert('共有URLがクリップボードにコピーされました！')
+      })
+      .catch(() => {
+        prompt('共有URL:', shareUrl)
+      })
   }
-  
+
   return (
     <div className="button-container">
       <button
@@ -42,10 +42,7 @@ export const SimulationControls: React.FC = () => {
       >
         {isSimulating ? 'スコア計算中...' : 'スコア計算'}
       </button>
-      <button 
-        className="share-button secondary"
-        onClick={handleShare}
-      >
+      <button className="share-button secondary" onClick={handleShare}>
         共有URLを作成
       </button>
     </div>

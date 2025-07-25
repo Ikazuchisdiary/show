@@ -8,7 +8,7 @@ export interface ComboCounts {
 
 export interface CenterSkill {
   when: 'beforeFirstTurn' | 'beforeFeverStart' | 'afterLastTurn'
-  effects: any[] // Will use Effect type from models
+  effects: import('../core/models/Effect').Effect[]
 }
 
 export interface LevelValues {

@@ -6,30 +6,30 @@ export const ShareModeBanner: React.FC = () => {
   const { isShareMode, saveSharedAsCustomMusic, exitShareMode } = useGameStore()
   const [customName, setCustomName] = useState('')
   const [showNameInput, setShowNameInput] = useState(false)
-  
+
   if (!isShareMode) return null
-  
+
   const handleSaveAsCustom = () => {
     if (!showNameInput) {
       setShowNameInput(true)
       return
     }
-    
+
     if (!customName.trim()) {
       alert('カスタム楽曲名を入力してください。')
       return
     }
-    
+
     saveSharedAsCustomMusic(customName.trim())
     setShowNameInput(false)
     setCustomName('')
   }
-  
+
   const handleCancel = () => {
     setShowNameInput(false)
     setCustomName('')
   }
-  
+
   return (
     <div className="share-mode-banner">
       <div className="share-mode-header">共有された編成を表示中</div>

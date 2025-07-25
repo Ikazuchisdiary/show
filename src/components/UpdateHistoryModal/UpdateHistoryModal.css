@@ -105,7 +105,7 @@
 
 .version-badge {
   display: inline-block;
-  background: #4CAF50;
+  background: #4caf50;
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
@@ -138,29 +138,29 @@
   .modal {
     padding: 10px;
   }
-  
+
   .modal-content {
     width: 95%;
     max-height: 90vh;
   }
-  
+
   .modal-header {
     padding: 15px;
   }
-  
+
   .modal-header h2 {
     font-size: 1.2rem;
   }
-  
+
   .modal-body {
     padding: 15px;
   }
-  
+
   .update-entry {
     margin-bottom: 20px;
     padding-bottom: 20px;
   }
-  
+
   .update-changes {
     font-size: 0.9rem;
   }

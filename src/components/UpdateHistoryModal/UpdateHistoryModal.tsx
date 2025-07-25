@@ -13,15 +13,17 @@ export const UpdateHistoryModal: React.FC<UpdateHistoryModalProps> = ({ isOpen, 
       onClose()
     }
   }
-  
+
   if (!isOpen) return null
-  
+
   return (
     <div className="modal" onClick={handleBackdropClick} style={{ display: 'flex' }}>
-      <div className="modal-content update-history-modal" onClick={e => e.stopPropagation()}>
+      <div className="modal-content update-history-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>アップデート履歴</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
+          <button className="modal-close" onClick={onClose}>
+            ×
+          </button>
         </div>
         <div className="modal-body">
           <div id="updateHistoryContent">

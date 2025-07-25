@@ -14,8 +14,8 @@ export const updateHistory: UpdateEntry[] = [
       'モダンなUIコンポーネントアーキテクチャ',
       'v1との完全な互換性を維持',
       'AP不足時の参考スコア計算機能を追加',
-      'アップデートバナーと履歴機能を実装'
-    ]
+      'アップデートバナーと履歴機能を実装',
+    ],
   },
   {
     version: '1.9.0',
@@ -23,8 +23,8 @@ export const updateHistory: UpdateEntry[] = [
     changes: [
       'AP不足時の参考スコア計算機能を追加',
       '詳細ログの表示改善（計算式、色分け）',
-      'カード除外シミュレーション機能'
-    ]
+      'カード除外シミュレーション機能',
+    ],
   },
   {
     version: '1.8.0',
@@ -32,8 +32,8 @@ export const updateHistory: UpdateEntry[] = [
     changes: [
       'センタースキル機能の実装',
       'センターキャラクターのハイライト表示',
-      'スキルパラメータの編集機能'
-    ]
+      'スキルパラメータの編集機能',
+    ],
   },
   {
     version: '1.7.0',
@@ -41,9 +41,9 @@ export const updateHistory: UpdateEntry[] = [
     changes: [
       'カスタム楽曲の保存/削除機能',
       'ローカルストレージによる設定保存',
-      'ドラッグ&ドロップの改善'
-    ]
-  }
+      'ドラッグ&ドロップの改善',
+    ],
+  },
 ]
 
 export const CURRENT_VERSION = '2.0.0'

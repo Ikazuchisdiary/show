@@ -8,7 +8,7 @@ import { calculateBaseAP } from '@utils/calculateBaseAP'
 import './ScoreDisplay.css'
 
 export const ScoreDisplay: React.FC = () => {
-  const { 
+  const {
     simulationResult,
     selectedCards,
     cardSkillLevels,
@@ -19,10 +19,10 @@ export const ScoreDisplay: React.FC = () => {
     selectedDifficulty,
     centerCharacter,
     comboCount,
-    initialMental
+    initialMental,
   } = useGameStore()
   const [showLog, setShowLog] = useState(false)
-  
+
   // Calculate base AP first
   const baseAP = useMemo(() => {
     // Get combo count from music based on difficulty
@@ -32,21 +32,21 @@ export const ScoreDisplay: React.FC = () => {
     }
     return calculateBaseAP(actualComboCount, initialMental)
   }, [comboCount, initialMental, selectedMusic, selectedDifficulty])
-  
+
   // Calculate AP shortage result if needed
   const apShortageResult = useMemo(() => {
     if (!simulationResult || !selectedMusic) return null
-    
+
     const totalAvailableAP = baseAP + simulationResult.apAcquired
     const netAP = totalAvailableAP - simulationResult.apConsumed
     if (netAP >= 0) return null
-    
+
     // Get combo count from music based on difficulty
     let actualComboCount = comboCount
     if (selectedMusic.combos && selectedMusic.combos[selectedDifficulty]) {
       actualComboCount = selectedMusic.combos[selectedDifficulty]!
     }
-    
+
     // Create a new simulator with the same configuration
     const simulator = new GameSimulator({
       cards: selectedCards,
@@ -58,9 +58,9 @@ export const ScoreDisplay: React.FC = () => {
       musicAttribute: selectedMusic?.attribute,
       centerCharacter: selectedMusic?.centerCharacter ?? centerCharacter ?? undefined,
       initialMental,
-      comboCount: actualComboCount
+      comboCount: actualComboCount,
     })
-    
+
     // Pass the existing simulation result to avoid re-simulation
     return simulator.simulateWithAPShortage(baseAP, simulationResult) // Include base AP and previous state
   }, [
@@ -75,39 +75,32 @@ export const ScoreDisplay: React.FC = () => {
     centerCharacter,
     comboCount,
     baseAP,
-    initialMental
+    initialMental,
   ])
-  
+
   if (!simulationResult) {
     return null
   }
-  
+
   const totalScore = simulationResult.totalScore
-  
+
   return (
     <>
       <div id="result" style={{ display: 'block' }}>
         <h2>計算結果</h2>
-        <div id="score">
-          {totalScore.toLocaleString()}
-        </div>
+        <div id="score">{totalScore.toLocaleString()}</div>
         <div className="result-details">
           <AppealDisplay />
-          
-          <APBalanceDisplay 
-            simulationResult={simulationResult}
-            baseAP={baseAP}
-          />
-          
-          {apShortageResult && (
-            <APShortageDisplay result={apShortageResult} totalAP={baseAP} />
-          )}
+
+          <APBalanceDisplay simulationResult={simulationResult} baseAP={baseAP} />
+
+          {apShortageResult && <APShortageDisplay result={apShortageResult} totalAP={baseAP} />}
         </div>
         <button className="toggle-log" onClick={() => setShowLog(!showLog)}>
           {showLog ? '詳細ログを隠す' : '詳細ログを表示'}
         </button>
       </div>
-      
+
       {showLog && (
         <div id="turnLog" style={{ display: 'block' }}>
           {simulationResult.turnResults.map((turn, index) => (
@@ -123,23 +116,17 @@ export const ScoreDisplay: React.FC = () => {
                   <div className="log-turn-header">
                     <span className="turn-number">T{turn.turn + 1}</span>
                     <span className="log-card-name">{turn.cardName}</span>
-                    {turn.apUsed > 0 && (
-                      <span className="log-ap-inline">AP-{turn.apUsed}</span>
-                    )}
+                    {turn.apUsed > 0 && <span className="log-ap-inline">AP-{turn.apUsed}</span>}
                   </div>
                   {!turn.isSkipped && (
                     <div className="log-details">
-                      <div className="log-action">
-                        スコア +{turn.scoreGain.toLocaleString()}
-                      </div>
+                      <div className="log-action">スコア +{turn.scoreGain.toLocaleString()}</div>
                       <div className="log-action">
                         ボルテージ +{turn.voltageGain} (Lv.{turn.voltageLevel})
                       </div>
                     </div>
                   )}
-                  {turn.isSkipped && (
-                    <div className="log-action">スキップ</div>
-                  )}
+                  {turn.isSkipped && <div className="log-action">スキップ</div>}
                 </>
               )}
             </div>

@@ -27,7 +27,7 @@ export interface TurnResult {
     center: number
     total: number
   }
-  logs?: string[]  // v1形式の詳細ログ
+  logs?: string[] // v1形式の詳細ログ
 }
 
 export interface CardActivationLog {
@@ -53,13 +53,13 @@ export interface GameState {
   music: Music | null
   musicAttribute: string | null
   centerCharacter: string | null
-  
+
   // Game progress
   currentTurn: number
   currentCardIndex: number
   totalScore: number
   totalVoltage: number
-  
+
   // Multipliers and boosts
   scoreBoost: number[]
   scoreBoostCount: number
@@ -68,22 +68,22 @@ export interface GameState {
   skillInvocationBoost: number
   centerSkillMultiplier: number
   learningCorrection: number
-  
+
   // Game resources
   mental: number
   baseAP?: number
   apAcquired: number
   apConsumed: number
-  
+
   // Card management
   removedCards: Set<string>
-  
+
   // Turn tracking
   turnResults: TurnResult[]
   cardTurnCounts: number[]
   totalCardUses: number[]
   cardActivationLog: CardActivationLog[]
-  
+
   // Phase info
   phases: GamePhase[]
   currentPhase: GamePhase | null

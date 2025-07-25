@@ -1,5 +1,5 @@
 // Convert existing gameData to TypeScript format
-import { CardData } from '../core/models/Card'
+import { CardData, CardStats } from '../core/models/Card'
 import { MusicData } from '../core/models/Music'
 import { Effect } from '../core/models/Effect'
 
@@ -7,65 +7,83 @@ import { Effect } from '../core/models/Effect'
 // @ts-expect-error - gameDataJS has dynamic structure
 import gameDataJS from '../../cardData.js'
 
+// Raw data types from JavaScript
+interface RawGameData {
+  cards: Record<string, unknown>
+  music: Record<string, unknown>
+}
+
 // Type assertion for the imported data
-const gameData = gameDataJS as any
+const gameData = gameDataJS as RawGameData
 
 // Convert effects with proper typing
-function convertEffects(effects: any[]): Effect[] {
-  return effects.map(effect => {
+function convertEffects(effects: unknown[]): Effect[] {
+  return effects.map((effectRaw) => {
+    const effect = effectRaw as Record<string, unknown>
     if (effect.type === 'conditional') {
       return {
         ...effect,
-        then: convertEffects(effect.then),
-        else: effect.else ? convertEffects(effect.else) : undefined
-      }
+        then: convertEffects(effect.then as unknown[]),
+        else: effect.else ? convertEffects(effect.else as unknown[]) : undefined,
+      } as Effect
     }
-    return effect
+    return effect as unknown as Effect
   })
 }
 
 // Convert card data
 export function convertCardData(): CardData {
   const cards: CardData = {}
-  
+
   for (const [key, cardData] of Object.entries(gameData.cards)) {
-    const card = cardData as any
+    const card = cardData as Record<string, unknown>
     cards[key] = {
-      name: card.name,
-      displayName: card.displayName,
-      character: card.character,
-      shortCode: card.shortCode,
-      apCost: card.apCost,
-      stats: card.stats,
-      centerCharacteristic: card.centerCharacteristic ? {
-        name: card.centerCharacteristic.name,
-        effects: convertEffects(card.centerCharacteristic.effects)
-      } : undefined,
-      centerSkill: card.centerSkill ? {
-        when: card.centerSkill.when,
-        effects: convertEffects(card.centerSkill.effects)
-      } : undefined,
-      effects: convertEffects(card.effects)
+      name: card.name as string,
+      displayName: card.displayName as string,
+      character: card.character as string,
+      shortCode: card.shortCode as string,
+      apCost: card.apCost as number,
+      stats: card.stats as CardStats,
+      centerCharacteristic: card.centerCharacteristic
+        ? {
+            name: (card.centerCharacteristic as Record<string, unknown>).name as string,
+            effects: convertEffects(
+              (card.centerCharacteristic as Record<string, unknown>).effects as unknown[],
+            ),
+          }
+        : undefined,
+      centerSkill: card.centerSkill
+        ? {
+            when: (card.centerSkill as Record<string, unknown>).when as
+              | 'beforeFirstTurn'
+              | 'beforeFeverStart'
+              | 'afterLastTurn',
+            effects: convertEffects(
+              (card.centerSkill as Record<string, unknown>).effects as unknown[],
+            ),
+          }
+        : undefined,
+      effects: convertEffects(card.effects as unknown[]),
     }
   }
-  
+
   return cards
 }
 
 // Convert music data
 export function convertMusicData(): MusicData {
   const music: MusicData = {}
-  
+
   for (const [key, musicData] of Object.entries(gameData.music)) {
-    const track = musicData as any
+    const track = musicData as Record<string, unknown>
     music[key] = {
-      name: track.name,
-      phases: track.phases,
-      centerCharacter: track.centerCharacter,
-      attribute: track.attribute
+      name: track.name as string,
+      phases: track.phases as number[],
+      centerCharacter: track.centerCharacter as string | undefined,
+      attribute: track.attribute as 'smile' | 'pure' | 'cool' | undefined,
     }
   }
-  
+
   return music
 }
 

@@ -17,7 +17,7 @@ export type EffectType =
   | 'voltagePenalty'
   | 'removeAfterUse'
 
-export type ConditionType = 
+export type ConditionType =
   | 'count'
   | 'voltage'
   | 'phase'
