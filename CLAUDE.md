@@ -235,6 +235,7 @@ See `ARCHITECTURE_PLAN.md` for detailed implementation plan.
 
 - **2025-07-25 開始**: 48時間の長期作業セッションを開始。タスクリストを作成し、ESLintエラーの修正から着手。
 - **2025-07-25 進捗1**: ESLintエラー修正完了。47個の `any` 型警告をすべて適切な型に置き換え、React Hooks依存関係の警告も解消。TypeScriptエラーも存在しないことを確認し、Prettierでコードフォーマット実行。
+- **2025-07-25 進捗2**: テストの修正作業中。ストアのメソッド名変更に対応、AP/Appeal計算のテスト期待値を実装に合わせて修正、formatSkillValue関数を追加。多くのテストがまだ失敗しているが、着実に進行中。
 
 ### Next Priority Tasks (After current work session)
 

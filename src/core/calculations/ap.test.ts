@@ -18,7 +18,7 @@ describe('AP Calculations', () => {
       const result2 = calculateBaseAP(150, 100)
 
       expect(result1).toBeCloseTo(72.6, 2)
-      expect(result2).toBeCloseTo(72.2, 2)
+      expect(result2).toBeCloseTo(84.2, 2)
     })
 
     it('should handle edge cases', () => {

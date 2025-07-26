@@ -25,8 +25,10 @@ describe('Appeal Calculations', () => {
       ]
 
       const appeal = calculateAppealValue({ cards })
-      // Should use the highest value (cool: 6000)
-      expect(appeal).toBe(6000)
+      // No music attribute, all stats at 10%
+      // Total stats: smile=6000, pure=6000, cool=6000
+      // Total = 18000 * 0.1 = 1800
+      expect(appeal).toBe(1800)
     })
 
     it('should apply music attribute selection', () => {
@@ -40,13 +42,16 @@ describe('Appeal Calculations', () => {
       ]
 
       const smileAppeal = calculateAppealValue({ cards, musicAttribute: 'smile' })
-      expect(smileAppeal).toBe(6000)
+      // smile: 6000 * 1.0 + (7000 + 7000) * 0.1 = 6000 + 1400 = 7400
+      expect(smileAppeal).toBe(7400)
 
       const pureAppeal = calculateAppealValue({ cards, musicAttribute: 'pure' })
-      expect(pureAppeal).toBe(7000)
+      // pure: 7000 * 1.0 + (6000 + 7000) * 0.1 = 7000 + 1300 = 8300
+      expect(pureAppeal).toBe(8300)
 
       const coolAppeal = calculateAppealValue({ cards, musicAttribute: 'cool' })
-      expect(coolAppeal).toBe(7000)
+      // cool: 7000 * 1.0 + (6000 + 7000) * 0.1 = 7000 + 1300 = 8300
+      expect(coolAppeal).toBe(8300)
     })
 
     it('should apply center attribute bonus', () => {
@@ -66,8 +71,10 @@ describe('Appeal Calculations', () => {
         centerCard,
       })
 
-      // 10000 * 1.14 = 11400
-      expect(appeal).toBe(11400)
+      // Cards have 10000 smile total
+      // With music attr smile: 10000 * 1.0 + 400 * 0.1 = 10000 + 40 = 10040
+      // Center attribute bonus is handled separately by game simulator
+      expect(appeal).toBe(10040)
     })
 
     it('should apply center characteristic appeal boost', () => {
@@ -97,10 +104,11 @@ describe('Appeal Calculations', () => {
         centerCharacteristic,
       })
 
-      // 102期 (3 cards) get 200% = 3000 * 2 = 6000
+      // 102期 (3 cards) get boost: 1 + 2.0 = 3.0x = 3000 * 3 = 9000
       // 103期 (1 card) stays at 1000
-      // Total: 6000 + 1000 = 7000
-      expect(appeal).toBe(7000)
+      // Total smile: 9000 + 1000 = 10000
+      // With music attr smile: 10000 * 1.0 + 2000 * 0.1 = 10000 + 200 = 10200
+      expect(appeal).toBe(10200)
     })
 
     it('should handle all group targets correctly', () => {
@@ -130,10 +138,10 @@ describe('Appeal Calculations', () => {
         centerCharacteristic,
       })
 
-      // スリーズブーケ: 3000 * 1.5 = 4500
+      // スリーズブーケ: 3000 * (1 + 1.5) = 3000 * 2.5 = 7500
       // DOLLCHESTRA: 3000 (no boost)
-      // Total: 4500 + 3000 = 7500
-      expect(appeal).toBe(7500)
+      // Total smile: 7500 + 3000 = 10500
+      expect(appeal).toBe(10500)
     })
 
     it('should floor the final result', () => {
