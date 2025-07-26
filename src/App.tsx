@@ -9,6 +9,7 @@ import { useGameStore } from './stores/gameStore'
 import { useMusicStore } from './stores/musicStore'
 import { useTouchDrag } from './hooks/useTouchDrag'
 import { useDuplicateCharacterDetection } from './hooks/useDuplicateCharacterDetection'
+import { useA11y } from './hooks/useA11y'
 import { UpdateHistoryModal, ShareModeBanner, LazyComponent } from './App.lazy'
 import './App.css'
 
@@ -25,6 +26,9 @@ function App() {
   const { loadCustomMusic } = useMusicStore()
   const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null)
   const [showUpdateHistory, setShowUpdateHistory] = useState(false)
+  
+  // Enable accessibility improvements
+  useA11y()
 
   // Detect duplicate characters
   const duplicateIndices = useDuplicateCharacterDetection(selectedCards)
