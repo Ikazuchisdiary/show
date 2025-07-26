@@ -1,0 +1,22 @@
+{
+  "name": "スクショウ計算ツール",
+  "short_name": "スクショウ",
+  "description": "スクショウのスコア計算とデッキシミュレーションツール",
+  "theme_color": "#f44336",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "/sukushou/v2/",
+  "start_url": "/sukushou/v2/",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

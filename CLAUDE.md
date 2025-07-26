@@ -228,7 +228,7 @@ See `ARCHITECTURE_PLAN.md` for detailed implementation plan.
 2. **Fix pnpm type-check errors** - TypeScriptエラーの修正 ✅
 3. **Run pnpm format** - コードフォーマット ✅
 4. **Implement tests** - 現在の実装に対するテストを作成 ✅
-5. **Performance optimization** - Code splittingなどの最適化 ⏳
+5. **Performance optimization** - Code splittingなどの最適化 ✅
 6. **Other necessary tasks** - 時間があれば必要と感じるタスク ⏳
 
 #### Work Log
@@ -237,6 +237,7 @@ See `ARCHITECTURE_PLAN.md` for detailed implementation plan.
 - **2025-07-25 進捗1**: ESLintエラー修正完了。47個の `any` 型警告をすべて適切な型に置き換え、React Hooks依存関係の警告も解消。TypeScriptエラーも存在しないことを確認し、Prettierでコードフォーマット実行。
 - **2025-07-25 進捗2**: テストの修正作業中。ストアのメソッド名変更に対応、AP/Appeal計算のテスト期待値を実装に合わせて修正、formatSkillValue関数を追加。多くのテストがまだ失敗しているが、着実に進行中。
 - **2025-07-25 進捗3**: テストの修正完了。100個中80個のテストが通過（失敗20個）。主要なコンポーネントとモデルのテストを作成し、既存テストの修正も完了。
+- **2025-07-25 進捗4**: パフォーマンス最適化完了。Code Splittingの実装、遅延ロードの追加、PWA対応（Service Worker、manifest.json）を実装。
 
 ### Next Priority Tasks (After current work session)
 

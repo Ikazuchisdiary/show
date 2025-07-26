@@ -5,12 +5,11 @@ import { SimulationControls } from './components/SimulationControls'
 import { ScoreDisplay } from './components/ScoreDisplay'
 import { UpdateBanner } from './components/UpdateBanner'
 import { UpdateHistoryButton } from './components/UpdateHistoryButton'
-import { UpdateHistoryModal } from './components/UpdateHistoryModal'
-import { ShareModeBanner } from './components/ShareModeBanner'
 import { useGameStore } from './stores/gameStore'
 import { useMusicStore } from './stores/musicStore'
 import { useTouchDrag } from './hooks/useTouchDrag'
 import { useDuplicateCharacterDetection } from './hooks/useDuplicateCharacterDetection'
+import { UpdateHistoryModal, ShareModeBanner, LazyComponent } from './App.lazy'
 import './App.css'
 
 function App() {
@@ -150,7 +149,7 @@ function App() {
 
         <UpdateBanner onShowHistory={() => setShowUpdateHistory(true)} />
 
-        <ShareModeBanner />
+        <LazyComponent Component={ShareModeBanner} />
 
         <MusicSelector />
 
@@ -183,7 +182,11 @@ function App() {
         <ScoreDisplay />
       </div>
 
-      <UpdateHistoryModal isOpen={showUpdateHistory} onClose={() => setShowUpdateHistory(false)} />
+      <LazyComponent
+        Component={UpdateHistoryModal}
+        isOpen={showUpdateHistory}
+        onClose={() => setShowUpdateHistory(false)}
+      />
     </div>
   )
 }
