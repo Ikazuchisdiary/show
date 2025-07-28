@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MusicSelector } from './MusicSelector'
 import { useGameStore } from '../../stores/gameStore'
@@ -45,12 +45,6 @@ describe('MusicSelector', () => {
         displayName: 'Test Music Display 1',
         phases: [10, 10, 10],
         centerCharacter: 'Test Character',
-        difficulty: {
-          normal: { combo: 100, appeal: 5000 },
-          hard: { combo: 150, appeal: 7500 },
-          expert: { combo: 200, appeal: 10000 },
-          master: { combo: 250, appeal: 12500 },
-        },
       },
     ])
   })

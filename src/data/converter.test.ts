@@ -174,12 +174,7 @@ describe('data converter', () => {
       expect(music.displayName).toBe('Test Music Display 1')
       expect(music.phases).toEqual([10, 10, 10])
       expect(music.centerCharacter).toBe('Test Character')
-      expect(music.difficulty).toEqual({
-        normal: { combo: 100, appeal: 5000 },
-        hard: { combo: 150, appeal: 7500 },
-        expert: { combo: 200, appeal: 10000 },
-        master: { combo: 250, appeal: 12500 },
-      })
+      // Music data structure doesn't have difficulty property in v2
     })
 
     it('should handle null center character', () => {

@@ -36,6 +36,7 @@ describe('gameStore', () => {
           smile: 1000,
           pure: 2000,
           cool: 3000,
+          mental: 100,
         },
         effects: [],
       }
@@ -57,6 +58,7 @@ describe('gameStore', () => {
           smile: 1000,
           pure: 2000,
           cool: 3000,
+          mental: 100,
         },
         effects: [],
       }
@@ -79,6 +81,7 @@ describe('gameStore', () => {
           smile: 1000,
           pure: 2000,
           cool: 3000,
+          mental: 100,
         },
         effects: [],
       }
@@ -105,6 +108,7 @@ describe('gameStore', () => {
           smile: 1000,
           pure: 2000,
           cool: 3000,
+          mental: 100,
         },
         effects: [],
       }
@@ -144,6 +148,7 @@ describe('gameStore', () => {
           smile: 1000,
           pure: 2000,
           cool: 3000,
+          mental: 100,
         },
         effects: [],
       }
@@ -170,6 +175,7 @@ describe('gameStore', () => {
           smile: 1000,
           pure: 2000,
           cool: 3000,
+          mental: 100,
         },
         effects: [],
       }

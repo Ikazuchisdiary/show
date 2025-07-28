@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { CardSelector } from './CardSelector'
 import { useGameStore } from '../../stores/gameStore'
@@ -39,7 +39,7 @@ describe('CardSelector', () => {
         character: 'Test Character',
         shortCode: '[TC1]',
         apCost: 20,
-        stats: { smile: 5000, pure: 4000, cool: 3000 },
+        stats: { smile: 5000, pure: 4000, cool: 3000, mental: 100 },
         effects: [],
       },
     ])

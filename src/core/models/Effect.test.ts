@@ -40,11 +40,7 @@ describe('Effect Model', () => {
     it('should create a conditional effect', () => {
       const effect: ConditionalEffect = {
         type: 'conditional',
-        condition: {
-          type: 'voltage',
-          threshold: 1000,
-          comparison: 'gte',
-        },
+        condition: 'voltage >= 1000',
         then: [
           {
             type: 'scoreGain',
@@ -60,8 +56,7 @@ describe('Effect Model', () => {
       }
 
       expect(effect.type).toBe('conditional')
-      expect(effect.condition.type).toBe('voltage')
-      expect(effect.condition.threshold).toBe(1000)
+      expect(effect.condition).toBe('voltage >= 1000')
       expect(effect.then).toHaveLength(1)
       expect(effect.else).toHaveLength(1)
     })
@@ -71,17 +66,11 @@ describe('Effect Model', () => {
     it('should create a remove after use effect', () => {
       const effect: RemoveAfterUseEffect = {
         type: 'removeAfterUse',
-        effects: [
-          {
-            type: 'scoreGain',
-            value: 5000,
-          },
-        ],
+        condition: 'turn > 5',
       }
 
       expect(effect.type).toBe('removeAfterUse')
-      expect(effect.effects).toHaveLength(1)
-      expect(effect.effects[0].type).toBe('scoreGain')
+      expect(effect.condition).toBe('turn > 5')
     })
   })
 })

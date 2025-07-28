@@ -13,6 +13,7 @@ describe('Card Model', () => {
         smile: 5000,
         pure: 4000,
         cool: 3000,
+        mental: 100,
       },
       effects: [
         {
@@ -45,6 +46,7 @@ describe('Card Model', () => {
         smile: 6000,
         pure: 5000,
         cool: 4000,
+        mental: 100,
       },
       effects: [],
       centerCharacteristic: {

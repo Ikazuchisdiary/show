@@ -153,7 +153,7 @@ describe('settingsStore', () => {
       
       // Create new store instance - in actual implementation this happens on app load
       // For testing, we need to manually trigger the rehydration
-      const store = useSettingsStore.getState()
+      const _store = useSettingsStore.getState()
       
       // The persisted middleware should have restored the state
       // Note: In test environment, automatic rehydration might not work

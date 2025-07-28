@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatSkillValue, roundSkillValue } from './skillValueRounding'
+import { formatSkillValue } from './skillValueRounding'
 
 describe('skillValueRounding', () => {
   describe('formatSkillValue', () => {
