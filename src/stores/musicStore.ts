@@ -55,7 +55,10 @@ export const useMusicStore = create<MusicStore>((set) => ({
       return { customMusicList: newList }
     }),
 
-  generateCustomMusicId: () => {
-    return `custom_${Date.now()}`
-  },
+  generateCustomMusicId: (() => {
+    let counter = 0
+    return () => {
+      return `custom_${Date.now()}_${counter++}`
+    }
+  })(),
 }))

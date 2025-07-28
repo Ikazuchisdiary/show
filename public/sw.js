@@ -1,15 +1,11 @@
 const CACHE_NAME = 'sukushou-v2-cache-v1'
-const urlsToCache = [
-  '/sukushou/v2/',
-  '/sukushou/v2/index.html',
-  '/sukushou/v2/manifest.json',
-]
+const urlsToCache = ['/sukushou/v2/', '/sukushou/v2/index.html', '/sukushou/v2/manifest.json']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(urlsToCache)
-    })
+    }),
   )
 })
 
@@ -36,7 +32,7 @@ self.addEventListener('fetch', (event) => {
 
         return response
       })
-    })
+    }),
   )
 })
 
@@ -49,8 +45,8 @@ self.addEventListener('activate', (event) => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
             return caches.delete(cacheName)
           }
-        })
+        }),
       )
-    })
+    }),
   )
 })

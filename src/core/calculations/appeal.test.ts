@@ -71,10 +71,10 @@ describe('Appeal Calculations', () => {
         centerCard,
       })
 
-      // Cards have 10000 smile total
-      // With music attr smile: 10000 * 1.0 + 400 * 0.1 = 10000 + 40 = 10040
+      // Cards have 10000 smile total, 2000 pure, 2000 cool
+      // With music attr smile: 10000 * 1.0 + (2000 + 2000) * 0.1 = 10000 + 400 = 10400
       // Center attribute bonus is handled separately by game simulator
-      expect(appeal).toBe(10040)
+      expect(appeal).toBe(10400)
     })
 
     it('should apply center characteristic appeal boost', () => {
@@ -104,11 +104,13 @@ describe('Appeal Calculations', () => {
         centerCharacteristic,
       })
 
-      // 102期 (3 cards) get boost: 1 + 2.0 = 3.0x = 3000 * 3 = 9000
-      // 103期 (1 card) stays at 1000
-      // Total smile: 9000 + 1000 = 10000
-      // With music attr smile: 10000 * 1.0 + 2000 * 0.1 = 10000 + 200 = 10200
-      expect(appeal).toBe(10200)
+      // 102期 (3 cards) get boost: 1 + 2.0 = 3.0x
+      // Each card: 1000 -> 3000 for all attributes
+      // 102期 total: 9000 smile, 9000 pure, 9000 cool
+      // 103期 (1 card) stays at 1000 each attribute
+      // Total: 10000 smile, 10000 pure, 10000 cool
+      // With music attr smile: 10000 * 1.0 + (10000 + 10000) * 0.1 = 10000 + 2000 = 12000
+      expect(appeal).toBe(12000)
     })
 
     it('should handle all group targets correctly', () => {

@@ -13,11 +13,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor': ['react', 'react-dom', 'zustand'],
-          'data': ['./cardData.js', './src/data/gameData.js'],
+          vendor: ['react', 'react-dom', 'zustand'],
+          data: ['./cardData.js', './src/data/gameData.js'],
         },
         chunkFileNames: (chunkInfo) => {
-          const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk'
+          const facadeModuleId = chunkInfo.facadeModuleId
+            ? chunkInfo.facadeModuleId.split('/').pop()
+            : 'chunk'
           return `assets/${facadeModuleId}-[hash].js`
         },
       },

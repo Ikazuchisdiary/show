@@ -8,12 +8,12 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register('/sw.js')
-      .then((registration) => {
-        console.log('ServiceWorker registration successful:', registration.scope)
+      .register('/sukushou/v2/sw.js')
+      .then(() => {
+        // ServiceWorker registration successful
       })
       .catch((err) => {
-        console.log('ServiceWorker registration failed:', err)
+        console.error('ServiceWorker registration failed:', err)
       })
   })
 }

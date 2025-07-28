@@ -13,7 +13,7 @@ vi.mock('../../data')
 describe('MusicSelector', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Mock game store
     vi.mocked(useGameStore).mockReturnValue({
       selectedMusic: null,
@@ -26,8 +26,8 @@ describe('MusicSelector', () => {
       setDifficulty: vi.fn(),
       setCenterCharacter: vi.fn(),
       setComboCount: vi.fn(),
-    } as any)
-    
+    } as ReturnType<typeof useGameStore>)
+
     // Mock music store
     vi.mocked(useMusicStore).mockReturnValue({
       customMusicList: {},
@@ -36,8 +36,8 @@ describe('MusicSelector', () => {
       updateCustomMusic: vi.fn(),
       deleteCustomMusic: vi.fn(),
       generateCustomMusicId: vi.fn(() => 'custom_123'),
-    } as any)
-    
+    } as ReturnType<typeof useMusicStore>)
+
     // Mock music data
     vi.mocked(getAllMusic).mockReturnValue([
       {
@@ -52,14 +52,14 @@ describe('MusicSelector', () => {
   describe('rendering', () => {
     it('should render music dropdown', () => {
       render(<MusicSelector />)
-      
+
       // Should render music selector
       expect(screen.getByText('楽曲選択:')).toBeInTheDocument()
     })
 
     it('should render initial mental input', () => {
       render(<MusicSelector />)
-      
+
       // Should render initial mental input
       expect(screen.getByText('初期メンタル (%)')).toBeInTheDocument()
     })

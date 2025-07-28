@@ -11,7 +11,7 @@ vi.mock('../../stores/settingsStore')
 describe('SimulationControls', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Mock game store
     vi.mocked(useGameStore).mockReturnValue({
       selectedMusic: null,
@@ -21,28 +21,28 @@ describe('SimulationControls', () => {
       runSimulation: vi.fn(),
       clearSimulation: vi.fn(),
       generateShareUrl: vi.fn(() => 'https://example.com/share'),
-    } as any)
-    
+    } as ReturnType<typeof useGameStore>)
+
     // Mock settings store
     vi.mocked(useSettingsStore).mockReturnValue({
       showDetailedLog: false,
       toggleDetailedLog: vi.fn(),
-    } as any)
+    } as ReturnType<typeof useSettingsStore>)
   })
 
   describe('rendering', () => {
     it('should render simulate button', () => {
       render(<SimulationControls />)
-      
+
       // Should render simulate button
-      expect(screen.getByText('結果を計算する')).toBeInTheDocument()
+      expect(screen.getByText('スコア計算')).toBeInTheDocument()
     })
 
     it('should be disabled when no music selected', () => {
       render(<SimulationControls />)
-      
+
       // Button should be disabled
-      const button = screen.getByText('結果を計算する')
+      const button = screen.getByText('スコア計算')
       expect(button).toBeDisabled()
     })
   })

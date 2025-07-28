@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy } from 'react'
 
 // Lazy load heavy components
 export const UpdateHistoryModal = lazy(() =>
@@ -16,11 +16,4 @@ export const ShareModeBanner = lazy(() =>
 // Loading fallback component
 export const LoadingFallback = () => (
   <div style={{ textAlign: 'center', padding: '20px' }}>読み込み中...</div>
-)
-
-// Wrapper for lazy components
-export const LazyComponent = ({ Component, ...props }: { Component: any; [key: string]: any }) => (
-  <Suspense fallback={<LoadingFallback />}>
-    <Component {...props} />
-  </Suspense>
 )

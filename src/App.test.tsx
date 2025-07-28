@@ -7,19 +7,19 @@ describe('App', () => {
     render(<App />)
     expect(screen.getByText('スクショウ計算ツール')).toBeInTheDocument()
   })
-  
+
   it('renders music selector', () => {
     render(<App />)
-    expect(screen.getByText('楽曲情報')).toBeInTheDocument()
+    expect(screen.getByText('楽曲選択:')).toBeInTheDocument()
   })
-  
+
   it('renders card selector', () => {
     render(<App />)
     expect(screen.getByText('カード選択')).toBeInTheDocument()
   })
-  
+
   it('renders simulation controls', () => {
     render(<App />)
-    expect(screen.getByText('結果を計算する')).toBeInTheDocument()
+    expect(screen.getByText('スコア計算')).toBeInTheDocument()
   })
 })

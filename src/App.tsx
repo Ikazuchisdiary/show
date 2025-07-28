@@ -10,7 +10,8 @@ import { useMusicStore } from './stores/musicStore'
 import { useTouchDrag } from './hooks/useTouchDrag'
 import { useDuplicateCharacterDetection } from './hooks/useDuplicateCharacterDetection'
 import { useA11y } from './hooks/useA11y'
-import { UpdateHistoryModal, ShareModeBanner, LazyComponent } from './App.lazy'
+import { UpdateHistoryModal, ShareModeBanner, LoadingFallback } from './App.lazy'
+import { Suspense } from 'react'
 import './App.css'
 
 function App() {
@@ -26,7 +27,7 @@ function App() {
   const { loadCustomMusic } = useMusicStore()
   const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null)
   const [showUpdateHistory, setShowUpdateHistory] = useState(false)
-  
+
   // Enable accessibility improvements
   useA11y()
 
@@ -153,7 +154,9 @@ function App() {
 
         <UpdateBanner onShowHistory={() => setShowUpdateHistory(true)} />
 
-        <LazyComponent Component={ShareModeBanner} />
+        <Suspense fallback={<LoadingFallback />}>
+          <ShareModeBanner />
+        </Suspense>
 
         <MusicSelector />
 
@@ -186,11 +189,12 @@ function App() {
         <ScoreDisplay />
       </div>
 
-      <LazyComponent
-        Component={UpdateHistoryModal}
-        isOpen={showUpdateHistory}
-        onClose={() => setShowUpdateHistory(false)}
-      />
+      <Suspense fallback={<LoadingFallback />}>
+        <UpdateHistoryModal
+          isOpen={showUpdateHistory}
+          onClose={() => setShowUpdateHistory(false)}
+        />
+      </Suspense>
     </div>
   )
 }

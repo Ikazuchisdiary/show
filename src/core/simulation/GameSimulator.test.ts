@@ -4,7 +4,7 @@ import { Card } from '../models/Card'
 import { Music } from '../models/Music'
 
 describe('GameSimulator', () => {
-  const createCard = (name: string, apCost: number, effects: any[] = []): Card => ({
+  const createCard = (name: string, apCost: number, effects: Card['effects'] = []): Card => ({
     name,
     displayName: name,
     character: 'Test Character',
@@ -36,7 +36,7 @@ describe('GameSimulator', () => {
     it('should initialize with correct parameters', () => {
       const music = createMusic()
       const cards = [createCard('Card 1', 20), createCard('Card 2', 25)]
-      
+
       const simulator = new GameSimulator({
         music,
         cards,
@@ -56,7 +56,7 @@ describe('GameSimulator', () => {
         createCard('Card 1', 20, [{ type: 'scoreGain', value: 1000 }]),
         createCard('Card 2', 25, [{ type: 'scoreGain', value: 2000 }]),
       ]
-      
+
       const simulator = new GameSimulator({
         music,
         cards,
@@ -76,7 +76,7 @@ describe('GameSimulator', () => {
 
     it('should handle empty cards', () => {
       const music = createMusic()
-      
+
       const simulator = new GameSimulator({
         music,
         cards: [],

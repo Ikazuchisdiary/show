@@ -90,7 +90,7 @@ describe('data converter', () => {
   describe('convertCardData', () => {
     it('should convert card data structure', () => {
       const converted = convertCardData()
-      
+
       expect(converted).toBeDefined()
       expect(converted.testCard1).toBeDefined()
       expect(converted.centerCard1).toBeDefined()
@@ -99,7 +99,7 @@ describe('data converter', () => {
     it('should convert card properties correctly', () => {
       const converted = convertCardData()
       const card = converted.testCard1
-      
+
       expect(card.name).toBe('Test Card 1')
       expect(card.displayName).toBe('Test Card Display 1')
       expect(card.character).toBe('Test Character')
@@ -110,7 +110,7 @@ describe('data converter', () => {
     it('should convert card stats', () => {
       const converted = convertCardData()
       const card = converted.testCard1
-      
+
       expect(card.stats).toEqual({
         smile: 5000,
         pure: 4000,
@@ -121,7 +121,7 @@ describe('data converter', () => {
     it('should convert effects directly', () => {
       const converted = convertCardData()
       const card = converted.testCard1
-      
+
       expect(card.effects).toBeDefined()
       expect(card.effects).toHaveLength(1)
       expect(card.effects[0]).toEqual({
@@ -133,7 +133,7 @@ describe('data converter', () => {
     it('should convert center characteristics', () => {
       const converted = convertCardData()
       const centerCard = converted.centerCard1
-      
+
       expect(centerCard.centerCharacteristic).toBeDefined()
       expect(centerCard.centerCharacteristic!.name).toBe('スマイル')
       expect(centerCard.centerCharacteristic!.effects).toHaveLength(1)
@@ -146,7 +146,7 @@ describe('data converter', () => {
     it('should convert center skills', () => {
       const converted = convertCardData()
       const centerCard = converted.centerCard1
-      
+
       expect(centerCard.centerSkill).toBeDefined()
       expect(centerCard.centerSkill!.when).toBe('beforeFirstTurn')
       expect(centerCard.centerSkill!.effects).toHaveLength(1)
@@ -160,7 +160,7 @@ describe('data converter', () => {
   describe('convertMusicData', () => {
     it('should convert music data structure', () => {
       const converted = convertMusicData()
-      
+
       expect(converted).toBeDefined()
       expect(converted.testMusic1).toBeDefined()
       expect(converted.testMusic2).toBeDefined()
@@ -169,7 +169,7 @@ describe('data converter', () => {
     it('should convert music properties', () => {
       const converted = convertMusicData()
       const music = converted.testMusic1
-      
+
       expect(music.name).toBe('Test Music 1')
       expect(music.displayName).toBe('Test Music Display 1')
       expect(music.phases).toEqual([10, 10, 10])
@@ -180,7 +180,7 @@ describe('data converter', () => {
     it('should handle null center character', () => {
       const converted = convertMusicData()
       const music = converted.testMusic2
-      
+
       expect(music.name).toBe('Test Music 2')
       expect(music.phases).toEqual([15, 10, 15])
       expect(music.centerCharacter).toBeNull()
@@ -222,12 +222,8 @@ describe('data converter', () => {
                     threshold: 1000,
                     comparison: 'gte',
                   },
-                  then: [
-                    { type: 'scoreGain', value: 3000 },
-                  ],
-                  else: [
-                    { type: 'scoreGain', value: 1000 },
-                  ],
+                  then: [{ type: 'scoreGain', value: 3000 }],
+                  else: [{ type: 'scoreGain', value: 1000 }],
                 },
               ],
             },
@@ -236,13 +232,19 @@ describe('data converter', () => {
         },
       }))
 
+      // Clear module cache to ensure fresh import
+      vi.resetModules()
+
       // Re-import to get new mocked data
       return import('./converter').then((module) => {
         const converted = module.convertCardData()
         const card = converted.conditionalCard
-        
+
+        expect(card).toBeDefined()
+        expect(card.effects).toBeDefined()
         expect(card.effects[0].type).toBe('conditional')
-        const conditionalEffect = card.effects[0] as any
+        const conditionalEffect = card
+          .effects[0] as import('../core/models/Effect').ConditionalEffect
         expect(conditionalEffect.condition).toBeDefined()
         expect(conditionalEffect.then).toHaveLength(1)
         expect(conditionalEffect.else).toHaveLength(1)

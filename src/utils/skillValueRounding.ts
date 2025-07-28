@@ -24,10 +24,10 @@ export function formatSkillValue(value: number): string {
   if (Number.isInteger(value)) {
     return value.toString()
   }
-  
+
   // For decimals, truncate to 4 places without rounding
   const truncated = Math.floor(value * 10000) / 10000
-  
+
   // Convert to string and remove trailing zeros
   const str = truncated.toFixed(4)
   return str.replace(/\.?0+$/, '')

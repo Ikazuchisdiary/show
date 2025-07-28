@@ -42,7 +42,7 @@ describe('gameStore', () => {
       }
 
       useGameStore.getState().setCard(0, card)
-      
+
       expect(useGameStore.getState().selectedCards[0]).toEqual(card)
       expect(useGameStore.getState().selectedCards[1]).toBeNull()
     })
@@ -66,7 +66,7 @@ describe('gameStore', () => {
       const store = useGameStore.getState()
       store.setCard(0, card)
       store.setCard(0, null)
-      
+
       expect(useGameStore.getState().selectedCards[0]).toBeNull()
     })
 
@@ -87,7 +87,7 @@ describe('gameStore', () => {
       }
 
       const store = useGameStore.getState()
-      
+
       // Should not throw
       expect(() => {
         store.setCard(10, card)
@@ -123,6 +123,7 @@ describe('gameStore', () => {
           smile: 2000,
           pure: 3000,
           cool: 4000,
+          mental: 100,
         },
         effects: [],
       }
@@ -130,9 +131,9 @@ describe('gameStore', () => {
       const store = useGameStore.getState()
       store.setCard(0, card1)
       store.setCard(3, card2)
-      
+
       store.swapCards(0, 3)
-      
+
       expect(useGameStore.getState().selectedCards[0]).toEqual(card2)
       expect(useGameStore.getState().selectedCards[3]).toEqual(card1)
     })
@@ -155,9 +156,9 @@ describe('gameStore', () => {
 
       const store = useGameStore.getState()
       store.setCard(1, card1)
-      
+
       store.swapCards(1, 2)
-      
+
       expect(useGameStore.getState().selectedCards[1]).toBeNull()
       expect(useGameStore.getState().selectedCards[2]).toEqual(card1)
     })
@@ -184,10 +185,10 @@ describe('gameStore', () => {
       store.setCard(0, card)
       store.setCard(2, card)
       store.setCard(4, card)
-      
+
       // Clear all cards
       store.selectedCards.forEach((_, i) => store.setCard(i, null))
-      
+
       expect(useGameStore.getState().selectedCards).toEqual([null, null, null, null, null, null])
     })
   })
@@ -200,13 +201,13 @@ describe('gameStore', () => {
 
     it('should clamp skill level between 1 and 14', () => {
       const store = useGameStore.getState()
-      
+
       store.setCardSkillLevel(0, 0)
       expect(useGameStore.getState().cardSkillLevels[0]).toBe(1)
-      
+
       store.setCardSkillLevel(0, 15)
       expect(useGameStore.getState().cardSkillLevels[0]).toBe(14)
-      
+
       store.setCardSkillLevel(0, -5)
       expect(useGameStore.getState().cardSkillLevels[0]).toBe(1)
     })
@@ -220,13 +221,13 @@ describe('gameStore', () => {
 
     it('should clamp skill level between 1 and 14', () => {
       const store = useGameStore.getState()
-      
+
       store.setCenterSkillLevel(0, 0)
       expect(useGameStore.getState().centerSkillLevels[0]).toBe(1)
-      
+
       store.setCenterSkillLevel(0, 15)
       expect(useGameStore.getState().centerSkillLevels[0]).toBe(14)
-      
+
       store.setCenterSkillLevel(0, -5)
       expect(useGameStore.getState().centerSkillLevels[0]).toBe(1)
     })
@@ -235,12 +236,12 @@ describe('gameStore', () => {
   describe('share mode', () => {
     it('should toggle share mode', () => {
       const store = useGameStore.getState()
-      
+
       expect(store.isShareMode).toBe(false)
-      
+
       store.setShareMode(true)
       expect(useGameStore.getState().isShareMode).toBe(true)
-      
+
       store.setShareMode(false)
       expect(useGameStore.getState().isShareMode).toBe(false)
     })
@@ -249,7 +250,7 @@ describe('gameStore', () => {
   describe('persistence', () => {
     it('should persist custom music list', () => {
       const store = useGameStore.getState()
-      
+
       const customMusic = {
         name: 'Custom Music',
         displayName: 'Custom Music Display',
@@ -262,16 +263,16 @@ describe('gameStore', () => {
           master: { combo: 250, appeal: 12500 },
         },
       }
-      
+
       store.saveCustomMusic('test-music', customMusic)
-      
+
       // Get the persisted data from localStorage
-      const persistedData = localStorage.getItem('sukushou-custom-music')
+      const persistedData = localStorage.getItem('sukushou_custom_music_list')
       expect(persistedData).toBeTruthy()
-      
+
       const parsed = JSON.parse(persistedData!)
-      expect(parsed['test-music']).toBeTruthy()
-      expect(parsed['test-music'].name).toBe('Custom Music')
+      expect(parsed[customMusic.name]).toBeTruthy()
+      expect(parsed[customMusic.name].displayName).toBe('test-music')
     })
   })
 })

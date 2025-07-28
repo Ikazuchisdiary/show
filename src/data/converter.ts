@@ -78,6 +78,7 @@ export function convertMusicData(): MusicData {
     const track = musicData as Record<string, unknown>
     music[key] = {
       name: track.name as string,
+      displayName: track.displayName as string,
       phases: track.phases as number[],
       centerCharacter: track.centerCharacter as string | undefined,
       attribute: track.attribute as 'smile' | 'pure' | 'cool' | undefined,

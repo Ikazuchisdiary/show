@@ -89,9 +89,9 @@ interface GameStore {
   loadFromShareUrl: (params: URLSearchParams) => void
   swapCards: (fromIndex: number, toIndex: number) => void
   insertCard: (fromIndex: number, toIndex: number, insertBefore: boolean) => void
+  loadCustomMusicList: () => void
   saveCustomMusic: (name: string, music: Music) => void
   deleteCustomMusic: (key: string) => void
-  loadCustomMusicList: () => void
   setShareMode: (enabled: boolean) => void
   exitShareMode: () => void
   saveSharedAsCustomMusic: (name: string) => void
@@ -442,10 +442,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const savedSkillLevel = loadCardSkillLevel(cardKey)
         const savedCenterSkillLevel = loadCardCenterSkillLevel(cardKey)
 
-        console.log(`Loading skill levels for ${cardKey}:`, {
-          savedSkillLevel,
-          savedCenterSkillLevel,
-        })
+        // Loading skill levels for card
 
         const newSkillLevels = [...state.cardSkillLevels]
         const newCenterSkillLevels = [...state.centerSkillLevels]
@@ -510,13 +507,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
   setCardSkillLevel: (index, level) =>
     set((state) => {
       const newLevels = [...state.cardSkillLevels]
-      newLevels[index] = level
+      newLevels[index] = Math.max(1, Math.min(14, level))
 
       // ローカルストレージに保存
       const card = state.selectedCards[index]
       if (card && !isShareMode()) {
         const cardKey = Object.keys(cardData).find((key) => cardData[key] === card) || ''
-        console.log('Saving skill level:', cardKey, level)
+        // Saving skill level
         saveCardSkillLevel(cardKey, level)
       }
 
@@ -526,7 +523,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   setCenterSkillLevel: (index, level) =>
     set((state) => {
       const newLevels = [...state.centerSkillLevels]
-      newLevels[index] = level
+      newLevels[index] = Math.max(1, Math.min(14, level))
 
       // ローカルストレージに保存
       const card = state.selectedCards[index]
@@ -541,15 +538,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
   loadStoredSkillLevels: () =>
     set((state) => {
       if (isShareMode()) {
-        console.log('Share mode detected, skipping localStorage load')
+        // Share mode detected, skipping localStorage load
         return state
       }
 
       const storedSkillLevels = loadAllCardSkillLevels()
       const storedCenterSkillLevels = loadAllCenterSkillLevels()
 
-      console.log('Loading stored skill levels:', storedSkillLevels)
-      console.log('Loading stored center skill levels:', storedCenterSkillLevels)
+      // Loading stored skill levels from localStorage
+      // console.log('Loading stored skill levels:', storedSkillLevels)
+      // console.log('Loading stored center skill levels:', storedCenterSkillLevels)
 
       const newSkillLevels = [...state.cardSkillLevels]
       const newCenterSkillLevels = [...state.centerSkillLevels]
@@ -643,7 +641,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const savedState = loadMusicState(newMusicKey)
 
         if (savedState) {
-          console.log(`Loading saved state for ${newMusicKey}:`, savedState)
+          // Loading saved state for music
+          // console.log(`Loading saved state for ${newMusicKey}:`, savedState)
 
           const newCards: (Card | null)[] = savedState.cards.map((cardName) => {
             if (!cardName) return null
@@ -708,7 +707,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
           learningCorrection: 1.5,
         })
       }
-      return { initialMental: mental }
+      return { initialMental: Math.max(0, Math.min(100, mental)) }
     }),
 
   setComboCount: (count) => set({ comboCount: count }),

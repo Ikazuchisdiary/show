@@ -17,10 +17,10 @@ describe('skillValueRounding', () => {
     })
 
     it('should remove trailing zeros from decimals', () => {
-      expect(formatSkillValue(100.1000)).toBe('100.1')
-      expect(formatSkillValue(100.1200)).toBe('100.12')
-      expect(formatSkillValue(100.0000)).toBe('100')
-      expect(formatSkillValue(0.0100)).toBe('0.01')
+      expect(formatSkillValue(100.1)).toBe('100.1')
+      expect(formatSkillValue(100.12)).toBe('100.12')
+      expect(formatSkillValue(100.0)).toBe('100')
+      expect(formatSkillValue(0.01)).toBe('0.01')
     })
 
     it('should handle edge cases', () => {

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { CardSelector } from './CardSelector'
 import { useGameStore } from '../../stores/gameStore'
-import { getAllCards } from '../../data'
+import { getAllCards, getCardsByCharacter } from '../../data'
 
 // Mock stores and data
 vi.mock('../../stores/gameStore')
@@ -11,7 +11,7 @@ vi.mock('../../data')
 describe('CardSelector', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Mock store state
     vi.mocked(useGameStore).mockReturnValue({
       selectedCards: Array(6).fill(null),
@@ -29,10 +29,10 @@ describe('CardSelector', () => {
       clearCustomCenterSkillValues: vi.fn(),
       swapCards: vi.fn(),
       insertCard: vi.fn(),
-    } as any)
-    
+    } as ReturnType<typeof useGameStore>)
+
     // Mock card data
-    vi.mocked(getAllCards).mockReturnValue([
+    const mockCards = [
       {
         name: 'Test Card 1',
         displayName: 'Test Card Display 1',
@@ -42,22 +42,27 @@ describe('CardSelector', () => {
         stats: { smile: 5000, pure: 4000, cool: 3000, mental: 100 },
         effects: [],
       },
-    ])
+    ]
+
+    vi.mocked(getAllCards).mockReturnValue(mockCards)
+    vi.mocked(getCardsByCharacter).mockImplementation((character) =>
+      mockCards.filter((card) => card.character === character),
+    )
   })
 
   describe('rendering', () => {
     it('should render all card slots', () => {
       render(<CardSelector index={0} />)
-      
-      // Should render card selector
-      expect(screen.getByRole('button')).toBeInTheDocument()
+
+      // Should render card selector input
+      expect(screen.getByPlaceholderText('カード名で検索...')).toBeInTheDocument()
     })
 
     it('should show empty state for unselected cards', () => {
       render(<CardSelector index={0} />)
-      
-      // Should show "カードを選択" text
-      expect(screen.getByText('カードを選択')).toBeInTheDocument()
+
+      // Should show "未選択" text in dropdown
+      expect(screen.getAllByText('未選択')).toHaveLength(2) // option and div
     })
   })
 })

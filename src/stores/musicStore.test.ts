@@ -8,6 +8,14 @@ vi.mock('../services/localStorageService', () => ({
   getCustomMusicList: vi.fn(() => ({})),
   saveCustomMusicList: vi.fn(),
   isShareMode: vi.fn(() => false),
+  loadMusicState: vi.fn(() => null),
+  saveMusicState: vi.fn(),
+  saveCardSkillLevel: vi.fn(),
+  loadCardSkillLevel: vi.fn(() => 14),
+  saveCenterSkillLevel: vi.fn(),
+  loadCenterSkillLevel: vi.fn(() => 14),
+  loadAllCardSkillLevels: vi.fn(() => ({})),
+  loadAllCenterSkillLevels: vi.fn(() => ({})),
 }))
 
 describe('musicStore', () => {
@@ -16,15 +24,26 @@ describe('musicStore', () => {
     useMusicStore.setState({
       customMusicList: {},
     })
-    
+
     // Reset gameStore state for music-related tests
     useGameStore.setState({
+      selectedCards: Array(6).fill(null),
+      cardSkillLevels: Array(6).fill(14),
+      centerSkillLevels: Array(6).fill(14),
+      customSkillValues: {},
+      customCenterSkillValues: {},
       selectedMusic: null,
-      initialMental: 100,
-      learningCorrection: 1.5,
       selectedDifficulty: 'master',
+      initialMental: 100,
+      comboCount: 100,
+      centerCharacter: null,
+      learningCorrection: 1.5,
+      customMusicList: {},
+      simulationResult: null,
+      isSimulating: false,
+      isShareMode: false,
     })
-    
+
     // Clear all mocks
     vi.clearAllMocks()
   })
@@ -43,7 +62,7 @@ describe('musicStore', () => {
           master: { combo: 250, appeal: 12500 },
         },
       }
-      
+
       useGameStore.getState().setMusic(music)
       expect(useGameStore.getState().selectedMusic).toEqual(music)
     })
@@ -61,7 +80,7 @@ describe('musicStore', () => {
           master: { combo: 250, appeal: 12500 },
         },
       }
-      
+
       const store = useGameStore.getState()
       store.setMusic(music)
       store.setMusic(null)
@@ -77,10 +96,10 @@ describe('musicStore', () => {
 
     it('should clamp initial mental between 0 and 100', () => {
       const store = useGameStore.getState()
-      
+
       store.setInitialMental(150)
       expect(useGameStore.getState().initialMental).toBe(100)
-      
+
       store.setInitialMental(-50)
       expect(useGameStore.getState().initialMental).toBe(0)
     })
@@ -113,21 +132,23 @@ describe('musicStore', () => {
           master: { combo: 250, appeal: 12500 },
         },
       }
-      
+
       useMusicStore.getState().addCustomMusic(mockCustomMusic)
-      
+
       const customMusicList = useMusicStore.getState().customMusicList
       expect(Object.keys(customMusicList)).toHaveLength(1)
       expect(customMusicList['custom_123']).toEqual(mockCustomMusic)
       expect(localStorageService.saveCustomMusicList).toHaveBeenCalledWith(customMusicList)
     })
 
-    it('should generate unique id for custom music', () => {
+    it('should generate unique id for custom music', async () => {
       const id1 = useMusicStore.getState().generateCustomMusicId()
+      // Wait 1ms to ensure different timestamp
+      await new Promise((resolve) => setTimeout(resolve, 1))
       const id2 = useMusicStore.getState().generateCustomMusicId()
-      
-      expect(id1).toMatch(/^custom_\d+$/)
-      expect(id2).toMatch(/^custom_\d+$/)
+
+      expect(id1).toMatch(/^custom_\d+_\d+$/)
+      expect(id2).toMatch(/^custom_\d+_\d+$/)
       expect(id1).not.toBe(id2)
     })
 
@@ -145,13 +166,13 @@ describe('musicStore', () => {
           master: { combo: 250, appeal: 12500 },
         },
       }
-      
+
       const store = useMusicStore.getState()
       store.addCustomMusic(mockCustomMusic)
-      
+
       const updatedMusic = { ...mockCustomMusic, name: 'Updated Music' }
       store.updateCustomMusic('custom_123', updatedMusic)
-      
+
       const customMusicList = useMusicStore.getState().customMusicList
       expect(Object.keys(customMusicList)).toHaveLength(1)
       expect(customMusicList['custom_123'].name).toBe('Updated Music')
@@ -171,19 +192,24 @@ describe('musicStore', () => {
           master: { combo: 250, appeal: 12500 },
         },
       }
-      
+
       const store = useMusicStore.getState()
       store.addCustomMusic(mockCustomMusic)
-      expect(Object.keys(store.customMusicList)).toHaveLength(1)
-      
+
+      // Get fresh state after adding
+      let currentState = useMusicStore.getState()
+      expect(Object.keys(currentState.customMusicList)).toHaveLength(1)
+
       store.deleteCustomMusic('custom_123')
-      expect(Object.keys(useMusicStore.getState().customMusicList)).toHaveLength(0)
+      // Get fresh state after deleting
+      currentState = useMusicStore.getState()
+      expect(Object.keys(currentState.customMusicList)).toHaveLength(0)
       expect(localStorageService.saveCustomMusicList).toHaveBeenLastCalledWith({})
     })
 
     it('should not modify custom music in share mode', () => {
       vi.mocked(localStorageService.isShareMode).mockReturnValue(true)
-      
+
       const mockCustomMusic = {
         id: 'custom_123',
         name: 'Custom Music',
@@ -197,10 +223,10 @@ describe('musicStore', () => {
           master: { combo: 250, appeal: 12500 },
         },
       }
-      
+
       const store = useMusicStore.getState()
       store.addCustomMusic(mockCustomMusic)
-      
+
       // Should not add music in share mode
       expect(Object.keys(store.customMusicList)).toHaveLength(0)
       expect(localStorageService.saveCustomMusicList).not.toHaveBeenCalled()
@@ -222,13 +248,13 @@ describe('musicStore', () => {
           },
         },
       }
-      
+
       vi.mocked(localStorageService.getCustomMusicList).mockReturnValue(savedMusic)
-      
+
       const store = useMusicStore.getState()
       store.loadCustomMusic()
-      
-      expect(store.customMusicList).toEqual(savedMusic)
+
+      expect(useMusicStore.getState().customMusicList).toEqual(savedMusic)
     })
   })
 })
