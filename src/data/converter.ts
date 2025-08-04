@@ -5,7 +5,7 @@ import { Effect } from '../core/models/Effect'
 
 // Import the original data
 // @ts-expect-error - gameDataJS has dynamic structure
-import gameDataJS from '../../cardData.js'
+import gameDataJS from './gameData.js'
 
 // Raw data types from JavaScript
 interface RawGameData {

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 
 // Mock the gameData import with test data
-vi.mock('../../cardData.js', () => ({
+vi.mock('./gameData.js', () => ({
   default: {
     cards: {
       testCard1: {
@@ -204,7 +204,7 @@ describe('data converter', () => {
   describe('effect conversion', () => {
     it('should handle conditional effects', () => {
       // Re-mock with conditional effects
-      vi.doMock('../../cardData.js', () => ({
+      vi.doMock('./gameData.js', () => ({
         default: {
           cards: {
             conditionalCard: {
