@@ -65,7 +65,15 @@ export function saveMusicState(
 ): void {
   if (!musicKey || isShareMode()) return
   const key = KEYS.musicState(musicKey)
-  localStorage.setItem(key, JSON.stringify(state))
+  
+  // v1互換形式に変換
+  const v1State = {
+    mental: state.mental.toString(),
+    learningCorrection: state.learningCorrection.toString(),
+    cards: state.cards.map(card => ({ card }))
+  }
+  
+  localStorage.setItem(key, JSON.stringify(v1State))
 }
 
 // 楽曲ごとの編成状態を読み込み（v1互換）
@@ -77,7 +85,34 @@ export function loadMusicState(musicKey: string): {
   if (!musicKey || isShareMode()) return null
   const key = KEYS.musicState(musicKey)
   const savedState = localStorage.getItem(key)
-  return savedState ? JSON.parse(savedState) : null
+  if (!savedState) return null
+  
+  try {
+    const parsed = JSON.parse(savedState)
+    
+    // v1形式（cards配列の要素が{card: string}）をv2形式に変換
+    let cards: string[]
+    if (Array.isArray(parsed.cards)) {
+      if (parsed.cards.length > 0 && typeof parsed.cards[0] === 'object' && 'card' in parsed.cards[0]) {
+        // v1形式
+        cards = parsed.cards.map((item: { card: string }) => item.card)
+      } else {
+        // v2形式（既に文字列配列）
+        cards = parsed.cards
+      }
+    } else {
+      cards = []
+    }
+    
+    return {
+      cards,
+      mental: parsed.mental ? parseInt(parsed.mental, 10) : undefined,
+      learningCorrection: parsed.learningCorrection ? parseFloat(parsed.learningCorrection) : undefined
+    }
+  } catch (e) {
+    console.error('Failed to parse music state:', e)
+    return null
+  }
 }
 
 // すべてのカードのスキルレベルを読み込み
@@ -121,7 +156,8 @@ export function loadAllCenterSkillLevels(): Record<string, number> {
 // 共有モードかどうかを判定（URLにshareパラメータがある場合）
 export function isShareMode(): boolean {
   const params = new URLSearchParams(window.location.search)
-  return params.has('share')
+  // v1互換: share=1またはs=1の両方をチェック
+  return params.get('share') === '1' || params.get('s') === '1'
 }
 
 // 最後に表示したバージョンを保存
