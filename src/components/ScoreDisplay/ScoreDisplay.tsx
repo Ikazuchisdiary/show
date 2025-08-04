@@ -107,9 +107,7 @@ export const ScoreDisplay: React.FC = () => {
             <div key={index} className="log-turn">
               {turn.logs && turn.logs.length > 0 ? (
                 // v1形式の詳細ログがある場合はそれを表示
-                turn.logs.map((log, logIndex) => (
-                  <div key={logIndex} dangerouslySetInnerHTML={{ __html: log }} />
-                ))
+                <div dangerouslySetInnerHTML={{ __html: turn.logs.join('') }} />
               ) : (
                 // 詳細ログがない場合は簡易表示（フォールバック）
                 <>

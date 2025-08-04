@@ -175,12 +175,8 @@
 /* v1形式のログスタイル */
 .log-boost-action {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 20px;
-  margin: 4px 0;
-  background-color: #f5f5f5;
-  border-radius: 4px;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .log-score-boost,
@@ -192,11 +188,11 @@
 }
 
 .log-score-boost {
-  color: #4caf50;
+  color: #ff6b6b;
 }
 
 .log-voltage-boost {
-  color: #ff9800;
+  color: #f39c12;
 }
 
 .log-score-gain {
@@ -204,15 +200,39 @@
 }
 
 .log-ap-gain {
-  color: #4caf50;
+  color: #67c23a;
+  font-weight: 600;
+  font-size: 12px;
 }
 
-.boost-values,
-.score-gain-values,
-.ap-gain-values {
+.boost-values {
+  padding-left: 16px;
+  font-weight: 600;
   font-size: 13px;
-  font-weight: 500;
-  color: #666;
+}
+
+/* Score boost value styling */
+.log-score-boost + .boost-values {
+  color: #ff6b6b;
+}
+
+/* Voltage boost value styling */
+.log-voltage-boost + .boost-values {
+  color: #f39c12;
+}
+
+.score-gain-values {
+  padding-left: 16px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #2196f3;
+}
+
+.ap-gain-values {
+  padding-left: 16px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #67c23a;
 }
 
 .log-voltage-gain {
@@ -255,30 +275,48 @@
 .log-condition-fail {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 20px;
-  margin: 4px 0;
-  font-size: 13px;
+  gap: 6px;
+  margin: 4px 0 4px 20px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  max-width: fit-content;
 }
 
 .log-condition-success {
-  color: #4caf50;
+  background: #e8f5e9;
+  border: 1px solid #c8e6c9;
+  color: #333;
 }
 
 .log-condition-fail {
-  color: #f44336;
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  color: #333;
+}
+
+.log-condition-success .condition-result {
+  color: #2e7d32;
+}
+
+.log-condition-fail .condition-result {
+  color: #757575;
 }
 
 .condition-text {
-  font-weight: 500;
+  color: #555;
+  font-size: 11px;
 }
 
 .condition-arrow {
   color: #999;
+  font-size: 14px;
 }
 
 .condition-result {
   font-weight: 600;
+  white-space: nowrap;
+  font-size: 11px;
 }
 
 /* 条件付きエフェクトのインデント */
@@ -307,4 +345,51 @@
   bottom: 0;
   width: 2px;
   background-color: #e0e0e0;
+}
+
+/* v1形式の追加スタイル */
+.log-score-boost::before {
+  content: '📈';
+  margin-right: 4px;
+  font-size: 12px;
+}
+
+.log-voltage-boost::before {
+  content: '⚡';
+  margin-right: 4px;
+  font-size: 12px;
+}
+
+.log-score-gain::before {
+  content: '💯';
+  margin-right: 4px;
+}
+
+.log-voltage-gain::before {
+  content: '⚡';
+  margin-right: 4px;
+}
+
+.log-mental::before {
+  content: '🧠';
+  margin-right: 4px;
+}
+
+/* スキップログのスタイル */
+.log-condition-skip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 4px 20px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  max-width: fit-content;
+  background: #fef5e7;
+  border: 1px solid #ffecb3;
+  color: #999;
+}
+
+.log-condition-skip .condition-result {
+  color: #f57c00;
 }

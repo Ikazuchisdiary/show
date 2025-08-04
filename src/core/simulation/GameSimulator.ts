@@ -238,7 +238,7 @@ export class GameSimulator {
     // Process all effects except removeAfterUse first
     for (let i = 0; i < card.effects.length; i++) {
       const effect = card.effects[i]
-      if (effect.type === 'removeAfterUse' || effect.type === 'skipTurn') {
+      if (effect.type === 'removeAfterUse') {
         // Save removeAfterUse for later processing
         removeAfterUseEffects.push({ effect, index: i })
       } else {
@@ -1084,16 +1084,11 @@ export class GameSimulator {
   private getPhaseStr(): string {
     if (!this.state.currentPhase) return ''
 
-    switch (this.state.currentPhase.name) {
-      case 'beforeFever':
-        return '<span style="color: #666;">フィーバー前</span>'
-      case 'duringFever':
-        return '<span style="color: #e74c3c;">フィーバー中</span>'
-      case 'afterFever':
-        return '<span style="color: #666;">フィーバー後</span>'
-      default:
-        return ''
+    // v1 style: Only show fever icon during fever
+    if (this.state.currentPhase.name === 'duringFever') {
+      return '<span class="fever-icon">🔥</span>'
     }
+    return ''
   }
 
   /**

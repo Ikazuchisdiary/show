@@ -7,14 +7,10 @@ export interface UpdateEntry {
 export const updateHistory: UpdateEntry[] = [
   {
     version: '2.0.0',
-    date: '2025-07-24',
+    date: '2025-08-05',
     changes: [
-      'React/TypeScriptによる完全な再実装',
-      'パフォーマンスとコード品質の大幅改善',
-      'モダンなUIコンポーネントアーキテクチャ',
-      'v1との完全な互換性を維持',
-      'AP不足時の参考スコア計算機能を追加',
-      'アップデートバナーと履歴機能を実装',
+      'システムの内部実装を改善',
+      'ログ表示の細かい調整',
     ],
   },
   {
