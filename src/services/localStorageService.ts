@@ -65,14 +65,14 @@ export function saveMusicState(
 ): void {
   if (!musicKey || isShareMode()) return
   const key = KEYS.musicState(musicKey)
-  
+
   // v1互換形式に変換
   const v1State = {
     mental: state.mental.toString(),
     learningCorrection: state.learningCorrection.toString(),
-    cards: state.cards.map(card => ({ card }))
+    cards: state.cards.map((card) => ({ card })),
   }
-  
+
   localStorage.setItem(key, JSON.stringify(v1State))
 }
 
@@ -86,14 +86,18 @@ export function loadMusicState(musicKey: string): {
   const key = KEYS.musicState(musicKey)
   const savedState = localStorage.getItem(key)
   if (!savedState) return null
-  
+
   try {
     const parsed = JSON.parse(savedState)
-    
+
     // v1形式（cards配列の要素が{card: string}）をv2形式に変換
     let cards: string[]
     if (Array.isArray(parsed.cards)) {
-      if (parsed.cards.length > 0 && typeof parsed.cards[0] === 'object' && 'card' in parsed.cards[0]) {
+      if (
+        parsed.cards.length > 0 &&
+        typeof parsed.cards[0] === 'object' &&
+        'card' in parsed.cards[0]
+      ) {
         // v1形式
         cards = parsed.cards.map((item: { card: string }) => item.card)
       } else {
@@ -103,11 +107,13 @@ export function loadMusicState(musicKey: string): {
     } else {
       cards = []
     }
-    
+
     return {
       cards,
       mental: parsed.mental ? parseInt(parsed.mental, 10) : undefined,
-      learningCorrection: parsed.learningCorrection ? parseFloat(parsed.learningCorrection) : undefined
+      learningCorrection: parsed.learningCorrection
+        ? parseFloat(parsed.learningCorrection)
+        : undefined,
     }
   } catch (e) {
     console.error('Failed to parse music state:', e)

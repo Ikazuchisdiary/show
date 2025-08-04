@@ -161,7 +161,12 @@ function App() {
         <MusicSelector />
 
         <div className="form-group">
-          <label>カード選択</label>
+          <label>
+            カード選択
+            <span style={{ marginLeft: '8px', fontSize: '12px', color: '#666' }}>
+              (同一キャラクターは2枚まで編成可能)
+            </span>
+          </label>
           <div className="card-slots">
             {Array.from({ length: 6 }, (_, i) => (
               <CardSelector

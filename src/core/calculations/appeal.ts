@@ -7,6 +7,7 @@ interface AppealCalculationOptions {
   musicAttribute?: MusicAttribute | null
   centerCard?: Card | null
   centerCharacteristic?: CenterCharacteristic | null
+  centerCharacteristics?: CenterCharacteristic[] // 複数のセンター特性に対応
 }
 
 /**
@@ -27,11 +28,24 @@ export function calculateAppealValue(options: AppealCalculationOptions): number 
       // Calculate boost multiplier for this card
       let boostMultiplier = 1.0
 
+      // 単一のセンター特性（後方互換性）
       if (options.centerCharacteristic) {
         for (const effect of options.centerCharacteristic.effects) {
           if (effect.type === 'appealBoost' && shouldApplyBoost(card, effect.target)) {
             // v1 adds the boost value to the multiplier (not sets it)
             boostMultiplier += effect.value
+          }
+        }
+      }
+
+      // 複数のセンター特性
+      if (options.centerCharacteristics) {
+        for (const centerChar of options.centerCharacteristics) {
+          for (const effect of centerChar.effects) {
+            if (effect.type === 'appealBoost' && shouldApplyBoost(card, effect.target)) {
+              // v1 adds the boost value to the multiplier (not sets it)
+              boostMultiplier += effect.value
+            }
           }
         }
       }

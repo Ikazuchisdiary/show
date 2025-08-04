@@ -8,10 +8,7 @@ export const updateHistory: UpdateEntry[] = [
   {
     version: '2.0.0',
     date: '2025-08-05',
-    changes: [
-      'システムの内部実装を改善',
-      'ログ表示の細かい調整',
-    ],
+    changes: ['システムの内部実装を改善', 'ログ表示の細かい調整'],
   },
   {
     version: '1.9.0',

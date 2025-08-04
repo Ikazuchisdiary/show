@@ -15,10 +15,13 @@ export const useDuplicateCharacterDetection = (cards: (Card | null)[]) => {
       }
     })
 
-    // Find slots with duplicate characters
+    // Find slots with duplicate characters (3枚目以降をエラーとする)
     characterSlots.forEach((slots) => {
-      if (slots.length > 1) {
-        slots.forEach((slot) => duplicates.add(slot))
+      if (slots.length > 2) {
+        // 3枚目以降（インデックス2以降）をエラーとする
+        for (let i = 2; i < slots.length; i++) {
+          duplicates.add(slots[i])
+        }
       }
     })
 

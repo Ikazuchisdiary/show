@@ -303,13 +303,15 @@ export class GameSimulator {
   private getEffectiveAPCost(card: Card): number {
     let apCost = card.apCost
 
-    // Apply AP reduction from center characteristic
-    const centerCard = this.getCenterCard()
-    if (centerCard?.centerCharacteristic) {
-      for (const effect of centerCard.centerCharacteristic.effects) {
-        if (effect.type === 'apReduce') {
-          const reduction = effect.value
-          apCost = Math.max(0, apCost - reduction)
+    // Apply AP reduction from center characteristics (複数のセンターカードに対応)
+    const centerCards = this.getCenterCards()
+    for (const centerCard of centerCards) {
+      if (centerCard?.centerCharacteristic) {
+        for (const effect of centerCard.centerCharacteristic.effects) {
+          if (effect.type === 'apReduce') {
+            const reduction = effect.value
+            apCost = Math.max(0, apCost - reduction)
+          }
         }
       }
     }
@@ -931,11 +933,15 @@ export class GameSimulator {
 
   // Add v1-style getScore method
   private getScore(value: number): void {
+    const centerCards = this.getCenterCards()
     const appeal = calculateAppealValue({
       cards: this.state.cards,
       musicAttribute: this.state.musicAttribute as 'smile' | 'pure' | 'cool' | undefined,
       centerCard: this.getCenterCard(),
       centerCharacteristic: this.getCenterCard()?.centerCharacteristic,
+      centerCharacteristics: centerCards
+        .map((card) => card.centerCharacteristic)
+        .filter((c) => c !== undefined),
     })
 
     const voltageLevel = getVoltageLevel(
@@ -1030,11 +1036,15 @@ export class GameSimulator {
 
     // Calculate appeal
     const centerCard = this.getCenterCard()
+    const centerCards = this.getCenterCards()
     const appeal = calculateAppealValue({
       cards: this.state.cards,
       musicAttribute: this.state.musicAttribute as 'smile' | 'pure' | 'cool' | undefined,
       centerCard,
       centerCharacteristic: centerCard?.centerCharacteristic,
+      centerCharacteristics: centerCards
+        .map((card) => card.centerCharacteristic)
+        .filter((c) => c !== undefined),
     })
 
     const voltageLevel = getVoltageLevel(
@@ -1079,6 +1089,14 @@ export class GameSimulator {
         (card) => card && card.character === this.state.music?.centerCharacter,
       ) || null
     )
+  }
+
+  private getCenterCards(): Card[] {
+    if (!this.state.music?.centerCharacter) return []
+
+    return this.state.cards.filter(
+      (card) => card && card.character === this.state.music?.centerCharacter,
+    ) as Card[]
   }
 
   private getPhaseStr(): string {
@@ -1268,11 +1286,15 @@ export class GameSimulator {
             }
 
             // Calculate appeal using the same method as in the regular simulation
+            const centerCards = this.getCenterCards()
             const appeal = calculateAppealValue({
               cards: this.state.cards,
               musicAttribute: this.state.musicAttribute as 'smile' | 'pure' | 'cool' | undefined,
               centerCard,
               centerCharacteristic: centerCard?.centerCharacteristic,
+              centerCharacteristics: centerCards
+                .map((card) => card.centerCharacteristic)
+                .filter((c) => c !== undefined),
             })
 
             const scoreGain = Math.ceil(
@@ -1324,115 +1346,119 @@ export class GameSimulator {
   }
 
   private applyCenterSkillsAtTiming(timing: string): void {
-    const centerCard = this.getCenterCard()
-    if (!centerCard) return
+    const centerCards = this.getCenterCards()
+    if (centerCards.length === 0) return
 
-    // Find the center card index
-    const centerIndex = this.state.cards.findIndex((card) => card === centerCard)
-    if (centerIndex === -1) return
+    // Process each center card
+    for (const centerCard of centerCards) {
+      // Find the center card index
+      const centerIndex = this.state.cards.findIndex((card) => card === centerCard)
+      if (centerIndex === -1) continue
 
-    // Process center skill effects
-    if (centerCard.centerSkill && centerCard.centerSkill.when === timing) {
-      // Reset turn logs for center skill
-      this.currentTurnLogs = []
+      // Process center skill effects
+      if (centerCard.centerSkill && centerCard.centerSkill.when === timing) {
+        // Reset turn logs for center skill
+        this.currentTurnLogs = []
 
-      // Add center skill header log
-      const isFeverTiming =
-        timing === 'beforeFeverStart' ||
-        (timing === 'afterLastTurn' &&
-          this.state.music &&
-          this.state.music.phases[1] >= this.getTotalTurns() - this.state.music.phases[0])
-      const feverIcon = isFeverTiming ? '<span class="fever-icon">🔥</span>' : ''
-      this.currentTurnLogs.push(
-        `<div class="log-turn-header">
-          <span class="turn-number center-skill">センタースキル</span>
-          ${feverIcon}
-          <span class="log-card-name">${centerCard.displayName || centerCard.name}</span>
-        </div>`,
-      )
+        // Add center skill header log
+        const isFeverTiming =
+          timing === 'beforeFeverStart' ||
+          (timing === 'afterLastTurn' &&
+            this.state.music &&
+            this.state.music.phases[1] >= this.getTotalTurns() - this.state.music.phases[0])
+        const feverIcon = isFeverTiming ? '<span class="fever-icon">🔥</span>' : ''
+        this.currentTurnLogs.push(
+          `<div class="log-turn-header">
+            <span class="turn-number center-skill">センタースキル</span>
+            ${feverIcon}
+            <span class="log-card-name">${centerCard.displayName || centerCard.name}</span>
+          </div>`,
+        )
 
-      // Record center skill activation log
-      const centerActivationIndex = this.state.cardActivationLog.length
+        // Record center skill activation log
+        const centerActivationIndex = this.state.cardActivationLog.length
 
-      this.state.cardActivationLog.push({
-        turn: this.state.currentTurn,
-        cardName: centerCard.displayName || centerCard.name,
-        cardIndex: centerIndex,
-        apCost: 0,
-        isCenterSkill: true,
-        scoreBefore: this.state.totalScore,
-        scoreBoostBefore: [...this.state.scoreBoost],
-        scoreBoostCountBefore: this.state.scoreBoostCount,
-        voltagePtBefore: this.state.totalVoltage,
-        scoreGain: 0, // Will be updated after processing
-        scoreBoostAfter: [], // Will be updated after processing
-        scoreBoostCountAfter: 0, // Will be updated after processing
-        voltagePtAfter: 0, // Will be updated after processing
-      })
-
-      const centerSkillLevel = this.centerSkillLevels[centerIndex]
-      const skillMultiplier = SKILL_LEVEL_MULTIPLIERS[centerSkillLevel - 1] || 1
-
-      for (let i = 0; i < centerCard.centerSkill.effects.length; i++) {
-        const effect = centerCard.centerSkill.effects[i]
-        this.processCenterSkillEffect(effect, centerIndex, skillMultiplier, `center_effect_${i}`)
-      }
-
-      // Add center skill log to turn results
-      if (this.currentTurnLogs.length > 1) {
-        // More than just header
-        this.state.turnResults.push({
+        this.state.cardActivationLog.push({
           turn: this.state.currentTurn,
+          cardName: centerCard.displayName || centerCard.name,
           cardIndex: centerIndex,
-          cardName: centerCard.name,
-          cardCharacter: centerCard.character,
-          appeal: 0,
-          scoreGain: this.currentTurnScoreGain,
-          voltageGain: this.currentTurnVoltageGain,
-          voltageLevel: getVoltageLevel(
-            this.state.totalVoltage,
-            this.state.currentTurn,
-            this.state.music,
-          ),
-          apUsed: 0,
-          isSkipped: false,
-          multipliers: {
-            base: 0,
-            skill: skillMultiplier,
-            skillBoost: 0,
-            voltage: 0,
-            fever: 0,
-            center: 0,
-            total: 0,
-          },
-          logs: [...this.currentTurnLogs],
+          apCost: 0,
+          isCenterSkill: true,
+          scoreBefore: this.state.totalScore,
+          scoreBoostBefore: [...this.state.scoreBoost],
+          scoreBoostCountBefore: this.state.scoreBoostCount,
+          voltagePtBefore: this.state.totalVoltage,
+          scoreGain: 0, // Will be updated after processing
+          scoreBoostAfter: [], // Will be updated after processing
+          scoreBoostCountAfter: 0, // Will be updated after processing
+          voltagePtAfter: 0, // Will be updated after processing
         })
+
+        const centerSkillLevel = this.centerSkillLevels[centerIndex]
+        const skillMultiplier = SKILL_LEVEL_MULTIPLIERS[centerSkillLevel - 1] || 1
+
+        for (let i = 0; i < centerCard.centerSkill.effects.length; i++) {
+          const effect = centerCard.centerSkill.effects[i]
+          this.processCenterSkillEffect(effect, centerIndex, skillMultiplier, `center_effect_${i}`)
+        }
+
+        // Add center skill log to turn results
+        if (this.currentTurnLogs.length > 1) {
+          // More than just header
+          this.state.turnResults.push({
+            turn: this.state.currentTurn,
+            cardIndex: centerIndex,
+            cardName: centerCard.name,
+            cardCharacter: centerCard.character,
+            appeal: 0,
+            scoreGain: this.currentTurnScoreGain,
+            voltageGain: this.currentTurnVoltageGain,
+            voltageLevel: getVoltageLevel(
+              this.state.totalVoltage,
+              this.state.currentTurn,
+              this.state.music,
+            ),
+            apUsed: 0,
+            isSkipped: false,
+            multipliers: {
+              base: 0,
+              skill: skillMultiplier,
+              skillBoost: 0,
+              voltage: 0,
+              fever: 0,
+              center: 0,
+              total: 0,
+            },
+            logs: [...this.currentTurnLogs],
+          })
+        }
+
+        // Update center skill activation log
+        if (centerActivationIndex < this.state.cardActivationLog.length) {
+          this.state.cardActivationLog[centerActivationIndex].scoreGain = this.currentTurnScoreGain
+          this.state.cardActivationLog[centerActivationIndex].scoreBoostAfter = [
+            ...this.state.scoreBoost,
+          ]
+          this.state.cardActivationLog[centerActivationIndex].scoreBoostCountAfter =
+            this.state.scoreBoostCount
+          this.state.cardActivationLog[centerActivationIndex].voltagePtAfter =
+            this.state.totalVoltage
+        }
+
+        // Reset turn gains
+        this.currentTurnScoreGain = 0
+        this.currentTurnVoltageGain = 0
       }
 
-      // Update center skill activation log
-      if (centerActivationIndex < this.state.cardActivationLog.length) {
-        this.state.cardActivationLog[centerActivationIndex].scoreGain = this.currentTurnScoreGain
-        this.state.cardActivationLog[centerActivationIndex].scoreBoostAfter = [
-          ...this.state.scoreBoost,
-        ]
-        this.state.cardActivationLog[centerActivationIndex].scoreBoostCountAfter =
-          this.state.scoreBoostCount
-        this.state.cardActivationLog[centerActivationIndex].voltagePtAfter = this.state.totalVoltage
-      }
-
-      // Reset turn gains
-      this.currentTurnScoreGain = 0
-      this.currentTurnVoltageGain = 0
-    }
-
-    // Process center characteristic effects (keep for compatibility)
-    if (centerCard.centerCharacteristic) {
-      for (let i = 0; i < centerCard.centerCharacteristic.effects.length; i++) {
-        const effect = centerCard.centerCharacteristic.effects[i]
-        if (effect.type === 'centerSkill' && effect.timing === timing) {
-          for (let j = 0; j < effect.effects.length; j++) {
-            const subEffect = effect.effects[j]
-            this.processEffect(subEffect, centerCard, centerIndex, `center_${timing}_${i}_${j}`)
+      // Process center characteristic effects (keep for compatibility)
+      if (centerCard.centerCharacteristic) {
+        for (let i = 0; i < centerCard.centerCharacteristic.effects.length; i++) {
+          const effect = centerCard.centerCharacteristic.effects[i]
+          if (effect.type === 'centerSkill' && effect.timing === timing) {
+            for (let j = 0; j < effect.effects.length; j++) {
+              const subEffect = effect.effects[j]
+              this.processEffect(subEffect, centerCard, centerIndex, `center_${timing}_${i}_${j}`)
+            }
           }
         }
       }
