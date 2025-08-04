@@ -5,7 +5,7 @@ import path from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/sukushou/v2/',
+  base: '/show/',
   build: {
     outDir: 'docs-v2',
     emptyOutDir: true,
@@ -14,7 +14,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'zustand'],
-          data: ['./cardData.js', './src/data/gameData.js'],
+          data: ['./src/data/gameData.js'],
         },
         chunkFileNames: (chunkInfo) => {
           const facadeModuleId = chunkInfo.facadeModuleId
