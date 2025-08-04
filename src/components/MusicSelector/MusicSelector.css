@@ -1,0 +1,746 @@
+/* 楽曲情報セクション */
+.music-info-section {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  overflow: visible;
+  position: relative;
+}
+
+.section-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 15px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+}
+
+.section-content {
+  padding: 20px;
+  background: white;
+}
+
+/* フォームグループ */
+.form-group {
+  margin-bottom: 0;
+}
+
+/* 楽曲選択ドロップダウン */
+.music-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.music-select-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.music-select-display:hover {
+  border-color: #4caf50;
+  background: #fafafa;
+}
+
+.music-select-display.active {
+  border-color: #4caf50;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* 楽曲選択値表示 */
+.music-select-value {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.music-select-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: #333;
+}
+
+.music-select-info {
+  font-size: 12px;
+  color: #666;
+}
+
+/* ドロップダウン矢印 */
+.music-select-arrow {
+  color: #666;
+  font-size: 14px;
+  transition: transform 0.2s ease;
+}
+
+.music-select-display.active .music-select-arrow {
+  transform: rotate(180deg);
+}
+
+/* ドロップダウンメニュー */
+.music-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 400px;
+  background: white;
+  border: 2px solid #4caf50;
+  border-top: none;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: none;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.music-dropdown.show {
+  display: block;
+}
+
+/* 検索コンテナ */
+.music-search-container {
+  padding: 8px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.music-search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+}
+
+.music-search-input:focus {
+  outline: none;
+  border-color: #4caf50;
+  background: white;
+}
+
+/* ドロップダウンアイテム */
+.music-dropdown-items {
+  max-height: calc(400px - 50px);
+  overflow-y: auto;
+}
+
+.music-dropdown-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.music-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.music-dropdown-item:hover {
+  background: #f5f5f5;
+}
+
+.music-dropdown-item.selected {
+  background: #e8f5e9;
+}
+
+.music-dropdown-item.custom-item {
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+  font-weight: 500;
+}
+
+.music-dropdown-item.custom-item:hover {
+  background: linear-gradient(135deg, #ffecb3 0%, #ffe082 100%);
+}
+
+/* Share mode disabled state */
+.music-select-display.share-mode-disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  background-color: #f5f5f5;
+}
+
+.music-select-display.share-mode-disabled .music-select-arrow {
+  opacity: 0.5;
+}
+
+/* 楽曲アイテム情報 */
+.music-item-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.music-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.music-phases {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.phase-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 4px;
+  background: #e0e0e0;
+  color: #333;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 3px;
+}
+
+.phase-tag.fever {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.phase-arrow {
+  color: #999;
+  font-size: 10px;
+}
+
+.music-item-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.center-label {
+  color: #666;
+  font-weight: 500;
+}
+
+.center-name {
+  color: #ff9800;
+  font-weight: 600;
+}
+
+.custom-icon {
+  font-size: 18px;
+}
+
+.custom-description {
+  color: #666;
+  font-size: 12px;
+}
+
+/* Stats Row */
+.stats-row {
+  display: flex;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.stats-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.stats-group label {
+  display: block;
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+/* カスタム楽曲セクション */
+.custom-music-inner {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.custom-music-card {
+  background: white;
+  border: none;
+  border-radius: 0;
+  overflow: hidden;
+  margin: 0;
+}
+
+.custom-music-header {
+  background: transparent;
+  padding: 0 0 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.custom-music-header h3 {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* フェーズ入力セクション */
+.phase-inputs-section {
+  padding: 20px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.section-label {
+  font-size: 13px;
+  color: #666;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.phase-inputs-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  justify-content: center;
+}
+
+.phase-input-group {
+  text-align: center;
+}
+
+.phase-input-group label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.phase-input-group input[type='number'] {
+  width: 70px;
+  text-align: center;
+  padding: 10px 8px;
+  font-size: 18px;
+  font-weight: 600;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.phase-input-group input[type='number']:focus {
+  border-color: #4caf50;
+  outline: none;
+  transform: scale(1.05);
+}
+
+/* フィーバーフェーズ特別スタイル */
+.phase-input-group.fever label {
+  color: #ff6b6b;
+  font-weight: 600;
+}
+
+.phase-input-group.fever input {
+  border-color: #ffe0e0;
+  background: #fff5f5;
+}
+
+.phase-input-group.fever input:focus {
+  border-color: #ff6b6b;
+}
+
+.phase-separator {
+  font-size: 20px;
+  color: #ccc;
+  font-weight: 300;
+}
+
+/* カスタム楽曲設定 */
+.custom-music-settings {
+  padding: 20px 0 0 0;
+}
+
+.setting-row {
+  margin-bottom: 15px;
+}
+
+.setting-label {
+  display: block;
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.setting-row select,
+.custom-attribute-section select {
+  width: 100%;
+  max-width: 350px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+}
+
+/* コンボ入力セクション */
+.combo-inputs-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.combo-inputs-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 30px;
+  max-width: none;
+}
+
+.combo-input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.combo-input-group label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.combo-input-group input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.combo-input-group input:focus {
+  outline: none;
+  border-color: #4caf50;
+}
+
+/* カスタム楽曲保存セクション */
+.custom-music-save-section {
+  margin-top: 20px;
+  padding-top: 20px;
+}
+
+.save-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 16px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: auto;
+  width: auto;
+}
+
+.save-button.overwrite-mode {
+  background: #ff9800;
+}
+
+.save-button.overwrite-mode:hover {
+  background: #f57c00;
+}
+
+.custom-music-save-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: auto;
+  width: auto;
+  white-space: nowrap;
+}
+
+.custom-music-save-button:hover {
+  background: #45a049;
+  transform: translateY(-1px);
+}
+
+.custom-music-save-button.overwrite-mode {
+  background: #ff9800;
+}
+
+.custom-music-save-button.overwrite-mode:hover {
+  background: #f57c00;
+}
+
+/* 保存入力グループ */
+.save-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.custom-music-name-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.custom-music-name-input:focus {
+  outline: none;
+  border-color: #4caf50;
+}
+
+.custom-music-save-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.custom-music-name-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.custom-music-name-input:focus {
+  outline: none;
+  border-color: #4caf50;
+}
+
+.custom-music-save-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.custom-music-save-actions button {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.custom-music-save-actions button:first-child {
+  background-color: #4caf50;
+  color: white;
+  border-color: #4caf50;
+}
+
+.custom-music-save-actions button:first-child:hover {
+  background-color: #45a049;
+}
+
+.custom-music-save-actions button:last-child {
+  background-color: white;
+  color: #666;
+}
+
+.custom-music-save-actions button:last-child:hover {
+  background-color: #f5f5f5;
+}
+
+/* 保存済みカスタム楽曲リスト */
+.saved-music-container {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.saved-music-header {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.saved-music-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  padding: 8px 10px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  transition: all 0.2s ease;
+}
+
+.saved-music-item:hover {
+  border-color: #4caf50;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.saved-music-item:last-child {
+  margin-bottom: 0;
+}
+
+.saved-music-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.saved-music-name {
+  font-weight: 500;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.saved-music-phases {
+  font-size: 13px;
+  color: #666;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.saved-music-center {
+  font-size: 12px;
+  color: #ff9800;
+  font-weight: 600;
+  background: #fff8e1;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #ffd54f;
+}
+
+/* 属性バッジ */
+.saved-music-attribute {
+  font-size: 12px;
+  color: #fff;
+  font-weight: normal;
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-left: 10px;
+}
+
+.saved-music-attribute.smile {
+  background: #ff6b6b;
+}
+
+.saved-music-attribute.pure {
+  background: #4ecdc4;
+}
+
+.saved-music-attribute.cool {
+  background: #5c7cfa;
+}
+
+/* 削除ボタン */
+.delete-button {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  padding: 0;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-button:hover {
+  background: #d32f2f;
+  transform: scale(1.1);
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .music-info-section {
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+
+  .section-header {
+    padding: 12px 15px;
+  }
+
+  .section-header h3 {
+    font-size: 15px;
+  }
+
+  .section-content {
+    padding: 15px;
+  }
+
+  .phase-inputs-container {
+    flex-wrap: wrap;
+  }
+
+  .phase-separator {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .stats-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .stats-group {
+    width: 100%;
+  }
+}
+
+/* 共有モードスタイル */
+body.share-mode .music-select-display {
+  cursor: not-allowed;
+  opacity: 0.7;
+  background: #f5f5f5;
+}
+
+body.share-mode .music-select-arrow {
+  opacity: 0.5;
+}

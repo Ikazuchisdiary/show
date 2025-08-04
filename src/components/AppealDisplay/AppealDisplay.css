@@ -1,0 +1,19 @@
+/* Appeal Value Box */
+.appeal-box {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+}
+
+.appeal-box .box-label {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.appeal-box .box-value {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #333;
+}

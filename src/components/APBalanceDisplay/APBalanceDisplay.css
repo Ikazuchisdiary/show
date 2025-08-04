@@ -1,0 +1,138 @@
+/* AP収支表示 */
+.ap-summary {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.ap-summary.positive {
+  background-color: #e8f5e9;
+}
+
+.ap-summary.negative {
+  background-color: #ffebee;
+}
+
+.ap-balance {
+  text-align: center;
+}
+
+.ap-balance.positive .box-value {
+  color: #2e7d32;
+}
+
+.ap-balance.negative .box-value {
+  color: #c62828;
+}
+
+.ap-info-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  color: #666;
+  background: none;
+  border: none;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.ap-info-icon:hover {
+  color: #333;
+}
+
+.ap-details {
+  display: block;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #ddd;
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ap-detail-columns {
+  display: flex;
+  gap: 20px;
+}
+
+.ap-detail-section {
+  flex: 1;
+}
+
+@media (max-width: 480px) {
+  .ap-detail-columns {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.ap-detail-label {
+  font-size: 0.8em;
+  color: #666;
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ap-detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+  font-size: 0.9em;
+}
+
+.ap-detail-name {
+  color: #555;
+  font-size: 0.9em;
+}
+
+.ap-detail-value {
+  font-weight: bold;
+}
+
+.ap-income .ap-detail-value {
+  color: #2e7d32;
+}
+
+.ap-expense .ap-detail-value {
+  color: #d32f2f;
+}
+
+.ap-detail-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-top: 1px solid #ddd;
+  margin-top: 6px;
+  font-weight: bold;
+}
+
+/* Box styles from v1 */
+.box-label {
+  font-size: 0.8em;
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.box-value {
+  font-size: 1.8em;
+  font-weight: bold;
+}

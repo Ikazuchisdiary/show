@@ -1,0 +1,395 @@
+/* 結果表示セクション */
+#result {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f0f8ff;
+  border-radius: 5px;
+  text-align: center;
+  display: none;
+}
+
+#result h2 {
+  margin-top: 0;
+  color: #333;
+  font-size: 24px;
+}
+
+#score {
+  font-size: 36px;
+  font-weight: bold;
+  color: #2196f3;
+  margin: 10px 0;
+}
+
+.result-details {
+  margin: 15px 0;
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.toggle-log {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #666;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-log:hover {
+  background-color: #555;
+}
+
+/* ターンログ */
+#turnLog {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  max-height: 400px;
+  overflow-y: auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  display: none;
+  border: 1px solid #e0e0e0;
+}
+
+.log-turn {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
+  border-left: 3px solid #4caf50;
+  position: relative;
+}
+
+.log-turn-header {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.log-turn-header .log-card-name {
+  font-weight: bold;
+  color: #2196f3;
+  font-size: 13px;
+  flex: 1;
+}
+
+.log-ap-inline {
+  position: absolute;
+  right: 0;
+  top: 0;
+  color: #e74c3c;
+  font-size: 12px;
+  font-weight: 600;
+  background: #ffebee;
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.turn-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  background: #f0f0f0;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.turn-number.center-skill {
+  background: #9c27b0;
+  color: white;
+  padding: 0 10px;
+  min-width: auto;
+}
+
+.fever-icon {
+  color: #ff5722;
+  font-size: 16px;
+}
+
+.log-action {
+  margin: 2px 0 2px 20px;
+  color: #666;
+}
+
+.log-calculation {
+  font-size: 12px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-left: 40px;
+  margin-top: 5px;
+}
+
+.calc-value {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  position: relative;
+}
+
+.calc-label {
+  font-size: 10px;
+  margin-top: 2px;
+  opacity: 0.8;
+  font-weight: normal;
+}
+
+.calc-base {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.calc-multiplier {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.calc-voltage {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+/* v1形式のログスタイル */
+.log-boost-action {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.log-score-boost,
+.log-voltage-boost,
+.log-score-gain,
+.log-ap-gain {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.log-score-boost {
+  color: #ff6b6b;
+}
+
+.log-voltage-boost {
+  color: #f39c12;
+}
+
+.log-score-gain {
+  color: #2196f3;
+}
+
+.log-ap-gain {
+  color: #67c23a;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.boost-values {
+  padding-left: 16px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+/* Score boost value styling */
+.log-score-boost + .boost-values {
+  color: #ff6b6b;
+}
+
+/* Voltage boost value styling */
+.log-voltage-boost + .boost-values {
+  color: #f39c12;
+}
+
+.score-gain-values {
+  padding-left: 16px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #2196f3;
+}
+
+.ap-gain-values {
+  padding-left: 16px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #67c23a;
+}
+
+.log-voltage-gain {
+  color: #ff9800;
+  font-weight: 500;
+}
+
+.calc-operator {
+  margin: 0 4px;
+  color: #999;
+  font-weight: normal;
+}
+
+.calc-appeal {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.calc-score-boost {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.calc-voltage-level {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.calc-fever {
+  background-color: #fce4ec;
+  color: #c2185b;
+}
+
+.log-mental {
+  color: #9c27b0;
+}
+
+/* 条件評価のスタイル */
+.log-condition-success,
+.log-condition-fail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 4px 20px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  max-width: fit-content;
+}
+
+.log-condition-success {
+  background: #e8f5e9;
+  border: 1px solid #c8e6c9;
+  color: #333;
+}
+
+.log-condition-fail {
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  color: #333;
+}
+
+.log-condition-success .condition-result {
+  color: #2e7d32;
+}
+
+.log-condition-fail .condition-result {
+  color: #757575;
+}
+
+.condition-text {
+  color: #555;
+  font-size: 11px;
+}
+
+.condition-arrow {
+  color: #999;
+  font-size: 14px;
+}
+
+.condition-result {
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 11px;
+}
+
+/* 条件付きエフェクトのインデント */
+.conditional-effects {
+  margin-left: 35px;
+  padding-left: 12px;
+  border-left: 2px solid #e0e0e0;
+  position: relative;
+}
+
+.conditional-effects .log-action {
+  margin-bottom: 2px;
+  margin-left: 0;
+}
+
+.log-conditional-indent {
+  margin-left: 40px !important;
+  position: relative;
+}
+
+.log-conditional-indent::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #e0e0e0;
+}
+
+/* v1形式の追加スタイル */
+.log-score-boost::before {
+  content: '📈';
+  margin-right: 4px;
+  font-size: 12px;
+}
+
+.log-voltage-boost::before {
+  content: '⚡';
+  margin-right: 4px;
+  font-size: 12px;
+}
+
+.log-score-gain::before {
+  content: '💯';
+  margin-right: 4px;
+}
+
+.log-voltage-gain::before {
+  content: '⚡';
+  margin-right: 4px;
+}
+
+.log-mental::before {
+  content: '🧠';
+  margin-right: 4px;
+}
+
+/* スキップログのスタイル */
+.log-condition-skip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 4px 20px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  max-width: fit-content;
+  background: #fef5e7;
+  border: 1px solid #ffecb3;
+  color: #999;
+}
+
+.log-condition-skip .condition-result {
+  color: #f57c00;
+}
