@@ -1,5 +1,5 @@
 const CACHE_NAME = 'sukushou-v2-cache-v1'
-const urlsToCache = ['/sukushou/v2/', '/sukushou/v2/index.html', '/sukushou/v2/manifest.json']
+const urlsToCache = ['/show/', '/show/index.html', '/show/manifest.json']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

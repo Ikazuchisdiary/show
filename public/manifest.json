@@ -5,7 +5,7 @@
   "theme_color": "#f44336",
   "background_color": "#ffffff",
   "display": "standalone",
-  "scope": "/sukushou/v2/",
-  "start_url": "/sukushou/v2/",
+  "scope": "/show/",
+  "start_url": "/show/",
   "icons": []
 }

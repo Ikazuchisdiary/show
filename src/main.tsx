@@ -7,8 +7,10 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 // Register service worker for PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
+    // Use the base path from vite config
+    const base = import.meta.env.BASE_URL
     navigator.serviceWorker
-      .register('/sukushou/v2/sw.js')
+      .register(`${base}sw.js`)
       .then(() => {
         // ServiceWorker registration successful
       })
