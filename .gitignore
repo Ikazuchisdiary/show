@@ -41,6 +41,14 @@ Thumbs.db
 
 # Vite
 vite.config.js.timestamp-*
+.vite/
 
 # Vitest
 __snapshots__/
+
+# Build output
+build/
+*.local
+
+# Environment variables
+.env
