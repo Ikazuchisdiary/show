@@ -27,6 +27,21 @@ export interface AppealCalculationResult {
       displayName: string
       boostPercentage: number
     }>
+    cardDetails: Array<{
+      cardIndex: number
+      displayName: string
+      baseStats: {
+        smile: number
+        pure: number
+        cool: number
+      }
+      boostPercentage: number
+      boostedStats: {
+        smile: number
+        pure: number
+        cool: number
+      }
+    }>
   }
 }
 
@@ -52,6 +67,7 @@ export function calculateAppealValueWithDetails(options: AppealCalculationOption
   let totalPure = 0
   let totalCool = 0
   const centerBoosts: AppealCalculationResult['details']['centerBoosts'] = []
+  const cardDetails: AppealCalculationResult['details']['cardDetails'] = []
 
   // Calculate appeal for each card with center characteristic boosts
   for (let i = 0; i < cards.length; i++) {
@@ -96,6 +112,23 @@ export function calculateAppealValueWithDetails(options: AppealCalculationOption
       totalSmile += boostedSmile
       totalPure += boostedPure
       totalCool += boostedCool
+
+      // Store card details
+      cardDetails.push({
+        cardIndex: i + 1,
+        displayName: card.displayName || card.name,
+        baseStats: {
+          smile: card.stats.smile,
+          pure: card.stats.pure,
+          cool: card.stats.cool
+        },
+        boostPercentage: totalBoost * 100,
+        boostedStats: {
+          smile: boostedSmile,
+          pure: boostedPure,
+          cool: boostedCool
+        }
+      })
     }
   }
 
@@ -138,7 +171,8 @@ export function calculateAppealValueWithDetails(options: AppealCalculationOption
       boostedCool: totalCool,
       matchingAttributeAppeal,
       nonMatchingAttributeAppeal,
-      centerBoosts
+      centerBoosts,
+      cardDetails
     }
   }
 }

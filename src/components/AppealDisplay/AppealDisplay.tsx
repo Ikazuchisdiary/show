@@ -59,77 +59,73 @@ export const AppealDisplay: React.FC = () => {
 
       {showDetails && (
         <div className="appeal-details">
+          {/* カードごとの詳細 */}
           <div className="appeal-detail-section">
-            <div className="appeal-detail-label">基礎アピール値</div>
-            <div className="appeal-attribute-grid">
-              <div className="appeal-attribute-item">
-                <span className="attribute-label smile">Smile</span>
-                <span className="attribute-value">{appealResult.details.baseSmile.toLocaleString()}</span>
-              </div>
-              <div className="appeal-attribute-item">
-                <span className="attribute-label pure">Pure</span>
-                <span className="attribute-value">{appealResult.details.basePure.toLocaleString()}</span>
-              </div>
-              <div className="appeal-attribute-item">
-                <span className="attribute-label cool">Cool</span>
-                <span className="attribute-value">{appealResult.details.baseCool.toLocaleString()}</span>
-              </div>
-            </div>
-          </div>
-
-          {appealResult.details.centerBoosts.length > 0 && (
-            <div className="appeal-detail-section">
-              <div className="appeal-detail-label">センター特性ボーナス</div>
-              {Object.entries(groupedBoosts).map(([percentage, boosts]) => (
-                <div key={percentage} className="center-boost-group">
-                  <div className="boost-percentage">+{percentage}%</div>
-                  <div className="boost-cards">
-                    {boosts.map((boost, index) => (
-                      <div key={index} className="boost-card-item">
-                        {boost.displayName}
-                      </div>
-                    ))}
+            <div className="appeal-detail-label">カード別アピール値</div>
+            {appealResult.details.cardDetails && appealResult.details.cardDetails.map((card) => (
+              <div key={card.cardIndex} className="card-appeal-detail">
+                <div className="card-appeal-header">
+                  <span className="card-number">{card.cardIndex}</span>
+                  <span className="card-name">{card.displayName}</span>
+                  {card.boostPercentage > 0 && (
+                    <span className="card-boost-badge">+{Math.round(card.boostPercentage * 100) / 100}%</span>
+                  )}
+                </div>
+                <div className="card-appeal-stats">
+                  <div className="card-stat-item">
+                    <span className="stat-label smile">Smile</span>
+                    <span className="stat-base">{card.baseStats.smile.toLocaleString()}</span>
+                    {card.boostPercentage > 0 && (
+                      <>
+                        <span className="stat-arrow">→</span>
+                        <span className="stat-boosted">{card.boostedStats.smile.toLocaleString()}</span>
+                      </>
+                    )}
+                  </div>
+                  <div className="card-stat-item">
+                    <span className="stat-label pure">Pure</span>
+                    <span className="stat-base">{card.baseStats.pure.toLocaleString()}</span>
+                    {card.boostPercentage > 0 && (
+                      <>
+                        <span className="stat-arrow">→</span>
+                        <span className="stat-boosted">{card.boostedStats.pure.toLocaleString()}</span>
+                      </>
+                    )}
+                  </div>
+                  <div className="card-stat-item">
+                    <span className="stat-label cool">Cool</span>
+                    <span className="stat-base">{card.baseStats.cool.toLocaleString()}</span>
+                    {card.boostPercentage > 0 && (
+                      <>
+                        <span className="stat-arrow">→</span>
+                        <span className="stat-boosted">{card.boostedStats.cool.toLocaleString()}</span>
+                      </>
+                    )}
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
 
+          {/* 合計値 */}
           <div className="appeal-detail-section">
-            <div className="appeal-detail-label">ブースト後アピール値</div>
-            <div className="appeal-attribute-grid">
-              <div className="appeal-attribute-item">
-                <span className="attribute-label smile">Smile</span>
-                <span className="attribute-value">
-                  {appealResult.details.boostedSmile.toLocaleString()}
-                  {appealResult.details.boostedSmile > appealResult.details.baseSmile && (
-                    <span className="attribute-boost">
-                      (+{(appealResult.details.boostedSmile - appealResult.details.baseSmile).toLocaleString()})
-                    </span>
-                  )}
-                </span>
+            <div className="appeal-detail-label">属性別合計アピール値</div>
+            <div className="appeal-total-grid">
+              <div className="appeal-total-item">
+                <span className="total-label">基礎合計</span>
+                <div className="total-stats">
+                  <span className="total-stat smile">Smile: {appealResult.details.baseSmile.toLocaleString()}</span>
+                  <span className="total-stat pure">Pure: {appealResult.details.basePure.toLocaleString()}</span>
+                  <span className="total-stat cool">Cool: {appealResult.details.baseCool.toLocaleString()}</span>
+                </div>
               </div>
-              <div className="appeal-attribute-item">
-                <span className="attribute-label pure">Pure</span>
-                <span className="attribute-value">
-                  {appealResult.details.boostedPure.toLocaleString()}
-                  {appealResult.details.boostedPure > appealResult.details.basePure && (
-                    <span className="attribute-boost">
-                      (+{(appealResult.details.boostedPure - appealResult.details.basePure).toLocaleString()})
-                    </span>
-                  )}
-                </span>
-              </div>
-              <div className="appeal-attribute-item">
-                <span className="attribute-label cool">Cool</span>
-                <span className="attribute-value">
-                  {appealResult.details.boostedCool.toLocaleString()}
-                  {appealResult.details.boostedCool > appealResult.details.baseCool && (
-                    <span className="attribute-boost">
-                      (+{(appealResult.details.boostedCool - appealResult.details.baseCool).toLocaleString()})
-                    </span>
-                  )}
-                </span>
+              <div className="appeal-total-item">
+                <span className="total-label">ブースト後合計</span>
+                <div className="total-stats">
+                  <span className="total-stat smile">Smile: {appealResult.details.boostedSmile.toLocaleString()}</span>
+                  <span className="total-stat pure">Pure: {appealResult.details.boostedPure.toLocaleString()}</span>
+                  <span className="total-stat cool">Cool: {appealResult.details.boostedCool.toLocaleString()}</span>
+                </div>
               </div>
             </div>
           </div>

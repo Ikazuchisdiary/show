@@ -137,29 +137,145 @@
   margin-top: 2px;
 }
 
-/* Center Boost Group */
-.center-boost-group {
+/* Card Appeal Detail */
+.card-appeal-detail {
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 10px;
   margin-bottom: 8px;
+}
+
+.card-appeal-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.card-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: #666;
+  color: white;
+  border-radius: 4px;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.card-name {
+  flex: 1;
+  font-size: 0.9em;
+  color: #333;
+}
+
+.card-boost-badge {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.card-appeal-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .card-appeal-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85em;
+}
+
+.stat-label {
+  font-weight: bold;
+  min-width: 45px;
+}
+
+.stat-label.smile {
+  color: #ff6b6b;
+}
+
+.stat-label.pure {
+  color: #4ecdc4;
+}
+
+.stat-label.cool {
+  color: #5eb3ff;
+}
+
+.stat-base {
+  color: #666;
+}
+
+.stat-arrow {
+  color: #999;
+}
+
+.stat-boosted {
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+/* Appeal Total Grid */
+.appeal-total-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
-.boost-percentage {
-  font-weight: bold;
-  color: #2e7d32;
-  font-size: 0.9em;
-  min-width: 50px;
+@media (max-width: 600px) {
+  .appeal-total-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-.boost-cards {
-  flex: 1;
+.appeal-total-item {
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 10px;
 }
 
-.boost-card-item {
+.total-label {
+  display: block;
   font-size: 0.85em;
-  color: #555;
-  line-height: 1.4;
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.total-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.total-stat {
+  font-size: 0.9em;
+}
+
+.total-stat.smile {
+  color: #ff6b6b;
+}
+
+.total-stat.pure {
+  color: #4ecdc4;
+}
+
+.total-stat.cool {
+  color: #5eb3ff;
 }
 
 /* Appeal Calculation */
