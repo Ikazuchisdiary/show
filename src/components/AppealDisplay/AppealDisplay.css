@@ -104,33 +104,33 @@
   text-align: center;
 }
 
-.attribute-label {
+.appeal-details .attribute-label {
   display: block;
   font-size: 0.85em;
   font-weight: bold;
   margin-bottom: 4px;
 }
 
-.attribute-label.smile {
+.appeal-details .attribute-label.smile {
   color: #ff6b6b;
 }
 
-.attribute-label.pure {
+.appeal-details .attribute-label.pure {
   color: #4ecdc4;
 }
 
-.attribute-label.cool {
+.appeal-details .attribute-label.cool {
   color: #5eb3ff;
 }
 
-.attribute-value {
+.appeal-details .attribute-value {
   display: block;
   font-size: 1.1em;
   font-weight: bold;
   color: #333;
 }
 
-.attribute-boost {
+.appeal-details .attribute-boost {
   display: block;
   font-size: 0.8em;
   color: #2e7d32;
@@ -152,7 +152,7 @@
   margin-bottom: 8px;
 }
 
-.card-number {
+.appeal-details .card-number {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -165,7 +165,7 @@
   font-weight: bold;
 }
 
-.card-name {
+.appeal-details .card-name {
   flex: 1;
   font-size: 0.9em;
   color: #333;
@@ -206,20 +206,20 @@
   font-size: 0.85em;
 }
 
-.stat-label {
+.appeal-details .stat-label {
   font-weight: bold;
   min-width: 45px;
 }
 
-.stat-label.smile {
+.appeal-details .stat-label.smile {
   color: #ff6b6b;
 }
 
-.stat-label.pure {
+.appeal-details .stat-label.pure {
   color: #4ecdc4;
 }
 
-.stat-label.cool {
+.appeal-details .stat-label.cool {
   color: #5eb3ff;
 }
 
