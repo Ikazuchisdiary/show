@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useGameStore } from '@stores/gameStore'
 import { calculateAppealValueWithDetails, AppealCalculationResult } from '@core/calculations/appeal'
 import './AppealDisplay.css'
@@ -42,6 +42,53 @@ export const AppealDisplay: React.FC = () => {
     return acc
   }, {} as Record<number, AppealCalculationResult['details']['centerBoosts']>)
 
+  // Create tooltip text for boost badges
+  const getBoostTooltip = useMemo(() => {
+    const boostSources: Record<number, string[]> = {}
+    
+    // Collect all center cards with their characteristics
+    centerCards.forEach((card) => {
+      if (card?.centerCharacteristic) {
+        card.centerCharacteristic.effects.forEach((effect) => {
+          if (effect.type === 'appealBoost') {
+            // Find which cards are affected by this center characteristic
+            selectedCards.forEach((targetCard, index) => {
+              if (targetCard && appealResult.details.cardDetails[index]) {
+                const cardDetail = appealResult.details.cardDetails[index]
+                if (cardDetail.boostPercentage > 0) {
+                  // Check if this center characteristic affects this card
+                  const targetMatch = 
+                    effect.target === 'all' ||
+                    effect.target === targetCard.character ||
+                    (effect.target === '102期' && ['乙宗梢', '藤島慈', '夕霧綴理'].includes(targetCard.character)) ||
+                    (effect.target === '103期' && ['日野下花帆', '村野さやか', '大沢瑠璃乃'].includes(targetCard.character)) ||
+                    (effect.target === '104期' && ['百生吟子', '徒町小鈴', '安養寺姫芽'].includes(targetCard.character)) ||
+                    (effect.target === 'スリーズブーケ' && ['乙宗梢', '日野下花帆', '百生吟子'].includes(targetCard.character)) ||
+                    (effect.target === 'DOLLCHESTRA' && ['夕霧綴理', '村野さやか', '徒町小鈴'].includes(targetCard.character)) ||
+                    (effect.target === 'みらくらぱーく！' && ['藤島慈', '大沢瑠璃乃', '安養寺姫芽'].includes(targetCard.character))
+                  
+                  if (targetMatch) {
+                    const key = index + 1
+                    if (!boostSources[key]) {
+                      boostSources[key] = []
+                    }
+                    const sourceName = card.displayName || card.name
+                    const targetDesc = effect.target === 'all' ? '全員' : effect.target
+                    boostSources[key].push(`${sourceName}: ${targetDesc}に+${effect.value * 100}%`)
+                  }
+                }
+              }
+            })
+          }
+        })
+      }
+    })
+    
+    return (cardIndex: number) => {
+      return boostSources[cardIndex]?.join('\n') || ''
+    }
+  }, [centerCards, selectedCards, appealResult.details.cardDetails])
+
   return (
     <div className="appeal-summary">
       <div className="appeal-box">
@@ -68,7 +115,12 @@ export const AppealDisplay: React.FC = () => {
                   <span className="card-number">{card.cardIndex}</span>
                   <span className="card-name">{card.displayName}</span>
                   {card.boostPercentage > 0 && (
-                    <span className="card-boost-badge">+{Math.round(card.boostPercentage * 100) / 100}%</span>
+                    <span 
+                      className="card-boost-badge"
+                      title={getBoostTooltip(card.cardIndex)}
+                    >
+                      +{Math.round(card.boostPercentage * 100) / 100}%
+                    </span>
                   )}
                 </div>
                 <div className="card-appeal-stats">

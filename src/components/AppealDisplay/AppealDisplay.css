@@ -178,6 +178,13 @@
   border-radius: 12px;
   font-size: 0.8em;
   font-weight: bold;
+  cursor: help;
+  transition: background-color 0.2s;
+  white-space: pre-line;
+}
+
+.card-boost-badge:hover {
+  background-color: #c8e6c9;
 }
 
 .card-appeal-stats {
