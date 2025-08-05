@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sukushou-v2-cache-v1'
+const CACHE_NAME = 'sukushou-v2-cache-v2'
 const urlsToCache = ['/show/', '/show/index.html', '/show/manifest.json']
 
 self.addEventListener('install', (event) => {
@@ -10,6 +10,11 @@ self.addEventListener('install', (event) => {
 })
 
 self.addEventListener('fetch', (event) => {
+  // Ignore chrome-extension and other non-http(s) requests
+  if (!event.request.url.startsWith('http')) {
+    return
+  }
+
   event.respondWith(
     caches.match(event.request).then((response) => {
       // Cache hit - return response
@@ -27,7 +32,10 @@ self.addEventListener('fetch', (event) => {
         const responseToCache = response.clone()
 
         caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache)
+          // Only cache http(s) requests
+          if (event.request.url.startsWith('http')) {
+            cache.put(event.request, responseToCache)
+          }
         })
 
         return response
