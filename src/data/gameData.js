@@ -1466,8 +1466,8 @@ const gameData = {
         {
           type: 'apGain',
           value: 0,
-          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 8, 12, 16],
-          description: 'AP回復 (Lv.11: 4, Lv.12: 8, Lv.13: 12, Lv.14: 16)',
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
         },
       ],
     },
@@ -1606,8 +1606,8 @@ const gameData = {
         {
           type: 'apGain',
           value: 0,
-          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 8, 12, 16],
-          description: 'AP回復 (Lv.11: 4, Lv.12: 8, Lv.13: 12, Lv.14: 16)',
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
         },
       ],
     },
@@ -1750,8 +1750,8 @@ const gameData = {
         {
           type: 'apGain',
           value: 0,
-          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 8, 12, 16],
-          description: 'AP回復 (Lv.11: 4, Lv.12: 8, Lv.13: 12, Lv.14: 16)',
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
         },
       ],
     },
@@ -1890,8 +1890,8 @@ const gameData = {
         {
           type: 'apGain',
           value: 0,
-          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 8, 12, 16],
-          description: 'AP回復 (Lv.11: 4, Lv.12: 8, Lv.13: 12, Lv.14: 16)',
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
         },
       ],
     },
