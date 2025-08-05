@@ -33,10 +33,12 @@ export const AppealDisplay: React.FC = () => {
 
   // Group center boosts by percentage
   const groupedBoosts = appealResult.details.centerBoosts.reduce((acc, boost) => {
-    if (!acc[boost.boostPercentage]) {
-      acc[boost.boostPercentage] = []
+    // Round to avoid floating point precision issues
+    const roundedPercentage = Math.round(boost.boostPercentage * 100) / 100
+    if (!acc[roundedPercentage]) {
+      acc[roundedPercentage] = []
     }
-    acc[boost.boostPercentage].push(boost)
+    acc[roundedPercentage].push(boost)
     return acc
   }, {} as Record<number, AppealCalculationResult['details']['centerBoosts']>)
 
