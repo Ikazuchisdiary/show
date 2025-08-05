@@ -101,7 +101,7 @@ describe('Appeal Calculations', () => {
       const appeal = calculateAppealValue({
         cards,
         musicAttribute: 'smile',
-        centerCharacteristic,
+        centerCharacteristics: [centerCharacteristic],
       })
 
       // 102期 (3 cards) get boost: 1 + 2.0 = 3.0x
@@ -137,7 +137,7 @@ describe('Appeal Calculations', () => {
       const appeal = calculateAppealValue({
         cards,
         musicAttribute: 'smile',
-        centerCharacteristic,
+        centerCharacteristics: [centerCharacteristic],
       })
 
       // スリーズブーケ: 3000 * (1 + 1.5) = 3000 * 2.5 = 7500
