@@ -1,66 +1,214 @@
-/* Appeal Value Box */
-.appeal-box {
+/* Appeal Value Summary Container */
+.appeal-summary {
   margin-top: 10px;
   padding: 10px;
   background-color: #f5f5f5;
   border-radius: 5px;
   position: relative;
-  transition: background-color 0.2s;
 }
 
-.appeal-box:hover {
-  background-color: #ebebeb;
+/* Appeal Value Box */
+.appeal-box {
+  text-align: center;
 }
 
 .appeal-box .box-label {
-  font-size: 0.9em;
+  font-size: 0.8em;
+  font-weight: bold;
   color: #666;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .appeal-box .box-value {
-  font-size: 1.2em;
+  font-size: 1.8em;
   font-weight: bold;
+  color: #333;
+}
+
+/* Info Icon */
+.appeal-info-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  color: #666;
+  background: none;
+  border: none;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.appeal-info-icon:hover {
   color: #333;
 }
 
 /* Appeal Details */
 .appeal-details {
+  display: block;
   margin-top: 12px;
-  border-top: 1px solid #ddd;
   padding-top: 12px;
-  font-size: 0.85em;
+  border-top: 1px solid #ddd;
+  animation: fadeIn 0.2s ease-in;
 }
 
-.detail-section {
-  margin-bottom: 10px;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.detail-section:last-child {
+.appeal-detail-section {
+  margin-bottom: 16px;
+}
+
+.appeal-detail-section:last-child {
   margin-bottom: 0;
 }
 
-.detail-label {
+.appeal-detail-label {
+  font-size: 0.8em;
+  color: #666;
   font-weight: bold;
-  color: #555;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Attribute Grid */
+.appeal-attribute-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 480px) {
+  .appeal-attribute-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+.appeal-attribute-item {
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 8px;
+  text-align: center;
+}
+
+.attribute-label {
+  display: block;
+  font-size: 0.85em;
+  font-weight: bold;
   margin-bottom: 4px;
 }
 
-.detail-item {
-  margin-left: 10px;
-  color: #666;
-  line-height: 1.4;
-}
-
-/* Attribute colors */
-.attribute-smile {
+.attribute-label.smile {
   color: #ff6b6b;
 }
 
-.attribute-pure {
+.attribute-label.pure {
   color: #4ecdc4;
 }
 
-.attribute-cool {
+.attribute-label.cool {
   color: #5eb3ff;
+}
+
+.attribute-value {
+  display: block;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #333;
+}
+
+.attribute-boost {
+  display: block;
+  font-size: 0.8em;
+  color: #2e7d32;
+  margin-top: 2px;
+}
+
+/* Center Boost Group */
+.center-boost-group {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.boost-percentage {
+  font-weight: bold;
+  color: #2e7d32;
+  font-size: 0.9em;
+  min-width: 50px;
+}
+
+.boost-cards {
+  flex: 1;
+}
+
+.boost-card-item {
+  font-size: 0.85em;
+  color: #555;
+  line-height: 1.4;
+}
+
+/* Appeal Calculation */
+.appeal-calculation {
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.calc-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 0.9em;
+  flex-wrap: wrap;
+}
+
+.calc-label {
+  color: #555;
+  min-width: 100px;
+}
+
+.calc-formula {
+  color: #666;
+  font-family: monospace;
+}
+
+.calc-result {
+  color: #333;
+  font-weight: bold;
+  margin-left: auto;
+}
+
+.calc-total {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+.calc-total .calc-label {
+  color: #333;
+}
+
+.calc-total .calc-result {
+  font-size: 1.1em;
+  color: #2e7d32;
 }

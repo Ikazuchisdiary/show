@@ -24,6 +24,7 @@ export interface AppealCalculationResult {
     centerBoosts: Array<{
       cardIndex: number
       cardName: string
+      displayName: string
       boostPercentage: number
     }>
   }
@@ -82,6 +83,7 @@ export function calculateAppealValueWithDetails(options: AppealCalculationOption
         centerBoosts.push({
           cardIndex: i + 1,
           cardName: card.name,
+          displayName: card.displayName || card.name,
           boostPercentage: totalBoost * 100
         })
       }
