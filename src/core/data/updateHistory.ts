@@ -6,6 +6,15 @@ export interface UpdateEntry {
 
 export const updateHistory: UpdateEntry[] = [
   {
+    version: '2.1.0',
+    date: '2025-08-05',
+    changes: [
+      '同一キャラクターを2枚まで編成可能に変更',
+      'センタースキル・センター特性が重複して発動するように対応',
+      'v1で保存したデータの読み込みに対応',
+    ],
+  },
+  {
     version: '2.0.0',
     date: '2025-08-05',
     changes: ['システムの内部実装を改善', 'ログ表示の細かい調整'],
@@ -39,4 +48,4 @@ export const updateHistory: UpdateEntry[] = [
   },
 ]
 
-export const CURRENT_VERSION = '2.0.0'
+export const CURRENT_VERSION = '2.1.0'
