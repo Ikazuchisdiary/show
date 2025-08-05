@@ -16,6 +16,7 @@ export type EffectType =
   | 'mentalRecover'
   | 'voltagePenalty'
   | 'removeAfterUse'
+  | 'visualOnly'
 
 export type ConditionType =
   | 'count'
