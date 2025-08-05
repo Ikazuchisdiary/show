@@ -1440,28 +1440,32 @@ const gameData = {
         effects: [
           {
             type: 'voltageGain',
-            value: 0.36,
-            description: 'FEVER開始時にボルテージ獲得（アピール合計値×36%）',
+            value: 279,
+            description: 'ライブ開始時にボルテージ獲得（279pt）',
           },
         ],
-        when: 'beforeFeverStart',
+        when: 'beforeFirstTurn',
       },
       effects: [
         {
           type: 'voltageGain',
-          value: 0.36,
-          description: 'ボルテージ獲得 (Lv.10: 36%)',
+          value: 279,
+          description: 'ボルテージ獲得 (Lv.10: 279pt)',
         },
         {
           type: 'conditional',
-          condition: 'voltage >= 200',
+          condition: 'mental >= 100',
           then: [
             {
               type: 'voltageGain',
-              value: 0.36,
-              description: 'さらにボルテージ獲得 (Lv.10: 36%)',
+              value: 561,
+              description: 'さらにボルテージ獲得 (Lv.10: 561pt)',
             },
           ],
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
         },
         {
           type: 'apGain',
@@ -1507,33 +1511,29 @@ const gameData = {
       centerSkill: {
         effects: [
           {
-            type: 'scoreGain',
-            value: 2.916,
-            description: 'ライブ開始時スコア獲得（アピール合計値×291.6%）',
+            type: 'apGain',
+            value: 12,
+            description: 'ライブ開始時AP回復（12）',
           },
         ],
         when: 'beforeFirstTurn',
       },
       effects: [
         {
-          type: 'scoreGain',
-          value: 2.916,
-          description: 'スコア獲得 (Lv.10: 291.6%)',
+          type: 'scoreBoost',
+          value: 2.175,
+          turns: 1,
+          description: 'スコア獲得スキルによるスコア獲得量が1回の間217.5%上昇 (Lv.10)',
         },
         {
           type: 'conditional',
           condition: 'count <= 3',
           then: [
             {
-              type: 'scoreGain',
-              value: 5.832,
-              description: 'さらにスコア獲得 (Lv.10: 583.2%)',
+              type: 'resetCardTurn',
+              description: '次に発動するスキルをデッキの1枚目から順に戻す',
             },
           ],
-        },
-        {
-          type: 'removeAfterUse',
-          description: 'このカードを除外',
         },
         {
           type: 'apGain',
@@ -1580,28 +1580,32 @@ const gameData = {
         effects: [
           {
             type: 'voltageGain',
-            value: 0.36,
-            description: 'FEVER開始時にボルテージ獲得（アピール合計値×36%）',
+            value: 278,
+            description: 'ライブ開始時にボルテージ獲得（278pt）',
           },
         ],
-        when: 'beforeFeverStart',
+        when: 'beforeFirstTurn',
       },
       effects: [
         {
           type: 'voltageGain',
-          value: 0.36,
-          description: 'ボルテージ獲得 (Lv.10: 36%)',
+          value: 278,
+          description: 'ボルテージ獲得 (Lv.10: 278pt)',
         },
         {
           type: 'conditional',
-          condition: 'voltage >= 200',
+          condition: 'skill_count <= 3',
           then: [
             {
               type: 'voltageGain',
-              value: 0.36,
-              description: 'さらにボルテージ獲得 (Lv.10: 36%)',
+              value: 624,
+              description: 'さらにボルテージ獲得 (Lv.10: 624pt)',
             },
           ],
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
         },
         {
           type: 'apGain',
@@ -1647,29 +1651,41 @@ const gameData = {
       centerSkill: {
         effects: [
           {
-            type: 'voltageBoost',
-            value: 2.4,
-            description: 'ライブ終了時ボルテージ240%ブースト',
+            type: 'apGain',
+            value: 12,
+            description: 'FEVER開始時AP回復（12）',
+          },
+          {
+            type: 'mentalRecover',
+            value: 1.0,
+            description: 'メンタル回復（最大値の100%）',
           },
         ],
-        when: 'afterLastTurn',
+        when: 'beforeFeverStart',
       },
       effects: [
         {
-          type: 'voltageBoost',
-          value: 2.4,
-          description: 'ボルテージ240%ブースト (Lv.10)',
+          type: 'scoreBoost',
+          value: 1.365,
+          turns: 1,
+          description: 'スコア獲得スキルによるスコア獲得量が1回の間136.5%上昇 (Lv.10)',
         },
         {
           type: 'conditional',
-          condition: 'turns_left <= 3',
+          condition: 'mental >= 100',
           then: [
             {
-              type: 'voltageBoost',
-              value: 4.8,
-              description: 'さらにボルテージ480%ブースト (Lv.10)',
+              type: 'scoreBoost',
+              value: 2.457,
+              turns: 1,
+              description: 'さらにスコア獲得スキルによるスコア獲得量が1回の間245.7%上昇 (Lv.10)',
             },
           ],
+        },
+        {
+          type: 'mentalRecover',
+          value: 1.0,
+          description: 'メンタル回復（最大値の100%）',
         },
         {
           type: 'removeAfterUse',
@@ -1791,27 +1807,27 @@ const gameData = {
       centerSkill: {
         effects: [
           {
-            type: 'scoreGain',
-            value: 2.916,
-            description: 'ライブ開始時スコア獲得（アピール合計値×291.6%）',
+            type: 'voltageGain',
+            value: 279,
+            description: 'ライブ開始時にボルテージ獲得（279pt）',
           },
         ],
         when: 'beforeFirstTurn',
       },
       effects: [
         {
-          type: 'scoreGain',
-          value: 2.916,
-          description: 'スコア獲得 (Lv.10: 291.6%)',
+          type: 'voltageGain',
+          value: 279,
+          description: 'ボルテージ獲得 (Lv.10: 279pt)',
         },
         {
           type: 'conditional',
-          condition: 'count <= 3',
+          condition: 'mental <= 10',
           then: [
             {
-              type: 'scoreGain',
-              value: 5.832,
-              description: 'さらにスコア獲得 (Lv.10: 583.2%)',
+              type: 'voltageGain',
+              value: 561,
+              description: 'さらにボルテージ獲得 (Lv.10: 561pt)',
             },
           ],
         },
@@ -1863,29 +1879,33 @@ const gameData = {
       centerSkill: {
         effects: [
           {
-            type: 'voltageGain',
-            value: 0.36,
-            description: 'FEVER開始時にボルテージ獲得（アピール合計値×36%）',
+            type: 'scoreGain',
+            value: 3.348,
+            description: 'ライブ終了時スコア獲得（アピール合計値×334.8%）',
           },
         ],
-        when: 'beforeFeverStart',
+        when: 'afterLastTurn',
       },
       effects: [
         {
-          type: 'voltageGain',
-          value: 0.36,
-          description: 'ボルテージ獲得 (Lv.10: 36%)',
+          type: 'scoreGain',
+          value: 3.348,
+          description: 'スコア獲得 (Lv.10: 334.8%)',
         },
         {
           type: 'conditional',
-          condition: 'voltage >= 200',
+          condition: 'mental <= 10',
           then: [
             {
-              type: 'voltageGain',
-              value: 0.36,
-              description: 'さらにボルテージ獲得 (Lv.10: 36%)',
+              type: 'scoreGain',
+              value: 6.7392,
+              description: 'さらにスコア獲得 (Lv.10: 673.92%)',
             },
           ],
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
         },
         {
           type: 'apGain',
