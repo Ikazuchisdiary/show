@@ -6,6 +6,14 @@ export interface UpdateEntry {
 
 export const updateHistory: UpdateEntry[] = [
   {
+    version: '2.2.1',
+    date: '2025-08-05',
+    changes: [
+      '新楽曲「太陽であれ！」を追加',
+      '新楽曲「太陽であれ！（-2秒）」を追加',
+    ],
+  },
+  {
     version: '2.2.0',
     date: '2025-08-05',
     changes: [
@@ -63,4 +71,4 @@ export const updateHistory: UpdateEntry[] = [
   },
 ]
 
-export const CURRENT_VERSION = '2.2.0'
+export const CURRENT_VERSION = '2.2.1'

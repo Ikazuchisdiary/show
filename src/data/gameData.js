@@ -3610,6 +3610,32 @@ const gameData = {
         master: 872,
       },
     },
+    taiyou_de_are: {
+      name: '太陽であれ！',
+      phases: [10, 6, 2],
+      description: 'フィーバー前: 10, フィーバー中: 6, フィーバー後: 2',
+      centerCharacter: '村野さやか',
+      attribute: 'cool',
+      combos: {
+        normal: 293,
+        hard: 464,
+        expert: 742,
+        master: 1092,
+      },
+    },
+    taiyou_de_are_minus2: {
+      name: '太陽であれ！（-2秒）',
+      phases: [17, 9, 5],
+      description: 'フィーバー前: 17, フィーバー中: 9, フィーバー後: 5',
+      centerCharacter: '村野さやか',
+      attribute: 'cool',
+      combos: {
+        normal: 293,
+        hard: 464,
+        expert: 742,
+        master: 1092,
+      },
+    },
   },
 }
 export default gameData
