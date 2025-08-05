@@ -1719,29 +1719,33 @@ const gameData = {
       centerSkill: {
         effects: [
           {
-            type: 'voltageGain',
-            value: 0.36,
-            description: 'FEVER開始時にボルテージ獲得（アピール合計値×36%）',
+            type: 'scoreGain',
+            value: 3.348,
+            description: 'FEVER開始時スコア獲得（アピール合計値×334.8%）',
           },
         ],
         when: 'beforeFeverStart',
       },
       effects: [
         {
-          type: 'voltageGain',
-          value: 0.36,
-          description: 'ボルテージ獲得 (Lv.10: 36%)',
+          type: 'scoreGain',
+          value: 3.348,
+          description: 'スコア獲得 (Lv.10: 334.8%)',
         },
         {
           type: 'conditional',
-          condition: 'voltage >= 200',
+          condition: 'skill_count >= 15',
           then: [
             {
-              type: 'voltageGain',
-              value: 0.36,
-              description: 'さらにボルテージ獲得 (Lv.10: 36%)',
+              type: 'scoreGain',
+              value: 7.488,
+              description: 'さらにスコア獲得 (Lv.10: 748.8%)',
             },
           ],
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
         },
         {
           type: 'apGain',
