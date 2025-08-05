@@ -28,19 +28,10 @@ export function calculateAppealValue(options: AppealCalculationOptions): number 
       // Calculate boost multiplier for this card
       let boostMultiplier = 1.0
 
-      // 単一のセンター特性（後方互換性）
-      if (options.centerCharacteristic) {
-        for (const effect of options.centerCharacteristic.effects) {
-          if (effect.type === 'appealBoost' && shouldApplyBoost(card, effect.target)) {
-            // v1 adds the boost value to the multiplier (not sets it)
-            boostMultiplier += effect.value
-          }
-        }
-      }
-
-      // 複数のセンター特性
-      if (options.centerCharacteristics) {
-        for (const centerChar of options.centerCharacteristics) {
+      // 複数のセンター特性のみを使用（単一の場合も配列として扱う）
+      if (options.centerCharacteristics && options.centerCharacteristics.length > 0) {
+        for (let j = 0; j < options.centerCharacteristics.length; j++) {
+          const centerChar = options.centerCharacteristics[j]
           for (const effect of centerChar.effects) {
             if (effect.type === 'appealBoost' && shouldApplyBoost(card, effect.target)) {
               // v1 adds the boost value to the multiplier (not sets it)
@@ -63,24 +54,16 @@ export function calculateAppealValue(options: AppealCalculationOptions): number 
 
   // Calculate final appeal based on music attribute
   let finalAppeal: number
-  let mainAttr = 0
-  let otherAttr = 0
 
   if (musicAttribute === 'smile') {
     // Smile is matching attribute (100%), others are 10%
-    mainAttr = totalSmile
-    otherAttr = (totalPure + totalCool) * 0.1
-    finalAppeal = mainAttr + otherAttr
+    finalAppeal = totalSmile + (totalPure + totalCool) * 0.1
   } else if (musicAttribute === 'pure') {
     // Pure is matching attribute (100%), others are 10%
-    mainAttr = totalPure
-    otherAttr = (totalSmile + totalCool) * 0.1
-    finalAppeal = mainAttr + otherAttr
+    finalAppeal = totalPure + (totalSmile + totalCool) * 0.1
   } else if (musicAttribute === 'cool') {
     // Cool is matching attribute (100%), others are 10%
-    mainAttr = totalCool
-    otherAttr = (totalSmile + totalPure) * 0.1
-    finalAppeal = mainAttr + otherAttr
+    finalAppeal = totalCool + (totalSmile + totalPure) * 0.1
   } else {
     // No music attribute, all are 10%
     finalAppeal = (totalSmile + totalPure + totalCool) * 0.1

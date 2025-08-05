@@ -473,7 +473,10 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                   break
 
                 case 'mentalRecover':
-                  if (effect.value !== undefined) {
+                  if (
+                    effect.levelValues &&
+                    effect.levelValues[skillLevel - 1] !== undefined
+                  ) {
                     return (
                       <div className="skill-param-row">
                         <label>メンタル回復:</label>
@@ -481,7 +484,19 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                           className="skill-param-value"
                           style={{ backgroundColor: '#e8f5e9', color: '#2e7d32' }}
                         >
-                          +{effect.value}
+                          +{effect.levelValues[skillLevel - 1]}%
+                        </span>
+                      </div>
+                    )
+                  } else if (effect.value !== undefined) {
+                    return (
+                      <div className="skill-param-row">
+                        <label>メンタル回復:</label>
+                        <span
+                          className="skill-param-value"
+                          style={{ backgroundColor: '#e8f5e9', color: '#2e7d32' }}
+                        >
+                          +{effect.value}%
                         </span>
                       </div>
                     )
@@ -489,7 +504,10 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                   break
 
                 case 'mentalReduction':
-                  if (effect.value !== undefined) {
+                  if (
+                    effect.levelValues &&
+                    effect.levelValues[skillLevel - 1] !== undefined
+                  ) {
                     return (
                       <div className="skill-param-row">
                         <label>メンタル減少:</label>
@@ -497,7 +515,19 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                           className="skill-param-value"
                           style={{ backgroundColor: '#ffebee', color: '#c62828' }}
                         >
-                          -{effect.value}
+                          -{effect.levelValues[skillLevel - 1]}%
+                        </span>
+                      </div>
+                    )
+                  } else if (effect.value !== undefined) {
+                    return (
+                      <div className="skill-param-row">
+                        <label>メンタル減少:</label>
+                        <span
+                          className="skill-param-value"
+                          style={{ backgroundColor: '#ffebee', color: '#c62828' }}
+                        >
+                          -{effect.value}%
                         </span>
                       </div>
                     )
@@ -527,6 +557,19 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                       <label>効果:</label>
                       <span className="skill-param-value">
                         {effect.description || 'ターンスキップ'}
+                      </span>
+                    </div>
+                  )
+
+                case 'visualOnly':
+                  return (
+                    <div className="skill-param-row">
+                      <label>効果:</label>
+                      <span
+                        className="skill-param-value"
+                        style={{ color: '#9e9e9e', fontStyle: 'italic' }}
+                      >
+                        {effect.description}
                       </span>
                     </div>
                   )
@@ -901,13 +944,81 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                       break
 
                     case 'mentalReduction':
-                      return (
-                        <div className="skill-param-row">
-                          <label style={{ color: '#e74c3c' }}>
-                            最大メンタル{effect.value}%減少
-                          </label>
-                        </div>
-                      )
+                      if (
+                        effect.levelValues &&
+                        effect.levelValues[centerSkillLevel - 1] !== undefined
+                      ) {
+                        return (
+                          <div className="skill-param-row">
+                            <label>メンタル減少:</label>
+                            <span
+                              className="skill-param-value"
+                              style={{
+                                backgroundColor: '#ffebee',
+                                color: '#c62828',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              -{effect.levelValues[centerSkillLevel - 1]}%
+                            </span>
+                          </div>
+                        )
+                      } else if (effect.value !== undefined) {
+                        return (
+                          <div className="skill-param-row">
+                            <label>メンタル減少:</label>
+                            <span
+                              className="skill-param-value"
+                              style={{
+                                backgroundColor: '#ffebee',
+                                color: '#c62828',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              -{effect.value}%
+                            </span>
+                          </div>
+                        )
+                      }
+                      break
+                    case 'mentalRecover':
+                      if (
+                        effect.levelValues &&
+                        effect.levelValues[centerSkillLevel - 1] !== undefined
+                      ) {
+                        return (
+                          <div className="skill-param-row">
+                            <label>メンタル回復:</label>
+                            <span
+                              className="skill-param-value"
+                              style={{
+                                backgroundColor: '#e8f5e9',
+                                color: '#2e7d32',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              +{effect.levelValues[centerSkillLevel - 1]}%
+                            </span>
+                          </div>
+                        )
+                      } else if (effect.value !== undefined) {
+                        return (
+                          <div className="skill-param-row">
+                            <label>メンタル回復:</label>
+                            <span
+                              className="skill-param-value"
+                              style={{
+                                backgroundColor: '#e8f5e9',
+                                color: '#2e7d32',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              +{effect.value}%
+                            </span>
+                          </div>
+                        )
+                      }
+                      break
 
                     case 'conditional':
                       // 条件付き効果の表示（センタースキル用）
@@ -987,6 +1098,12 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                       )
                     } else if (effect.type === 'apReduce') {
                       return <div key={idx}>全てのスキルの消費APが{effect.value}減少</div>
+                    } else if (effect.type === 'visualOnly') {
+                      return (
+                        <div key={idx} style={{ color: '#9e9e9e', fontStyle: 'italic' }}>
+                          {effect.description}
+                        </div>
+                      )
                     }
                     return null
                   })

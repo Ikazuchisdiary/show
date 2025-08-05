@@ -164,7 +164,7 @@ function App() {
           <label>
             カード選択
             <span style={{ marginLeft: '8px', fontSize: '12px', color: '#666' }}>
-              (同一キャラクターは2枚まで編成可能)
+              (同一キャラクターは2枚まで、Prism Echo/Ether Aria/Oracle Étudeは1枚まで)
             </span>
           </label>
           <div className="card-slots">

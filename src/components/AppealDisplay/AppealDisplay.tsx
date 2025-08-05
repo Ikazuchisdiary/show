@@ -6,11 +6,12 @@ import './AppealDisplay.css'
 export const AppealDisplay: React.FC = () => {
   const { selectedCards, selectedMusic } = useGameStore()
 
-  // Find center card for center characteristic
-  const centerCard =
-    selectedCards.find(
-      (card) => card && selectedMusic && card.character === selectedMusic.centerCharacter,
-    ) || null
+  // Find all center cards for center characteristics
+  const centerCards = selectedMusic?.centerCharacter
+    ? selectedCards.filter(
+        (card) => card && card.character === selectedMusic.centerCharacter,
+      )
+    : []
 
   // Get music attribute from selected music
   const musicAttribute = selectedMusic?.attribute || null
@@ -19,8 +20,10 @@ export const AppealDisplay: React.FC = () => {
   const appeal = calculateAppealValue({
     cards: selectedCards,
     musicAttribute: musicAttribute,
-    centerCard,
-    centerCharacteristic: centerCard?.centerCharacteristic,
+    // Use only centerCharacteristics to avoid double application
+    centerCharacteristics: centerCards
+      .map((card) => card?.centerCharacteristic)
+      .filter((c) => c !== undefined),
   })
 
   return (

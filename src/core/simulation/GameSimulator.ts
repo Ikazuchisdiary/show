@@ -9,6 +9,8 @@ import {
   APShortageResult,
   RemoveAfterUseEffect,
   ApGainEffect,
+  MentalReductionEffect,
+  MentalRecoverEffect,
 } from '../models'
 import { roundSkillValue } from '../../utils/skillValueRounding'
 import { calculateAppealValue, getVoltageLevel, SKILL_LEVEL_MULTIPLIERS } from '../calculations'
@@ -24,6 +26,9 @@ export class GameSimulator {
   // Store turn start values for condition evaluation
   private turnStartVoltageLevel: number = 0
   private turnStartMental: number = 100
+  
+  // Cache for appeal value
+  private cachedAppealValue: number | null = null
 
   constructor(options: SimulationOptions) {
     this.customSkillValues = options.customSkillValues || {}
@@ -525,16 +530,30 @@ export class GameSimulator {
       }
 
       case 'mentalReduction': {
-        const reduction = Math.floor(this.state.mental * (effect.value / 100))
-        this.state.mental = Math.max(0, this.state.mental - reduction)
+        const mentalEffect = effect as MentalReductionEffect
+        let reductionValue: number
+        if (mentalEffect.levelValues && mentalEffect.levelValues[skillLevel - 1] !== undefined) {
+          reductionValue = mentalEffect.levelValues[skillLevel - 1]
+        } else {
+          reductionValue = effect.value
+        }
+        this.state.mental = Math.max(0, this.state.mental - reductionValue)
         this.currentTurnLogs.push(
-          `<div class="log-action"><span style="color: #e74c3c;">メンタル${effect.value}%減少 → ${this.state.mental}%</span></div>`,
+          `<div class="log-action"><span style="color: #e74c3c;">メンタル減少: -${reductionValue} → ${this.state.mental}%</span></div>`,
         )
         break
       }
 
       case 'mentalRecover': {
-        const mentalRecoverValue = customValue !== undefined ? customValue : effect.value
+        const mentalRecoverEffect = effect as MentalRecoverEffect
+        let mentalRecoverValue: number
+        if (customValue !== undefined) {
+          mentalRecoverValue = customValue
+        } else if (mentalRecoverEffect.levelValues && mentalRecoverEffect.levelValues[skillLevel - 1] !== undefined) {
+          mentalRecoverValue = mentalRecoverEffect.levelValues[skillLevel - 1]
+        } else {
+          mentalRecoverValue = effect.value
+        }
         // No skill multiplier applied to mental recover in v1
         this.state.mental += mentalRecoverValue
         this.currentTurnLogs.push(
@@ -562,6 +581,16 @@ export class GameSimulator {
             `<div class="log-condition-skip">
               <span class="condition-result">デッキから除外 🚫</span>
             </div>`,
+          )
+        }
+        break
+      }
+
+      case 'visualOnly': {
+        // Visual only effect - just show in log but don't process
+        if (effect.description) {
+          this.currentTurnLogs.push(
+            `<div class="log-action" style="color: #9e9e9e; font-style: italic;">${effect.description}</div>`,
           )
         }
         break
@@ -931,18 +960,29 @@ export class GameSimulator {
     )
   }
 
-  // Add v1-style getScore method
-  private getScore(value: number): void {
+  // Get appeal value with caching
+  private getAppealValue(): number {
+    if (this.cachedAppealValue !== null) {
+      return this.cachedAppealValue
+    }
+    
     const centerCards = this.getCenterCards()
-    const appeal = calculateAppealValue({
+    this.cachedAppealValue = calculateAppealValue({
       cards: this.state.cards,
       musicAttribute: this.state.musicAttribute as 'smile' | 'pure' | 'cool' | undefined,
       centerCard: this.getCenterCard(),
-      centerCharacteristic: this.getCenterCard()?.centerCharacteristic,
+      // Use only centerCharacteristics to avoid double application
       centerCharacteristics: centerCards
         .map((card) => card.centerCharacteristic)
         .filter((c) => c !== undefined),
     })
+    
+    return this.cachedAppealValue
+  }
+
+  // Add v1-style getScore method
+  private getScore(value: number): void {
+    const appeal = this.getAppealValue()
 
     const voltageLevel = getVoltageLevel(
       this.state.totalVoltage,
@@ -1035,17 +1075,7 @@ export class GameSimulator {
     const skillMultiplier = SKILL_LEVEL_MULTIPLIERS[skillLevel - 1] || 1
 
     // Calculate appeal
-    const centerCard = this.getCenterCard()
-    const centerCards = this.getCenterCards()
-    const appeal = calculateAppealValue({
-      cards: this.state.cards,
-      musicAttribute: this.state.musicAttribute as 'smile' | 'pure' | 'cool' | undefined,
-      centerCard,
-      centerCharacteristic: centerCard?.centerCharacteristic,
-      centerCharacteristics: centerCards
-        .map((card) => card.centerCharacteristic)
-        .filter((c) => c !== undefined),
-    })
+    const appeal = this.getAppealValue()
 
     const voltageLevel = getVoltageLevel(
       this.state.totalVoltage,
@@ -1286,16 +1316,7 @@ export class GameSimulator {
             }
 
             // Calculate appeal using the same method as in the regular simulation
-            const centerCards = this.getCenterCards()
-            const appeal = calculateAppealValue({
-              cards: this.state.cards,
-              musicAttribute: this.state.musicAttribute as 'smile' | 'pure' | 'cool' | undefined,
-              centerCard,
-              centerCharacteristic: centerCard?.centerCharacteristic,
-              centerCharacteristics: centerCards
-                .map((card) => card.centerCharacteristic)
-                .filter((c) => c !== undefined),
-            })
+            const appeal = this.getAppealValue()
 
             const scoreGain = Math.ceil(
               appeal *
@@ -1554,10 +1575,21 @@ export class GameSimulator {
         break
       }
 
-      case 'mentalReduction':
-        // Mental reduction is a fixed percentage, not affected by skill level
-        // Handled in game initialization
+      case 'mentalReduction': {
+        const mentalEffect = effect as MentalReductionEffect
+        const centerSkillLevel = this.centerSkillLevels[centerIndex]
+        let reductionValue: number
+        if (mentalEffect.levelValues && mentalEffect.levelValues[centerSkillLevel - 1] !== undefined) {
+          reductionValue = mentalEffect.levelValues[centerSkillLevel - 1]
+        } else {
+          reductionValue = mentalEffect.value
+        }
+        this.state.mental = Math.max(0, this.state.mental - reductionValue)
+        this.currentTurnLogs.push(
+          `<div class="log-action"><span style="color: #e74c3c;">メンタル減少: -${reductionValue} → ${this.state.mental}%</span></div>`,
+        )
         break
+      }
 
       case 'conditional': {
         const conditionalEffect = effect as ConditionalEffect

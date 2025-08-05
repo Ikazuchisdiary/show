@@ -86,11 +86,13 @@ export interface ApGainEffect extends BaseEffect {
 export interface MentalReductionEffect extends BaseEffect {
   type: 'mentalReduction'
   value: number
+  levelValues?: number[]
 }
 
 export interface MentalRecoverEffect extends BaseEffect {
   type: 'mentalRecover'
   value: number
+  levelValues?: number[]
 }
 
 export interface VoltagePenaltyEffect extends BaseEffect {
@@ -101,6 +103,11 @@ export interface VoltagePenaltyEffect extends BaseEffect {
 export interface RemoveAfterUseEffect extends BaseEffect {
   type: 'removeAfterUse'
   condition?: string
+}
+
+export interface VisualOnlyEffect extends BaseEffect {
+  type: 'visualOnly'
+  description: string
 }
 
 export interface CenterSkillEffect extends BaseEffect {
@@ -131,6 +138,7 @@ export type Effect =
   | MentalRecoverEffect
   | VoltagePenaltyEffect
   | RemoveAfterUseEffect
+  | VisualOnlyEffect
   | CenterSkillEffect
   | ConditionalEffect
 

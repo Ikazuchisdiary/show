@@ -6,6 +6,21 @@ export interface UpdateEntry {
 
 export const updateHistory: UpdateEntry[] = [
   {
+    version: '2.2.0',
+    date: '2025-08-05',
+    changes: [
+      '新カード「[Prism Echo]日野下花帆」を追加',
+      '新カード「[Prism Echo]村野さやか」を追加',
+      '新カード「[Prism Echo]大沢瑠璃乃」を追加',
+      '新カード「[Prism Echo]乙宗梢」を追加',
+      '新カード「[Prism Echo]夕霧綴理」を追加',
+      '新カード「[Prism Echo]藤島慈」を追加',
+      '新カード「[Ether Aria]日野下花帆」を追加',
+      '新カード「[Ether Aria]百生吟子」を追加',
+      'Prism Echo/Ether Aria/Oracle Étudeシリーズは1枚のみ編成可能に制限',
+    ],
+  },
+  {
     version: '2.1.0',
     date: '2025-08-05',
     changes: [
@@ -48,4 +63,4 @@ export const updateHistory: UpdateEntry[] = [
   },
 ]
 
-export const CURRENT_VERSION = '2.1.0'
+export const CURRENT_VERSION = '2.2.0'

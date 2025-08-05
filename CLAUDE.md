@@ -40,6 +40,7 @@ This is a plain HTML/CSS/JavaScript application with no build system:
 ## Important Implementation Details
 
 1. **Effect System**: Card effects are defined in JSON format in `cardData.js`. Each effect has a type (e.g., "scoreBoost", "voltageBoost", "conditional") and associated parameters.
+   - **IMPORTANT**: The `value` field in effects should contain the Lv.10 value, not Lv.1 or Lv.14
 
 2. **Skill Level Multipliers**: Defined in `SKILL_LEVEL_MULTIPLIERS` array (`script.js:6`) ranging from 1.0x (Lv.1) to 3.0x (Lv.14).
 

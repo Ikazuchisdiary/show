@@ -876,6 +876,532 @@ const gameData = {
         ],
       },
     },
+    // Prism Echo カード
+    prismEchoKaho: {
+      name: 'Prism Echo Kaho',
+      displayName: '［Prism Echo］日野下花帆',
+      character: '日野下花帆',
+      shortCode: 'Kpe',
+      apCost: 20,
+      stats: {
+        smile: 7680,
+        pure: 7200,
+        cool: 6240,
+        mental: 460,
+      },
+      centerCharacteristic: {
+        name: 'アピールアップ・AP軽減・CT短縮',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 1.6,
+            target: 'スリーズブーケ',
+            description: 'スリーズブーケメンバーのアピール値が160%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全スキルのAPを2軽減',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'scoreGain',
+            value: 3.348,
+            description: 'ライブ終了時スコア獲得（アピール合計値×334.8%）',
+          },
+        ],
+        when: 'afterLastTurn',
+      },
+      effects: [
+        {
+          type: 'scoreGain',
+          value: 7.02,
+          description: 'スコア獲得 (Lv.10: 702%)',
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
+        },
+      ],
+    },
+    prismEchoSayaka: {
+      name: 'Prism Echo Sayaka',
+      displayName: '［Prism Echo］村野さやか',
+      character: '村野さやか',
+      shortCode: 'Spe',
+      apCost: 20,
+      stats: {
+        smile: 6240,
+        pure: 7680,
+        cool: 6720,
+        mental: 600,
+      },
+      centerCharacteristic: {
+        name: 'アピールアップ・AP軽減・CT短縮',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 1.6,
+            target: 'DOLLCHESTRA',
+            description: 'DOLLCHESTRAメンバーのアピール値が160%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全スキルのAPを2軽減',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'voltageGain',
+            value: 279,
+            description: 'ライブ開始時ボルテージ獲得 (Lv.10: 279pt)',
+          },
+        ],
+        when: 'beforeFirstTurn',
+      },
+      effects: [
+        {
+          type: 'voltageGain',
+          value: 585,
+          description: 'ボルテージ獲得 (Lv.10: 585pt)',
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
+        },
+      ],
+    },
+    prismEchoRurino: {
+      name: 'Prism Echo Rurino',
+      displayName: '［Prism Echo］大沢瑠璃乃',
+      character: '大沢瑠璃乃',
+      shortCode: 'Rpe',
+      apCost: 12,
+      stats: {
+        smile: 6840,
+        pure: 7200,
+        cool: 6240,
+        mental: 640,
+      },
+      centerCharacteristic: {
+        name: 'アピールアップ・AP軽減・CT短縮',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 1.6,
+            target: 'みらくらぱーく！',
+            description: 'みらくらぱーく！メンバーのアピール値が160%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全スキルのAPを2軽減',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'apGain',
+            value: 8,
+            description: 'フィーバー開始時AP回復',
+            levelValues: [4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 9, 10, 12],
+          },
+          {
+            type: 'mentalRecover',
+            value: 65,
+            description: 'フィーバー開始時メンタル回復',
+            levelValues: [30, 35, 40, 40, 45, 50, 50, 55, 60, 65, 70, 80, 90, 100],
+          },
+        ],
+        when: 'beforeFeverStart',
+      },
+      effects: [
+        {
+          type: 'scoreBoost',
+          value: 1.365,
+          description: 'スコア136.5%ブースト (Lv.10)',
+        },
+        {
+          type: 'voltageBoost',
+          value: 1.365,
+          description: 'ボルテージ136.5%ブースト (Lv.10)',
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
+        },
+      ],
+    },
+    prismEchoKozu: {
+      name: 'Prism Echo Kozu',
+      displayName: '［Prism Echo］乙宗梢',
+      character: '乙宗梢',
+      shortCode: 'Kzpe',
+      apCost: 12,
+      stats: {
+        smile: 7200,
+        pure: 6720,
+        cool: 6240,
+        mental: 640,
+      },
+      centerCharacteristic: {
+        name: 'アピールアップ・AP軽減・CT短縮',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 1.6,
+            target: 'スリーズブーケ',
+            description: 'スリーズブーケメンバーのアピール値が160%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全スキルのAPを2軽減',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'apGain',
+            value: 12,
+            description: 'AP回復',
+            levelValues: [6, 7, 8, 8, 9, 10, 10, 11, 12, 12, 13, 14, 16, 18],
+          },
+        ],
+        when: 'beforeFirstTurn',
+      },
+      effects: [
+        {
+          type: 'scoreBoost',
+          value: 1.365,
+          description: 'スコア136.5%ブースト (Lv.10)',
+        },
+        {
+          type: 'voltageBoost',
+          value: 1.365,
+          description: 'ボルテージ136.5%ブースト (Lv.10)',
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
+        },
+      ],
+    },
+    prismEchoTsuzuri: {
+      name: 'Prism Echo Tsuzuri',
+      displayName: '［Prism Echo］夕霧綴理',
+      character: '夕霧綴理',
+      shortCode: 'Tpe',
+      apCost: 20,
+      stats: {
+        smile: 6240,
+        pure: 6720,
+        cool: 7680,
+        mental: 600,
+      },
+      centerCharacteristic: {
+        name: 'アピールアップ・AP軽減・CT短縮',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 1.6,
+            target: 'DOLLCHESTRA',
+            description: 'DOLLCHESTRAメンバーのアピール値が160%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全スキルのAPを2軽減',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'voltageGain',
+            value: 279,
+            description: 'ライブ開始時ボルテージ獲得 (Lv.10: 279pt)',
+          },
+        ],
+        when: 'beforeFirstTurn',
+      },
+      effects: [
+        {
+          type: 'voltageGain',
+          value: 585,
+          description: 'ボルテージ獲得 (Lv.10: 585pt)',
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
+        },
+      ],
+    },
+    prismEchoMegu: {
+      name: 'Prism Echo Megu',
+      displayName: '［Prism Echo］藤島慈',
+      character: '藤島慈',
+      shortCode: 'Mpe',
+      apCost: 20,
+      stats: {
+        smile: 7680,
+        pure: 7200,
+        cool: 6240,
+        mental: 560,
+      },
+      centerCharacteristic: {
+        name: 'アピールアップ・AP軽減・CT短縮',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 1.6,
+            target: 'みらくらぱーく！',
+            description: 'みらくらぱーく！メンバーのアピール値が160%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全スキルのAPを2軽減',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'scoreGain',
+            value: 3.348,
+            description: 'ライブ終了時スコア獲得（アピール合計値×334.8%）',
+          },
+        ],
+        when: 'afterLastTurn',
+      },
+      effects: [
+        {
+          type: 'scoreGain',
+          value: 7.02,
+          description: 'スコア獲得 (Lv.10: 702%)',
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
+        },
+      ],
+    },
+    // Ether Aria カード
+    etherAriaKaho: {
+      name: 'Ether Aria Kaho',
+      displayName: '［Ether Aria］日野下花帆',
+      character: '日野下花帆',
+      shortCode: 'Kea',
+      apCost: 20,
+      stats: {
+        smile: 8640,
+        pure: 6720,
+        cool: 5640,
+        mental: 570,
+      },
+      centerCharacteristic: {
+        name: 'アピールアップ・AP軽減・CT短縮',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 1.6,
+            target: 'スリーズブーケ',
+            description: 'スリーズブーケメンバーのアピール値が160%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全スキルのAPを2軽減',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'scoreGain',
+            value: 3.348,
+            description: 'ライブ終了時スコア獲得（アピール合計値×334.8%）',
+          },
+        ],
+        when: 'afterLastTurn',
+      },
+      effects: [
+        {
+          type: 'scoreGain',
+          value: 3.348,
+          description: 'スコア獲得 (Lv.10: 334.8%)',
+        },
+        {
+          type: 'conditional',
+          condition: 'mental >= max_mental',
+          then: [
+            {
+              type: 'scoreGain',
+              value: 6.7392,
+              description: 'さらにスコア獲得 (Lv.10: 673.92%)',
+            },
+          ],
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
+        },
+      ],
+    },
+    etherAriaGin: {
+      name: 'Ether Aria Gin',
+      displayName: '［Ether Aria］百生吟子',
+      character: '百生吟子',
+      shortCode: 'Gea',
+      apCost: 12,
+      stats: {
+        smile: 5520,
+        pure: 7800,
+        cool: 7440,
+        mental: 590,
+      },
+      centerCharacteristic: {
+        name: 'アピールアップ・AP軽減・CT短縮',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 1.6,
+            target: 'スリーズブーケ',
+            description: 'スリーズブーケメンバーのアピール値が160%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全スキルのAPを2軽減',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'mentalReduction',
+            value: 60,
+            levelValues: [30, 30, 35, 35, 40, 45, 45, 50, 50, 60, 70, 75, 80, 90],
+            description: '最大メンタル減少 (Lv.10: 60%, Lv.14: 90%)',
+          },
+        ],
+        when: 'beforeFirstTurn',
+      },
+      effects: [
+        {
+          type: 'conditional',
+          condition: 'mental <= 1',
+          then: [
+            {
+              type: 'scoreBoost',
+              value: 4.35,
+              description: 'スコア435%ブースト (Lv.10)',
+            },
+          ],
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 8, 12],
+          description: 'AP回復 (Lv.12: 4, Lv.13: 8, Lv.14: 12)',
+        },
+      ],
+    },
     // 村野さやか
     iDoMeSayaka: {
       name: 'I Do Me Sayaka',
