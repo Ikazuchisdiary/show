@@ -737,7 +737,9 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                   const customValue = centerCustomValues[effectKey]
 
                   const calculateCenterValue = (baseValue: number) => {
-                    const calculated = baseValue * multiplier
+                    // Center skills store actual Lv.10 values, not doubled like regular skills
+                    // So we use a different formula: value * multiplier / 2.0
+                    const calculated = baseValue * multiplier / 2.0
                     // 小数点第3位で切り捨て
                     return Math.floor(calculated * 1000) / 1000
                   }
@@ -849,7 +851,9 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
 
                     case 'voltageGain':
                       if (effect.value !== undefined) {
-                        const defaultValue = Math.floor(effect.value * multiplier)
+                        // Center skills store actual Lv.10 values, not doubled like regular skills
+                        // So we use a different formula: value * multiplier / 2.0
+                        const defaultValue = Math.floor(effect.value * multiplier / 2.0)
                         return (
                           <div className="skill-param-row">
                             <label>ボルテージ獲得:</label>

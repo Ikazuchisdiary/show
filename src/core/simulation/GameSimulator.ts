@@ -1548,9 +1548,10 @@ export class GameSimulator {
         if (customValue !== undefined) {
           voltageValue = customValue
         } else {
-          // Apply skill level formula
-          // v1 formula: (lv10Value / 2) * multiplier
-          voltageValue = roundSkillValue((effect.value / 2) * skillMultiplier, false)
+          // Center skill values are stored as actual Lv.10 values (not doubled like regular skills)
+          // Regular skills use (value / 2) * multiplier, but center skills use value directly
+          // To match this pattern, we need to double the value first
+          voltageValue = roundSkillValue(effect.value * skillMultiplier / 2.0, false)
         }
         // Apply voltage boost when gaining voltage
         const voltageWithBoost = Math.floor(
@@ -1559,6 +1560,11 @@ export class GameSimulator {
         this.state.totalVoltage += voltageWithBoost
         // Increment voltage boost counter after use
         this.state.voltageBoostCount = Math.min(this.state.voltageBoostCount + 1, 99)
+        // Add log
+        this.currentTurnVoltageGain += voltageWithBoost
+        this.currentTurnLogs.push(
+          `<div class="log-action log-boost-action"><div class="log-voltage-gain">⚡ ボルテージ獲得</div><div class="voltage-gain-values">+${voltageWithBoost} → ${this.state.totalVoltage}</div></div>`,
+        )
         break
       }
 
