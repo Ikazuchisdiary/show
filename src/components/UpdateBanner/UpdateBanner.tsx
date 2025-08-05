@@ -24,10 +24,17 @@ export const UpdateBanner: React.FC<UpdateBannerProps> = ({ onShowHistory }) => 
     setIsVisible(false)
   }
 
+  const handleShowHistory = () => {
+    // Mark as seen when clicking to view history
+    localStorage.setItem('sukushou_lastVersion', CURRENT_VERSION)
+    setIsVisible(false)
+    onShowHistory()
+  }
+
   if (!isVisible) return null
 
   return (
-    <div className="update-banner" onClick={onShowHistory}>
+    <div className="update-banner" onClick={handleShowHistory}>
       <button className="update-close-button" onClick={handleDismiss}>
         ×
       </button>
