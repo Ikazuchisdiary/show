@@ -6,6 +6,21 @@ export interface UpdateEntry {
 
 export const updateHistory: UpdateEntry[] = [
   {
+    version: '2.2.2',
+    date: '2025-08-06',
+    changes: [
+      'アピール値の詳細表示機能を追加（クリックで展開）',
+      '新カード「[Ether Aria]村野さやか」を追加',
+      '新カード「[Ether Aria]乙宗梢」を追加',
+      '新カード「[Ether Aria]夕霧綴理」を追加',
+      '新カード「[Ether Aria]大沢瑠璃乃」を追加',
+      '新カード「[Ether Aria]藤島慈」を追加',
+      '新カード「[Ether Aria]徒町小鈴」を追加',
+      '新カード「[Ether Aria]安養寺姫芽」を追加',
+      '新カード「[Oracle Étude]安養寺姫芽」を追加',
+    ],
+  },
+  {
     version: '2.2.1',
     date: '2025-08-05',
     changes: [
@@ -71,4 +86,4 @@ export const updateHistory: UpdateEntry[] = [
   },
 ]
 
-export const CURRENT_VERSION = '2.2.1'
+export const CURRENT_VERSION = '2.2.2'

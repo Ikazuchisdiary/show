@@ -1402,6 +1402,495 @@ const gameData = {
         },
       ],
     },
+    // Ether Aria 追加カード
+    etherAriaSayaka: {
+      name: 'Ether Aria Sayaka',
+      displayName: '［Ether Aria］村野さやか',
+      character: '村野さやか',
+      shortCode: 'Sea',
+      apCost: 10,
+      stats: {
+        smile: 6240,
+        pure: 5400,
+        cool: 9240,
+        mental: 570,
+      },
+      centerCharacteristic: {
+        name: 'アピールアップ（DOLLCHESTRA）・AP軽減・CT短縮',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 1.6,
+            target: 'DOLLCHESTRA',
+            description: 'DOLLCHESTRAメンバーのアピール値が160%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全スキルのAPを2軽減',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'voltageGain',
+            value: 0.36,
+            description: 'FEVER開始時にボルテージ獲得（アピール合計値×36%）',
+          },
+        ],
+        when: 'beforeFeverStart',
+      },
+      effects: [
+        {
+          type: 'voltageGain',
+          value: 0.36,
+          description: 'ボルテージ獲得 (Lv.10: 36%)',
+        },
+        {
+          type: 'conditional',
+          condition: 'voltage >= 200',
+          then: [
+            {
+              type: 'voltageGain',
+              value: 0.36,
+              description: 'さらにボルテージ獲得 (Lv.10: 36%)',
+            },
+          ],
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 8, 12, 16],
+          description: 'AP回復 (Lv.11: 4, Lv.12: 8, Lv.13: 12, Lv.14: 16)',
+        },
+      ],
+    },
+    etherAriaKozu: {
+      name: 'Ether Aria Kozu',
+      displayName: '［Ether Aria］乙宗梢',
+      character: '乙宗梢',
+      shortCode: 'Kea',
+      apCost: 16,
+      stats: {
+        smile: 5880,
+        pure: 5640,
+        cool: 9000,
+        mental: 590,
+      },
+      centerCharacteristic: {
+        name: 'アピールアップ（スリーズブーケ）・AP軽減・CT短縮',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 1.6,
+            target: 'スリーズブーケ',
+            description: 'スリーズブーケメンバーのアピール値が160%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全スキルのAPを2軽減',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'scoreGain',
+            value: 2.916,
+            description: 'ライブ開始時スコア獲得（アピール合計値×291.6%）',
+          },
+        ],
+        when: 'beforeFirstTurn',
+      },
+      effects: [
+        {
+          type: 'scoreGain',
+          value: 2.916,
+          description: 'スコア獲得 (Lv.10: 291.6%)',
+        },
+        {
+          type: 'conditional',
+          condition: 'count <= 3',
+          then: [
+            {
+              type: 'scoreGain',
+              value: 5.832,
+              description: 'さらにスコア獲得 (Lv.10: 583.2%)',
+            },
+          ],
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
+        },
+      ],
+    },
+    etherAriaTsuzuri: {
+      name: 'Ether Aria Tsuzuri',
+      displayName: '［Ether Aria］夕霧綴理',
+      character: '夕霧綴理',
+      shortCode: 'Tea',
+      apCost: 10,
+      stats: {
+        smile: 6240,
+        pure: 9120,
+        cool: 5400,
+        mental: 580,
+      },
+      centerCharacteristic: {
+        name: 'アピールアップ（DOLLCHESTRA）・AP軽減・CT短縮',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 1.6,
+            target: 'DOLLCHESTRA',
+            description: 'DOLLCHESTRAメンバーのアピール値が160%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全スキルのAPを2軽減',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'voltageGain',
+            value: 0.36,
+            description: 'FEVER開始時にボルテージ獲得（アピール合計値×36%）',
+          },
+        ],
+        when: 'beforeFeverStart',
+      },
+      effects: [
+        {
+          type: 'voltageGain',
+          value: 0.36,
+          description: 'ボルテージ獲得 (Lv.10: 36%)',
+        },
+        {
+          type: 'conditional',
+          condition: 'voltage >= 200',
+          then: [
+            {
+              type: 'voltageGain',
+              value: 0.36,
+              description: 'さらにボルテージ獲得 (Lv.10: 36%)',
+            },
+          ],
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 8, 12, 16],
+          description: 'AP回復 (Lv.11: 4, Lv.12: 8, Lv.13: 12, Lv.14: 16)',
+        },
+      ],
+    },
+    etherAriaRurino: {
+      name: 'Ether Aria Rurino',
+      displayName: '［Ether Aria］大沢瑠璃乃',
+      character: '大沢瑠璃乃',
+      shortCode: 'Rea',
+      apCost: 14,
+      stats: {
+        smile: 8640,
+        pure: 5520,
+        cool: 6600,
+        mental: 580,
+      },
+      centerCharacteristic: {
+        name: 'アピールアップ（みらくらぱーく！）・AP軽減・CT短縮',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 1.6,
+            target: 'みらくらぱーく！',
+            description: 'みらくらぱーく！メンバーのアピール値が160%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全スキルのAPを2軽減',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'voltageBoost',
+            value: 2.4,
+            description: 'ライブ終了時ボルテージ240%ブースト',
+          },
+        ],
+        when: 'afterLastTurn',
+      },
+      effects: [
+        {
+          type: 'voltageBoost',
+          value: 2.4,
+          description: 'ボルテージ240%ブースト (Lv.10)',
+        },
+        {
+          type: 'conditional',
+          condition: 'turns_left <= 3',
+          then: [
+            {
+              type: 'voltageBoost',
+              value: 4.8,
+              description: 'さらにボルテージ480%ブースト (Lv.10)',
+            },
+          ],
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
+        },
+      ],
+    },
+    etherAriaMegumi: {
+      name: 'Ether Aria Megumi',
+      displayName: '［Ether Aria］藤島慈',
+      character: '藤島慈',
+      shortCode: 'Mea',
+      apCost: 10,
+      stats: {
+        smile: 9120,
+        pure: 6240,
+        cool: 5400,
+        mental: 580,
+      },
+      centerCharacteristic: {
+        name: 'アピールアップ（みらくらぱーく！）・AP軽減・CT短縮',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 1.6,
+            target: 'みらくらぱーく！',
+            description: 'みらくらぱーく！メンバーのアピール値が160%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全スキルのAPを2軽減',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'voltageGain',
+            value: 0.36,
+            description: 'FEVER開始時にボルテージ獲得（アピール合計値×36%）',
+          },
+        ],
+        when: 'beforeFeverStart',
+      },
+      effects: [
+        {
+          type: 'voltageGain',
+          value: 0.36,
+          description: 'ボルテージ獲得 (Lv.10: 36%)',
+        },
+        {
+          type: 'conditional',
+          condition: 'voltage >= 200',
+          then: [
+            {
+              type: 'voltageGain',
+              value: 0.36,
+              description: 'さらにボルテージ獲得 (Lv.10: 36%)',
+            },
+          ],
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 8, 12, 16],
+          description: 'AP回復 (Lv.11: 4, Lv.12: 8, Lv.13: 12, Lv.14: 16)',
+        },
+      ],
+    },
+    etherAriaKosuzu: {
+      name: 'Ether Aria Kosuzu',
+      displayName: '［Ether Aria］徒町小鈴',
+      character: '徒町小鈴',
+      shortCode: 'Kzea',
+      apCost: 16,
+      stats: {
+        smile: 5640,
+        pure: 9000,
+        cool: 5880,
+        mental: 590,
+      },
+      centerCharacteristic: {
+        name: 'アピールアップ（DOLLCHESTRA）・AP軽減・CT短縮',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 1.6,
+            target: 'DOLLCHESTRA',
+            description: 'DOLLCHESTRAメンバーのアピール値が160%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全スキルのAPを2軽減',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'scoreGain',
+            value: 2.916,
+            description: 'ライブ開始時スコア獲得（アピール合計値×291.6%）',
+          },
+        ],
+        when: 'beforeFirstTurn',
+      },
+      effects: [
+        {
+          type: 'scoreGain',
+          value: 2.916,
+          description: 'スコア獲得 (Lv.10: 291.6%)',
+        },
+        {
+          type: 'conditional',
+          condition: 'count <= 3',
+          then: [
+            {
+              type: 'scoreGain',
+              value: 5.832,
+              description: 'さらにスコア獲得 (Lv.10: 583.2%)',
+            },
+          ],
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
+        },
+      ],
+    },
+    etherAriaHimeme: {
+      name: 'Ether Aria Himeme',
+      displayName: '［Ether Aria］安養寺姫芽',
+      character: '安養寺姫芽',
+      shortCode: 'Hea',
+      apCost: 10,
+      stats: {
+        smile: 5400,
+        pure: 6240,
+        cool: 9120,
+        mental: 580,
+      },
+      centerCharacteristic: {
+        name: 'アピールアップ（みらくらぱーく！）・AP軽減・CT短縮',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 1.6,
+            target: 'みらくらぱーく！',
+            description: 'みらくらぱーく！メンバーのアピール値が160%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全スキルのAPを2軽減',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'voltageGain',
+            value: 0.36,
+            description: 'FEVER開始時にボルテージ獲得（アピール合計値×36%）',
+          },
+        ],
+        when: 'beforeFeverStart',
+      },
+      effects: [
+        {
+          type: 'voltageGain',
+          value: 0.36,
+          description: 'ボルテージ獲得 (Lv.10: 36%)',
+        },
+        {
+          type: 'conditional',
+          condition: 'voltage >= 200',
+          then: [
+            {
+              type: 'voltageGain',
+              value: 0.36,
+              description: 'さらにボルテージ獲得 (Lv.10: 36%)',
+            },
+          ],
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 8, 12, 16],
+          description: 'AP回復 (Lv.11: 4, Lv.12: 8, Lv.13: 12, Lv.14: 16)',
+        },
+      ],
+    },
     // 村野さやか
     iDoMeSayaka: {
       name: 'I Do Me Sayaka',
@@ -3150,6 +3639,105 @@ const gameData = {
           value: 6,
           description: 'AP獲得 (Lv.10: 6)',
           levelValues: [3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 7, 8, 8, 10],
+        },
+      ],
+    },
+    // Oracle Étude カード
+    oracleEtudeHimeme: {
+      name: 'Oracle Etude Himeme',
+      displayName: '［Oracle Étude］安養寺姫芽',
+      character: '安養寺姫芽',
+      shortCode: 'Hoe',
+      apCost: 14,
+      stats: {
+        smile: 4600,
+        pure: 8400,
+        cool: 7600,
+        mental: 600,
+      },
+      centerCharacteristic: {
+        name: 'Radioactive',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 5.0,
+            target: '安養寺姫芽',
+            description: '安養寺姫芽のアピール値が500%上昇',
+          },
+          {
+            type: 'visualOnly',
+            description: '編成メンバーの変更ができず、すべてのカードが安養寺姫芽カードに変更される',
+          },
+          {
+            type: 'visualOnly',
+            description: 'ライブ終了後、編成内の全カードがロストする',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'visualOnly',
+            description: 'ライブ開始時 Elysion発動（ライブ中SP特技以外でのAP回復無効化）',
+          },
+        ],
+        when: 'beforeFirstTurn',
+      },
+      effects: [
+        {
+          type: 'conditional',
+          condition: 'turn <= 7',
+          then: [
+            {
+              type: 'scoreBoost',
+              value: 3.5,
+              description: 'スコア350%ブースト (Lv.10)',
+            },
+            {
+              type: 'voltageBoost',
+              value: 3.5,
+              description: 'ボルテージ350%ブースト (Lv.10)',
+            },
+            {
+              type: 'apBoost',
+              value: 4.0,
+              description: 'AP獲得量400%ブースト',
+            },
+          ],
+          else: [
+            {
+              type: 'scoreGain',
+              value: 6.912,
+              description: 'スコア獲得 (Lv.10: 691.2%)',
+            },
+            {
+              type: 'voltageGain',
+              value: 0.72,
+              description: 'ボルテージ獲得 (Lv.10: 72%)',
+            },
+            {
+              type: 'conditional',
+              condition: 'voltage >= 500',
+              then: [
+                {
+                  type: 'scoreGain',
+                  value: 6.912,
+                  description: 'さらにスコア獲得 (Lv.10: 691.2%)',
+                },
+                {
+                  type: 'voltageGain',
+                  value: 0.72,
+                  description: 'さらにボルテージ獲得 (Lv.10: 72%)',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 12, 18, 24],
+          description: 'AP回復 (Lv.11: 6, Lv.12: 12, Lv.13: 18, Lv.14: 24)',
         },
       ],
     },

@@ -10,23 +10,59 @@ interface AppealCalculationOptions {
   centerCharacteristics?: CenterCharacteristic[] // 複数のセンター特性に対応
 }
 
+export interface AppealCalculationResult {
+  totalAppeal: number
+  details: {
+    baseSmile: number
+    basePure: number
+    baseCool: number
+    boostedSmile: number
+    boostedPure: number
+    boostedCool: number
+    matchingAttributeAppeal: number
+    nonMatchingAttributeAppeal: number
+    centerBoosts: Array<{
+      cardIndex: number
+      cardName: string
+      boostPercentage: number
+    }>
+  }
+}
+
 /**
  * Calculate total appeal value based on cards and music attribute
  */
 export function calculateAppealValue(options: AppealCalculationOptions): number {
+  const result = calculateAppealValueWithDetails(options)
+  return result.totalAppeal
+}
+
+/**
+ * Calculate total appeal value with detailed breakdown
+ */
+export function calculateAppealValueWithDetails(options: AppealCalculationOptions): AppealCalculationResult {
   const { cards, musicAttribute } = options
 
   // Calculate total appeal for each attribute
+  let baseSmile = 0
+  let basePure = 0
+  let baseCool = 0
   let totalSmile = 0
   let totalPure = 0
   let totalCool = 0
+  const centerBoosts: AppealCalculationResult['details']['centerBoosts'] = []
 
   // Calculate appeal for each card with center characteristic boosts
   for (let i = 0; i < cards.length; i++) {
     const card = cards[i]
     if (card && card.stats) {
+      // Add base stats
+      baseSmile += card.stats.smile
+      basePure += card.stats.pure
+      baseCool += card.stats.cool
       // Calculate boost multiplier for this card
       let boostMultiplier = 1.0
+      let totalBoost = 0
 
       // 複数のセンター特性のみを使用（単一の場合も配列として扱う）
       if (options.centerCharacteristics && options.centerCharacteristics.length > 0) {
@@ -36,9 +72,18 @@ export function calculateAppealValue(options: AppealCalculationOptions): number 
             if (effect.type === 'appealBoost' && shouldApplyBoost(card, effect.target)) {
               // v1 adds the boost value to the multiplier (not sets it)
               boostMultiplier += effect.value
+              totalBoost += effect.value
             }
           }
         }
+      }
+
+      if (totalBoost > 0) {
+        centerBoosts.push({
+          cardIndex: i + 1,
+          cardName: card.name,
+          boostPercentage: totalBoost * 100
+        })
       }
 
       // Apply boost and ceil per card (v1 behavior)
@@ -54,23 +99,46 @@ export function calculateAppealValue(options: AppealCalculationOptions): number 
 
   // Calculate final appeal based on music attribute
   let finalAppeal: number
+  let matchingAttributeAppeal = 0
+  let nonMatchingAttributeAppeal = 0
 
   if (musicAttribute === 'smile') {
     // Smile is matching attribute (100%), others are 10%
-    finalAppeal = totalSmile + (totalPure + totalCool) * 0.1
+    matchingAttributeAppeal = totalSmile
+    nonMatchingAttributeAppeal = (totalPure + totalCool) * 0.1
+    finalAppeal = matchingAttributeAppeal + nonMatchingAttributeAppeal
   } else if (musicAttribute === 'pure') {
     // Pure is matching attribute (100%), others are 10%
-    finalAppeal = totalPure + (totalSmile + totalCool) * 0.1
+    matchingAttributeAppeal = totalPure
+    nonMatchingAttributeAppeal = (totalSmile + totalCool) * 0.1
+    finalAppeal = matchingAttributeAppeal + nonMatchingAttributeAppeal
   } else if (musicAttribute === 'cool') {
     // Cool is matching attribute (100%), others are 10%
-    finalAppeal = totalCool + (totalSmile + totalPure) * 0.1
+    matchingAttributeAppeal = totalCool
+    nonMatchingAttributeAppeal = (totalSmile + totalPure) * 0.1
+    finalAppeal = matchingAttributeAppeal + nonMatchingAttributeAppeal
   } else {
     // No music attribute, all are 10%
-    finalAppeal = (totalSmile + totalPure + totalCool) * 0.1
+    matchingAttributeAppeal = 0
+    nonMatchingAttributeAppeal = (totalSmile + totalPure + totalCool) * 0.1
+    finalAppeal = nonMatchingAttributeAppeal
   }
 
   // Round up the final appeal
-  return Math.ceil(finalAppeal)
+  return {
+    totalAppeal: Math.ceil(finalAppeal),
+    details: {
+      baseSmile,
+      basePure,
+      baseCool,
+      boostedSmile: totalSmile,
+      boostedPure: totalPure,
+      boostedCool: totalCool,
+      matchingAttributeAppeal,
+      nonMatchingAttributeAppeal,
+      centerBoosts
+    }
+  }
 }
 
 // /**
