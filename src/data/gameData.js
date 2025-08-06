@@ -1772,7 +1772,7 @@ const gameData = {
       displayName: '［太陽であれ！］徒町小鈴',
       character: '徒町小鈴',
       shortCode: 'Kzt',
-      apCost: 23,
+      apCost: 15,
       stats: {
         smile: 4080,
         pure: 6600,
@@ -1780,11 +1780,13 @@ const gameData = {
         mental: 470,
       },
       centerCharacteristic: {
-        name: 'ソルブレイブ',
+        name: 'アピールアップ（DOLLCHESTRA）',
         effects: [
           {
-            type: 'visualOnly',
-            description: 'ハートを3000個集めてメンタル0%時にビートハート300個獲得、スキルAP-13（計算機では未対応）',
+            type: 'appealBoost',
+            value: 2.0,
+            target: 'DOLLCHESTRA',
+            description: 'DOLLCHESTRAメンバーのアピール値が200%上昇',
           },
         ],
       },
@@ -1800,21 +1802,24 @@ const gameData = {
       },
       effects: [
         {
-          type: 'visualOnly',
-          description: 'ビートハート160個キャプチャ (Lv.10）（計算機では未対応）',
-        },
-        {
           type: 'conditional',
-          condition: 'mental == 0',
+          condition: 'mental >= 2',
           then: [
             {
+              type: 'voltageBoost',
+              value: 3.825,
+              description: 'ボルテージ382.5%ブースト (Lv.10)',
+            },
+          ],
+          else: [
+            {
               type: 'voltageGain',
-              value: 240,
-              description: 'ボルテージ240獲得 (Lv.10)',
+              value: 637,
+              description: 'ボルテージ637獲得 (Lv.10)',
             },
             {
-              type: 'visualOnly',
-              description: 'LOVEゲイン率4000%増加、ハート上限+800（計算機では未対応）',
+              type: 'removeAfterUse',
+              description: 'このカードを除外',
             },
           ],
         },
