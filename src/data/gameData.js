@@ -1803,7 +1803,7 @@ const gameData = {
       effects: [
         {
           type: 'conditional',
-          condition: 'mental >= 2',
+          condition: 'mental > 1',
           then: [
             {
               type: 'voltageBoost',
