@@ -8,24 +8,30 @@ export const AppealDisplay: React.FC = () => {
   const [showDetails, setShowDetails] = useState(false)
 
   // Find all center cards for center characteristics
-  const centerCards = selectedMusic?.centerCharacter
-    ? selectedCards.filter(
-        (card) => card && card.character === selectedMusic.centerCharacter,
-      )
-    : []
+  const centerCards = useMemo(
+    () => selectedMusic?.centerCharacter
+      ? selectedCards.filter(
+          (card) => card && card.character === selectedMusic.centerCharacter,
+        )
+      : [],
+    [selectedMusic?.centerCharacter, selectedCards]
+  )
 
   // Get music attribute from selected music
   const musicAttribute = selectedMusic?.attribute || null
 
   // Calculate appeal value with details
-  const appealResult = calculateAppealValueWithDetails({
-    cards: selectedCards,
-    musicAttribute: musicAttribute,
-    // Use only centerCharacteristics to avoid double application
-    centerCharacteristics: centerCards
-      .map((card) => card?.centerCharacteristic)
-      .filter((c) => c !== undefined),
-  })
+  const appealResult = useMemo(
+    () => calculateAppealValueWithDetails({
+      cards: selectedCards,
+      musicAttribute: musicAttribute,
+      // Use only centerCharacteristics to avoid double application
+      centerCharacteristics: centerCards
+        .map((card) => card?.centerCharacteristic)
+        .filter((c) => c !== undefined),
+    }),
+    [selectedCards, musicAttribute, centerCards]
+  )
 
   const handleToggleDetails = () => {
     setShowDetails(!showDetails)
