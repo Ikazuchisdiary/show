@@ -67,6 +67,15 @@ interface GameStore {
 
   // Share mode
   isShareMode: boolean
+  
+  // Optimization state
+  isOptimizing: boolean
+  optimizationResult: {
+    bestFormation: (Card | null)[]
+    bestScore: number
+    originalScore: number
+    improvement: number
+  } | null
 
   // Actions
   setCard: (index: number, card: Card | null) => void
@@ -95,6 +104,14 @@ interface GameStore {
   setShareMode: (enabled: boolean) => void
   exitShareMode: () => void
   saveSharedAsCustomMusic: (name: string) => void
+  optimizeFormation: () => void
+  isOptimizing: boolean
+  optimizationResult: {
+    bestFormation: (Card | null)[]
+    bestScore: number
+    originalScore: number
+    improvement: number
+  } | null
 }
 
 // Helper function to get music key from music object
@@ -429,6 +446,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   simulationResult: null,
   isSimulating: false,
   isShareMode: false,
+  isOptimizing: false,
+  optimizationResult: null,
 
   // Actions
   setCard: (index, card) =>
@@ -1247,5 +1266,199 @@ export const useGameStore = create<GameStore>((set, get) => ({
     })
 
     alert(`カスタム楽曲「${name}」として保存しました！`)
+  },
+
+  optimizeFormation: async () => {
+    const state = get()
+
+    // Validate inputs
+    if (!state.selectedMusic) return
+
+    const validCards = state.selectedCards.filter((card) => card !== null)
+    if (validCards.length === 0) return
+
+    set({ isOptimizing: true, optimizationResult: null })
+
+    try {
+      // Get combo count from music based on difficulty
+      let comboCount = state.comboCount
+      if (state.selectedMusic.combos && state.selectedMusic.combos[state.selectedDifficulty]) {
+        comboCount = state.selectedMusic.combos[state.selectedDifficulty]!
+      }
+
+      // Calculate base AP
+      const baseAP = calculateBaseAP(comboCount, state.initialMental)
+
+      // Create array of valid card indices
+      const validIndices: number[] = []
+      state.selectedCards.forEach((card, index) => {
+        if (card !== null) {
+          validIndices.push(index)
+        }
+      })
+
+      // If only one or no cards, nothing to optimize
+      if (validIndices.length <= 1) {
+        set({ isOptimizing: false })
+        alert('最適化するには2枚以上のカードが必要です。')
+        return
+      }
+
+      // Generate all permutations of card positions
+      const permutations: number[][] = []
+      const generatePermutations = (arr: number[], start: number) => {
+        if (start >= arr.length - 1) {
+          permutations.push([...arr])
+          return
+        }
+        for (let i = start; i < arr.length; i++) {
+          // Swap
+          const temp = arr[start]
+          arr[start] = arr[i]
+          arr[i] = temp
+          
+          generatePermutations(arr, start + 1)
+          
+          // Backtrack
+          arr[i] = arr[start]
+          arr[start] = temp
+        }
+      }
+
+      generatePermutations([...validIndices], 0)
+
+      let bestScore = 0
+      let bestFormation: (Card | null)[] = [...state.selectedCards]
+      let originalScore = 0
+
+      // Calculate original score first
+      const originalOptions: SimulationOptions = {
+        cards: state.selectedCards,
+        cardSkillLevels: state.cardSkillLevels,
+        centerSkillLevels: state.centerSkillLevels,
+        customSkillValues: state.customSkillValues,
+        customCenterSkillValues: state.customCenterSkillValues,
+        music: state.selectedMusic,
+        musicAttribute: state.selectedMusic.attribute,
+        centerCharacter: state.selectedMusic.centerCharacter,
+        initialMental: state.initialMental,
+        comboCount: comboCount,
+        baseAP: baseAP,
+      }
+
+      const originalSimulator = new GameSimulator(originalOptions)
+      const originalResult = originalSimulator.simulate()
+      const apShortageResult = originalSimulator.simulateWithAPShortage(baseAP, originalResult)
+      originalScore = apShortageResult ? apShortageResult.score : originalResult.totalScore
+
+      // Test each permutation
+      for (const perm of permutations) {
+        // Create new card arrangement
+        const newCards: (Card | null)[] = Array(6).fill(null)
+        const newSkillLevels: number[] = [...state.cardSkillLevels]
+        const newCenterSkillLevels: number[] = [...state.centerSkillLevels]
+        const newCustomSkillValues: Record<string, Record<string, number>> = {}
+        const newCustomCenterSkillValues: Record<string, Record<string, number>> = {}
+
+        // Place cards according to permutation
+        perm.forEach((originalIndex, newIndex) => {
+          newCards[newIndex] = state.selectedCards[originalIndex]
+          newSkillLevels[newIndex] = state.cardSkillLevels[originalIndex]
+          newCenterSkillLevels[newIndex] = state.centerSkillLevels[originalIndex]
+          if (state.customSkillValues[originalIndex]) {
+            newCustomSkillValues[newIndex] = state.customSkillValues[originalIndex]
+          }
+          if (state.customCenterSkillValues[originalIndex]) {
+            newCustomCenterSkillValues[newIndex] = state.customCenterSkillValues[originalIndex]
+          }
+        })
+
+        const options: SimulationOptions = {
+          cards: newCards,
+          cardSkillLevels: newSkillLevels,
+          centerSkillLevels: newCenterSkillLevels,
+          customSkillValues: newCustomSkillValues,
+          customCenterSkillValues: newCustomCenterSkillValues,
+          music: state.selectedMusic,
+          musicAttribute: state.selectedMusic.attribute,
+          centerCharacter: state.selectedMusic.centerCharacter,
+          initialMental: state.initialMental,
+          comboCount: comboCount,
+          baseAP: baseAP,
+        }
+
+        const simulator = new GameSimulator(options)
+        const result = simulator.simulate()
+        const apShortage = simulator.simulateWithAPShortage(baseAP, result)
+        const score = apShortage ? apShortage.score : result.totalScore
+
+        if (score > bestScore) {
+          bestScore = score
+          bestFormation = newCards
+        }
+      }
+
+      const improvement = bestScore - originalScore
+
+      set({
+        isOptimizing: false,
+        optimizationResult: {
+          bestFormation,
+          bestScore,
+          originalScore,
+          improvement,
+        },
+      })
+
+      // If improvement found, ask user if they want to apply it
+      if (improvement > 0) {
+        const confirmMessage = `最適化により ${improvement.toLocaleString()} 点のスコア向上が見つかりました。\n` +
+          `現在: ${originalScore.toLocaleString()} 点\n` +
+          `最適: ${bestScore.toLocaleString()} 点\n\n` +
+          `この編成を適用しますか？`
+        
+        if (confirm(confirmMessage)) {
+          // Apply the best formation
+          const newSkillLevels = [...state.cardSkillLevels]
+          const newCenterSkillLevels = [...state.centerSkillLevels]
+          const newCustomSkillValues: Record<number, Record<string, number>> = {}
+          const newCustomCenterSkillValues: Record<number, Record<string, number>> = {}
+
+          // Find the mapping from original to new positions
+          bestFormation.forEach((card, newIndex) => {
+            if (card) {
+              const originalIndex = state.selectedCards.findIndex(c => c === card)
+              if (originalIndex >= 0) {
+                newSkillLevels[newIndex] = state.cardSkillLevels[originalIndex]
+                newCenterSkillLevels[newIndex] = state.centerSkillLevels[originalIndex]
+                if (state.customSkillValues[originalIndex]) {
+                  newCustomSkillValues[newIndex] = state.customSkillValues[originalIndex]
+                }
+                if (state.customCenterSkillValues[originalIndex]) {
+                  newCustomCenterSkillValues[newIndex] = state.customCenterSkillValues[originalIndex]
+                }
+              }
+            }
+          })
+
+          set({
+            selectedCards: bestFormation,
+            cardSkillLevels: newSkillLevels,
+            centerSkillLevels: newCenterSkillLevels,
+            customSkillValues: newCustomSkillValues,
+            customCenterSkillValues: newCustomCenterSkillValues,
+          })
+
+          // Save formation after optimization
+          saveFormationForMusic(get())
+        }
+      } else {
+        alert('現在の編成が既に最適です。')
+      }
+    } catch (error) {
+      console.error('Optimization error:', error)
+      set({ isOptimizing: false })
+      alert('最適化中にエラーが発生しました。')
+    }
   },
 }))

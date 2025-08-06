@@ -4,7 +4,7 @@ import { useDuplicateCharacterDetection } from '@hooks/useDuplicateCharacterDete
 import './SimulationControls.css'
 
 export const SimulationControls: React.FC = () => {
-  const { runSimulation, isSimulating, selectedMusic, selectedCards, generateShareUrl } =
+  const { runSimulation, isSimulating, selectedMusic, selectedCards, generateShareUrl, optimizeFormation, isOptimizing } =
     useGameStore()
 
   const hasValidSelection = selectedMusic && selectedCards.some((card) => card !== null)
@@ -33,6 +33,17 @@ export const SimulationControls: React.FC = () => {
       })
   }
 
+  const handleOptimize = () => {
+    // Check for duplicate characters first
+    if (duplicateIndices.size > 0) {
+      alert(
+        '同じキャラクターのカードが複数選択されています。\nキャラクターの重複を解消してから最適化してください。',
+      )
+      return
+    }
+    optimizeFormation()
+  }
+
   return (
     <div className="button-container">
       <button
@@ -41,6 +52,13 @@ export const SimulationControls: React.FC = () => {
         disabled={!hasValidSelection || isSimulating}
       >
         {isSimulating ? 'スコア計算中...' : 'スコア計算'}
+      </button>
+      <button 
+        className="optimize-button secondary" 
+        onClick={handleOptimize}
+        disabled={!hasValidSelection || isOptimizing || isSimulating}
+      >
+        {isOptimizing ? '最適化中...' : '編成最適化'}
       </button>
       <button className="share-button secondary" onClick={handleShare}>
         共有URLを作成

@@ -6,6 +6,15 @@ export interface UpdateEntry {
 
 export const updateHistory: UpdateEntry[] = [
   {
+    version: '2.2.3',
+    date: '2025-08-06',
+    changes: [
+      '編成最適化機能を追加（全ての並び順を試してスコアが最大となる編成を見つける）',
+      'AP不足時は参考スコアを基準に最適化',
+      '最適化結果のプレビューと適用確認ダイアログ',
+    ],
+  },
+  {
     version: '2.2.2',
     date: '2025-08-06',
     changes: [
@@ -94,4 +103,4 @@ export const updateHistory: UpdateEntry[] = [
   },
 ]
 
-export const CURRENT_VERSION = '2.2.2'
+export const CURRENT_VERSION = '2.2.3'
