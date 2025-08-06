@@ -306,7 +306,7 @@ const gameData = {
         },
         {
           type: 'conditional',
-          condition: 'count <= 12',
+          condition: 'turn <= 12',
           then: [
             {
               type: 'apGain',
@@ -1590,7 +1590,7 @@ const gameData = {
         },
         {
           type: 'conditional',
-          condition: 'skill_count <= 3',
+          condition: 'turn <= 3',
           then: [
             {
               type: 'voltageGain',
@@ -1746,7 +1746,7 @@ const gameData = {
         },
         {
           type: 'conditional',
-          condition: 'skill_count >= 15',
+          condition: 'turn >= 15',
           then: [
             {
               type: 'scoreGain',
