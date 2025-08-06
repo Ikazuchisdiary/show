@@ -21,6 +21,9 @@ describe('gameStore', () => {
       simulationResult: null,
       isSimulating: false,
       isShareMode: false,
+      isOptimizing: false,
+      optimizationResult: null,
+      fixedPositions: new Set(),
     })
   })
 
@@ -273,6 +276,83 @@ describe('gameStore', () => {
       const parsed = JSON.parse(persistedData!)
       expect(parsed[customMusic.name]).toBeTruthy()
       expect(parsed[customMusic.name].displayName).toBe('test-music')
+    })
+  })
+
+  describe('toggleFixedPosition', () => {
+    it('should toggle fixed position for a card index', () => {
+      const store = useGameStore.getState()
+
+      // Initially no fixed positions
+      expect(store.fixedPositions.has(0)).toBe(false)
+
+      // Toggle on
+      store.toggleFixedPosition(0)
+      expect(useGameStore.getState().fixedPositions.has(0)).toBe(true)
+
+      // Toggle off
+      store.toggleFixedPosition(0)
+      expect(useGameStore.getState().fixedPositions.has(0)).toBe(false)
+    })
+
+    it('should handle multiple fixed positions', () => {
+      const store = useGameStore.getState()
+
+      store.toggleFixedPosition(0)
+      store.toggleFixedPosition(2)
+      store.toggleFixedPosition(4)
+
+      const fixedPositions = useGameStore.getState().fixedPositions
+      expect(fixedPositions.has(0)).toBe(true)
+      expect(fixedPositions.has(1)).toBe(false)
+      expect(fixedPositions.has(2)).toBe(true)
+      expect(fixedPositions.has(3)).toBe(false)
+      expect(fixedPositions.has(4)).toBe(true)
+    })
+  })
+
+  describe('clearFixedPositions', () => {
+    it('should clear all fixed positions', () => {
+      const store = useGameStore.getState()
+
+      // Set some fixed positions
+      store.toggleFixedPosition(0)
+      store.toggleFixedPosition(2)
+      store.toggleFixedPosition(4)
+      expect(useGameStore.getState().fixedPositions.size).toBe(3)
+
+      // Clear all
+      store.clearFixedPositions()
+      expect(useGameStore.getState().fixedPositions.size).toBe(0)
+    })
+  })
+
+  describe('setCard with fixed positions', () => {
+    it('should remove fixed position when card is set to null', () => {
+      const store = useGameStore.getState()
+      const card: Card = {
+        name: 'Test Card',
+        displayName: 'Test Card Display',
+        character: 'Test Character',
+        shortCode: '[TC]',
+        apCost: 10,
+        stats: {
+          smile: 1000,
+          pure: 2000,
+          cool: 3000,
+          mental: 100,
+        },
+        effects: [],
+      }
+
+      // Set card and fix position
+      store.setCard(0, card)
+      store.toggleFixedPosition(0)
+      expect(useGameStore.getState().fixedPositions.has(0)).toBe(true)
+
+      // Remove card
+      store.setCard(0, null)
+      expect(useGameStore.getState().fixedPositions.has(0)).toBe(false)
     })
   })
 })

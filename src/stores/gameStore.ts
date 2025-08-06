@@ -76,6 +76,9 @@ interface GameStore {
     originalScore: number
     improvement: number
   } | null
+  
+  // Fixed card positions for optimization
+  fixedPositions: Set<number>
 
   // Actions
   setCard: (index: number, card: Card | null) => void
@@ -105,6 +108,8 @@ interface GameStore {
   exitShareMode: () => void
   saveSharedAsCustomMusic: (name: string) => void
   optimizeFormation: () => void
+  toggleFixedPosition: (index: number) => void
+  clearFixedPositions: () => void
 }
 
 // Helper function to get music key from music object
@@ -441,12 +446,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
   isShareMode: false,
   isOptimizing: false,
   optimizationResult: null,
+  fixedPositions: new Set(),
 
   // Actions
   setCard: (index, card) =>
     set((state) => {
       const newCards = [...state.selectedCards]
       newCards[index] = card
+      
+      // カードを変更したら固定状態を解除
+      const newFixedPositions = new Set(state.fixedPositions)
+      if (card === null) {
+        newFixedPositions.delete(index)
+      }
 
       // ローカルストレージから保存されたスキルレベルを読み込む
       if (card && !isShareMode()) {
@@ -488,6 +500,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
           selectedCards: newCards,
           cardSkillLevels: newSkillLevels,
           centerSkillLevels: newCenterSkillLevels,
+          fixedPositions: newFixedPositions,
         }
       }
 
@@ -513,7 +526,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         })
       }
 
-      return { selectedCards: newCards }
+      return { selectedCards: newCards, fixedPositions: newFixedPositions }
     }),
 
   setCardSkillLevel: (index, level) =>
@@ -1261,7 +1274,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     alert(`カスタム楽曲「${name}」として保存しました！`)
   },
 
-  optimizeFormation: async () => {
+  optimizeFormation: () => {
     const state = get()
 
     // Validate inputs
@@ -1284,24 +1297,53 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
       // Create array of valid card indices
       const validIndices: number[] = []
+      const fixedIndices: number[] = []
+      const movableIndices: number[] = []
+      
       state.selectedCards.forEach((card, index) => {
         if (card !== null) {
           validIndices.push(index)
+          if (state.fixedPositions.has(index)) {
+            fixedIndices.push(index)
+          } else {
+            movableIndices.push(index)
+          }
         }
       })
 
-      // If only one or no cards, nothing to optimize
-      if (validIndices.length <= 1) {
+      // If only one or no movable cards, nothing to optimize
+      if (movableIndices.length <= 1) {
         set({ isOptimizing: false })
-        alert('最適化するには2枚以上のカードが必要です。')
+        if (fixedIndices.length > 0) {
+          alert('固定されていないカードが1枚以下のため、最適化できません。')
+        } else {
+          alert('最適化するには2枚以上のカードが必要です。')
+        }
         return
       }
 
-      // Generate all permutations of card positions
+      // Generate all permutations of movable card positions
       const permutations: number[][] = []
       const generatePermutations = (arr: number[], start: number) => {
         if (start >= arr.length - 1) {
-          permutations.push([...arr])
+          // Create full arrangement including fixed positions
+          const fullArrangement: number[] = Array(6).fill(-1)
+          
+          // Place fixed cards first
+          fixedIndices.forEach(idx => {
+            fullArrangement[idx] = idx
+          })
+          
+          // Place movable cards in available positions
+          let movableIndex = 0
+          for (let i = 0; i < 6; i++) {
+            if (fullArrangement[i] === -1 && state.selectedCards[i] !== null) {
+              fullArrangement[i] = arr[movableIndex]
+              movableIndex++
+            }
+          }
+          
+          permutations.push(fullArrangement.filter(i => i !== -1))
           return
         }
         for (let i = start; i < arr.length; i++) {
@@ -1318,7 +1360,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         }
       }
 
-      generatePermutations([...validIndices], 0)
+      generatePermutations([...movableIndices], 0)
 
       let bestScore = 0
       let bestFormation: (Card | null)[] = [...state.selectedCards]
@@ -1453,5 +1495,21 @@ export const useGameStore = create<GameStore>((set, get) => ({
       set({ isOptimizing: false })
       alert('最適化中にエラーが発生しました。')
     }
+  },
+
+  toggleFixedPosition: (index) => {
+    set((state) => {
+      const newFixedPositions = new Set(state.fixedPositions)
+      if (newFixedPositions.has(index)) {
+        newFixedPositions.delete(index)
+      } else {
+        newFixedPositions.add(index)
+      }
+      return { fixedPositions: newFixedPositions }
+    })
+  },
+
+  clearFixedPositions: () => {
+    set({ fixedPositions: new Set() })
   },
 }))

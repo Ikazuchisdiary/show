@@ -95,6 +95,8 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     clearCustomSkillValues,
     setCustomCenterSkillValue,
     clearCustomCenterSkillValues,
+    fixedPositions,
+    toggleFixedPosition,
   } = useGameStore()
   const selectedCard = selectedCards[index]
   const skillLevel = cardSkillLevels[index]
@@ -366,6 +368,15 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
             </option>
           ))}
         </select>
+        {selectedCard && (
+          <button
+            className={`pin-button ${fixedPositions.has(index) ? 'pinned' : ''}`}
+            onClick={() => toggleFixedPosition(index)}
+            title={fixedPositions.has(index) ? '位置固定を解除' : '位置を固定'}
+          >
+            📌
+          </button>
+        )}
       </div>
 
       {selectedCard && (
