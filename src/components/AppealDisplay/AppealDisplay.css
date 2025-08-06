@@ -146,14 +146,15 @@
 }
 
 .card-appeal-header {
-  display: flex;
+  display: grid;
+  grid-template-columns: 32px 1fr 80px;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   margin-bottom: 8px;
 }
 
 .appeal-details .card-number {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 24px;
@@ -166,7 +167,6 @@
 }
 
 .appeal-details .card-name {
-  flex: 1;
   font-size: 0.9em;
   color: #333;
 }
@@ -180,11 +180,18 @@
   font-weight: bold;
   cursor: help;
   transition: background-color 0.2s;
-  white-space: pre-line;
+  white-space: nowrap;
+  justify-self: end;
 }
 
 .card-boost-badge:hover {
   background-color: #c8e6c9;
+}
+
+.card-boost-badge-container {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 80px;
 }
 
 .card-appeal-stats {

@@ -103,14 +103,16 @@ export const AppealDisplay: React.FC = () => {
                 <div className="card-appeal-header">
                   <span className="card-number">{card.cardIndex}</span>
                   <span className="card-name">{card.displayName}</span>
-                  {card.boostPercentage > 0 && (
-                    <span 
-                      className="card-boost-badge"
-                      title={getBoostTooltip(card.cardIndex)}
-                    >
-                      +{Math.round(card.boostPercentage * 100) / 100}%
-                    </span>
-                  )}
+                  <span className="card-boost-badge-container">
+                    {card.boostPercentage > 0 && (
+                      <span 
+                        className="card-boost-badge"
+                        title={getBoostTooltip(card.cardIndex)}
+                      >
+                        +{Math.round(card.boostPercentage * 100) / 100}%
+                      </span>
+                    )}
+                  </span>
                 </div>
                 <div className="card-appeal-stats">
                   <div className="card-stat-item">
