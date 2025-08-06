@@ -1784,7 +1784,7 @@ const gameData = {
         effects: [
           {
             type: 'visualOnly',
-            description: 'ハート関連の特殊効果（計算機では未対応）',
+            description: 'ハートを3000個集めてメンタル0%時にビートハート300個獲得、スキルAP-13（計算機では未対応）',
           },
         ],
       },
@@ -1801,7 +1801,7 @@ const gameData = {
       effects: [
         {
           type: 'visualOnly',
-          description: 'ビートハートをキャプチャ（計算機では未対応）',
+          description: 'ビートハート160個キャプチャ (Lv.10）（計算機では未対応）',
         },
         {
           type: 'conditional',
@@ -1814,7 +1814,7 @@ const gameData = {
             },
             {
               type: 'visualOnly',
-              description: 'LOVEゲイン率増加とハート上限増加（計算機では未対応）',
+              description: 'LOVEゲイン率4000%増加、ハート上限+800（計算機では未対応）',
             },
           ],
         },
