@@ -105,13 +105,6 @@ interface GameStore {
   exitShareMode: () => void
   saveSharedAsCustomMusic: (name: string) => void
   optimizeFormation: () => void
-  isOptimizing: boolean
-  optimizationResult: {
-    bestFormation: (Card | null)[]
-    bestScore: number
-    originalScore: number
-    improvement: number
-  } | null
 }
 
 // Helper function to get music key from music object
