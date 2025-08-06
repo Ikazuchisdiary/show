@@ -6,6 +6,20 @@ export interface UpdateEntry {
 
 export const updateHistory: UpdateEntry[] = [
   {
+    version: '2.2.3',
+    date: '2025-08-06',
+    changes: [
+      '新楽曲「始まりは君の空」を追加',
+      '新楽曲「始まりは君の空（-2秒）」を追加',
+      '「太陽であれ！」のセンターキャラクターを徒町小鈴に修正',
+      'Ether Ariaシリーズの効果を修正（藤島慈、百生吟子など）',
+      '新カード「[Oracle Étude]大沢瑠璃乃」を追加',
+      '新カード「[Oracle Étude]徒町小鈴」を追加',
+      'カード検索で矢印キーでの選択に対応',
+      'カード検索中は「未選択」を非表示に',
+    ],
+  },
+  {
     version: '2.2.2',
     date: '2025-08-06',
     changes: [
@@ -86,4 +100,4 @@ export const updateHistory: UpdateEntry[] = [
   },
 ]
 
-export const CURRENT_VERSION = '2.2.2'
+export const CURRENT_VERSION = '2.2.3'

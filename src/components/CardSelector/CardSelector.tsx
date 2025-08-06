@@ -105,8 +105,10 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
   const [searchQuery, setSearchQuery] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
+  const [highlightedIndex, setHighlightedIndex] = useState(-1)
   const searchRef = useRef<HTMLInputElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   // Display value for the input (shows selected card when not focused)
   const displayValue = isFocused ? searchQuery : selectedCard ? selectedCard.displayName : ''
@@ -153,11 +155,35 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     )
   }
 
+  // Get all selectable items (including "未選択" as first item only when not searching)
+  const getSelectableItems = () => {
+    const items: Array<{ card: Card | null; index: number }> = []
+    let itemIndex = 0
+
+    // Only include "未選択" when not searching
+    if (!searchQuery || !isFocused) {
+      items.push({ card: null, index: itemIndex++ })
+    }
+
+    const filteredCards = getFilteredCards()
+    characters.forEach((character) => {
+      const characterCards = getCardsByCharacter(character).filter((card) =>
+        filteredCards.includes(card),
+      )
+      characterCards.forEach((card) => {
+        items.push({ card, index: itemIndex++ })
+      })
+    })
+
+    return items
+  }
+
   const handleCardSelect = (card: Card | null) => {
     setCard(index, card)
     setShowDropdown(false)
     setIsFocused(false)
     setSearchQuery('')
+    setHighlightedIndex(-1)
   }
 
   const handleSearchFocus = () => {
@@ -175,6 +201,43 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     if (!showDropdown) {
       setShowDropdown(true)
     }
+    setHighlightedIndex(-1) // Reset highlight when search changes
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showDropdown) return
+
+    const selectableItems = getSelectableItems()
+    
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault()
+        setHighlightedIndex((prev) => {
+          const next = prev + 1
+          return next >= selectableItems.length ? 0 : next
+        })
+        break
+      case 'ArrowUp':
+        e.preventDefault()
+        setHighlightedIndex((prev) => {
+          const next = prev - 1
+          return next < 0 ? selectableItems.length - 1 : next
+        })
+        break
+      case 'Enter':
+        e.preventDefault()
+        if (highlightedIndex >= 0 && highlightedIndex < selectableItems.length) {
+          handleCardSelect(selectableItems[highlightedIndex].card)
+        }
+        break
+      case 'Escape':
+        e.preventDefault()
+        setShowDropdown(false)
+        setIsFocused(false)
+        setSearchQuery('')
+        setHighlightedIndex(-1)
+        break
+    }
   }
 
   // Handle clicks outside
@@ -184,12 +247,23 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
         setShowDropdown(false)
         setIsFocused(false)
         setSearchQuery('') // Reset search query
+        setHighlightedIndex(-1)
       }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
+
+  // Scroll highlighted item into view
+  useEffect(() => {
+    if (highlightedIndex >= 0 && dropdownRef.current) {
+      const highlightedElement = dropdownRef.current.querySelector('.card-option.highlighted')
+      if (highlightedElement) {
+        highlightedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+      }
+    }
+  }, [highlightedIndex])
 
   return (
     <div
@@ -220,6 +294,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
             value={displayValue}
             onChange={handleSearchChange}
             onFocus={handleSearchFocus}
+            onKeyDown={handleKeyDown}
             autoComplete="off"
           />
           <select
@@ -235,10 +310,15 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
               </option>
             ))}
           </select>
-          <div className="card-dropdown">
-            <div className="card-option" onClick={() => handleCardSelect(null)}>
-              未選択
-            </div>
+          <div className="card-dropdown" ref={dropdownRef}>
+            {(!searchQuery || !isFocused) && (
+              <div 
+                className={`card-option ${highlightedIndex === 0 ? 'highlighted' : ''}`}
+                onClick={() => handleCardSelect(null)}
+              >
+                未選択
+              </div>
+            )}
             {characters.map((character) => {
               const filteredCards = getFilteredCards()
               const characterCards = getCardsByCharacter(character).filter((card) =>
@@ -247,18 +327,28 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
 
               if (characterCards.length === 0) return null
 
+              let currentIndex = 1
+              const selectableItems = getSelectableItems()
+
               return (
                 <div key={character} className="card-group">
                   <div className="card-group-header">{character}</div>
-                  {characterCards.map((card) => (
-                    <div
-                      key={card.name}
-                      className={`card-option ${selectedCard?.name === card.name ? 'selected' : ''}`}
-                      onClick={() => handleCardSelect(card)}
-                    >
-                      {card.displayName}
-                    </div>
-                  ))}
+                  {characterCards.map((card) => {
+                    const itemIndex = selectableItems.findIndex(
+                      (item) => item.card?.name === card.name
+                    )
+                    const isHighlighted = highlightedIndex === itemIndex
+
+                    return (
+                      <div
+                        key={card.name}
+                        className={`card-option ${selectedCard?.name === card.name ? 'selected' : ''} ${isHighlighted ? 'highlighted' : ''}`}
+                        onClick={() => handleCardSelect(card)}
+                      >
+                        {card.displayName}
+                      </div>
+                    )
+                  })}
                 </div>
               )
             })}

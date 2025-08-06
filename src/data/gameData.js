@@ -172,10 +172,8 @@ const gameData = {
             description: '全てのスキルの消費APが1減少',
           },
           {
-            type: 'ctReduce',
-            value: 2,
-            target: 'all',
-            description: 'クールタイムが2秒減少',
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
           },
         ],
       },
@@ -279,10 +277,8 @@ const gameData = {
             description: '全てのスキルの消費APが1減少',
           },
           {
-            type: 'ctReduce',
-            value: 2,
-            target: 'all',
-            description: 'クールタイムが2秒減少',
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
           },
         ],
       },
@@ -623,10 +619,8 @@ const gameData = {
             description: '全てのスキルの消費APが1減少',
           },
           {
-            type: 'ctReduce',
-            value: 2,
-            target: 'all',
-            description: 'クールタイムが2秒減少',
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
           },
         ],
       },
@@ -1386,13 +1380,15 @@ const gameData = {
             {
               type: 'scoreBoost',
               value: 4.35,
-              description: 'スコア435%ブースト (Lv.10)',
+              turns: 1,
+              description: 'スコア獲得スキルによるスコア獲得量が1回の間435%上昇 (Lv.10)',
             },
           ],
         },
         {
           type: 'removeAfterUse',
-          description: 'このカードを除外',
+          condition: 'count >= 2',
+          description: '2回使用後はデッキから除外',
         },
         {
           type: 'apGain',
@@ -3684,84 +3680,232 @@ const gameData = {
         effects: [
           {
             type: 'appealBoost',
-            value: 5.0,
+            value: 3.2,
             target: '安養寺姫芽',
-            description: '安養寺姫芽のアピール値が500%上昇',
+            description: '安養寺姫芽のアピール値が320%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全てのスキルの消費APが2減少',
           },
           {
             type: 'visualOnly',
-            description: '編成メンバーの変更ができず、すべてのカードが安養寺姫芽カードに変更される',
-          },
-          {
-            type: 'visualOnly',
-            description: 'ライブ終了後、編成内の全カードがロストする',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
           },
         ],
       },
       centerSkill: {
         effects: [
           {
+            type: 'scoreGain',
+            value: 3.348,
+            description: 'ライブ終了時スコア獲得（アピール合計値×334.8%）',
+          },
+        ],
+        when: 'afterLastTurn',
+      },
+      effects: [
+        {
+          type: 'scoreGain',
+          value: 3.348,
+          description: 'スコア獲得 (Lv.10: 334.8%)',
+        },
+        {
+          type: 'conditional',
+          condition: 'mental <= 1',
+          then: [
+            {
+              type: 'scoreGain',
+              value: 10.08,
+              description: 'さらにスコア獲得 (Lv.10: 1008%)',
+            },
+          ],
+        },
+        {
+          type: 'mentalRecover',
+          value: 0.5,
+          description: 'メンタル回復（最大値の50%）',
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
+        },
+      ],
+    },
+    oracleEtudeRurino: {
+      name: 'Oracle Etude Rurino',
+      displayName: '［Oracle Étude］大沢瑠璃乃',
+      character: '大沢瑠璃乃',
+      shortCode: 'Roe',
+      apCost: 14,
+      stats: {
+        smile: 6060,
+        pure: 4700,
+        cool: 7320,
+        mental: 590,
+      },
+      centerCharacteristic: {
+        name: 'ELIXIR',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 3.2,
+            target: '大沢瑠璃乃',
+            description: '大沢瑠璃乃のアピール値が320%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全てのスキルの消費APが2減少',
+          },
+          {
             type: 'visualOnly',
-            description: 'ライブ開始時 Elysion発動（ライブ中SP特技以外でのAP回復無効化）',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'apGain',
+            value: 12,
+            description: 'FEVER開始時AP回復（12）',
+          },
+          {
+            type: 'mentalRecover',
+            value: 1.0,
+            description: 'メンタル回復（最大値の100%）',
+          },
+        ],
+        when: 'beforeFeverStart',
+      },
+      effects: [
+        {
+          type: 'voltageBoost',
+          value: 1.365,
+          description: 'ボルテージ獲得量を136.5%上昇 (Lv.10)',
+        },
+        {
+          type: 'conditional',
+          condition: 'mental >= 100',
+          then: [
+            {
+              type: 'voltageBoost',
+              value: 2.457,
+              description: 'さらにボルテージ獲得量を245.7%上昇 (Lv.10)',
+            },
+          ],
+        },
+        {
+          type: 'mentalRecover',
+          value: 0.5,
+          description: 'メンタル回復（最大値の50%）',
+        },
+        {
+          type: 'resetDeck',
+          description: 'デッキリセット',
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
+        },
+        {
+          type: 'apGain',
+          value: 0,
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
+        },
+      ],
+    },
+    oracleEtudeKosuzu: {
+      name: 'Oracle Etude Kosuzu',
+      displayName: '［Oracle Étude］徒町小鈴',
+      character: '徒町小鈴',
+      shortCode: 'Koe',
+      apCost: 14,
+      stats: {
+        smile: 6170,
+        pure: 7520,
+        cool: 4390,
+        mental: 590,
+      },
+      centerCharacteristic: {
+        name: 'DEVICE',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 3.2,
+            target: '徒町小鈴',
+            description: '徒町小鈴のアピール値が320%上昇',
+          },
+          {
+            type: 'apReduce',
+            value: 2,
+            target: 'all',
+            description: '全てのスキルの消費APが2減少',
+          },
+          {
+            type: 'visualOnly',
+            description: 'クールタイムが2秒減少（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'voltageGain',
+            value: 279,
+            description: 'ライブ開始時にボルテージ獲得（279pt）',
           },
         ],
         when: 'beforeFirstTurn',
       },
       effects: [
         {
+          type: 'voltageGain',
+          value: 279,
+          description: 'ボルテージ獲得 (Lv.10: 279pt)',
+        },
+        {
           type: 'conditional',
-          condition: 'turn <= 7',
+          condition: 'mental <= 1',
           then: [
             {
-              type: 'scoreBoost',
-              value: 3.5,
-              description: 'スコア350%ブースト (Lv.10)',
-            },
-            {
-              type: 'voltageBoost',
-              value: 3.5,
-              description: 'ボルテージ350%ブースト (Lv.10)',
-            },
-            {
-              type: 'apBoost',
-              value: 4.0,
-              description: 'AP獲得量400%ブースト',
-            },
-          ],
-          else: [
-            {
-              type: 'scoreGain',
-              value: 6.912,
-              description: 'スコア獲得 (Lv.10: 691.2%)',
-            },
-            {
               type: 'voltageGain',
-              value: 0.72,
-              description: 'ボルテージ獲得 (Lv.10: 72%)',
-            },
-            {
-              type: 'conditional',
-              condition: 'voltage >= 500',
-              then: [
-                {
-                  type: 'scoreGain',
-                  value: 6.912,
-                  description: 'さらにスコア獲得 (Lv.10: 691.2%)',
-                },
-                {
-                  type: 'voltageGain',
-                  value: 0.72,
-                  description: 'さらにボルテージ獲得 (Lv.10: 72%)',
-                },
-              ],
+              value: 840,
+              description: 'さらにボルテージ獲得 (Lv.10: 840pt)',
             },
           ],
         },
         {
+          type: 'conditional',
+          condition: 'mental >= 50',
+          then: [
+            {
+              type: 'voltagePenalty',
+              value: 300,
+              description: 'ボルテージ-300pt',
+            },
+          ],
+        },
+        {
+          type: 'removeAfterUse',
+          description: 'このカードを除外',
+        },
+        {
           type: 'apGain',
           value: 0,
-          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 12, 18, 24],
-          description: 'AP回復 (Lv.11: 6, Lv.12: 12, Lv.13: 18, Lv.14: 24)',
+          levelValues: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 15, 20],
+          description: 'AP回復 (Lv.11: 5, Lv.12: 10, Lv.13: 15, Lv.14: 20)',
         },
       ],
     },
@@ -4226,7 +4370,7 @@ const gameData = {
       name: '太陽であれ！',
       phases: [10, 6, 2],
       description: 'フィーバー前: 10, フィーバー中: 6, フィーバー後: 2',
-      centerCharacter: '村野さやか',
+      centerCharacter: '徒町小鈴',
       attribute: 'cool',
       combos: {
         normal: 293,
@@ -4239,13 +4383,39 @@ const gameData = {
       name: '太陽であれ！（-2秒）',
       phases: [17, 9, 5],
       description: 'フィーバー前: 17, フィーバー中: 9, フィーバー後: 5',
-      centerCharacter: '村野さやか',
+      centerCharacter: '徒町小鈴',
       attribute: 'cool',
       combos: {
         normal: 293,
         hard: 464,
         expert: 742,
         master: 1092,
+      },
+    },
+    hajimari_wa_kimi_no_sora: {
+      name: '始まりは君の空',
+      phases: [18, 5, 0],
+      description: 'フィーバー前: 18, フィーバー中: 5, フィーバー後: 0',
+      centerCharacter: '村野さやか',
+      attribute: 'pure',
+      combos: {
+        normal: 285,
+        hard: 590,
+        expert: 806,
+        master: 1089,
+      },
+    },
+    hajimari_wa_kimi_no_sora_minus2: {
+      name: '始まりは君の空（-2秒）',
+      phases: [31, 8, 0],
+      description: 'フィーバー前: 31, フィーバー中: 8, フィーバー後: 0',
+      centerCharacter: '村野さやか',
+      attribute: 'pure',
+      combos: {
+        normal: 285,
+        hard: 590,
+        expert: 806,
+        master: 1089,
       },
     },
   },
