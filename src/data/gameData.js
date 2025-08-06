@@ -1808,9 +1808,9 @@ const gameData = {
           condition: 'mental == 0',
           then: [
             {
-              type: 'voltageBoost',
-              value: 5.0,
-              description: 'ボルテージ500%ブースト',
+              type: 'voltageGain',
+              value: 240,
+              description: 'ボルテージ240獲得 (Lv.10)',
             },
             {
               type: 'visualOnly',
