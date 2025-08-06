@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { useGameStore } from '@stores/gameStore'
-import { calculateAppealValueWithDetails, AppealCalculationResult } from '@core/calculations/appeal'
+import { calculateAppealValueWithDetails } from '@core/calculations/appeal'
 import './AppealDisplay.css'
 
 export const AppealDisplay: React.FC = () => {
@@ -30,17 +30,6 @@ export const AppealDisplay: React.FC = () => {
   const handleToggleDetails = () => {
     setShowDetails(!showDetails)
   }
-
-  // Group center boosts by percentage
-  const groupedBoosts = appealResult.details.centerBoosts.reduce((acc, boost) => {
-    // Round to avoid floating point precision issues
-    const roundedPercentage = Math.round(boost.boostPercentage * 100) / 100
-    if (!acc[roundedPercentage]) {
-      acc[roundedPercentage] = []
-    }
-    acc[roundedPercentage].push(boost)
-    return acc
-  }, {} as Record<number, AppealCalculationResult['details']['centerBoosts']>)
 
   // Create tooltip text for boost badges
   const getBoostTooltip = useMemo(() => {

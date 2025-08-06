@@ -327,7 +327,6 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
 
               if (characterCards.length === 0) return null
 
-              let currentIndex = 1
               const selectableItems = getSelectableItems()
 
               return (
