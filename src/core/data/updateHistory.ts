@@ -6,6 +6,15 @@ export interface UpdateEntry {
 
 export const updateHistory: UpdateEntry[] = [
   {
+    version: '2.2.4',
+    date: '2025-08-06',
+    changes: [
+      '新カード「[太陽であれ！]徒町小鈴」を追加',
+      'メンタル0時にボルテージ500%ブースト効果',
+      'センタースキル：ボルテージゲイン232pt（FEVER開始時）',
+    ],
+  },
+  {
     version: '2.2.3',
     date: '2025-08-06',
     changes: [
@@ -103,4 +112,4 @@ export const updateHistory: UpdateEntry[] = [
   },
 ]
 
-export const CURRENT_VERSION = '2.2.3'
+export const CURRENT_VERSION = '2.2.4'

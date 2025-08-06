@@ -1767,6 +1767,59 @@ const gameData = {
         },
       ],
     },
+    taiyouKosuzu: {
+      name: 'Taiyou de Are Kosuzu',
+      displayName: '［太陽であれ！］徒町小鈴',
+      character: '徒町小鈴',
+      shortCode: 'Kzt',
+      apCost: 23,
+      stats: {
+        smile: 4080,
+        pure: 6600,
+        cool: 6720,
+        mental: 470,
+      },
+      centerCharacteristic: {
+        name: 'ソルブレイブ',
+        effects: [
+          {
+            type: 'visualOnly',
+            description: 'ハート関連の特殊効果（計算機では未対応）',
+          },
+        ],
+      },
+      centerSkill: {
+        when: 'beforeFeverStart',
+        effects: [
+          {
+            type: 'voltageGain',
+            value: 232,
+            description: 'ボルテージ232獲得 (Lv.10)',
+          },
+        ],
+      },
+      effects: [
+        {
+          type: 'visualOnly',
+          description: 'ビートハートをキャプチャ（計算機では未対応）',
+        },
+        {
+          type: 'conditional',
+          condition: 'mental == 0',
+          then: [
+            {
+              type: 'voltageBoost',
+              value: 5.0,
+              description: 'ボルテージ500%ブースト',
+            },
+            {
+              type: 'visualOnly',
+              description: 'LOVEゲイン率増加とハート上限増加（計算機では未対応）',
+            },
+          ],
+        },
+      ],
+    },
     etherAriaKosuzu: {
       name: 'Ether Aria Kosuzu',
       displayName: '［Ether Aria］徒町小鈴',
