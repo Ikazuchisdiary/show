@@ -58,7 +58,7 @@ export const SimulationControls: React.FC = () => {
         onClick={handleOptimize}
         disabled={!hasValidSelection || isOptimizing || isSimulating}
       >
-        {isOptimizing ? '最適化中...' : '編成最適化'}
+        {isOptimizing ? '最適化中...' : '並び順最適化'}
       </button>
       <button className="share-button secondary" onClick={handleShare}>
         共有URLを作成
