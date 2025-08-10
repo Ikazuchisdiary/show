@@ -1,5 +1,7 @@
+import { CardData } from '../../core/models/Card'
+
 // Card data for 藤島慈
-const fujishima_megumiCards = {
+const fujishima_megumiCards: CardData = {
   bdMegu: {
     name: 'BD Megu',
     displayName: '［18th Birthday］藤島慈',

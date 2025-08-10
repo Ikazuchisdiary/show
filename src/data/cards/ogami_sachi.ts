@@ -1,5 +1,7 @@
+import { CardData } from '../../core/models/Card'
+
 // Card data for 大賀美沙知
-const ogami_sachiCards = {
+const ogami_sachiCards: CardData = {
   sachi: {
     name: 'Sachi',
     displayName: '［蓮ノ空女学院スクールアイドルクラブ101期生］大賀美沙知',

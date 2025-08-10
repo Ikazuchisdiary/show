@@ -1,5 +1,7 @@
+import { CardData } from '../../core/models/Card'
+
 // Card data for 百生吟子
-const momose_ginkoCards = {
+const momose_ginkoCards: CardData = {
   etherAriaGin: {
     name: 'Ether Aria Gin',
     displayName: '［Ether Aria］百生吟子',
@@ -248,10 +250,15 @@ const momose_ginkoCards = {
       mental: 480,
     },
     centerCharacteristic: {
-      type: 'appealBoost',
-      value: 0.8,
-      target: 'all',
-      description: '全メンバーのアピール値+80%',
+      name: 'アピールアップ',
+      effects: [
+        {
+          type: 'appealBoost',
+          value: 0.8,
+          target: 'all',
+          description: '全メンバーのアピール値+80%',
+        },
+      ],
     },
     effects: [
       {

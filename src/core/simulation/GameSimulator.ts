@@ -1642,6 +1642,28 @@ export class GameSimulator {
         this.state.totalVoltage = Math.max(0, this.state.totalVoltage - effect.value)
         break
 
+      case 'mentalRecover': {
+        const mentalRecoverEffect = effect as MentalRecoverEffect
+        let mentalRecoverValue: number
+        if (customValue !== undefined) {
+          mentalRecoverValue = customValue
+        } else if (
+          mentalRecoverEffect.levelValues &&
+          mentalRecoverEffect.levelValues[this.centerSkillLevels[centerIndex] - 1] !== undefined
+        ) {
+          mentalRecoverValue =
+            mentalRecoverEffect.levelValues[this.centerSkillLevels[centerIndex] - 1]
+        } else {
+          mentalRecoverValue = mentalRecoverEffect.value
+        }
+        // No skill multiplier applied to mental recover in v1
+        this.state.mental += mentalRecoverValue
+        this.currentTurnLogs.push(
+          `<div class="log-action log-mental">メンタル回復: +${mentalRecoverValue} → ${this.state.mental}%</div>`,
+        )
+        break
+      }
+
       case 'appealBoost':
         // This is handled during appeal calculation, not here
         break

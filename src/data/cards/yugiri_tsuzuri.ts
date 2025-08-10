@@ -1,5 +1,7 @@
+import { CardData } from '../../core/models/Card'
+
 // Card data for 夕霧綴理
-const yugiri_tsuzuriCards = {
+const yugiri_tsuzuriCards: CardData = {
   lrTsuzuri: {
     name: 'LR Tsuzuri',
     displayName: '［幸せのリボン］夕霧綴理',

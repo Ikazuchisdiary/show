@@ -1,5 +1,7 @@
+import { CardData } from '../../core/models/Card'
+
 // Card data for 桂城泉＆セラス 柳田 リリエンフェルト
-const katsuragi_and_cerasCards = {
+const katsuragi_and_cerasCards: CardData = {
   edeliedIzumiCelestine: {
     name: 'Edelied Izumi & Celestine',
     displayName: '［Edelied］桂城泉＆セラス 柳田 リリエンフェルト',

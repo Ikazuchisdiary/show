@@ -5,6 +5,6 @@
 // - "beforeFeverStart": FEVER開始時
 // - "afterLastTurn": ライブ終了時
 
-import cardData from './cards/index.js'
+import cardData from './cards/index'
 
 export default cardData

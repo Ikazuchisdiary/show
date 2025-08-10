@@ -6,249 +6,268 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a web-based score calculator for "スクショウ" (Sukushou), a Japanese rhythm/idol game. The application calculates game scores based on complex mechanics involving cards, appeal values, voltage levels, and fever phases.
 
-## Key Architecture
+## Current Architecture
 
-### Core Files
+### Technology Stack
 
-- `index.html`: Main entry point with UI structure
-- `script.js`: Game logic implementation using ES6 classes (`Game`, `Card`, `GenericCard`)
-- `cardData.js`: Card definitions and configurations in JSON format
-- `style.css`: Styling for the web interface
+- **TypeScript**: Type-safe development
+- **React**: Component-based UI
+- **Vite**: Build tool and development server
+- **Zustand**: State management
+- **Vitest**: Testing framework
 
-### Important Classes and Concepts
+### Project Structure
 
-1. **Game Class** (`script.js:24`): Manages game state including score, voltage, boosts, turns, and card rotations
-2. **Card System**: Cards have configurable effects defined in `cardData.js` with support for:
-   - Score/voltage boosts
-   - Conditional effects based on game state
-   - Turn skipping mechanics
-   - Skill levels (1-14) with multipliers
+```
+src/
+├── components/       # React components
+├── core/            # Core business logic
+│   ├── calculations/  # Score, AP, voltage calculations
+│   ├── models/       # Card, Music, Effect models
+│   └── simulation/   # Game simulation engine
+├── data/            # Game data files
+│   ├── cards/       # Character-specific card data
+│   ├── cardData.js  # Card data aggregator
+│   └── musicData.js # Music/song data
+├── stores/          # Zustand stores
+└── utils/           # Utility functions
+```
 
-3. **Game Mechanics**:
-   - Turn-based system with card rotations
-   - Voltage levels affecting score multipliers
-   - Three phases: before fever, during fever, after fever
-   - Mental system for card conditions
+### Data Organization
+
+- **Card Data**: Split by character in `src/data/cards/` directory (TypeScript files)
+  - Character files use romanized names: `osawa_rurino.ts`, `momose_ginko.ts`, etc.
+  - Each file exports a default object with all cards for that character
+  - Cards are re-exported through `cardData.ts` for backward compatibility
+- **Music Data**: Centralized in `src/data/musicData.ts`
+- **Important**: All skill values in card data are stored as **Lv.10 values**
+- Center skill timings:
+  - `beforeFirstTurn`: ライブ開始時
+  - `beforeFeverStart`: FEVER開始時
+  - `afterLastTurn`: ライブ終了時
 
 ## Development Commands
 
-This is a plain HTML/CSS/JavaScript application with no build system:
+```bash
+# Development
+pnpm dev          # Start development server
+pnpm build        # Build for production
+pnpm preview      # Preview production build
 
-- **Run locally**: Open `index.html` in a web browser
-- **No build/lint/test commands**: The project has no package manager or testing framework
+# Code Quality
+pnpm lint         # Run ESLint
+pnpm format       # Run Prettier
+pnpm type-check   # Run TypeScript type checking
+
+# Testing
+pnpm test         # Run tests
+pnpm test:ui      # Run tests with UI
+pnpm coverage     # Generate test coverage
+```
 
 ## Important Implementation Details
 
-1. **Effect System**: Card effects are defined in JSON format in `cardData.js`. Each effect has a type (e.g., "scoreBoost", "voltageBoost", "conditional") and associated parameters.
-   - **IMPORTANT**: The `value` field in effects should contain the Lv.10 value, not Lv.1 or Lv.14
+1. **Effect System**: Card effects support various types:
+   - Basic: `scoreBoost`, `voltageBoost`, `scoreGain`, `voltageGain`
+   - Conditional: Based on turn count, voltage level, mental state
+   - Special: `resetCardTurn`, `removeAfterUse`, `apGain`
 
-2. **Skill Level Multipliers**: Defined in `SKILL_LEVEL_MULTIPLIERS` array (`script.js:6`) ranging from 1.0x (Lv.1) to 3.0x (Lv.14).
+2. **Skill Level System**:
+   - Levels 1-14 with multipliers from 1.0x to 3.0x
+   - Some effects have fixed values regardless of level (check `levelValues` array)
 
-3. **Voltage Calculation**: The `getVoltageLevel()` method (`script.js:86`) uses predefined thresholds for levels 0-19, then adds 1 level per 200 voltage points above 1900.
+3. **Game Phases**:
+   - Before fever: Start to fever start
+   - During fever: Fever duration
+   - After fever: Remaining turns
 
-4. **Phase Detection**: The game has three phases determined by the music array:
-   - Before fever: turns 0 to music[0]-1
-   - During fever: turns music[0] to music[0]+music[1]-1
-   - After fever: remaining turns
+4. **AP System**:
+   - Cards have AP costs
+   - Center characteristics can reduce AP costs
+   - AP gains are multiplied by 1.5x during calculations
 
-5. **Card Rotation**: Cards are used in sequence, resetting to the first card after all have been used (`script.js:51`).
+## Card Data Structure
+
+### File Organization
+
+Card data is organized by character in `src/data/cards/`:
+
+```typescript
+// src/data/cards/[character_name].ts
+import { CardData } from '../../core/models/Card'
+
+const character_nameCards: CardData = {
+  cardKey1: { ... },
+  cardKey2: { ... },
+}
+
+export default character_nameCards
+```
+
+### Important Conventions
+
+1. **Skill Values**: All `value` fields in card effects contain **Lv.10 values**
+   - The game automatically calculates other levels using multipliers
+   - Lv.1 = 1.0x, Lv.10 = 2.1x, Lv.14 = 3.0x (full list in `SKILL_LEVEL_MULTIPLIERS`)
+   - Example: If Lv.10 value is 2.175, then Lv.1 = 1.035, Lv.14 = 3.11
+
+2. **Fixed Values**: Some effects have fixed values regardless of skill level
+   - Use `levelValues` array to specify fixed values per level
+   - Example: `levelValues: [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]` = always 5
+   - Common fixed-value effects:
+     - `apGain`: AP回復量が固定の場合（一部のカードはLv.11以上で変動）
+     - `mentalReduction`: メンタル減少量（パーセンテージの場合あり）
+     - `mentalRecover`: メンタル回復量（直接加算、値は実数点）
+     - `voltagePenalty`: ボルテージ減少量
+     - `resetCardTurn`: 山札リセット（数値なし）
+     - `removeAfterUse`: カード除外（数値なし）
+
+3. **Card Structure**:
+
+   ```javascript
+   cardKey: {
+     name: 'Internal Name',           // English internal identifier
+     displayName: '[衣装名]キャラ名',    // Japanese display name
+     character: 'キャラクター名',        // Character name for grouping
+     shortCode: 'Xx',                 // 2-letter abbreviation (MUST be unique)
+     apCost: 10,                      // AP cost to use
+     stats: {                         // Base stats
+       smile: 5760,
+       pure: 5760,
+       cool: 5760,
+       mental: 480
+     },
+     effects: [...],                  // Card effects array
+     centerCharacteristic: {...},     // Optional: Center position bonus
+     centerSkill: {...}              // Optional: Center skill timing effect
+   }
+   ```
+
+4. **Effect Types**:
+   - Score/Voltage boost: Use decimal (0.825 = 82.5%)
+   - Score/Voltage gain: Use decimal (2.175 = 217.5%)
+   - AP/Mental values: Use integers (10 = 10 points, 50 = 50 points)
+   - Voltage penalty: Use integers (5000 = 5000 points)
 
 ## Adding New Features
 
-When adding new cards or effects:
+### Adding New Cards
 
-1. Add card definitions to `cardData.js` following the existing JSON structure
-2. For new effect types, implement handling in the `GenericCard.do()` method
-3. Update UI elements in `index.html` if needed
-4. Maintain the existing code style and patterns
+1. **Find or create character file** in `src/data/cards/[character_name].ts`
+   - Use romanized names: `osawa_rurino.ts`, `momose_ginko.ts`, etc.
+   - File should export a default object with all cards for that character
+
+2. **Add card to the character's cards object**:
+
+   ```typescript
+   const character_nameCards: CardData = {
+     // Existing cards...
+     newCardKey: {
+       name: 'New Card Name',
+       displayName: '［衣装名］キャラクター名',
+       character: 'キャラクター名',
+       shortCode: 'Xx',
+       apCost: 10,
+       stats: { smile: 5760, pure: 5760, cool: 5760, mental: 480 },
+       effects: [
+         {
+           type: 'scoreBoost',
+           value: 1.365, // Lv.10 value (136.5%)
+           description: 'スコア136.5%ブースト (Lv.10)',
+         },
+       ],
+       // Optional: centerCharacteristic, centerSkill
+     },
+   }
+   ```
+
+3. **Important reminders**:
+   - Always use Lv.10 values for the `value` field
+   - Mental recovery values are direct points (50 = 50 points, not 50%)
+   - **shortCode must be unique** - Each card must have a different 2-letter code
+   - Test with different skill levels and game scenarios
+   - You can check card details on the wiki: `https://wikiwiki.jp/llll_wiki/{displayName}`
+     - Example: `https://wikiwiki.jp/llll_wiki/［17th Birthday］大沢瑠璃乃`
+
+### Adding New Music
+
+1. **Check music details on the wiki**:
+   - Music attributes and combo counts: https://wikiwiki.jp/llll_wiki/スクショウ/楽曲一覧
+2. **Add to `src/data/musicData.ts`**:
+
+   ```typescript
+   musicKey: {
+     name: '楽曲名',
+     attribute: 'smile', // or 'pure', 'cool'
+     comboCount: 123,
+     phases: [15, 10, 15], // [beforeFever, duringFever, afterFever]
+     description: '説明文（任意）',
+   }
+   ```
+
+3. **Special music types**:
+   - **(-2秒) versions**: Same structure as regular songs, only phases array differs
+     ```typescript
+     musicKeyShort: {
+       name: '楽曲名（-2秒）',
+       attribute: 'smile',  // Same as regular version
+       comboCount: 100,     // Same as regular version
+       phases: [13, 8, 13], // Shorter turn counts than regular version
+       description: '短縮版楽曲',
+     }
+     ```
+
+### Adding New Effects
+
+1. Add type to `EffectType` in `src/core/models/Effect.ts`
+2. Create interface for the effect
+3. Add to `Effect` union type
+4. Implement handling in `GameSimulator.processEffect()`
 
 ## Commit Message Guidelines
 
-When committing changes, include update information for the update banner system:
+Format: `type: description in Japanese`
 
-1. Keep commit messages concise and descriptive
-2. When making user-facing changes, think about how they would appear in the update history
-3. The update history is manually maintained in `script.js` in the `updateHistory` array
-4. Format: Brief description of the change in Japanese (matching the app's language)
+Types:
 
-Example commit messages:
+- `feat`: New features
+- `fix`: Bug fixes
+- `refactor`: Code refactoring
+- `docs`: Documentation updates
+- `test`: Test additions/changes
+- `style`: UI/styling changes
 
-- "新カード追加: [カード名]キャラクター名"
-- "スキル値を修正: カード名"
-- "共有機能のバグを修正"
-- "UIの改善: 具体的な改善内容"
+Examples:
+
+- `feat: 新カード「[カード名]」を追加`
+- `fix: AP計算の不具合を修正`
+- `refactor: カードデータをキャラクター別に分割`
 
 ## Development Best Practices
 
-- **User Confirmation**:
-  - pushする前にユーザに確認をとってください
+1. **Always confirm before pushing**: pushする前にユーザに確認をとってください
+2. **Update history tracking**: updateHistoryを更新するときは現在時刻を取得して指定
+3. **Test thoroughly**: Run lint, format, and type-check before committing
+4. **Maintain data integrity**: Ensure all card/music data follows established patterns
 
-## Memory Notes
+## TypeScript Benefits
 
-- updateHistoryを更新するときは、現在時刻を取得して指定してください
-- v2開発時は必ずv1の実装を確認してから実装する
-- インラインスタイルはCSSクラスに移行する
-- font-family: inheritなどのグローバルスタイルに注意
+- **Type Safety**: All card and music data is now strongly typed
+- **IntelliSense Support**: Auto-completion for effect types, card properties, etc.
+- **Compile-time Validation**: Invalid effect types or missing required fields will cause build errors
+- **Better Documentation**: Type definitions serve as inline documentation
 
-## v2 Development Methodology
+## Recent Updates
 
-### Code Analysis and Documentation
+- Converted all data files to TypeScript for better type safety
+- Refactored data structure: Split gameData into character-specific files
+- Fixed TypeScript errors related to optional effect arrays
+- Standardized effect naming: `resetDeck` → `resetCardTurn`
+- Improved type safety throughout the codebase
+- Fixed center skill `mentalRecover` implementation
 
-When improving v2 to match v1 quality:
+## Known Issues and TODOs
 
-1. **Analyze v1 implementation** - Study CSS, HTML, and JS in detail
-2. **Create analysis markdown** - Document findings in dedicated markdown files
-3. **Track differences** - Maintain detailed comparisons between v1 and v2
-4. **Update systematically** - Make changes based on documented analysis
-
-### Key Analysis Files
-
-- `V1_FEATURE_ANALYSIS.md` - Comprehensive v1 feature list and implementation status
-- `V2_IMPLEMENTATION_GAPS.md` - Features marked complete but actually incomplete
-- `V2_IMPLEMENTATION_TASKS.md` - Prioritized task list with time estimates
-- `V1_IMPLEMENTATION_REFERENCE.md` - Detailed code locations in v1
-- `V1_CARD_SELECTOR_ANALYSIS.md` - Deep dive into card selection UI differences
-
-### v1 Reference Location
-
-Reference files from v1 are stored in `/v1-reference/` directory for easy comparison.
-
-## UI Implementation Guidelines
-
-### Card Selection UI (Based on v1 Analysis) ✅ COMPLETED
-
-1. **Card numbers**: Square with rounded corners (32x32px, border-radius: 6px, white background)
-2. **Font family**: System fonts with proper font-weights
-3. **Conditional effects**: Gray background (#f0f0f0) with proper indentation
-4. **Success/Failure colors**: Success (#2196F3), Failure (#f44336)
-5. **Label width**: 150px fixed width with font-weight: 700 for skill parameters
-6. **No shortCodes**: Display only card names without [Kg] style prefixes
-7. **Character order**: Fixed order matching v1 (102期 → 103期 → 104期 → Others)
-8. **Drag & Drop**: Insert behavior with green position indicators (not swap)
-
-### Development Approach
-
-1. Always compare with v1 before implementing UI changes
-2. Document findings in markdown before coding
-3. Update CLAUDE.md with new guidelines discovered
-4. Maintain consistency with v1's visual design language
-
-## Architecture Migration Plan
-
-A comprehensive architecture migration plan has been created in `ARCHITECTURE_PLAN.md`. The migration involves:
-
-### Technology Stack (Planned)
-
-- **TypeScript**: For type safety and better developer experience
-- **Vite**: Modern build tool with fast HMR and optimized builds
-- **React**: Component-based UI architecture
-- **Zustand**: Lightweight state management
-- **Vitest**: Testing framework integrated with Vite
-
-### Migration Phases
-
-1. **Phase 1**: Development environment setup (1-2 weeks)
-2. **Phase 2**: Core logic migration to TypeScript (2-3 weeks)
-3. **Phase 3**: UI layer reconstruction with React (2-3 weeks)
-4. **Phase 4**: Optimization and new features (1-2 weeks)
-
-### Important Notes
-
-- The migration will be gradual to minimize risk
-- GitHub Pages deployment will be maintained (output to `docs/` folder)
-- Old and new versions will run in parallel during transition
-- All changes should maintain backward compatibility where possible
-
-See `ARCHITECTURE_PLAN.md` for detailed implementation plan.
-
-## v2 Progress Tracking
-
-### Completed Features (2025-07-25)
-
-1. **Card Selection UI** - Fully matches v1 appearance and behavior
-   - Skill parameter editing with custom values
-   - Conditional effect display formatting
-   - Character ordering (102期 → 103期 → 104期 → Others)
-   - Font weights and sizes matching v1
-   - Drag & drop with insertion indicators
-2. **Center Character System** - Highlight and bonus calculations
-   - Orange border (#ff9800) highlighting for center character cards
-   - Center characteristic appeal boost calculations
-   - AP reduction effects properly applied
-3. **Score Calculation** - Complete v1 parity
-   - Base AP calculation with actual combo count
-   - Skill level multipliers correctly applied
-   - Appeal value calculation with attribute matching
-   - AP shortage reference score calculation
-   - Center skill processing with voltage level doubling
-4. **URL Sharing** - v1-compatible compression and encoding
-   - Share mode with background visual feedback
-   - Custom music support in shared URLs
-   - Learning correction parameter support
-5. **Custom Music** - Full v1 compatibility
-   - id='custom' for new custom music
-   - Saved custom music with unique IDs
-   - No formation saving for custom music (v1 behavior)
-   - Proper duplicate handling in music list
-6. **UI Improvements**
-   - AP balance display with correct formatting
-   - Appeal value display in results
-   - Voltage summary removed for cleaner UI
-   - Skill value rounding (integers use Math.floor, decimals truncate at 4 places)
-
-### Recent Bug Fixes (2025-07-25)
-
-1. **AP Calculation Issues**
-   - Fixed base AP not being included in calculations
-   - Fixed trailing zeros being removed from AP display
-   - Fixed center characteristic AP reduction not being applied
-   - Fixed skill AP gains not being multiplied by 1.5x
-   - Fixed incorrect combo count usage in base AP calculation
-2. **Skill Value Issues**
-   - Fixed BLAST姫芽 values not matching v1
-   - Fixed skill level multipliers being incorrectly applied
-   - Fixed skill value rounding rules to match v1
-3. **URL Sharing Issues**
-   - Fixed custom music not loading from URLs
-   - Fixed learning correction not being loaded
-   - Fixed share mode UI state management
-4. **Custom Music Issues**
-   - Fixed duplicate entries in dropdown
-   - Fixed shared custom music handling
-   - Fixed music list showing duplicates
-   - Aligned custom music detection with v1 (id='custom' or id.startsWith('custom\_'))
-
-### Current Tasks (2025-07-25 48-hour work session)
-
-**作業開始**: 2025-07-25 (現在)
-**予定終了**: 2025-07-27
-
-#### Task Progress
-
-1. **Fix pnpm lint errors** - ESLintエラーの修正 ✅
-2. **Fix pnpm type-check errors** - TypeScriptエラーの修正 ✅
-3. **Run pnpm format** - コードフォーマット ✅
-4. **Implement tests** - 現在の実装に対するテストを作成 ✅
-5. **Performance optimization** - Code splittingなどの最適化 ✅
-6. **Other necessary tasks** - 時間があれば必要と感じるタスク ✅
-
-#### Work Log
-
-- **2025-07-25 開始**: 48時間の長期作業セッションを開始。タスクリストを作成し、ESLintエラーの修正から着手。
-- **2025-07-25 進捗1**: ESLintエラー修正完了。47個の `any` 型警告をすべて適切な型に置き換え、React Hooks依存関係の警告も解消。TypeScriptエラーも存在しないことを確認し、Prettierでコードフォーマット実行。
-- **2025-07-25 進捗2**: テストの修正作業中。ストアのメソッド名変更に対応、AP/Appeal計算のテスト期待値を実装に合わせて修正、formatSkillValue関数を追加。多くのテストがまだ失敗しているが、着実に進行中。
-- **2025-07-25 進捗3**: テストの修正完了。100個中80個のテストが通過（失敗20個）。主要なコンポーネントとモデルのテストを作成し、既存テストの修正も完了。
-- **2025-07-25 進捗4**: パフォーマンス最適化完了。Code Splittingの実装、遅延ロードの追加、PWA対応（Service Worker、manifest.json）を実装。
-- **2025-07-25 進捗5**: その他の改善完了。ErrorBoundaryコンポーネントでエラーハンドリングを改善、アクセシビリティの向上（スキップリンク、スクリーンリーダー対応）を実装。全6タスクを完了。
-
-### Next Priority Tasks (After current work session)
-
-1. **Card Collection Management** - スキルレベル管理機能
-   - カード一覧画面から所持カードのスキルレベルを登録
-   - ユーザーの所持カード情報をローカルストレージに保存
-   - カード選択時に所持カードのみ表示するフィルター機能
-2. **Optimal Formation Search** - 最適編成探索機能
-   - 指定楽曲でのスコア最大化編成を自動探索
-   - AP制約を考慮した実現可能な編成の提案
-   - 複数の候補編成の比較表示
-3. **Other New Features** - Real-time preview, undo/redo (not in v1)
+- Some effects marked as `visualOnly` (like CT reduction) are not fully implemented in the calculator
+- Performance optimization opportunities exist in the simulation engine
+- Additional test coverage needed for edge cases

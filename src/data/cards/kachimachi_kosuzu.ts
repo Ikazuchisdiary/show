@@ -1,5 +1,7 @@
+import { CardData } from '../../core/models/Card'
+
 // Card data for 徒町小鈴
-const kachimachi_kosuzuCards = {
+const kachimachi_kosuzuCards: CardData = {
   taiyouKosuzu: {
     name: 'Taiyou de Are Kosuzu',
     displayName: '［太陽であれ！］徒町小鈴',

@@ -1,5 +1,7 @@
+import { CardData } from '../../core/models/Card'
+
 // Card data for 村野さやか
-const murano_sayakaCards = {
+const murano_sayakaCards: CardData = {
   prismEchoSayaka: {
     name: 'Prism Echo Sayaka',
     displayName: '［Prism Echo］村野さやか',

@@ -1,5 +1,7 @@
+import { CardData } from '../../core/models/Card'
+
 // Card data for 大沢瑠璃乃
-const osawa_rurinoCards = {
+const osawa_rurinoCards: CardData = {
   prismEchoRurino: {
     name: 'Prism Echo Rurino',
     displayName: '［Prism Echo］大沢瑠璃乃',
@@ -115,7 +117,7 @@ const osawa_rurinoCards = {
         },
         {
           type: 'mentalRecover',
-          value: 1,
+          value: 100,
           description: 'メンタル回復（最大値の100%）',
         },
       ],
@@ -142,7 +144,7 @@ const osawa_rurinoCards = {
       },
       {
         type: 'mentalRecover',
-        value: 1,
+        value: 100,
         description: 'メンタル回復（最大値の100%）',
       },
       {
@@ -952,7 +954,7 @@ const osawa_rurinoCards = {
         },
         {
           type: 'mentalRecover',
-          value: 1,
+          value: 100,
           description: 'メンタル回復（最大値の100%）',
         },
       ],
@@ -977,7 +979,7 @@ const osawa_rurinoCards = {
       },
       {
         type: 'mentalRecover',
-        value: 0.5,
+        value: 50,
         description: 'メンタル回復（最大値の50%）',
       },
       {

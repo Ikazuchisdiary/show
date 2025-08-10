@@ -1,5 +1,7 @@
+import { CardData } from '../../core/models/Card'
+
 // Card data for セラス 柳田 リリエンフェルト
-const ceras_rilienfeltCards = {
+const ceras_rilienfeltCards: CardData = {
   bdCelestine: {
     name: 'BD Celestine',
     displayName: '［16th Birthday］セラス 柳田 リリエンフェルト',

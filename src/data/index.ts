@@ -1,5 +1,4 @@
-// @ts-expect-error - gameData.js is a plain JavaScript module
-import gameDataRaw from './gameData.js'
+import gameDataRaw from './gameData'
 import { Card, CardData } from '../core/models/Card'
 import { Music, MusicData } from '../core/models/Music'
 

@@ -12,15 +12,15 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'zustand'],
-          data: ['./src/data/gameData.js'],
-        },
-        chunkFileNames: (chunkInfo) => {
-          const facadeModuleId = chunkInfo.facadeModuleId
-            ? chunkInfo.facadeModuleId.split('/').pop()
-            : 'chunk'
-          return `assets/${facadeModuleId}-[hash].js`
+        manualChunks: (id) => {
+          // node_modules内のパッケージをvendorチャンクに
+          if (id.includes('node_modules')) {
+            return 'vendor'
+          }
+          // カード・楽曲データを別チャンクに
+          if (id.includes('/src/data/cards/') || id.includes('/src/data/musicData')) {
+            return 'game-data'
+          }
         },
       },
     },

@@ -1,5 +1,7 @@
+import { CardData } from '../../core/models/Card'
+
 // Card data for 日野下花帆
-const hinoshita_kahoCards = {
+const hinoshita_kahoCards: CardData = {
   iDoMeKaho: {
     name: 'I Do Me Kaho',
     displayName: '［アイドゥーミー！］日野下花帆',

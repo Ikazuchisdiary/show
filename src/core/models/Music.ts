@@ -11,12 +11,14 @@ export interface Music {
   id?: string // For custom music identification (v1 compatible)
   name: string
   displayName?: string // For custom music display names
+  description?: string
   centerCharacter?: string
   attribute?: MusicAttribute
   phases: number[] // [beforeFever, duringFever, afterFever]
   baseFeverAppeal?: number
   baseFeverAppealLv10?: number
   combos?: MusicCombos
+  comboCount?: number // Total combo count for simplified data
 }
 
 export interface MusicData {

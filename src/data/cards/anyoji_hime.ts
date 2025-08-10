@@ -1,5 +1,6 @@
-// Card data for 安養寺姫芽
-const anyoji_himeCards = {
+import { CardData } from '../../core/models/Card'
+
+const anyoji_himeCards: CardData = {
   etherAriaHimeme: {
     name: 'Ether Aria Himeme',
     displayName: '［Ether Aria］安養寺姫芽',
@@ -204,7 +205,7 @@ const anyoji_himeCards = {
       },
       {
         type: 'mentalRecover',
-        value: 0.5,
+        value: 50,
         description: 'メンタル回復（最大値の50%）',
       },
       {

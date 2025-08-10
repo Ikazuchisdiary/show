@@ -1,5 +1,7 @@
+import { CardData } from '../../core/models/Card'
+
 // Card data for 桂城泉
-const katsuragi_izumiCards = {
+const katsuragi_izumiCards: CardData = {
   tenchiIzumi: {
     name: 'Tenchi Izumi',
     displayName: '［天地黎明］桂城泉',

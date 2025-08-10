@@ -1,5 +1,7 @@
+import { CardData } from '../../core/models/Card'
+
 // Card data for 乙宗梢
-const otomune_kozueCards = {
+const otomune_kozueCards: CardData = {
   gingaKozu: {
     name: 'Ginga Kozu',
     displayName: '［輪廻の銀河へ］乙宗梢',
