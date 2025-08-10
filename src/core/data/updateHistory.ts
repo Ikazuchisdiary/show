@@ -6,6 +6,20 @@ export interface UpdateEntry {
 
 export const updateHistory: UpdateEntry[] = [
   {
+    version: '2.2.7',
+    date: '2025-08-12',
+    changes: [
+      '新楽曲「とーひょー☆スター！」を追加',
+      '新楽曲「とーひょー☆スター！（-2秒）」を追加',
+      '新楽曲「Very! Very! COCO夏っ」を追加',
+      '新楽曲「Very! Very! COCO夏っ（-2秒）」を追加',
+      '新楽曲「diamondz」を追加',
+      '新楽曲「diamondz（-2秒）」を追加',
+      '新楽曲「START!! True dreams」を追加',
+      '新楽曲「START!! True dreams（-2秒）」を追加',
+    ],
+  },
+  {
     version: '2.2.6',
     date: '2025-08-11',
     changes: [
@@ -122,4 +136,4 @@ export const updateHistory: UpdateEntry[] = [
   },
 ]
 
-export const CURRENT_VERSION = '2.2.6'
+export const CURRENT_VERSION = '2.2.7'
