@@ -9,40 +9,36 @@ export const AppealDisplay: React.FC = () => {
 
   // Find all center cards for center characteristics
   const centerCards = useMemo(
-    () => selectedMusic?.centerCharacter
-      ? selectedCards.filter(
-          (card) => card && card.character === selectedMusic.centerCharacter,
-        )
-      : [],
-    [selectedMusic?.centerCharacter, selectedCards]
+    () =>
+      selectedMusic?.centerCharacter
+        ? selectedCards.filter((card) => card && card.character === selectedMusic.centerCharacter)
+        : [],
+    [selectedMusic?.centerCharacter, selectedCards],
   )
 
   // Get music attribute from selected music
   const musicAttribute = selectedMusic?.attribute || null
 
   // Calculate appeal value with details
-  const appealResult = useMemo(
-    () => {
-      // Filter center characteristics based on centerActivations
-      const activeCenterCharacteristics = centerCards
-        .map((card) => {
-          const cardIndex = selectedCards.findIndex((c) => c === card)
-          if (cardIndex === -1 || !centerActivations[cardIndex]) {
-            return null
-          }
-          return card?.centerCharacteristic
-        })
-        .filter((c) => c !== null && c !== undefined)
-      
-      return calculateAppealValueWithDetails({
-        cards: selectedCards,
-        musicAttribute: musicAttribute,
-        // Use only centerCharacteristics to avoid double application
-        centerCharacteristics: activeCenterCharacteristics,
+  const appealResult = useMemo(() => {
+    // Filter center characteristics based on centerActivations
+    const activeCenterCharacteristics = centerCards
+      .map((card) => {
+        const cardIndex = selectedCards.findIndex((c) => c === card)
+        if (cardIndex === -1 || !centerActivations[cardIndex]) {
+          return null
+        }
+        return card?.centerCharacteristic
       })
-    },
-    [selectedCards, musicAttribute, centerCards, centerActivations]
-  )
+      .filter((c) => c !== null && c !== undefined)
+
+    return calculateAppealValueWithDetails({
+      cards: selectedCards,
+      musicAttribute: musicAttribute,
+      // Use only centerCharacteristics to avoid double application
+      centerCharacteristics: activeCenterCharacteristics,
+    })
+  }, [selectedCards, musicAttribute, centerCards, centerActivations])
 
   const handleToggleDetails = () => {
     setShowDetails(!showDetails)
@@ -51,15 +47,15 @@ export const AppealDisplay: React.FC = () => {
   // Create tooltip text for boost badges
   const getBoostTooltip = useMemo(() => {
     const boostSources: Record<number, string[]> = {}
-    
+
     // Collect all center cards with their characteristics
     centerCards.forEach((card) => {
       const cardIndex = selectedCards.findIndex((c) => c === card)
       if (cardIndex === -1 || !centerActivations[cardIndex]) {
         return
       }
-      
-      if (card?.centerCharacteristic) {
+
+      if (card?.centerCharacteristic?.effects) {
         card.centerCharacteristic.effects.forEach((effect) => {
           if (effect.type === 'appealBoost') {
             // Find which cards are affected by this center characteristic
@@ -68,16 +64,22 @@ export const AppealDisplay: React.FC = () => {
                 const cardDetail = appealResult.details.cardDetails[index]
                 if (cardDetail.boostPercentage > 0) {
                   // Check if this center characteristic affects this card
-                  const targetMatch = 
+                  const targetMatch =
                     effect.target === 'all' ||
                     effect.target === targetCard.character ||
-                    (effect.target === '102期' && ['乙宗梢', '藤島慈', '夕霧綴理'].includes(targetCard.character)) ||
-                    (effect.target === '103期' && ['日野下花帆', '村野さやか', '大沢瑠璃乃'].includes(targetCard.character)) ||
-                    (effect.target === '104期' && ['百生吟子', '徒町小鈴', '安養寺姫芽'].includes(targetCard.character)) ||
-                    (effect.target === 'スリーズブーケ' && ['乙宗梢', '日野下花帆', '百生吟子'].includes(targetCard.character)) ||
-                    (effect.target === 'DOLLCHESTRA' && ['夕霧綴理', '村野さやか', '徒町小鈴'].includes(targetCard.character)) ||
-                    (effect.target === 'みらくらぱーく！' && ['藤島慈', '大沢瑠璃乃', '安養寺姫芽'].includes(targetCard.character))
-                  
+                    (effect.target === '102期' &&
+                      ['乙宗梢', '藤島慈', '夕霧綴理'].includes(targetCard.character)) ||
+                    (effect.target === '103期' &&
+                      ['日野下花帆', '村野さやか', '大沢瑠璃乃'].includes(targetCard.character)) ||
+                    (effect.target === '104期' &&
+                      ['百生吟子', '徒町小鈴', '安養寺姫芽'].includes(targetCard.character)) ||
+                    (effect.target === 'スリーズブーケ' &&
+                      ['乙宗梢', '日野下花帆', '百生吟子'].includes(targetCard.character)) ||
+                    (effect.target === 'DOLLCHESTRA' &&
+                      ['夕霧綴理', '村野さやか', '徒町小鈴'].includes(targetCard.character)) ||
+                    (effect.target === 'みらくらぱーく！' &&
+                      ['藤島慈', '大沢瑠璃乃', '安養寺姫芽'].includes(targetCard.character))
+
                   if (targetMatch) {
                     const key = index + 1
                     if (!boostSources[key]) {
@@ -94,7 +96,7 @@ export const AppealDisplay: React.FC = () => {
         })
       }
     })
-    
+
     return (cardIndex: number) => {
       return boostSources[cardIndex]?.join('\n') || ''
     }
@@ -107,11 +109,7 @@ export const AppealDisplay: React.FC = () => {
         <div className="box-value">{appealResult.totalAppeal.toLocaleString()}</div>
       </div>
 
-      <span
-        className="appeal-info-icon"
-        onClick={handleToggleDetails}
-        title="詳細を表示"
-      >
+      <span className="appeal-info-icon" onClick={handleToggleDetails} title="詳細を表示">
         ⓘ
       </span>
 
@@ -120,56 +118,60 @@ export const AppealDisplay: React.FC = () => {
           {/* カードごとの詳細 */}
           <div className="appeal-detail-section">
             <div className="appeal-detail-label">カード別アピール値</div>
-            {appealResult.details.cardDetails && appealResult.details.cardDetails.map((card) => (
-              <div key={card.cardIndex} className="card-appeal-detail">
-                <div className="card-appeal-header">
-                  <span className="card-number">{card.cardIndex}</span>
-                  <span className="card-name">{card.displayName}</span>
-                  <span className="card-boost-badge-container">
-                    {card.boostPercentage > 0 && (
-                      <span 
-                        className="card-boost-badge"
-                        title={getBoostTooltip(card.cardIndex)}
-                      >
-                        +{Math.round(card.boostPercentage * 100) / 100}%
-                      </span>
-                    )}
-                  </span>
+            {appealResult.details.cardDetails &&
+              appealResult.details.cardDetails.map((card) => (
+                <div key={card.cardIndex} className="card-appeal-detail">
+                  <div className="card-appeal-header">
+                    <span className="card-number">{card.cardIndex}</span>
+                    <span className="card-name">{card.displayName}</span>
+                    <span className="card-boost-badge-container">
+                      {card.boostPercentage > 0 && (
+                        <span className="card-boost-badge" title={getBoostTooltip(card.cardIndex)}>
+                          +{Math.round(card.boostPercentage * 100) / 100}%
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                  <div className="card-appeal-stats">
+                    <div className="card-stat-item">
+                      <span className="stat-label smile">Smile</span>
+                      <span className="stat-base">{card.baseStats.smile.toLocaleString()}</span>
+                      {card.boostPercentage > 0 && (
+                        <>
+                          <span className="stat-arrow">→</span>
+                          <span className="stat-boosted">
+                            {card.boostedStats.smile.toLocaleString()}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <div className="card-stat-item">
+                      <span className="stat-label pure">Pure</span>
+                      <span className="stat-base">{card.baseStats.pure.toLocaleString()}</span>
+                      {card.boostPercentage > 0 && (
+                        <>
+                          <span className="stat-arrow">→</span>
+                          <span className="stat-boosted">
+                            {card.boostedStats.pure.toLocaleString()}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <div className="card-stat-item">
+                      <span className="stat-label cool">Cool</span>
+                      <span className="stat-base">{card.baseStats.cool.toLocaleString()}</span>
+                      {card.boostPercentage > 0 && (
+                        <>
+                          <span className="stat-arrow">→</span>
+                          <span className="stat-boosted">
+                            {card.boostedStats.cool.toLocaleString()}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div className="card-appeal-stats">
-                  <div className="card-stat-item">
-                    <span className="stat-label smile">Smile</span>
-                    <span className="stat-base">{card.baseStats.smile.toLocaleString()}</span>
-                    {card.boostPercentage > 0 && (
-                      <>
-                        <span className="stat-arrow">→</span>
-                        <span className="stat-boosted">{card.boostedStats.smile.toLocaleString()}</span>
-                      </>
-                    )}
-                  </div>
-                  <div className="card-stat-item">
-                    <span className="stat-label pure">Pure</span>
-                    <span className="stat-base">{card.baseStats.pure.toLocaleString()}</span>
-                    {card.boostPercentage > 0 && (
-                      <>
-                        <span className="stat-arrow">→</span>
-                        <span className="stat-boosted">{card.boostedStats.pure.toLocaleString()}</span>
-                      </>
-                    )}
-                  </div>
-                  <div className="card-stat-item">
-                    <span className="stat-label cool">Cool</span>
-                    <span className="stat-base">{card.baseStats.cool.toLocaleString()}</span>
-                    {card.boostPercentage > 0 && (
-                      <>
-                        <span className="stat-arrow">→</span>
-                        <span className="stat-boosted">{card.boostedStats.cool.toLocaleString()}</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
 
           {/* 合計値 */}
@@ -179,17 +181,29 @@ export const AppealDisplay: React.FC = () => {
               <div className="appeal-total-item">
                 <span className="total-label">基礎合計</span>
                 <div className="total-stats">
-                  <span className="total-stat smile">Smile: {appealResult.details.baseSmile.toLocaleString()}</span>
-                  <span className="total-stat pure">Pure: {appealResult.details.basePure.toLocaleString()}</span>
-                  <span className="total-stat cool">Cool: {appealResult.details.baseCool.toLocaleString()}</span>
+                  <span className="total-stat smile">
+                    Smile: {appealResult.details.baseSmile.toLocaleString()}
+                  </span>
+                  <span className="total-stat pure">
+                    Pure: {appealResult.details.basePure.toLocaleString()}
+                  </span>
+                  <span className="total-stat cool">
+                    Cool: {appealResult.details.baseCool.toLocaleString()}
+                  </span>
                 </div>
               </div>
               <div className="appeal-total-item">
                 <span className="total-label">ブースト後合計</span>
                 <div className="total-stats">
-                  <span className="total-stat smile">Smile: {appealResult.details.boostedSmile.toLocaleString()}</span>
-                  <span className="total-stat pure">Pure: {appealResult.details.boostedPure.toLocaleString()}</span>
-                  <span className="total-stat cool">Cool: {appealResult.details.boostedCool.toLocaleString()}</span>
+                  <span className="total-stat smile">
+                    Smile: {appealResult.details.boostedSmile.toLocaleString()}
+                  </span>
+                  <span className="total-stat pure">
+                    Pure: {appealResult.details.boostedPure.toLocaleString()}
+                  </span>
+                  <span className="total-stat cool">
+                    Cool: {appealResult.details.boostedCool.toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>
@@ -202,7 +216,12 @@ export const AppealDisplay: React.FC = () => {
                 <div className="calc-step">
                   <span className="calc-label">一致属性 ({musicAttribute})</span>
                   <span className="calc-formula">
-                    {appealResult.details['boosted' + musicAttribute.charAt(0).toUpperCase() + musicAttribute.slice(1) as keyof typeof appealResult.details]?.toLocaleString() || '0'} × 100%
+                    {appealResult.details[
+                      ('boosted' +
+                        musicAttribute.charAt(0).toUpperCase() +
+                        musicAttribute.slice(1)) as keyof typeof appealResult.details
+                    ]?.toLocaleString() || '0'}{' '}
+                    × 100%
                   </span>
                   <span className="calc-result">
                     = {Math.ceil(appealResult.details.matchingAttributeAppeal).toLocaleString()}
@@ -212,11 +231,13 @@ export const AppealDisplay: React.FC = () => {
                   <span className="calc-label">不一致属性</span>
                   <span className="calc-formula">
                     {(() => {
-                      const nonMatchingTotal = 
-                        (musicAttribute === 'smile' ? appealResult.details.boostedPure + appealResult.details.boostedCool :
-                         musicAttribute === 'pure' ? appealResult.details.boostedSmile + appealResult.details.boostedCool :
-                         appealResult.details.boostedSmile + appealResult.details.boostedPure);
-                      return `${nonMatchingTotal.toLocaleString()} × 10%`;
+                      const nonMatchingTotal =
+                        musicAttribute === 'smile'
+                          ? appealResult.details.boostedPure + appealResult.details.boostedCool
+                          : musicAttribute === 'pure'
+                            ? appealResult.details.boostedSmile + appealResult.details.boostedCool
+                            : appealResult.details.boostedSmile + appealResult.details.boostedPure
+                      return `${nonMatchingTotal.toLocaleString()} × 10%`
                     })()}
                   </span>
                   <span className="calc-result">
@@ -226,7 +247,9 @@ export const AppealDisplay: React.FC = () => {
                 <div className="calc-total">
                   <span className="calc-label">合計アピール値</span>
                   <span className="calc-result">
-                    {Math.ceil(appealResult.details.matchingAttributeAppeal).toLocaleString()} + {Math.ceil(appealResult.details.nonMatchingAttributeAppeal).toLocaleString()} = {appealResult.totalAppeal.toLocaleString()}
+                    {Math.ceil(appealResult.details.matchingAttributeAppeal).toLocaleString()} +{' '}
+                    {Math.ceil(appealResult.details.nonMatchingAttributeAppeal).toLocaleString()} ={' '}
+                    {appealResult.totalAppeal.toLocaleString()}
                   </span>
                 </div>
               </div>

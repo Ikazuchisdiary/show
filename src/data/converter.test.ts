@@ -137,7 +137,7 @@ describe('data converter', () => {
       expect(centerCard.centerCharacteristic).toBeDefined()
       expect(centerCard.centerCharacteristic!.name).toBe('スマイル')
       expect(centerCard.centerCharacteristic!.effects).toHaveLength(1)
-      expect(centerCard.centerCharacteristic!.effects[0]).toEqual({
+      expect(centerCard.centerCharacteristic!.effects![0]).toEqual({
         type: 'appealBoost',
         value: 0.15,
       })

@@ -35,6 +35,7 @@ export interface BaseEffect {
 export interface ScoreBoostEffect extends BaseEffect {
   type: 'scoreBoost'
   value: number
+  turns?: number // Optional turns duration
 }
 
 export interface VoltageBoostEffect extends BaseEffect {
@@ -145,7 +146,12 @@ export type Effect =
 
 export interface CenterCharacteristic {
   name: string
-  effects: Effect[]
+  effects?: Effect[]
+  // Legacy format support
+  type?: EffectType
+  value?: number
+  target?: string
+  description?: string
 }
 
 export interface CenterSkill {

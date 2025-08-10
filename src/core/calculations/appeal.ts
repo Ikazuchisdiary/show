@@ -56,7 +56,9 @@ export function calculateAppealValue(options: AppealCalculationOptions): number 
 /**
  * Calculate total appeal value with detailed breakdown
  */
-export function calculateAppealValueWithDetails(options: AppealCalculationOptions): AppealCalculationResult {
+export function calculateAppealValueWithDetails(
+  options: AppealCalculationOptions,
+): AppealCalculationResult {
   const { cards, musicAttribute } = options
 
   // Calculate total appeal for each attribute
@@ -85,6 +87,7 @@ export function calculateAppealValueWithDetails(options: AppealCalculationOption
       if (options.centerCharacteristics && options.centerCharacteristics.length > 0) {
         for (let j = 0; j < options.centerCharacteristics.length; j++) {
           const centerChar = options.centerCharacteristics[j]
+          if (!centerChar.effects) continue
           for (const effect of centerChar.effects) {
             if (effect.type === 'appealBoost' && shouldApplyBoost(card, effect.target)) {
               // v1 adds the boost value to the multiplier (not sets it)
@@ -100,7 +103,7 @@ export function calculateAppealValueWithDetails(options: AppealCalculationOption
           cardIndex: i + 1,
           cardName: card.name,
           displayName: card.displayName || card.name,
-          boostPercentage: totalBoost * 100
+          boostPercentage: totalBoost * 100,
         })
       }
 
@@ -120,14 +123,14 @@ export function calculateAppealValueWithDetails(options: AppealCalculationOption
         baseStats: {
           smile: card.stats.smile,
           pure: card.stats.pure,
-          cool: card.stats.cool
+          cool: card.stats.cool,
         },
         boostPercentage: totalBoost * 100,
         boostedStats: {
           smile: boostedSmile,
           pure: boostedPure,
-          cool: boostedCool
-        }
+          cool: boostedCool,
+        },
       })
     }
   }
@@ -172,8 +175,8 @@ export function calculateAppealValueWithDetails(options: AppealCalculationOption
       matchingAttributeAppeal,
       nonMatchingAttributeAppeal,
       centerBoosts,
-      cardDetails
-    }
+      cardDetails,
+    },
   }
 }
 

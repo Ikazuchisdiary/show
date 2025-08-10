@@ -25,9 +25,7 @@ export const updateHistory: UpdateEntry[] = [
   {
     version: '2.2.4',
     date: '2025-08-06',
-    changes: [
-      '新カード「[太陽であれ！]徒町小鈴」を追加',
-    ],
+    changes: ['新カード「[太陽であれ！]徒町小鈴」を追加'],
   },
   {
     version: '2.2.3',
@@ -64,10 +62,7 @@ export const updateHistory: UpdateEntry[] = [
   {
     version: '2.2.1',
     date: '2025-08-05',
-    changes: [
-      '新楽曲「太陽であれ！」を追加',
-      '新楽曲「太陽であれ！（-2秒）」を追加',
-    ],
+    changes: ['新楽曲「太陽であれ！」を追加', '新楽曲「太陽であれ！（-2秒）」を追加'],
   },
   {
     version: '2.2.0',

@@ -212,7 +212,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     if (!showDropdown) return
 
     const selectableItems = getSelectableItems()
-    
+
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault()
@@ -316,7 +316,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
           </select>
           <div className="card-dropdown" ref={dropdownRef}>
             {(!searchQuery || !isFocused) && (
-              <div 
+              <div
                 className={`card-option ${highlightedIndex === 0 ? 'highlighted' : ''}`}
                 onClick={() => handleCardSelect(null)}
               >
@@ -338,7 +338,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                   <div className="card-group-header">{character}</div>
                   {characterCards.map((card) => {
                     const itemIndex = selectableItems.findIndex(
-                      (item) => item.card?.name === card.name
+                      (item) => item.card?.name === card.name,
                     )
                     const isHighlighted = highlightedIndex === itemIndex
 
@@ -575,10 +575,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                   break
 
                 case 'mentalRecover':
-                  if (
-                    effect.levelValues &&
-                    effect.levelValues[skillLevel - 1] !== undefined
-                  ) {
+                  if (effect.levelValues && effect.levelValues[skillLevel - 1] !== undefined) {
                     return (
                       <div className="skill-param-row">
                         <label>メンタル回復:</label>
@@ -606,10 +603,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                   break
 
                 case 'mentalReduction':
-                  if (
-                    effect.levelValues &&
-                    effect.levelValues[skillLevel - 1] !== undefined
-                  ) {
+                  if (effect.levelValues && effect.levelValues[skillLevel - 1] !== undefined) {
                     return (
                       <div className="skill-param-row">
                         <label>メンタル減少:</label>
@@ -825,7 +819,12 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                 <>
                   {/* センタースキルのタイミング表示 */}
                   <div
-                    style={{ color: '#ff9800', fontWeight: 'bold', fontSize: '14px', margin: '5px 0' }}
+                    style={{
+                      color: '#ff9800',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                      margin: '5px 0',
+                    }}
                   >
                     ⚡{' '}
                     {selectedCard.centerSkill.when === 'beforeFirstTurn'
@@ -838,354 +837,354 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                   </div>
 
                   {/* センタースキルの効果表示 */}
-              {(() => {
-                const skillMultipliers = [
-                  1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 2.0, 2.2, 2.4, 2.6, 3.0,
-                ]
-                const multiplier = skillMultipliers[centerSkillLevel - 1] || 1
+                  {(() => {
+                    const skillMultipliers = [
+                      1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 2.0, 2.2, 2.4, 2.6, 3.0,
+                    ]
+                    const multiplier = skillMultipliers[centerSkillLevel - 1] || 1
 
-                const renderCenterEffect = (effect: Effect, effectPath: string) => {
-                  const effectKey = effectPath
-                  const hasCustomValue = centerCustomValues[effectKey] !== undefined
-                  const customValue = centerCustomValues[effectKey]
+                    const renderCenterEffect = (effect: Effect, effectPath: string) => {
+                      const effectKey = effectPath
+                      const hasCustomValue = centerCustomValues[effectKey] !== undefined
+                      const customValue = centerCustomValues[effectKey]
 
-                  const calculateCenterValue = (baseValue: number) => {
-                    // Center skills store actual Lv.10 values, not doubled like regular skills
-                    // So we use a different formula: value * multiplier / 2.0
-                    const calculated = baseValue * multiplier / 2.0
-                    // 小数点第3位で切り捨て
-                    return Math.floor(calculated * 1000) / 1000
-                  }
-
-                  switch (effect.type) {
-                    case 'apGain':
-                      if (
-                        effect.levelValues &&
-                        effect.levelValues[centerSkillLevel - 1] !== undefined
-                      ) {
-                        return (
-                          <div className="skill-param-row">
-                            <label>AP獲得:</label>
-                            <span
-                              className="skill-param-value"
-                              style={{
-                                backgroundColor: '#e3f2fd',
-                                color: '#1976d2',
-                                fontWeight: 'bold',
-                              }}
-                            >
-                              +{effect.levelValues[centerSkillLevel - 1]}
-                            </span>
-                          </div>
-                        )
-                      } else if (effect.value !== undefined) {
-                        const defaultValue = Math.floor(effect.value * multiplier)
-                        return (
-                          <div className="skill-param-row">
-                            <label>AP獲得:</label>
-                            <div style={{ position: 'relative', flex: 1, minWidth: '100px' }}>
-                              <span
-                                style={{
-                                  position: 'absolute',
-                                  left: '10px',
-                                  top: '50%',
-                                  transform: 'translateY(-50%)',
-                                  color: '#1976d2',
-                                  fontWeight: 'bold',
-                                  pointerEvents: 'none',
-                                }}
-                              >
-                                +
-                              </span>
-                              <input
-                                type="number"
-                                className={`skill-param-input ${hasCustomValue ? 'custom' : ''}`}
-                                style={{
-                                  paddingLeft: '25px',
-                                  backgroundColor: hasCustomValue ? '#fffbdd' : '#e3f2fd',
-                                  color: '#1976d2',
-                                  fontWeight: 'bold',
-                                }}
-                                value={hasCustomValue ? customValue : defaultValue}
-                                placeholder={defaultValue.toString()}
-                                onChange={(e) => {
-                                  const value = parseInt(e.target.value)
-                                  if (!isNaN(value) && value !== defaultValue) {
-                                    setCustomCenterSkillValue(index, effectKey, value)
-                                  } else if (value === defaultValue || e.target.value === '') {
-                                    const newCustomValues = { ...centerCustomValues }
-                                    delete newCustomValues[effectKey]
-                                    if (Object.keys(newCustomValues).length === 0) {
-                                      clearCustomCenterSkillValues(index)
-                                    } else {
-                                      setCustomCenterSkillValue(index, effectKey, defaultValue)
-                                    }
-                                  }
-                                }}
-                                step="1"
-                              />
-                            </div>
-                          </div>
-                        )
-                      }
-                      break
-
-                    case 'scoreGain':
-                      if (effect.value !== undefined) {
-                        const defaultValue = calculateCenterValue(effect.value)
-                        return (
-                          <div className="skill-param-row">
-                            <label>スコア獲得:</label>
-                            <input
-                              type="number"
-                              className={`skill-param-input ${hasCustomValue ? 'custom' : ''}`}
-                              value={hasCustomValue ? customValue : defaultValue}
-                              placeholder={defaultValue.toString()}
-                              onChange={(e) => {
-                                const value = parseFloat(e.target.value)
-                                if (!isNaN(value) && value !== defaultValue) {
-                                  setCustomCenterSkillValue(index, effectKey, value)
-                                } else if (value === defaultValue || e.target.value === '') {
-                                  const newCustomValues = { ...centerCustomValues }
-                                  delete newCustomValues[effectKey]
-                                  if (Object.keys(newCustomValues).length === 0) {
-                                    clearCustomCenterSkillValues(index)
-                                  } else {
-                                    setCustomCenterSkillValue(index, effectKey, defaultValue)
-                                  }
-                                }
-                              }}
-                              step="0.001"
-                            />
-                          </div>
-                        )
-                      }
-                      break
-
-                    case 'voltageGain':
-                      if (effect.value !== undefined) {
+                      const calculateCenterValue = (baseValue: number) => {
                         // Center skills store actual Lv.10 values, not doubled like regular skills
                         // So we use a different formula: value * multiplier / 2.0
-                        const defaultValue = Math.floor(effect.value * multiplier / 2.0)
-                        return (
-                          <div className="skill-param-row">
-                            <label>ボルテージ獲得:</label>
-                            <input
-                              type="number"
-                              className={`skill-param-input ${hasCustomValue ? 'custom' : ''}`}
-                              value={hasCustomValue ? customValue : defaultValue}
-                              placeholder={defaultValue.toString()}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value)
-                                if (!isNaN(value) && value !== defaultValue) {
-                                  setCustomCenterSkillValue(index, effectKey, value)
-                                } else if (value === defaultValue || e.target.value === '') {
-                                  const newCustomValues = { ...centerCustomValues }
-                                  delete newCustomValues[effectKey]
-                                  if (Object.keys(newCustomValues).length === 0) {
-                                    clearCustomCenterSkillValues(index)
-                                  } else {
-                                    setCustomCenterSkillValue(index, effectKey, defaultValue)
-                                  }
-                                }
-                              }}
-                              step="1"
-                            />
-                          </div>
-                        )
+                        const calculated = (baseValue * multiplier) / 2.0
+                        // 小数点第3位で切り捨て
+                        return Math.floor(calculated * 1000) / 1000
                       }
-                      break
 
-                    case 'scoreBoost':
-                      if (effect.value !== undefined) {
-                        const defaultValue = calculateCenterValue(effect.value)
-                        return (
-                          <div className="skill-param-row">
-                            <label>スコアブースト:</label>
-                            <input
-                              type="number"
-                              className={`skill-param-input ${hasCustomValue ? 'custom' : ''}`}
-                              value={hasCustomValue ? customValue : defaultValue}
-                              placeholder={defaultValue.toString()}
-                              onChange={(e) => {
-                                const value = parseFloat(e.target.value)
-                                if (!isNaN(value) && value !== defaultValue) {
-                                  setCustomCenterSkillValue(index, effectKey, value)
-                                } else if (value === defaultValue || e.target.value === '') {
-                                  const newCustomValues = { ...centerCustomValues }
-                                  delete newCustomValues[effectKey]
-                                  if (Object.keys(newCustomValues).length === 0) {
-                                    clearCustomCenterSkillValues(index)
-                                  } else {
-                                    setCustomCenterSkillValue(index, effectKey, defaultValue)
-                                  }
-                                }
-                              }}
-                              step="0.001"
-                            />
-                          </div>
-                        )
-                      }
-                      break
+                      switch (effect.type) {
+                        case 'apGain':
+                          if (
+                            effect.levelValues &&
+                            effect.levelValues[centerSkillLevel - 1] !== undefined
+                          ) {
+                            return (
+                              <div className="skill-param-row">
+                                <label>AP獲得:</label>
+                                <span
+                                  className="skill-param-value"
+                                  style={{
+                                    backgroundColor: '#e3f2fd',
+                                    color: '#1976d2',
+                                    fontWeight: 'bold',
+                                  }}
+                                >
+                                  +{effect.levelValues[centerSkillLevel - 1]}
+                                </span>
+                              </div>
+                            )
+                          } else if (effect.value !== undefined) {
+                            const defaultValue = Math.floor(effect.value * multiplier)
+                            return (
+                              <div className="skill-param-row">
+                                <label>AP獲得:</label>
+                                <div style={{ position: 'relative', flex: 1, minWidth: '100px' }}>
+                                  <span
+                                    style={{
+                                      position: 'absolute',
+                                      left: '10px',
+                                      top: '50%',
+                                      transform: 'translateY(-50%)',
+                                      color: '#1976d2',
+                                      fontWeight: 'bold',
+                                      pointerEvents: 'none',
+                                    }}
+                                  >
+                                    +
+                                  </span>
+                                  <input
+                                    type="number"
+                                    className={`skill-param-input ${hasCustomValue ? 'custom' : ''}`}
+                                    style={{
+                                      paddingLeft: '25px',
+                                      backgroundColor: hasCustomValue ? '#fffbdd' : '#e3f2fd',
+                                      color: '#1976d2',
+                                      fontWeight: 'bold',
+                                    }}
+                                    value={hasCustomValue ? customValue : defaultValue}
+                                    placeholder={defaultValue.toString()}
+                                    onChange={(e) => {
+                                      const value = parseInt(e.target.value)
+                                      if (!isNaN(value) && value !== defaultValue) {
+                                        setCustomCenterSkillValue(index, effectKey, value)
+                                      } else if (value === defaultValue || e.target.value === '') {
+                                        const newCustomValues = { ...centerCustomValues }
+                                        delete newCustomValues[effectKey]
+                                        if (Object.keys(newCustomValues).length === 0) {
+                                          clearCustomCenterSkillValues(index)
+                                        } else {
+                                          setCustomCenterSkillValue(index, effectKey, defaultValue)
+                                        }
+                                      }
+                                    }}
+                                    step="1"
+                                  />
+                                </div>
+                              </div>
+                            )
+                          }
+                          break
 
-                    case 'voltageBoost':
-                      if (effect.value !== undefined) {
-                        const defaultValue = calculateCenterValue(effect.value)
-                        return (
-                          <div className="skill-param-row">
-                            <label>ボルテージブースト:</label>
-                            <input
-                              type="number"
-                              className={`skill-param-input ${hasCustomValue ? 'custom' : ''}`}
-                              value={hasCustomValue ? customValue : defaultValue}
-                              placeholder={defaultValue.toString()}
-                              onChange={(e) => {
-                                const value = parseFloat(e.target.value)
-                                if (!isNaN(value) && value !== defaultValue) {
-                                  setCustomCenterSkillValue(index, effectKey, value)
-                                } else if (value === defaultValue || e.target.value === '') {
-                                  const newCustomValues = { ...centerCustomValues }
-                                  delete newCustomValues[effectKey]
-                                  if (Object.keys(newCustomValues).length === 0) {
-                                    clearCustomCenterSkillValues(index)
-                                  } else {
-                                    setCustomCenterSkillValue(index, effectKey, defaultValue)
-                                  }
-                                }
-                              }}
-                              step="0.001"
-                            />
-                          </div>
-                        )
-                      }
-                      break
+                        case 'scoreGain':
+                          if (effect.value !== undefined) {
+                            const defaultValue = calculateCenterValue(effect.value)
+                            return (
+                              <div className="skill-param-row">
+                                <label>スコア獲得:</label>
+                                <input
+                                  type="number"
+                                  className={`skill-param-input ${hasCustomValue ? 'custom' : ''}`}
+                                  value={hasCustomValue ? customValue : defaultValue}
+                                  placeholder={defaultValue.toString()}
+                                  onChange={(e) => {
+                                    const value = parseFloat(e.target.value)
+                                    if (!isNaN(value) && value !== defaultValue) {
+                                      setCustomCenterSkillValue(index, effectKey, value)
+                                    } else if (value === defaultValue || e.target.value === '') {
+                                      const newCustomValues = { ...centerCustomValues }
+                                      delete newCustomValues[effectKey]
+                                      if (Object.keys(newCustomValues).length === 0) {
+                                        clearCustomCenterSkillValues(index)
+                                      } else {
+                                        setCustomCenterSkillValue(index, effectKey, defaultValue)
+                                      }
+                                    }
+                                  }}
+                                  step="0.001"
+                                />
+                              </div>
+                            )
+                          }
+                          break
 
-                    case 'mentalReduction':
-                      if (
-                        effect.levelValues &&
-                        effect.levelValues[centerSkillLevel - 1] !== undefined
-                      ) {
-                        return (
-                          <div className="skill-param-row">
-                            <label>メンタル減少:</label>
-                            <span
-                              className="skill-param-value"
-                              style={{
-                                backgroundColor: '#ffebee',
-                                color: '#c62828',
-                                fontWeight: 'bold',
-                              }}
-                            >
-                              -{effect.levelValues[centerSkillLevel - 1]}%
-                            </span>
-                          </div>
-                        )
-                      } else if (effect.value !== undefined) {
-                        return (
-                          <div className="skill-param-row">
-                            <label>メンタル減少:</label>
-                            <span
-                              className="skill-param-value"
-                              style={{
-                                backgroundColor: '#ffebee',
-                                color: '#c62828',
-                                fontWeight: 'bold',
-                              }}
-                            >
-                              -{effect.value}%
-                            </span>
-                          </div>
-                        )
-                      }
-                      break
-                    case 'mentalRecover':
-                      if (
-                        effect.levelValues &&
-                        effect.levelValues[centerSkillLevel - 1] !== undefined
-                      ) {
-                        return (
-                          <div className="skill-param-row">
-                            <label>メンタル回復:</label>
-                            <span
-                              className="skill-param-value"
-                              style={{
-                                backgroundColor: '#e8f5e9',
-                                color: '#2e7d32',
-                                fontWeight: 'bold',
-                              }}
-                            >
-                              +{effect.levelValues[centerSkillLevel - 1]}%
-                            </span>
-                          </div>
-                        )
-                      } else if (effect.value !== undefined) {
-                        return (
-                          <div className="skill-param-row">
-                            <label>メンタル回復:</label>
-                            <span
-                              className="skill-param-value"
-                              style={{
-                                backgroundColor: '#e8f5e9',
-                                color: '#2e7d32',
-                                fontWeight: 'bold',
-                              }}
-                            >
-                              +{effect.value}%
-                            </span>
-                          </div>
-                        )
-                      }
-                      break
+                        case 'voltageGain':
+                          if (effect.value !== undefined) {
+                            // Center skills store actual Lv.10 values, not doubled like regular skills
+                            // So we use a different formula: value * multiplier / 2.0
+                            const defaultValue = Math.floor((effect.value * multiplier) / 2.0)
+                            return (
+                              <div className="skill-param-row">
+                                <label>ボルテージ獲得:</label>
+                                <input
+                                  type="number"
+                                  className={`skill-param-input ${hasCustomValue ? 'custom' : ''}`}
+                                  value={hasCustomValue ? customValue : defaultValue}
+                                  placeholder={defaultValue.toString()}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value)
+                                    if (!isNaN(value) && value !== defaultValue) {
+                                      setCustomCenterSkillValue(index, effectKey, value)
+                                    } else if (value === defaultValue || e.target.value === '') {
+                                      const newCustomValues = { ...centerCustomValues }
+                                      delete newCustomValues[effectKey]
+                                      if (Object.keys(newCustomValues).length === 0) {
+                                        clearCustomCenterSkillValues(index)
+                                      } else {
+                                        setCustomCenterSkillValue(index, effectKey, defaultValue)
+                                      }
+                                    }
+                                  }}
+                                  step="1"
+                                />
+                              </div>
+                            )
+                          }
+                          break
 
-                    case 'conditional':
-                      // 条件付き効果の表示（センタースキル用）
-                      return (
-                        <div className="conditional-effect-container">
-                          <div className="conditional-effect-header">
-                            {formatConditionToJapanese(effect.condition)}
-                          </div>
+                        case 'scoreBoost':
+                          if (effect.value !== undefined) {
+                            const defaultValue = calculateCenterValue(effect.value)
+                            return (
+                              <div className="skill-param-row">
+                                <label>スコアブースト:</label>
+                                <input
+                                  type="number"
+                                  className={`skill-param-input ${hasCustomValue ? 'custom' : ''}`}
+                                  value={hasCustomValue ? customValue : defaultValue}
+                                  placeholder={defaultValue.toString()}
+                                  onChange={(e) => {
+                                    const value = parseFloat(e.target.value)
+                                    if (!isNaN(value) && value !== defaultValue) {
+                                      setCustomCenterSkillValue(index, effectKey, value)
+                                    } else if (value === defaultValue || e.target.value === '') {
+                                      const newCustomValues = { ...centerCustomValues }
+                                      delete newCustomValues[effectKey]
+                                      if (Object.keys(newCustomValues).length === 0) {
+                                        clearCustomCenterSkillValues(index)
+                                      } else {
+                                        setCustomCenterSkillValue(index, effectKey, defaultValue)
+                                      }
+                                    }
+                                  }}
+                                  step="0.001"
+                                />
+                              </div>
+                            )
+                          }
+                          break
 
-                          {effect.then && effect.then.length > 0 && (
-                            <div>
-                              <div className="conditional-effect-label">▶ 成立時</div>
-                              {effect.then.map((thenEffect: Effect, i: number) => {
-                                const rendered = renderCenterEffect(
-                                  thenEffect,
-                                  `${effectPath}_then_${i}`,
-                                )
-                                return rendered ? (
-                                  <React.Fragment key={`then-${i}`}>{rendered}</React.Fragment>
-                                ) : null
-                              })}
+                        case 'voltageBoost':
+                          if (effect.value !== undefined) {
+                            const defaultValue = calculateCenterValue(effect.value)
+                            return (
+                              <div className="skill-param-row">
+                                <label>ボルテージブースト:</label>
+                                <input
+                                  type="number"
+                                  className={`skill-param-input ${hasCustomValue ? 'custom' : ''}`}
+                                  value={hasCustomValue ? customValue : defaultValue}
+                                  placeholder={defaultValue.toString()}
+                                  onChange={(e) => {
+                                    const value = parseFloat(e.target.value)
+                                    if (!isNaN(value) && value !== defaultValue) {
+                                      setCustomCenterSkillValue(index, effectKey, value)
+                                    } else if (value === defaultValue || e.target.value === '') {
+                                      const newCustomValues = { ...centerCustomValues }
+                                      delete newCustomValues[effectKey]
+                                      if (Object.keys(newCustomValues).length === 0) {
+                                        clearCustomCenterSkillValues(index)
+                                      } else {
+                                        setCustomCenterSkillValue(index, effectKey, defaultValue)
+                                      }
+                                    }
+                                  }}
+                                  step="0.001"
+                                />
+                              </div>
+                            )
+                          }
+                          break
+
+                        case 'mentalReduction':
+                          if (
+                            effect.levelValues &&
+                            effect.levelValues[centerSkillLevel - 1] !== undefined
+                          ) {
+                            return (
+                              <div className="skill-param-row">
+                                <label>メンタル減少:</label>
+                                <span
+                                  className="skill-param-value"
+                                  style={{
+                                    backgroundColor: '#ffebee',
+                                    color: '#c62828',
+                                    fontWeight: 'bold',
+                                  }}
+                                >
+                                  -{effect.levelValues[centerSkillLevel - 1]}%
+                                </span>
+                              </div>
+                            )
+                          } else if (effect.value !== undefined) {
+                            return (
+                              <div className="skill-param-row">
+                                <label>メンタル減少:</label>
+                                <span
+                                  className="skill-param-value"
+                                  style={{
+                                    backgroundColor: '#ffebee',
+                                    color: '#c62828',
+                                    fontWeight: 'bold',
+                                  }}
+                                >
+                                  -{effect.value}%
+                                </span>
+                              </div>
+                            )
+                          }
+                          break
+                        case 'mentalRecover':
+                          if (
+                            effect.levelValues &&
+                            effect.levelValues[centerSkillLevel - 1] !== undefined
+                          ) {
+                            return (
+                              <div className="skill-param-row">
+                                <label>メンタル回復:</label>
+                                <span
+                                  className="skill-param-value"
+                                  style={{
+                                    backgroundColor: '#e8f5e9',
+                                    color: '#2e7d32',
+                                    fontWeight: 'bold',
+                                  }}
+                                >
+                                  +{effect.levelValues[centerSkillLevel - 1]}%
+                                </span>
+                              </div>
+                            )
+                          } else if (effect.value !== undefined) {
+                            return (
+                              <div className="skill-param-row">
+                                <label>メンタル回復:</label>
+                                <span
+                                  className="skill-param-value"
+                                  style={{
+                                    backgroundColor: '#e8f5e9',
+                                    color: '#2e7d32',
+                                    fontWeight: 'bold',
+                                  }}
+                                >
+                                  +{effect.value}%
+                                </span>
+                              </div>
+                            )
+                          }
+                          break
+
+                        case 'conditional':
+                          // 条件付き効果の表示（センタースキル用）
+                          return (
+                            <div className="conditional-effect-container">
+                              <div className="conditional-effect-header">
+                                {formatConditionToJapanese(effect.condition)}
+                              </div>
+
+                              {effect.then && effect.then.length > 0 && (
+                                <div>
+                                  <div className="conditional-effect-label">▶ 成立時</div>
+                                  {effect.then.map((thenEffect: Effect, i: number) => {
+                                    const rendered = renderCenterEffect(
+                                      thenEffect,
+                                      `${effectPath}_then_${i}`,
+                                    )
+                                    return rendered ? (
+                                      <React.Fragment key={`then-${i}`}>{rendered}</React.Fragment>
+                                    ) : null
+                                  })}
+                                </div>
+                              )}
                             </div>
-                          )}
+                          )
+                      }
+
+                      return null
+                    }
+
+                    const hasParams = selectedCard.centerSkill.effects.some(
+                      (effect: Effect, idx: number) => {
+                        return renderCenterEffect(effect, `center_effect_${idx}`) !== null
+                      },
+                    )
+
+                    if (hasParams) {
+                      return selectedCard.centerSkill.effects.map((effect: Effect, idx: number) => (
+                        <React.Fragment key={`center-${idx}`}>
+                          {renderCenterEffect(effect, `center_effect_${idx}`)}
+                        </React.Fragment>
+                      ))
+                    } else {
+                      return (
+                        <div style={{ color: '#666', fontSize: '14px' }}>
+                          このセンタースキルには調整可能なパラメータがありません
                         </div>
                       )
-                  }
-
-                  return null
-                }
-
-                const hasParams = selectedCard.centerSkill.effects.some(
-                  (effect: Effect, idx: number) => {
-                    return renderCenterEffect(effect, `center_effect_${idx}`) !== null
-                  },
-                )
-
-                if (hasParams) {
-                  return selectedCard.centerSkill.effects.map((effect: Effect, idx: number) => (
-                    <React.Fragment key={`center-${idx}`}>
-                      {renderCenterEffect(effect, `center_effect_${idx}`)}
-                    </React.Fragment>
-                  ))
-                } else {
-                  return (
-                    <div style={{ color: '#666', fontSize: '14px' }}>
-                      このセンタースキルには調整可能なパラメータがありません
-                    </div>
-                  )
-                }
-              })()}
+                    }
+                  })()}
                 </>
               )}
             </div>
@@ -1194,12 +1193,10 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
           {/* センター特性表示（センターキャラクターの場合のみ） */}
           {isCenter && selectedCard.centerCharacteristic && centerActivations[index] && (
             <div className="center-characteristic-info">
-              <div className="center-characteristic-header">
-                センター特性
-              </div>
+              <div className="center-characteristic-header">センター特性</div>
               <div className="center-characteristic-content">
                 {selectedCard.centerCharacteristic.effects
-                  .map((effect: Effect, idx: number) => {
+                  ?.map((effect: Effect, idx: number) => {
                     if (effect.type === 'appealBoost') {
                       const percentage = Math.round(effect.value * 100)
                       const target =

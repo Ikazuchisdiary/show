@@ -7,7 +7,7 @@ describe('gameStore optimization - simplified integration tests', () => {
     // Mock window functions
     vi.spyOn(window, 'alert').mockImplementation(() => {})
     vi.spyOn(window, 'confirm').mockImplementation(() => false)
-    
+
     // Reset store
     useGameStore.setState({
       selectedCards: Array(6).fill(null),
@@ -38,7 +38,7 @@ describe('gameStore optimization - simplified integration tests', () => {
   describe('Basic optimization functionality', () => {
     it('should run optimization without errors when cards and music are selected', () => {
       const store = useGameStore.getState()
-      
+
       // Set up a simple formation
       store.setCard(0, cardData.gingaKozu)
       store.setCard(1, cardData.bdSayaka)
@@ -54,7 +54,7 @@ describe('gameStore optimization - simplified integration tests', () => {
 
     it('should not run optimization without music', () => {
       const store = useGameStore.getState()
-      
+
       store.setCard(0, cardData.gingaKozu)
       store.setCard(1, cardData.bdSayaka)
       // No music set
@@ -69,7 +69,7 @@ describe('gameStore optimization - simplified integration tests', () => {
     it('should show alert for single card', () => {
       const store = useGameStore.getState()
       const alertSpy = vi.spyOn(window, 'alert')
-      
+
       store.setCard(0, cardData.gingaKozu)
       store.setMusic(musicData.sparkly_spot)
 
@@ -82,12 +82,12 @@ describe('gameStore optimization - simplified integration tests', () => {
   describe('Fixed position functionality', () => {
     it('should allow toggling fixed positions', () => {
       const store = useGameStore.getState()
-      
+
       expect(store.fixedPositions.has(0)).toBe(false)
-      
+
       store.toggleFixedPosition(0)
       expect(useGameStore.getState().fixedPositions.has(0)).toBe(true)
-      
+
       store.toggleFixedPosition(0)
       expect(useGameStore.getState().fixedPositions.has(0)).toBe(false)
     })
@@ -95,27 +95,29 @@ describe('gameStore optimization - simplified integration tests', () => {
     it('should show alert when all cards are fixed', () => {
       const store = useGameStore.getState()
       const alertSpy = vi.spyOn(window, 'alert')
-      
+
       store.setCard(0, cardData.gingaKozu)
       store.setCard(1, cardData.bdSayaka)
       store.setMusic(musicData.sparkly_spot)
-      
+
       // Fix all cards
       store.toggleFixedPosition(0)
       store.toggleFixedPosition(1)
 
       store.optimizeFormation()
 
-      expect(alertSpy).toHaveBeenCalledWith('固定されていないカードが1枚以下のため、最適化できません。')
+      expect(alertSpy).toHaveBeenCalledWith(
+        '固定されていないカードが1枚以下のため、最適化できません。',
+      )
     })
 
     it('should clear fixed position when card is removed', () => {
       const store = useGameStore.getState()
-      
+
       store.setCard(0, cardData.gingaKozu)
       store.toggleFixedPosition(0)
       expect(useGameStore.getState().fixedPositions.has(0)).toBe(true)
-      
+
       store.setCard(0, null)
       expect(useGameStore.getState().fixedPositions.has(0)).toBe(false)
     })
@@ -124,19 +126,19 @@ describe('gameStore optimization - simplified integration tests', () => {
   describe('Skill level preservation', () => {
     it('should maintain skill levels when setting cards', () => {
       const store = useGameStore.getState()
-      
+
       store.setCard(0, cardData.gingaKozu)
       store.setCardSkillLevel(0, 10)
-      
+
       expect(useGameStore.getState().cardSkillLevels[0]).toBe(10)
     })
 
     it('should maintain custom skill values', () => {
       const store = useGameStore.getState()
-      
+
       store.setCard(0, cardData.gingaKozu)
       store.setCustomSkillValue(0, 'test_effect', 123)
-      
+
       expect(useGameStore.getState().customSkillValues[0]).toEqual({ test_effect: 123 })
     })
   })
@@ -144,7 +146,7 @@ describe('gameStore optimization - simplified integration tests', () => {
   describe('Performance checks', () => {
     it('should handle 6 cards without timeout', () => {
       const store = useGameStore.getState()
-      
+
       // Fill all slots
       store.setCard(0, cardData.gingaKozu)
       store.setCard(1, cardData.bdSayaka)

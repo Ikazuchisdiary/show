@@ -49,7 +49,7 @@ interface GameStore {
   // Custom skill values (user overrides)
   customSkillValues: Record<string, Record<string, number>>
   customCenterSkillValues: Record<string, Record<string, number>>
-  
+
   // Center skill/characteristic activation flags
   centerActivations: boolean[]
 
@@ -72,7 +72,7 @@ interface GameStore {
 
   // Share mode
   isShareMode: boolean
-  
+
   // Optimization state
   isOptimizing: boolean
   optimizationResult: {
@@ -81,7 +81,7 @@ interface GameStore {
     originalScore: number
     improvement: number
   } | null
-  
+
   // Fixed card positions for optimization
   fixedPositions: Set<number>
 
@@ -256,10 +256,10 @@ const compressShareData = (data: ShareData): string => {
 
     parts.push(cardPart)
   }
-  
+
   // Add center activations if any are disabled
-  if (data.centerActivations && data.centerActivations.some(active => !active)) {
-    parts.push('S' + data.centerActivations.map(a => a ? '1' : '0').join(''))
+  if (data.centerActivations && data.centerActivations.some((active) => !active)) {
+    parts.push('S' + data.centerActivations.map((a) => (a ? '1' : '0')).join(''))
   }
 
   // Encode to base64
@@ -405,10 +405,10 @@ const decompressShareData = (compressed: string): ShareData => {
           data.cards.push(cardData)
           break
         }
-        
+
         case 'S': {
           // Center activations
-          const activations = value.split('').map(v => v === '1')
+          const activations = value.split('').map((v) => v === '1')
           data.centerActivations = activations
           break
         }
@@ -472,7 +472,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set((state) => {
       const newCards = [...state.selectedCards]
       newCards[index] = card
-      
+
       // カードを変更したら固定状態を解除
       const newFixedPositions = new Set(state.fixedPositions)
       if (card === null) {
@@ -648,7 +648,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       delete newCustomValues[cardIndex]
       return { customCenterSkillValues: newCustomValues }
     }),
-    
+
   setCenterActivation: (index, active) =>
     set((state) => {
       const newActivations = [...state.centerActivations]
@@ -892,10 +892,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
         data.cards.push(cardData)
       }
     }
-    
+
     // Add center activations if any are disabled
-    const hasDisabledCenter = state.centerActivations.some(active => !active)
-    
+    const hasDisabledCenter = state.centerActivations.some((active) => !active)
+
     if (hasDisabledCenter) {
       data.centerActivations = state.centerActivations
     }
@@ -1336,7 +1336,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const validIndices: number[] = []
       const fixedIndices: number[] = []
       const movableIndices: number[] = []
-      
+
       state.selectedCards.forEach((card, index) => {
         if (card !== null) {
           validIndices.push(index)
@@ -1365,12 +1365,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
         if (start >= arr.length - 1) {
           // Create full arrangement including fixed positions
           const fullArrangement: number[] = Array(6).fill(-1)
-          
+
           // Place fixed cards first
-          fixedIndices.forEach(idx => {
+          fixedIndices.forEach((idx) => {
             fullArrangement[idx] = idx
           })
-          
+
           // Place movable cards in available positions
           let movableIndex = 0
           for (let i = 0; i < 6; i++) {
@@ -1379,8 +1379,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
               movableIndex++
             }
           }
-          
-          permutations.push(fullArrangement.filter(i => i !== -1))
+
+          permutations.push(fullArrangement.filter((i) => i !== -1))
           return
         }
         for (let i = start; i < arr.length; i++) {
@@ -1388,9 +1388,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
           const temp = arr[start]
           arr[start] = arr[i]
           arr[i] = temp
-          
+
           generatePermutations(arr, start + 1)
-          
+
           // Backtrack
           arr[i] = arr[start]
           arr[start] = temp
@@ -1484,11 +1484,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
       // If improvement found, ask user if they want to apply it
       if (improvement > 0) {
-        const confirmMessage = `最適化により ${improvement.toLocaleString()} 点のスコア向上が見つかりました。\n` +
+        const confirmMessage =
+          `最適化により ${improvement.toLocaleString()} 点のスコア向上が見つかりました。\n` +
           `現在: ${originalScore.toLocaleString()} 点\n` +
           `最適: ${bestScore.toLocaleString()} 点\n\n` +
           `この編成を適用しますか？`
-        
+
         if (confirm(confirmMessage)) {
           // Apply the best formation
           const newSkillLevels = [...state.cardSkillLevels]
@@ -1499,7 +1500,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
           // Find the mapping from original to new positions
           bestFormation.forEach((card, newIndex) => {
             if (card) {
-              const originalIndex = state.selectedCards.findIndex(c => c === card)
+              const originalIndex = state.selectedCards.findIndex((c) => c === card)
               if (originalIndex >= 0) {
                 newSkillLevels[newIndex] = state.cardSkillLevels[originalIndex]
                 newCenterSkillLevels[newIndex] = state.centerSkillLevels[originalIndex]
@@ -1507,7 +1508,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
                   newCustomSkillValues[newIndex] = state.customSkillValues[originalIndex]
                 }
                 if (state.customCenterSkillValues[originalIndex]) {
-                  newCustomCenterSkillValues[newIndex] = state.customCenterSkillValues[originalIndex]
+                  newCustomCenterSkillValues[newIndex] =
+                    state.customCenterSkillValues[originalIndex]
                 }
               }
             }

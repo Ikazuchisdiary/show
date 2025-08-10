@@ -4,8 +4,15 @@ import { useDuplicateCharacterDetection } from '@hooks/useDuplicateCharacterDete
 import './SimulationControls.css'
 
 export const SimulationControls: React.FC = () => {
-  const { runSimulation, isSimulating, selectedMusic, selectedCards, generateShareUrl, optimizeFormation, isOptimizing } =
-    useGameStore()
+  const {
+    runSimulation,
+    isSimulating,
+    selectedMusic,
+    selectedCards,
+    generateShareUrl,
+    optimizeFormation,
+    isOptimizing,
+  } = useGameStore()
 
   const hasValidSelection = selectedMusic && selectedCards.some((card) => card !== null)
   const duplicateIndices = useDuplicateCharacterDetection(selectedCards)
@@ -53,8 +60,8 @@ export const SimulationControls: React.FC = () => {
       >
         {isSimulating ? 'スコア計算中...' : 'スコア計算'}
       </button>
-      <button 
-        className="optimize-button secondary" 
+      <button
+        className="optimize-button secondary"
         onClick={handleOptimize}
         disabled={!hasValidSelection || isOptimizing || isSimulating}
       >

@@ -27,7 +27,7 @@ export class GameSimulator {
   // Store turn start values for condition evaluation
   private turnStartVoltageLevel: number = 0
   private turnStartMental: number = 100
-  
+
   // Cache for appeal value
   private cachedAppealValue: number | null = null
 
@@ -315,8 +315,8 @@ export class GameSimulator {
     for (const centerCard of centerCards) {
       const centerIndex = this.state.cards.findIndex((card) => card === centerCard)
       if (centerIndex === -1 || !this.centerActivations[centerIndex]) continue
-      
-      if (centerCard?.centerCharacteristic) {
+
+      if (centerCard?.centerCharacteristic?.effects) {
         for (const effect of centerCard.centerCharacteristic.effects) {
           if (effect.type === 'apReduce') {
             const reduction = effect.value
@@ -554,7 +554,10 @@ export class GameSimulator {
         let mentalRecoverValue: number
         if (customValue !== undefined) {
           mentalRecoverValue = customValue
-        } else if (mentalRecoverEffect.levelValues && mentalRecoverEffect.levelValues[skillLevel - 1] !== undefined) {
+        } else if (
+          mentalRecoverEffect.levelValues &&
+          mentalRecoverEffect.levelValues[skillLevel - 1] !== undefined
+        ) {
           mentalRecoverValue = mentalRecoverEffect.levelValues[skillLevel - 1]
         } else {
           mentalRecoverValue = effect.value
@@ -970,7 +973,7 @@ export class GameSimulator {
     if (this.cachedAppealValue !== null) {
       return this.cachedAppealValue
     }
-    
+
     const centerCards = this.getCenterCards()
     const activeCenterCharacteristics = centerCards
       .map((card) => {
@@ -981,7 +984,7 @@ export class GameSimulator {
         return card.centerCharacteristic
       })
       .filter((c) => c !== null && c !== undefined)
-    
+
     this.cachedAppealValue = calculateAppealValue({
       cards: this.state.cards,
       musicAttribute: this.state.musicAttribute as 'smile' | 'pure' | 'cool' | undefined,
@@ -989,7 +992,7 @@ export class GameSimulator {
       // Use only centerCharacteristics to avoid double application
       centerCharacteristics: activeCenterCharacteristics,
     })
-    
+
     return this.cachedAppealValue
   }
 
@@ -1391,7 +1394,7 @@ export class GameSimulator {
 
       // Check if center is activated for this card
       if (!this.centerActivations[centerIndex]) continue
-      
+
       // Process center skill effects
       if (centerCard.centerSkill && centerCard.centerSkill.when === timing) {
         // Reset turn logs for center skill
@@ -1488,7 +1491,7 @@ export class GameSimulator {
       }
 
       // Process center characteristic effects (keep for compatibility)
-      if (centerCard.centerCharacteristic) {
+      if (centerCard.centerCharacteristic?.effects) {
         for (let i = 0; i < centerCard.centerCharacteristic.effects.length; i++) {
           const effect = centerCard.centerCharacteristic.effects[i]
           if (effect.type === 'centerSkill' && effect.timing === timing) {
@@ -1567,7 +1570,7 @@ export class GameSimulator {
           // Center skill values are stored as actual Lv.10 values (not doubled like regular skills)
           // Regular skills use (value / 2) * multiplier, but center skills use value directly
           // To match this pattern, we need to double the value first
-          voltageValue = roundSkillValue(effect.value * skillMultiplier / 2.0, false)
+          voltageValue = roundSkillValue((effect.value * skillMultiplier) / 2.0, false)
         }
         // Apply voltage boost when gaining voltage
         const voltageWithBoost = Math.floor(
@@ -1601,7 +1604,10 @@ export class GameSimulator {
         const mentalEffect = effect as MentalReductionEffect
         const centerSkillLevel = this.centerSkillLevels[centerIndex]
         let reductionValue: number
-        if (mentalEffect.levelValues && mentalEffect.levelValues[centerSkillLevel - 1] !== undefined) {
+        if (
+          mentalEffect.levelValues &&
+          mentalEffect.levelValues[centerSkillLevel - 1] !== undefined
+        ) {
           reductionValue = mentalEffect.levelValues[centerSkillLevel - 1]
         } else {
           reductionValue = mentalEffect.value

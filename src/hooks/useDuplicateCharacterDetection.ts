@@ -14,12 +14,14 @@ export const useDuplicateCharacterDetection = (cards: (Card | null)[]) => {
         slots.push(index)
         characterSlots.set(card.character, slots)
       }
-      
+
       // Check for special cards (Prism Echo, Ether Aria, Oracle Étude)
-      if (card?.displayName && 
-          (card.displayName.includes('Prism Echo') || 
-           card.displayName.includes('Ether Aria') || 
-           card.displayName.includes('Oracle Étude'))) {
+      if (
+        card?.displayName &&
+        (card.displayName.includes('Prism Echo') ||
+          card.displayName.includes('Ether Aria') ||
+          card.displayName.includes('Oracle Étude'))
+      ) {
         specialCardIndices.push(index)
       }
     })
@@ -33,7 +35,7 @@ export const useDuplicateCharacterDetection = (cards: (Card | null)[]) => {
         }
       }
     })
-    
+
     // Check for multiple special cards (2枚目以降をエラーとする)
     if (specialCardIndices.length > 1) {
       for (let i = 1; i < specialCardIndices.length; i++) {

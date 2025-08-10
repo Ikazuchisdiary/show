@@ -168,7 +168,7 @@ describe('gameStore optimization', () => {
   describe('optimizeFormation basic checks', () => {
     it('should require music to be selected', () => {
       const store = useGameStore.getState()
-      
+
       store.setCard(0, mockCards[0])
       store.setCard(1, mockCards[1])
       // No music selected
@@ -182,7 +182,7 @@ describe('gameStore optimization', () => {
 
     it('should require at least one card', () => {
       const store = useGameStore.getState()
-      
+
       // No cards selected
       store.setMusic(mockMusic)
 
@@ -195,7 +195,7 @@ describe('gameStore optimization', () => {
     it('should handle single card case', () => {
       const store = useGameStore.getState()
       const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {})
-      
+
       // Set only one card
       store.setCard(0, mockCards[0])
       store.setMusic(mockMusic)
@@ -205,19 +205,19 @@ describe('gameStore optimization', () => {
       // Should show alert
       expect(alertSpy).toHaveBeenCalledWith('最適化するには2枚以上のカードが必要です。')
       expect(useGameStore.getState().isOptimizing).toBe(false)
-      
+
       alertSpy.mockRestore()
     })
 
     it('should handle all cards fixed case', () => {
       const store = useGameStore.getState()
       const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {})
-      
+
       // Set up 2 cards, both fixed
       store.setCard(0, mockCards[0])
       store.setCard(1, mockCards[1])
       store.setMusic(mockMusic)
-      
+
       // Fix all positions
       store.toggleFixedPosition(0)
       store.toggleFixedPosition(1)
@@ -225,8 +225,10 @@ describe('gameStore optimization', () => {
       store.optimizeFormation()
 
       // Should show alert about fixed cards
-      expect(alertSpy).toHaveBeenCalledWith('固定されていないカードが1枚以下のため、最適化できません。')
-      
+      expect(alertSpy).toHaveBeenCalledWith(
+        '固定されていないカードが1枚以下のため、最適化できません。',
+      )
+
       alertSpy.mockRestore()
     })
   })
