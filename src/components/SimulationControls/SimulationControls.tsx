@@ -1,6 +1,7 @@
 import React from 'react'
 import { useGameStore } from '@stores/gameStore'
 import { useDuplicateCharacterDetection } from '@hooks/useDuplicateCharacterDetection'
+import { trackFeatureUsage } from '@/analytics'
 import './SimulationControls.css'
 
 export const SimulationControls: React.FC = () => {
@@ -30,6 +31,9 @@ export const SimulationControls: React.FC = () => {
 
   const handleShare = () => {
     const shareUrl = generateShareUrl()
+    trackFeatureUsage('share_url_created', {
+      share_url: shareUrl
+    })
     navigator.clipboard
       .writeText(shareUrl)
       .then(() => {
@@ -48,6 +52,7 @@ export const SimulationControls: React.FC = () => {
       )
       return
     }
+    trackFeatureUsage('formation_optimization')
     optimizeFormation()
   }
 

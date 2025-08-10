@@ -3,6 +3,7 @@ import { Card } from '@core/models/Card'
 import { Effect } from '@core/models/Effect'
 import { useGameStore } from '@stores/gameStore'
 import { getAllCards, getCardsByCharacter } from '@data/index'
+import { trackCardSelection } from '@/analytics'
 import './CardSelector.css'
 
 interface CardSelectorProps {
@@ -188,6 +189,15 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     setIsFocused(false)
     setSearchQuery('')
     setHighlightedIndex(-1)
+    
+    // Track card selection
+    if (card) {
+      trackCardSelection({
+        cardName: card.displayName,
+        character: card.character,
+        position: index + 1, // 1-indexed for user-friendly tracking
+      })
+    }
   }
 
   const handleSearchFocus = () => {

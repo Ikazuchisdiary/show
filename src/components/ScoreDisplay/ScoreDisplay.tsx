@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useGameStore } from '@stores/gameStore'
 import { APBalanceDisplay } from '@components/APBalanceDisplay'
 import { APShortageDisplay } from '@components/APShortageDisplay'
 import { AppealDisplay } from '@components/AppealDisplay'
 import { GameSimulator } from '@core/simulation/GameSimulator'
 import { calculateBaseAP } from '@utils/calculateBaseAP'
+import { trackCalculation } from '@/analytics'
 import './ScoreDisplay.css'
 
 export const ScoreDisplay: React.FC = () => {
@@ -20,6 +21,7 @@ export const ScoreDisplay: React.FC = () => {
     centerCharacter,
     comboCount,
     initialMental,
+    generateShareUrl,
   } = useGameStore()
   const [showLog, setShowLog] = useState(false)
 
@@ -77,6 +79,21 @@ export const ScoreDisplay: React.FC = () => {
     baseAP,
     initialMental,
   ])
+
+  // Track calculation event when results are available
+  useEffect(() => {
+    if (!simulationResult || !selectedMusic) return
+
+    const shareUrl = generateShareUrl()
+    trackCalculation({
+      musicName: selectedMusic.name,
+      totalScore: simulationResult.totalScore,
+      totalVoltage: simulationResult.totalVoltage,
+      apConsumed: simulationResult.apConsumed,
+      referenceScore: apShortageResult?.score,
+      shareUrl: shareUrl,
+    })
+  }, [simulationResult, selectedMusic, apShortageResult, generateShareUrl])
 
   if (!simulationResult) {
     return null
