@@ -37,6 +37,8 @@
   color: #e65100;
   margin-bottom: 5px;
   font-size: 14px;
+  display: flex;
+  align-items: center;
 }
 
 .center-characteristic-content {

@@ -24,6 +24,7 @@ interface ShareCardData {
   centerSkillLevel: number
   customSkillValues?: Record<string, number>
   customCenterSkillValues?: Record<string, number>
+  centerActive?: boolean
 }
 
 interface ShareData {
@@ -36,6 +37,7 @@ interface ShareData {
   customMusicName: string | null
   customCombos?: Record<string, number>
   cards: ShareCardData[]
+  centerActivations?: boolean[]
 }
 
 interface GameStore {
@@ -47,6 +49,9 @@ interface GameStore {
   // Custom skill values (user overrides)
   customSkillValues: Record<string, Record<string, number>>
   customCenterSkillValues: Record<string, Record<string, number>>
+  
+  // Center skill/characteristic activation flags
+  centerActivations: boolean[]
 
   // Selected music
   selectedMusic: Music | null
@@ -89,6 +94,7 @@ interface GameStore {
   clearCustomSkillValues: (cardIndex: number) => void
   setCustomCenterSkillValue: (cardIndex: number, effectKey: string, value: number) => void
   clearCustomCenterSkillValues: (cardIndex: number) => void
+  setCenterActivation: (index: number, active: boolean) => void
   setMusic: (music: Music | null) => void
   setDifficulty: (difficulty: 'normal' | 'hard' | 'expert' | 'master') => void
   setInitialMental: (mental: number) => void
@@ -250,6 +256,11 @@ const compressShareData = (data: ShareData): string => {
 
     parts.push(cardPart)
   }
+  
+  // Add center activations if any are disabled
+  if (data.centerActivations && data.centerActivations.some(active => !active)) {
+    parts.push('S' + data.centerActivations.map(a => a ? '1' : '0').join(''))
+  }
 
   // Encode to base64
   const encoded = btoa(parts.join('_')).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '.')
@@ -394,6 +405,13 @@ const decompressShareData = (compressed: string): ShareData => {
           data.cards.push(cardData)
           break
         }
+        
+        case 'S': {
+          // Center activations
+          const activations = value.split('').map(v => v === '1')
+          data.centerActivations = activations
+          break
+        }
       }
     }
 
@@ -434,6 +452,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   centerSkillLevels: Array(6).fill(14),
   customSkillValues: {},
   customCenterSkillValues: {},
+  centerActivations: Array(6).fill(true),
   selectedMusic: null,
   selectedDifficulty: 'master',
   initialMental: 100,
@@ -629,6 +648,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
       delete newCustomValues[cardIndex]
       return { customCenterSkillValues: newCustomValues }
     }),
+    
+  setCenterActivation: (index, active) =>
+    set((state) => {
+      const newActivations = [...state.centerActivations]
+      newActivations[index] = active
+      return { centerActivations: newActivations }
+    }),
 
   setMusic: (music) =>
     set((state) => {
@@ -768,6 +794,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         centerSkillLevels: state.centerSkillLevels,
         customSkillValues: state.customSkillValues,
         customCenterSkillValues: state.customCenterSkillValues,
+        centerActivations: state.centerActivations,
         music: state.selectedMusic,
         musicAttribute: state.selectedMusic.attribute,
         centerCharacter: state.selectedMusic.centerCharacter,
@@ -865,6 +892,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
         data.cards.push(cardData)
       }
     }
+    
+    // Add center activations if any are disabled
+    const hasDisabledCenter = state.centerActivations.some(active => !active)
+    
+    if (hasDisabledCenter) {
+      data.centerActivations = state.centerActivations
+    }
 
     // Compress data to shorter format
     const compressedData = compressShareData(data)
@@ -921,6 +955,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const newCenterSkillLevels: number[] = Array(6).fill(14)
         const newCustomSkillValues: Record<number, Record<string, number>> = {}
         const newCustomCenterSkillValues: Record<number, Record<string, number>> = {}
+        // Default to all activated for backward compatibility
+        const newCenterActivations: boolean[] = data.centerActivations || Array(6).fill(true)
 
         data.cards.forEach((cardInfo: ShareCardData, index: number) => {
           if (index >= 6) return
@@ -954,6 +990,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
           centerSkillLevels: newCenterSkillLevels,
           customSkillValues: newCustomSkillValues,
           customCenterSkillValues: newCustomCenterSkillValues,
+          centerActivations: newCenterActivations,
           learningCorrection: data.learningCorrection ? parseFloat(data.learningCorrection) : 1.5,
           isShareMode: true,
         })

@@ -20,6 +20,7 @@ export class GameSimulator {
   private customSkillValues: Record<string, Record<string, number>>
   private customCenterSkillValues: Record<string, Record<string, number>>
   private centerSkillLevels: number[]
+  private centerActivations: boolean[]
   private currentTurnScoreGain: number = 0
   private currentTurnVoltageGain: number = 0
   private currentTurnLogs: string[] = []
@@ -34,6 +35,7 @@ export class GameSimulator {
     this.customSkillValues = options.customSkillValues || {}
     this.customCenterSkillValues = options.customCenterSkillValues || {}
     this.centerSkillLevels = options.centerSkillLevels || Array(6).fill(10)
+    this.centerActivations = options.centerActivations || Array(6).fill(true)
     this.state = this.initializeState(options)
   }
 
@@ -311,6 +313,9 @@ export class GameSimulator {
     // Apply AP reduction from center characteristics (複数のセンターカードに対応)
     const centerCards = this.getCenterCards()
     for (const centerCard of centerCards) {
+      const centerIndex = this.state.cards.findIndex((card) => card === centerCard)
+      if (centerIndex === -1 || !this.centerActivations[centerIndex]) continue
+      
       if (centerCard?.centerCharacteristic) {
         for (const effect of centerCard.centerCharacteristic.effects) {
           if (effect.type === 'apReduce') {
@@ -967,14 +972,22 @@ export class GameSimulator {
     }
     
     const centerCards = this.getCenterCards()
+    const activeCenterCharacteristics = centerCards
+      .map((card) => {
+        const centerIndex = this.state.cards.findIndex((c) => c === card)
+        if (centerIndex === -1 || !this.centerActivations[centerIndex]) {
+          return null
+        }
+        return card.centerCharacteristic
+      })
+      .filter((c) => c !== null && c !== undefined)
+    
     this.cachedAppealValue = calculateAppealValue({
       cards: this.state.cards,
       musicAttribute: this.state.musicAttribute as 'smile' | 'pure' | 'cool' | undefined,
       centerCard: this.getCenterCard(),
       // Use only centerCharacteristics to avoid double application
-      centerCharacteristics: centerCards
-        .map((card) => card.centerCharacteristic)
-        .filter((c) => c !== undefined),
+      centerCharacteristics: activeCenterCharacteristics,
     })
     
     return this.cachedAppealValue
@@ -1376,6 +1389,9 @@ export class GameSimulator {
       const centerIndex = this.state.cards.findIndex((card) => card === centerCard)
       if (centerIndex === -1) continue
 
+      // Check if center is activated for this card
+      if (!this.centerActivations[centerIndex]) continue
+      
       // Process center skill effects
       if (centerCard.centerSkill && centerCard.centerSkill.when === timing) {
         // Reset turn logs for center skill

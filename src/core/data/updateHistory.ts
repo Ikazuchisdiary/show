@@ -6,6 +6,15 @@ export interface UpdateEntry {
 
 export const updateHistory: UpdateEntry[] = [
   {
+    version: '2.2.6',
+    date: '2025-08-11',
+    changes: [
+      'センタースキル・センター特性の選択機能を追加',
+      '複数のセンターキャラクターが編成されている場合、どのセンタースキル・センター特性を発動させるか選択可能に',
+      'センタースキルのチェックボックスでセンタースキルとセンター特性を同時に制御',
+    ],
+  },
+  {
     version: '2.2.5',
     date: '2025-08-10',
     changes: [
@@ -118,4 +127,4 @@ export const updateHistory: UpdateEntry[] = [
   },
 ]
 
-export const CURRENT_VERSION = '2.2.5'
+export const CURRENT_VERSION = '2.2.6'

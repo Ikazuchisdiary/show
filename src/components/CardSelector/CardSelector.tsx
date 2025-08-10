@@ -88,6 +88,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     centerSkillLevels,
     customSkillValues,
     customCenterSkillValues,
+    centerActivations,
     setCard,
     setCardSkillLevel,
     setCenterSkillLevel,
@@ -95,6 +96,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     clearCustomSkillValues,
     setCustomCenterSkillValue,
     clearCustomCenterSkillValues,
+    setCenterActivation,
     fixedPositions,
     toggleFixedPosition,
   } = useGameStore()
@@ -793,38 +795,49 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                 style={{ alignItems: 'flex-start', marginBottom: '10px' }}
               >
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                  <input
+                    type="checkbox"
+                    checked={centerActivations[index]}
+                    onChange={(e) => setCenterActivation(index, e.target.checked)}
+                    style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                  />
                   <span style={{ color: '#ff9800', fontWeight: 'bold', fontSize: '13px' }}>
                     センタースキル
                   </span>
-                  <select
-                    className="skill-level-select"
-                    value={centerSkillLevel}
-                    onChange={(e) => setCenterSkillLevel(index, parseInt(e.target.value))}
-                  >
-                    {Array.from({ length: 14 }, (_, i) => 14 - i).map((level) => (
-                      <option key={level} value={level}>
-                        Lv.{level}
-                      </option>
-                    ))}
-                  </select>
+                  {centerActivations[index] && (
+                    <select
+                      className="skill-level-select"
+                      value={centerSkillLevel}
+                      onChange={(e) => setCenterSkillLevel(index, parseInt(e.target.value))}
+                    >
+                      {Array.from({ length: 14 }, (_, i) => 14 - i).map((level) => (
+                        <option key={level} value={level}>
+                          Lv.{level}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </span>
               </div>
 
-              {/* センタースキルのタイミング表示 */}
-              <div
-                style={{ color: '#ff9800', fontWeight: 'bold', fontSize: '14px', margin: '5px 0' }}
-              >
-                ⚡{' '}
-                {selectedCard.centerSkill.when === 'beforeFirstTurn'
-                  ? 'ライブ開始時'
-                  : selectedCard.centerSkill.when === 'beforeFeverStart'
-                    ? 'FEVER開始時'
-                    : selectedCard.centerSkill.when === 'afterLastTurn'
-                      ? 'ライブ終了時'
-                      : selectedCard.centerSkill.when}
-              </div>
+              {/* チェックボックスがオンの場合のみセンタースキルの詳細を表示 */}
+              {centerActivations[index] && (
+                <>
+                  {/* センタースキルのタイミング表示 */}
+                  <div
+                    style={{ color: '#ff9800', fontWeight: 'bold', fontSize: '14px', margin: '5px 0' }}
+                  >
+                    ⚡{' '}
+                    {selectedCard.centerSkill.when === 'beforeFirstTurn'
+                      ? 'ライブ開始時'
+                      : selectedCard.centerSkill.when === 'beforeFeverStart'
+                        ? 'FEVER開始時'
+                        : selectedCard.centerSkill.when === 'afterLastTurn'
+                          ? 'ライブ終了時'
+                          : selectedCard.centerSkill.when}
+                  </div>
 
-              {/* センタースキルの効果表示 */}
+                  {/* センタースキルの効果表示 */}
               {(() => {
                 const skillMultipliers = [
                   1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 2.0, 2.2, 2.4, 2.6, 3.0,
@@ -1173,13 +1186,17 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                   )
                 }
               })()}
+                </>
+              )}
             </div>
           )}
 
           {/* センター特性表示（センターキャラクターの場合のみ） */}
-          {isCenter && selectedCard.centerCharacteristic && (
+          {isCenter && selectedCard.centerCharacteristic && centerActivations[index] && (
             <div className="center-characteristic-info">
-              <div className="center-characteristic-header">センター特性</div>
+              <div className="center-characteristic-header">
+                センター特性
+              </div>
               <div className="center-characteristic-content">
                 {selectedCard.centerCharacteristic.effects
                   .map((effect: Effect, idx: number) => {

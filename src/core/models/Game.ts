@@ -109,6 +109,7 @@ export interface SimulationOptions {
   centerSkillLevels?: number[]
   customSkillValues?: Record<string, Record<string, number>>
   customCenterSkillValues?: Record<string, Record<string, number>>
+  centerActivations?: boolean[]
   music: Music
   musicAttribute?: string
   centerCharacter?: string

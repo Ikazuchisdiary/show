@@ -4,7 +4,7 @@ import { calculateAppealValueWithDetails } from '@core/calculations/appeal'
 import './AppealDisplay.css'
 
 export const AppealDisplay: React.FC = () => {
-  const { selectedCards, selectedMusic } = useGameStore()
+  const { selectedCards, selectedMusic, centerActivations } = useGameStore()
   const [showDetails, setShowDetails] = useState(false)
 
   // Find all center cards for center characteristics
@@ -22,15 +22,26 @@ export const AppealDisplay: React.FC = () => {
 
   // Calculate appeal value with details
   const appealResult = useMemo(
-    () => calculateAppealValueWithDetails({
-      cards: selectedCards,
-      musicAttribute: musicAttribute,
-      // Use only centerCharacteristics to avoid double application
-      centerCharacteristics: centerCards
-        .map((card) => card?.centerCharacteristic)
-        .filter((c) => c !== undefined),
-    }),
-    [selectedCards, musicAttribute, centerCards]
+    () => {
+      // Filter center characteristics based on centerActivations
+      const activeCenterCharacteristics = centerCards
+        .map((card) => {
+          const cardIndex = selectedCards.findIndex((c) => c === card)
+          if (cardIndex === -1 || !centerActivations[cardIndex]) {
+            return null
+          }
+          return card?.centerCharacteristic
+        })
+        .filter((c) => c !== null && c !== undefined)
+      
+      return calculateAppealValueWithDetails({
+        cards: selectedCards,
+        musicAttribute: musicAttribute,
+        // Use only centerCharacteristics to avoid double application
+        centerCharacteristics: activeCenterCharacteristics,
+      })
+    },
+    [selectedCards, musicAttribute, centerCards, centerActivations]
   )
 
   const handleToggleDetails = () => {
@@ -43,6 +54,11 @@ export const AppealDisplay: React.FC = () => {
     
     // Collect all center cards with their characteristics
     centerCards.forEach((card) => {
+      const cardIndex = selectedCards.findIndex((c) => c === card)
+      if (cardIndex === -1 || !centerActivations[cardIndex]) {
+        return
+      }
+      
       if (card?.centerCharacteristic) {
         card.centerCharacteristic.effects.forEach((effect) => {
           if (effect.type === 'appealBoost') {
@@ -82,7 +98,7 @@ export const AppealDisplay: React.FC = () => {
     return (cardIndex: number) => {
       return boostSources[cardIndex]?.join('\n') || ''
     }
-  }, [centerCards, selectedCards, appealResult.details.cardDetails])
+  }, [centerCards, selectedCards, appealResult.details.cardDetails, centerActivations])
 
   return (
     <div className="appeal-summary">
