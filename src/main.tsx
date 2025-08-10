@@ -3,6 +3,10 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { initGoogleAnalytics } from './analytics'
+
+// Initialize Google Analytics
+initGoogleAnalytics()
 
 // Register service worker for PWA
 if ('serviceWorker' in navigator) {
