@@ -6,6 +6,14 @@ export interface UpdateEntry {
 
 export const updateHistory: UpdateEntry[] = [
   {
+    version: '2.2.5',
+    date: '2025-08-10',
+    changes: [
+      '新カード「[Very! Very! COCO夏っ]安養寺姫芽」を追加',
+      '新カード「[Very! Very! COCO夏っ]大沢瑠璃乃」を追加',
+    ],
+  },
+  {
     version: '2.2.4',
     date: '2025-08-06',
     changes: [
@@ -110,4 +118,4 @@ export const updateHistory: UpdateEntry[] = [
   },
 ]
 
-export const CURRENT_VERSION = '2.2.4'
+export const CURRENT_VERSION = '2.2.5'

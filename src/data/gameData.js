@@ -3798,6 +3798,118 @@ const gameData = {
         },
       ],
     },
+    cocoNatsuHimeme: {
+      name: 'Very Very COCO Natsu Himeme',
+      displayName: '［Very! Very! COCO夏っ］安養寺姫芽',
+      character: '安養寺姫芽',
+      shortCode: 'Hcn',
+      apCost: 20,
+      stats: {
+        smile: 6600,
+        pure: 5880,
+        cool: 4560,
+        mental: 500,
+      },
+      centerCharacteristic: {
+        name: 'みらくらぱーく！アピールアップ',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 2.0,
+            target: 'みらくらぱーく！',
+            description: 'みらくらぱーく！のアピール値が200%上昇',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'voltageGain',
+            value: 350,
+            description: 'FEVER開始時に、ボルテージを350pt獲得',
+          },
+        ],
+        when: 'beforeFeverStart',
+      },
+      effects: [
+        {
+          type: 'conditional',
+          condition: 'mental <= 1',
+          then: [
+            {
+              type: 'scoreGain',
+              value: 11.7,
+              description: 'アピール値の1170%のスコアを獲得 (Lv.10)',
+            },
+          ],
+        },
+        {
+          type: 'voltagePenalty',
+          value: 5000,
+          description: 'ボルテージを5000pt失う',
+        },
+      ],
+    },
+    cocoNatsuRurino: {
+      name: 'Very Very COCO Natsu Rurino',
+      displayName: '［Very! Very! COCO夏っ］大沢瑠璃乃',
+      character: '大沢瑠璃乃',
+      shortCode: 'Rcn',
+      apCost: 15,
+      stats: {
+        smile: 6480,
+        pure: 6060,
+        cool: 4500,
+        mental: 500,
+      },
+      centerCharacteristic: {
+        name: 'みらくらぱーく！アピールアップ',
+        effects: [
+          {
+            type: 'appealBoost',
+            value: 2.0,
+            target: 'みらくらぱーく！',
+            description: 'みらくらぱーく！のアピール値が200%上昇',
+          },
+        ],
+      },
+      centerSkill: {
+        effects: [
+          {
+            type: 'apGain',
+            value: 4,
+            levelValues: [4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 9, 10, 11],
+            description: 'ライブ開始時にAP獲得 (Lv.10: 8)',
+          },
+        ],
+        when: 'beforeFirstTurn',
+      },
+      effects: [
+        {
+          type: 'conditional',
+          condition: 'count <= 2',
+          then: [
+            {
+              type: 'voltageBoost',
+              value: 4.185,
+              description: 'ボルテージブースト418.5% (Lv.10)',
+            },
+            {
+              type: 'resetCardTurn',
+              description: 'デッキリセット',
+            },
+          ],
+          else: [
+            {
+              type: 'apGain',
+              value: 5,
+              levelValues: [5, 5, 6, 6, 7, 7, 8, 8, 9, 10, 11, 12, 13, 15],
+              description: 'AP回復 (Lv.10: 10)',
+            },
+          ],
+        },
+      ],
+    },
     oracleEtudeRurino: {
       name: 'Oracle Etude Rurino',
       displayName: '［Oracle Étude］大沢瑠璃乃',
