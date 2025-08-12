@@ -998,6 +998,201 @@ const osawa_rurinoCards: CardData = {
       },
     ],
   },
+  wawoRurino: {
+    name: 'WAWO Rurino',
+    displayName: '［WAWO!］大沢瑠璃乃',
+    character: '大沢瑠璃乃',
+    shortCode: 'Rw',
+    apCost: 15,
+    stats: {
+      smile: 4980,
+      pure: 7200,
+      cool: 5100,
+      mental: 480,
+    },
+    centerCharacteristic: {
+      name: 'アピールアップ（みらくらぱーく！）',
+      effects: [
+        {
+          type: 'appealBoost',
+          value: 2,
+          target: 'みらくらぱーく！',
+          description: 'みらくらぱーく！に所属するメンバーのアピール値が200%上昇',
+        },
+      ],
+    },
+    centerSkill: {
+      effects: [
+        {
+          type: 'apGain',
+          value: 4,
+          levelValues: [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8],
+          description: 'FEVER開始時AP回復',
+        },
+        {
+          type: 'conditional',
+          condition: 'voltageLevel >= 4',
+          then: [
+            {
+              type: 'apGain',
+              value: 4,
+              levelValues: [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8],
+              description: 'さらにAP回復（2倍）',
+            },
+          ],
+        },
+      ],
+      when: 'beforeFeverStart',
+    },
+    effects: [
+      {
+        type: 'voltageBoost',
+        value: 1.575,
+        description: 'ボルテージ獲得量157.5%上昇 (Lv.10)',
+      },
+      {
+        type: 'conditional',
+        condition: 'mental >= 75',
+        then: [
+          {
+            type: 'voltageBoost',
+            value: 2.52,
+            description: 'ボルテージ獲得量252%上昇 (Lv.10)',
+          },
+        ],
+      },
+    ],
+  },
+  auroraFlowerRurino: {
+    name: 'Aurora Flower Rurino',
+    displayName: '［AURORA FLOWER］大沢瑠璃乃',
+    character: '大沢瑠璃乃',
+    shortCode: 'Raf',
+    apCost: 12,
+    stats: {
+      smile: 6360,
+      pure: 6360,
+      cool: 6360,
+      mental: 530,
+    },
+    centerCharacteristic: {
+      name: 'アピールアップ（みらくらぱーく！）',
+      effects: [
+        {
+          type: 'appealBoost',
+          value: 2,
+          target: 'みらくらぱーく！',
+          description: 'みらくらぱーく！に所属するメンバーのアピール値が200%上昇',
+        },
+      ],
+    },
+    centerSkill: {
+      effects: [
+        {
+          type: 'apGain',
+          value: 4,
+          levelValues: [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8],
+          description: 'AP回復',
+        },
+        {
+          type: 'conditional',
+          condition: 'mental >= 50',
+          then: [
+            {
+              type: 'apGain',
+              value: 4,
+              levelValues: [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8],
+              description: 'さらにAP回復',
+            },
+          ],
+        },
+      ],
+      when: 'beforeFeverStart',
+    },
+    effects: [
+      {
+        type: 'voltageBoost',
+        value: 1.1375,
+        description: 'ボルテージ獲得量113.75%上昇 (Lv.10)',
+      },
+      {
+        type: 'conditional',
+        condition: 'mental >= 70',
+        then: [
+          {
+            type: 'voltageBoost',
+            value: 1.82,
+            description: 'ボルテージ獲得量182%上昇 (Lv.10)',
+          },
+        ],
+      },
+    ],
+  },
+  seiyaTanRurino: {
+    name: 'Seiya Tan Rurino',
+    displayName: '［聖夜譚］大沢瑠璃乃',
+    character: '大沢瑠璃乃',
+    shortCode: 'Rst',
+    apCost: 10,
+    stats: {
+      smile: 5520,
+      pure: 6240,
+      cool: 5400,
+      mental: 490,
+    },
+    centerCharacteristic: {
+      name: 'アピールアップ',
+      effects: [
+        {
+          type: 'appealBoost',
+          value: 0.8,
+          target: 'all',
+          description: '全メンバーのアピール値が80%上昇',
+        },
+      ],
+    },
+    centerSkill: {
+      effects: [
+        {
+          type: 'apGain',
+          value: 4,
+          levelValues: [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8],
+          description: 'AP回復',
+        },
+        {
+          type: 'conditional',
+          condition: 'mental >= 30',
+          then: [
+            {
+              type: 'apGain',
+              value: 4,
+              levelValues: [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8],
+              description: 'さらにAP回復',
+            },
+          ],
+        },
+      ],
+      when: 'beforeFeverStart',
+    },
+    effects: [
+      {
+        type: 'voltageBoost',
+        value: 0.9375,
+        description: 'ボルテージ獲得量93.75%上昇（1回） (Lv.10)',
+      },
+      {
+        type: 'conditional',
+        condition: 'mental >= 70',
+        then: [
+          {
+            type: 'voltageBoost',
+            value: 1.5,
+            description: 'ボルテージ獲得量150%上昇（1回） (Lv.10)',
+          },
+        ],
+      },
+    ],
+  },
 }
 
 export default osawa_rurinoCards

@@ -429,6 +429,124 @@ const momose_ginkoCards: CardData = {
       },
     ],
   },
+  yumewazuraiGin: {
+    name: 'Yumewazurai Gin',
+    displayName: '［ユメワズライ］百生吟子',
+    character: '百生吟子',
+    shortCode: 'Gy',
+    apCost: 15,
+    stats: {
+      smile: 6240,
+      pure: 5520,
+      cool: 5520,
+      mental: 480,
+    },
+    centerCharacteristic: {
+      name: 'アピールアップ',
+      effects: [
+        {
+          type: 'appealBoost',
+          value: 0.72,
+          target: 'all',
+          description: '全メンバーのアピール値が72%上昇',
+        },
+      ],
+    },
+    centerSkill: {
+      when: 'beforeFeverStart',
+      effects: [
+        {
+          type: 'apGain',
+          value: 5,
+          description: 'AP獲得',
+          levelValues: [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8],
+        },
+      ],
+    },
+    effects: [
+      {
+        type: 'voltageBoost',
+        value: 1.575,
+        description: 'ボルテージ獲得スキルによるボルテージ獲得量が157.5%上昇 (Lv.10)',
+      },
+      {
+        type: 'conditional',
+        condition: 'mental <= 10',
+        then: [
+          {
+            type: 'voltageBoost',
+            value: 2.835,
+            description: 'メンタルが最大値の10%以下の時、ボルテージ獲得スキルによるボルテージ獲得量が283.5%上昇 (Lv.10)',
+          },
+        ],
+      },
+    ],
+  },
+  auroraFlowerGin: {
+    name: 'Aurora Flower Gin',
+    displayName: '［AURORA FLOWER］百生吟子',
+    character: '百生吟子',
+    shortCode: 'Ga',
+    apCost: 12,
+    stats: {
+      smile: 6360,
+      pure: 6360,
+      cool: 6360,
+      mental: 530,
+    },
+    centerCharacteristic: {
+      name: 'アピールアップ（スリーズブーケ）',
+      effects: [
+        {
+          type: 'appealBoost',
+          value: 2,
+          target: 'スリーズブーケ',
+          description: 'スリーズブーケに所属するメンバーのアピール値が200%上昇',
+        },
+      ],
+    },
+    centerSkill: {
+      when: 'beforeFeverStart',
+      effects: [
+        {
+          type: 'apGain',
+          value: 5,
+          description: 'AP回復',
+          levelValues: [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8],
+        },
+        {
+          type: 'conditional',
+          condition: 'mental <= 50',
+          then: [
+            {
+              type: 'apGain',
+              value: 5,
+              description: 'メンタルが最大値の50%以下の時、AP回復',
+              levelValues: [2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 8],
+            },
+          ],
+        },
+      ],
+    },
+    effects: [
+      {
+        type: 'voltageBoost',
+        value: 1.1375,
+        description: 'ボルテージ獲得効果スキルによるボルテージ獲得量が、1回の間113.75%上昇 (Lv.10)',
+      },
+      {
+        type: 'conditional',
+        condition: 'mental <= 10',
+        then: [
+          {
+            type: 'voltageBoost',
+            value: 2.0475,
+            description: 'メンタルが最大値の10%以下の時、ボルテージ獲得効果スキルによるボルテージ獲得量が、1回の間204.75%上昇 (Lv.10)',
+          },
+        ],
+      },
+    ],
+  },
 }
 
 export default momose_ginkoCards

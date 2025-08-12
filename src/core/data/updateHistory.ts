@@ -6,6 +6,17 @@ export interface UpdateEntry {
 
 export const updateHistory: UpdateEntry[] = [
   {
+    version: '2.2.8',
+    date: '2025-08-13',
+    changes: [
+      '新カード「[AURORA FLOWER]百生吟子」を追加',
+      '新カード「[ユメワズライ]百生吟子」を追加',
+      '新カード「[WAWO!]大沢瑠璃乃」を追加',
+      '新カード「[AURORA FLOWER]大沢瑠璃乃」を追加',
+      '新カード「[聖夜譚]大沢瑠璃乃」を追加',
+    ],
+  },
+  {
     version: '2.2.7',
     date: '2025-08-12',
     changes: [
@@ -136,4 +147,4 @@ export const updateHistory: UpdateEntry[] = [
   },
 ]
 
-export const CURRENT_VERSION = '2.2.7'
+export const CURRENT_VERSION = '2.2.8'
