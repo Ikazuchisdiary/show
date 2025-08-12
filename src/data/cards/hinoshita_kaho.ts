@@ -146,7 +146,7 @@ const hinoshita_kahoCards: CardData = {
       smile: 7680,
       pure: 7200,
       cool: 6240,
-      mental: 460,
+      mental: 560,
     },
     centerCharacteristic: {
       name: 'アピールアップ・AP軽減・CT短縮',

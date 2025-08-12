@@ -317,10 +317,10 @@ const otomune_kozueCards: CardData = {
     shortCode: 'Kea',
     apCost: 16,
     stats: {
-      smile: 5880,
-      pure: 5640,
-      cool: 9000,
-      mental: 590,
+      smile: 6480,
+      pure: 6480,
+      cool: 8160,
+      mental: 560,
     },
     centerCharacteristic: {
       name: 'アピールアップ（スリーズブーケ）・AP軽減・CT短縮',

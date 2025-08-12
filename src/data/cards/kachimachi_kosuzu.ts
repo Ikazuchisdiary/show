@@ -67,10 +67,10 @@ const kachimachi_kosuzuCards: CardData = {
     shortCode: 'Kzea',
     apCost: 16,
     stats: {
-      smile: 5640,
-      pure: 9000,
-      cool: 5880,
-      mental: 590,
+      smile: 7800,
+      pure: 7440,
+      cool: 5760,
+      mental: 570,
     },
     centerCharacteristic: {
       name: 'アピールアップ（DOLLCHESTRA）・AP軽減・CT短縮',
@@ -259,9 +259,9 @@ const kachimachi_kosuzuCards: CardData = {
     shortCode: 'Koe',
     apCost: 14,
     stats: {
-      smile: 6170,
-      pure: 7520,
-      cool: 4390,
+      smile: 7080,
+      pure: 8640,
+      cool: 5040,
       mental: 590,
     },
     centerCharacteristic: {

@@ -284,10 +284,10 @@ const fujishima_megumiCards: CardData = {
     shortCode: 'Mea',
     apCost: 10,
     stats: {
-      smile: 9120,
-      pure: 6240,
-      cool: 5400,
-      mental: 580,
+      smile: 8160,
+      pure: 6360,
+      cool: 6120,
+      mental: 600,
     },
     centerCharacteristic: {
       name: 'アピールアップ（みらくらぱーく！）・AP軽減・CT短縮',

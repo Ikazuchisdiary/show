@@ -70,10 +70,10 @@ const murano_sayakaCards: CardData = {
     shortCode: 'Sea',
     apCost: 10,
     stats: {
-      smile: 6240,
-      pure: 5400,
-      cool: 9240,
-      mental: 570,
+      smile: 6120,
+      pure: 6240,
+      cool: 8400,
+      mental: 590,
     },
     centerCharacteristic: {
       name: 'アピールアップ（DOLLCHESTRA）・AP軽減・CT短縮',

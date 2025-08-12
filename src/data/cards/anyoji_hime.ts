@@ -8,10 +8,10 @@ const anyoji_himeCards: CardData = {
     shortCode: 'Hea',
     apCost: 10,
     stats: {
-      smile: 5400,
-      pure: 6240,
-      cool: 9120,
-      mental: 580,
+      smile: 6600,
+      pure: 6960,
+      cool: 7440,
+      mental: 570,
     },
     centerCharacteristic: {
       name: 'アピールアップ（みらくらぱーく！）・AP軽減・CT短縮',
@@ -150,10 +150,10 @@ const anyoji_himeCards: CardData = {
     shortCode: 'Hoe',
     apCost: 14,
     stats: {
-      smile: 4600,
+      smile: 5280,
       pure: 8400,
-      cool: 7600,
-      mental: 600,
+      cool: 7320,
+      mental: 570,
     },
     centerCharacteristic: {
       name: 'Radioactive',

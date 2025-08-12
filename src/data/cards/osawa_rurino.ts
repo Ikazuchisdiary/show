@@ -82,10 +82,10 @@ const osawa_rurinoCards: CardData = {
     shortCode: 'Rea',
     apCost: 14,
     stats: {
-      smile: 8640,
-      pure: 5520,
-      cool: 6600,
-      mental: 580,
+      smile: 6240,
+      pure: 8280,
+      cool: 6480,
+      mental: 570,
     },
     centerCharacteristic: {
       name: 'アピールアップ（みらくらぱーく！）・AP軽減・CT短縮',
@@ -919,9 +919,9 @@ const osawa_rurinoCards: CardData = {
     shortCode: 'Roe',
     apCost: 14,
     stats: {
-      smile: 6060,
-      pure: 4700,
-      cool: 7320,
+      smile: 6960,
+      pure: 5400,
+      cool: 8400,
       mental: 590,
     },
     centerCharacteristic: {

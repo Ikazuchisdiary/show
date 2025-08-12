@@ -342,9 +342,9 @@ const yugiri_tsuzuriCards: CardData = {
     apCost: 10,
     stats: {
       smile: 6240,
-      pure: 9120,
-      cool: 5400,
-      mental: 580,
+      pure: 8400,
+      cool: 6480,
+      mental: 560,
     },
     centerCharacteristic: {
       name: 'アピールアップ（DOLLCHESTRA）・AP軽減・CT短縮',
