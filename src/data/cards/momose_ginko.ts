@@ -476,7 +476,8 @@ const momose_ginkoCards: CardData = {
           {
             type: 'voltageBoost',
             value: 2.835,
-            description: 'メンタルが最大値の10%以下の時、ボルテージ獲得スキルによるボルテージ獲得量が283.5%上昇 (Lv.10)',
+            description:
+              'メンタルが最大値の10%以下の時、ボルテージ獲得スキルによるボルテージ獲得量が283.5%上昇 (Lv.10)',
           },
         ],
       },
@@ -541,7 +542,8 @@ const momose_ginkoCards: CardData = {
           {
             type: 'voltageBoost',
             value: 2.0475,
-            description: 'メンタルが最大値の10%以下の時、ボルテージ獲得効果スキルによるボルテージ獲得量が、1回の間204.75%上昇 (Lv.10)',
+            description:
+              'メンタルが最大値の10%以下の時、ボルテージ獲得効果スキルによるボルテージ獲得量が、1回の間204.75%上昇 (Lv.10)',
           },
         ],
       },

@@ -266,6 +266,30 @@ Examples:
 - Improved type safety throughout the codebase
 - Fixed center skill `mentalRecover` implementation
 
+## Wiki Data Reading Guide
+
+When extracting card data from the wiki:
+
+1. **Card Details Page Structure**:
+   - The URL format is: `https://wikiwiki.jp/llll_wiki/[カード名]`
+   - Card names use URL encoding for Japanese characters and special symbols
+
+2. **Important Sections to Read**:
+   - **基本情報**: Contains rarity, type, style type, and mood
+   - **ステータス**: Contains the card stats (smile, pure, cool, mental) at Lv120
+   - **スクショウ（SIShow）**: Contains the skill effects for the score calculator
+     - **スキル**: Main skill effect with numerical values at different levels
+     - **センタースキル**: Center position skill (activated at specific timings)
+     - **センター特性**: Center characteristic (passive boost when in center)
+   - **スクステ（SIStage）**: Different game mode - NOT used for score calculator
+
+3. **Reading Tips**:
+   - Always check the Lv10 values for skill effects (or calculate from other levels)
+   - **AP Cost**: Use the number on the right side of "→" in the skill section (e.g., "8→6" means AP cost is 6)
+   - Center skills often have conditional effects based on voltage level or mental
+   - Some effects are fixed values (not affected by skill level multipliers)
+   - Pay attention to the exact wording - "上昇" (boost) vs "獲得" (gain) have different implementations
+
 ## Known Issues and TODOs
 
 - Some effects marked as `visualOnly` (like CT reduction) are not fully implemented in the calculator

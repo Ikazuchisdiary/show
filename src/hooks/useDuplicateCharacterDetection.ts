@@ -2,10 +2,11 @@ import { useMemo } from 'react'
 import { Card } from '@core/models/Card'
 
 export const useDuplicateCharacterDetection = (cards: (Card | null)[]) => {
-  const duplicateIndices = useMemo(() => {
+  const result = useMemo(() => {
     const characterSlots = new Map<string, number[]>()
-    const duplicates = new Set<number>()
-    const specialCardIndices: number[] = []
+    const characterDuplicates = new Set<number>()
+    const drCardIndices: number[] = []
+    const drDuplicates = new Set<number>()
 
     // Build a map of character to slot indices
     cards.forEach((card, index) => {
@@ -15,14 +16,14 @@ export const useDuplicateCharacterDetection = (cards: (Card | null)[]) => {
         characterSlots.set(card.character, slots)
       }
 
-      // Check for special cards (Prism Echo, Ether Aria, Oracle Étude)
+      // Check for DR cards (Prism Echo, Ether Aria, Oracle Étude)
       if (
         card?.displayName &&
-        (card.displayName.includes('Prism Echo') ||
-          card.displayName.includes('Ether Aria') ||
-          card.displayName.includes('Oracle Étude'))
+        (card.displayName.includes('［Prism Echo］') ||
+          card.displayName.includes('［Ether Aria］') ||
+          card.displayName.includes('［Oracle Étude］'))
       ) {
-        specialCardIndices.push(index)
+        drCardIndices.push(index)
       }
     })
 
@@ -31,20 +32,24 @@ export const useDuplicateCharacterDetection = (cards: (Card | null)[]) => {
       if (slots.length > 2) {
         // 3枚目以降（インデックス2以降）をエラーとする
         for (let i = 2; i < slots.length; i++) {
-          duplicates.add(slots[i])
+          characterDuplicates.add(slots[i])
         }
       }
     })
 
-    // Check for multiple special cards (2枚目以降をエラーとする)
-    if (specialCardIndices.length > 1) {
-      for (let i = 1; i < specialCardIndices.length; i++) {
-        duplicates.add(specialCardIndices[i])
+    // Check for multiple DR cards (2枚目以降をエラーとする)
+    if (drCardIndices.length > 1) {
+      for (let i = 1; i < drCardIndices.length; i++) {
+        drDuplicates.add(drCardIndices[i])
       }
     }
 
-    return duplicates
+    return {
+      duplicateIndices: new Set([...characterDuplicates, ...drDuplicates]),
+      hasDRDuplicates: drDuplicates.size > 0,
+      hasCharacterDuplicates: characterDuplicates.size > 0,
+    }
   }, [cards])
 
-  return duplicateIndices
+  return result
 }

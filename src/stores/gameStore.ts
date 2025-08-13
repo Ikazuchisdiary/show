@@ -807,7 +807,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const result = simulator.simulate()
 
       set({ simulationResult: result, isSimulating: false })
-
     } catch (error) {
       console.error('Simulation error:', error)
       set({ isSimulating: false })

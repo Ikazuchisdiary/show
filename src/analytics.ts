@@ -7,7 +7,7 @@ declare global {
 
 export const initGoogleAnalytics = () => {
   const gaId = import.meta.env.VITE_GA_ID
-  
+
   if (!gaId || import.meta.env.DEV) {
     // Skip analytics in development or if ID is not set
     return
@@ -21,7 +21,7 @@ export const initGoogleAnalytics = () => {
 
   // Initialize gtag
   window.dataLayer = window.dataLayer || []
-  window.gtag = function(...args: unknown[]) {
+  window.gtag = function (...args: unknown[]) {
     window.dataLayer.push(args)
   }
   window.gtag('js', new Date())
@@ -36,7 +36,7 @@ export const trackEvent = (
     label?: string
     value?: number
     [key: string]: unknown
-  }
+  },
 ) => {
   if (typeof window.gtag === 'function' && !import.meta.env.DEV) {
     window.gtag('event', eventName, parameters)
@@ -76,7 +76,10 @@ export const trackCardSelection = (params: {
   })
 }
 
-export const trackFeatureUsage = (featureName: string, additionalParams?: Record<string, unknown>) => {
+export const trackFeatureUsage = (
+  featureName: string,
+  additionalParams?: Record<string, unknown>,
+) => {
   trackEvent('feature_used', {
     category: 'engagement',
     feature_name: featureName,

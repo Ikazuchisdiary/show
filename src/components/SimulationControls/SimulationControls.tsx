@@ -16,14 +16,23 @@ export const SimulationControls: React.FC = () => {
   } = useGameStore()
 
   const hasValidSelection = selectedMusic && selectedCards.some((card) => card !== null)
-  const duplicateIndices = useDuplicateCharacterDetection(selectedCards)
+  const { duplicateIndices, hasDRDuplicates, hasCharacterDuplicates } =
+    useDuplicateCharacterDetection(selectedCards)
 
   const handleCalculate = () => {
     // Check for duplicate characters first
     if (duplicateIndices.size > 0) {
-      alert(
-        '同じキャラクターのカードが複数選択されています。\nキャラクターの重複を解消してから計算してください。',
-      )
+      if (hasDRDuplicates && hasCharacterDuplicates) {
+        alert(
+          'DRカードが複数選択されています。また、同じキャラクターのカードが複数選択されています。\nDRカードは1枚まで、同じキャラクターは2枚までしか編成できません。',
+        )
+      } else if (hasDRDuplicates) {
+        alert('DRカードが複数選択されています。\nDRカードは1枚までしか編成できません。')
+      } else {
+        alert(
+          '同じキャラクターのカードが複数選択されています。\nキャラクターの重複を解消してから計算してください。',
+        )
+      }
       return
     }
     runSimulation()
@@ -32,7 +41,7 @@ export const SimulationControls: React.FC = () => {
   const handleShare = () => {
     const shareUrl = generateShareUrl()
     trackFeatureUsage('share_url_created', {
-      share_url: shareUrl
+      share_url: shareUrl,
     })
     navigator.clipboard
       .writeText(shareUrl)
@@ -47,9 +56,17 @@ export const SimulationControls: React.FC = () => {
   const handleOptimize = () => {
     // Check for duplicate characters first
     if (duplicateIndices.size > 0) {
-      alert(
-        '同じキャラクターのカードが複数選択されています。\nキャラクターの重複を解消してから最適化してください。',
-      )
+      if (hasDRDuplicates && hasCharacterDuplicates) {
+        alert(
+          'DRカードが複数選択されています。また、同じキャラクターのカードが複数選択されています。\nDRカードは1枚まで、同じキャラクターは2枚までしか編成できません。',
+        )
+      } else if (hasDRDuplicates) {
+        alert('DRカードが複数選択されています。\nDRカードは1枚までしか編成できません。')
+      } else {
+        alert(
+          '同じキャラクターのカードが複数選択されています。\nキャラクターの重複を解消してから最適化してください。',
+        )
+      }
       return
     }
     trackFeatureUsage('formation_optimization')

@@ -189,7 +189,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     setIsFocused(false)
     setSearchQuery('')
     setHighlightedIndex(-1)
-    
+
     // Track card selection
     if (card) {
       trackCardSelection({

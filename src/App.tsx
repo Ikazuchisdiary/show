@@ -32,7 +32,7 @@ function App() {
   useA11y()
 
   // Detect duplicate characters
-  const duplicateIndices = useDuplicateCharacterDetection(selectedCards)
+  const { duplicateIndices } = useDuplicateCharacterDetection(selectedCards)
 
   useEffect(() => {
     // Load from URL parameters on mount
