@@ -549,6 +549,69 @@ const momose_ginkoCards: CardData = {
       },
     ],
   },
+  fruitsPunchGin: {
+    name: 'Fruits Punch Gin',
+    displayName: '［フルーツパンチ］百生吟子',
+    character: '百生吟子',
+    shortCode: 'Gfp',
+    apCost: 4,
+    stats: {
+      smile: 7680,
+      pure: 5760,
+      cool: 3720,
+      mental: 490,
+    },
+    centerCharacteristic: {
+      name: 'アピールアップ（スリーズブーケ）',
+      effects: [
+        {
+          type: 'appealBoost',
+          value: 2,
+          target: 'スリーズブーケ',
+          description: 'スリーズブーケに所属するメンバーのアピール値が200%上昇',
+        },
+      ],
+    },
+    centerSkill: {
+      when: 'beforeFirstTurn',
+      effects: [
+        {
+          type: 'apGain',
+          value: 8,
+          description: 'AP回復',
+          levelValues: [4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 9, 10, 12],
+        },
+      ],
+    },
+    effects: [
+      {
+        type: 'mentalReduction',
+        value: 25,
+        description: 'メンタル25%減少',
+      },
+      {
+        type: 'conditional',
+        condition: 'mental <= 1',
+        then: [
+          {
+            type: 'apGain',
+            value: 4,
+            description: 'AP回復 (Lv.10)',
+            levelValues: [2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5, 6],
+          },
+        ],
+      },
+      {
+        type: 'resetCardTurn',
+        description: '次に発動するスキルをデッキの1枚目から順に戻す',
+      },
+      {
+        type: 'removeAfterUse',
+        condition: 'count >= 4',
+        description: 'このカードのスキル発動回数が4回以上の時、このカードを除外する',
+      },
+    ],
+  },
 }
 
 export default momose_ginkoCards
