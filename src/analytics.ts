@@ -10,11 +10,8 @@ export const initGoogleAnalytics = () => {
 
   if (!gaId || import.meta.env.DEV) {
     // Skip analytics in development or if ID is not set
-    console.log('[GA4] Analytics disabled:', { gaId: !!gaId, isDev: import.meta.env.DEV })
     return
   }
-
-  console.log('[GA4] Initializing with ID:', gaId)
 
   // Initialize dataLayer and gtag before loading the script
   window.dataLayer = window.dataLayer || []
@@ -36,9 +33,6 @@ export const initGoogleAnalytics = () => {
   script.onerror = () => {
     console.error('[GA4] Failed to load Google Analytics script')
   }
-  script.onload = () => {
-    console.log('[GA4] Google Analytics script loaded successfully')
-  }
   document.head.appendChild(script)
 }
 
@@ -53,15 +47,11 @@ export const trackEvent = (
   },
 ) => {
   if (import.meta.env.DEV) {
-    console.log('[GA4] Event skipped in development:', eventName, parameters)
     return
   }
 
   if (typeof window.gtag === 'function') {
-    console.log('[GA4] Tracking event:', eventName, parameters)
     window.gtag('event', eventName, parameters)
-  } else {
-    console.warn('[GA4] gtag not available, event not tracked:', eventName)
   }
 }
 
