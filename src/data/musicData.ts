@@ -5,7 +5,7 @@ const musicData: MusicData = {
     name: 'diamondz',
     phases: [9, 5, 4],
     description: 'フィーバー前: 9, フィーバー中: 5, フィーバー後: 4',
-    centerCharacter: '徒町小鈴',
+    centerCharacter: '村野さやか',
     attribute: 'cool',
     combos: {
       normal: 185,
@@ -18,7 +18,7 @@ const musicData: MusicData = {
     name: 'diamondz（-2秒）',
     phases: [15, 9, 6],
     description: 'フィーバー前: 15, フィーバー中: 9, フィーバー後: 6',
-    centerCharacter: '徒町小鈴',
+    centerCharacter: '村野さやか',
     attribute: 'cool',
     combos: {
       normal: 185,
