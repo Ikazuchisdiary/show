@@ -12,6 +12,10 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       output: {
+        // ファイル名にハッシュを含める
+        entryFileNames: 'assets/[name].[hash].js',
+        chunkFileNames: 'assets/[name].[hash].js',
+        assetFileNames: 'assets/[name].[hash].[ext]',
         manualChunks: (id) => {
           // node_modules内のパッケージをvendorチャンクに
           if (id.includes('node_modules')) {

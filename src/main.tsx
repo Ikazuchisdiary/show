@@ -15,8 +15,26 @@ if ('serviceWorker' in navigator) {
     const base = import.meta.env.BASE_URL
     navigator.serviceWorker
       .register(`${base}sw.js`)
-      .then(() => {
-        // ServiceWorker registration successful
+      .then((registration) => {
+        // Check for updates periodically
+        setInterval(() => {
+          registration.update()
+        }, 60000) // Check every minute
+
+        // Listen for updates
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // New content is available
+                if (confirm('新しいバージョンが利用可能です。ページを更新しますか？')) {
+                  window.location.reload()
+                }
+              }
+            })
+          }
+        })
       })
       .catch((err) => {
         console.error('ServiceWorker registration failed:', err)
