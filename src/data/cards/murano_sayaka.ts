@@ -350,6 +350,65 @@ const murano_sayakaCards: CardData = {
       ],
     },
   },
+  taiyoDeareSayaka: {
+    name: 'Taiyo De Are Sayaka',
+    displayName: '［太陽であれ！］村野さやか',
+    character: '村野さやか',
+    shortCode: 'St',
+    apCost: 12,
+    stats: {
+      smile: 3960,
+      pure: 6600,
+      cool: 6840,
+      mental: 470,
+    },
+    centerCharacteristic: {
+      name: 'アピールアップ（DOLLCHESTRA）',
+      effects: [
+        {
+          type: 'appealBoost',
+          value: 2,
+          target: 'DOLLCHESTRA',
+          description: 'DOLLCHESTRAメンバーのアピール値が200%上昇',
+        },
+      ],
+    },
+    centerSkill: {
+      when: 'beforeFeverStart',
+      effects: [
+        {
+          type: 'voltageGain',
+          value: 232,
+          description: 'FEVER開始時にボルテージ獲得 (Lv.10: 232pt)',
+        },
+      ],
+    },
+    effects: [
+      {
+        type: 'voltageGain',
+        value: 288,
+        description: 'ボルテージ獲得 (Lv.10: 288pt)',
+      },
+      {
+        type: 'mentalReduction',
+        value: 25,
+        levelValues: [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25],
+        description: 'メンタル最大値の25%減少',
+      },
+      {
+        type: 'conditional',
+        condition: 'mental <= 50',
+        then: [
+          {
+            type: 'apGain',
+            value: 4,
+            levelValues: [2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 5, 6],
+            description: 'AP回復 (Lv.1-4: 2, Lv.5-9: 3, Lv.10-12: 4, Lv.13: 5, Lv.14: 6)',
+          },
+        ],
+      },
+    ],
+  },
 }
 
 export default murano_sayakaCards

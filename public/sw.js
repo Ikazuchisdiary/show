@@ -4,7 +4,7 @@ const urlsToCache = ['/show/', '/show/index.html', '/show/manifest.json']
 self.addEventListener('install', (event) => {
   // Force the waiting service worker to become the active service worker
   self.skipWaiting()
-  
+
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(urlsToCache)
@@ -19,10 +19,12 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Network first strategy for HTML and JS files
-  if (event.request.url.includes('.html') || 
-      event.request.url.includes('.js') || 
-      event.request.url.includes('.css') ||
-      event.request.mode === 'navigate') {
+  if (
+    event.request.url.includes('.html') ||
+    event.request.url.includes('.js') ||
+    event.request.url.includes('.css') ||
+    event.request.mode === 'navigate'
+  ) {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
@@ -36,7 +38,7 @@ self.addEventListener('fetch', (event) => {
         .catch(() => {
           // If network fails, try cache
           return caches.match(event.request)
-        })
+        }),
     )
     return
   }
@@ -74,18 +76,21 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('activate', (event) => {
   // Take control of all pages immediately
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          // Delete all old caches
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName)
-          }
-        }),
-      )
-    }).then(() => {
-      // Take control of all clients immediately
-      return self.clients.claim()
-    })
+    caches
+      .keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            // Delete all old caches
+            if (cacheName !== CACHE_NAME) {
+              return caches.delete(cacheName)
+            }
+          }),
+        )
+      })
+      .then(() => {
+        // Take control of all clients immediately
+        return self.clients.claim()
+      }),
   )
 })
