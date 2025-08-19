@@ -652,9 +652,9 @@ const momose_ginkoCards: CardData = {
         condition: 'mental <= 10',
         then: [
           {
-            type: 'scoreGain',
+            type: 'scoreBoost',
             value: 5.7375,
-            description: 'スコア獲得573.75% (Lv.10)',
+            description: 'スコアブースト573.75% (Lv.10)',
           },
         ],
       },
