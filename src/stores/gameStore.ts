@@ -38,6 +38,7 @@ interface ShareData {
   customCombos?: Record<string, number>
   cards: ShareCardData[]
   centerActivations?: boolean[]
+  mentalRecoverActivations?: boolean[]
 }
 
 interface GameStore {
@@ -266,6 +267,11 @@ const compressShareData = (data: ShareData): string => {
     parts.push('S' + data.centerActivations.map((a) => (a ? '1' : '0')).join(''))
   }
 
+  // Add mental recover activations if any are disabled
+  if (data.mentalRecoverActivations && data.mentalRecoverActivations.some((active) => !active)) {
+    parts.push('R' + data.mentalRecoverActivations.map((a) => (a ? '1' : '0')).join(''))
+  }
+
   // Encode to base64
   const encoded = btoa(parts.join('_')).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '.')
   return encoded
@@ -414,6 +420,13 @@ const decompressShareData = (compressed: string): ShareData => {
           // Center activations
           const activations = value.split('').map((v) => v === '1')
           data.centerActivations = activations
+          break
+        }
+
+        case 'R': {
+          // Mental recover activations
+          const activations = value.split('').map((v) => v === '1')
+          data.mentalRecoverActivations = activations
           break
         }
       }
@@ -913,6 +926,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
       data.centerActivations = state.centerActivations
     }
 
+    // Add mental recover activations if any are disabled
+    const hasDisabledMentalRecover = state.mentalRecoverActivations.some((active) => !active)
+    
+    if (hasDisabledMentalRecover) {
+      data.mentalRecoverActivations = state.mentalRecoverActivations
+    }
+
     // Compress data to shorter format
     const compressedData = compressShareData(data)
 
@@ -970,6 +990,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const newCustomCenterSkillValues: Record<number, Record<string, number>> = {}
         // Default to all activated for backward compatibility
         const newCenterActivations: boolean[] = data.centerActivations || Array(6).fill(true)
+        const newMentalRecoverActivations: boolean[] = data.mentalRecoverActivations || Array(6).fill(true)
 
         data.cards.forEach((cardInfo: ShareCardData, index: number) => {
           if (index >= 6) return
@@ -1004,6 +1025,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
           customSkillValues: newCustomSkillValues,
           customCenterSkillValues: newCustomCenterSkillValues,
           centerActivations: newCenterActivations,
+          mentalRecoverActivations: newMentalRecoverActivations,
           learningCorrection: data.learningCorrection ? parseFloat(data.learningCorrection) : 1.5,
           isShareMode: true,
         })
