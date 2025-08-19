@@ -6,6 +6,13 @@ export interface UpdateEntry {
 
 export const updateHistory: UpdateEntry[] = [
   {
+    version: '2.2.9',
+    date: '2025-08-19',
+    changes: [
+      '新カード「[可惜夜花火]百生吟子」を追加',
+    ],
+  },
+  {
     version: '2.2.8',
     date: '2025-08-13',
     changes: [

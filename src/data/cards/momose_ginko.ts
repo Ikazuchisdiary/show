@@ -612,6 +612,59 @@ const momose_ginkoCards: CardData = {
       },
     ],
   },
+  kasekiyoHanabiGin: {
+    name: 'Kasekiyo Hanabi Gin',
+    displayName: '［可惜夜花火］百生吟子',
+    character: '百生吟子',
+    shortCode: 'Gk',
+    apCost: 1,
+    stats: {
+      smile: 4440,
+      pure: 6000,
+      cool: 6720,
+      mental: 490,
+    },
+    centerCharacteristic: {
+      name: 'アピールアップ（スリーズブーケ）',
+      effects: [
+        {
+          type: 'appealBoost',
+          value: 2,
+          target: 'スリーズブーケ',
+          description: 'スリーズブーケに所属するメンバーのアピール値が200%上昇',
+        },
+      ],
+    },
+    centerSkill: {
+      when: 'beforeFirstTurn',
+      effects: [
+        {
+          type: 'apGain',
+          value: 8,
+          description: 'AP回復',
+          levelValues: [4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 9, 10, 12],
+        },
+      ],
+    },
+    effects: [
+      {
+        type: 'conditional',
+        condition: 'mental <= 10',
+        then: [
+          {
+            type: 'scoreGain',
+            value: 5.7375,
+            description: 'スコア獲得573.75% (Lv.10)',
+          },
+          {
+            type: 'mentalRecover',
+            value: 25,
+            description: 'メンタル回復25%',
+          },
+        ],
+      },
+    ],
+  },
 }
 
 export default momose_ginkoCards
