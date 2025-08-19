@@ -656,12 +656,12 @@ const momose_ginkoCards: CardData = {
             value: 5.7375,
             description: 'スコア獲得573.75% (Lv.10)',
           },
-          {
-            type: 'mentalRecover',
-            value: 25,
-            description: 'メンタル回復25%',
-          },
         ],
+      },
+      {
+        type: 'mentalRecover',
+        value: 25,
+        description: 'メンタル回復25%',
       },
     ],
   },
