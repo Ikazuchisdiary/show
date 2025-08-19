@@ -93,7 +93,18 @@ export const ScoreDisplay: React.FC = () => {
       referenceScore: apShortageResult?.score,
       shareUrl: shareUrl,
     })
-  }, [simulationResult, selectedMusic, apShortageResult, generateShareUrl])
+  }, [
+    simulationResult,
+    selectedMusic,
+    apShortageResult,
+    generateShareUrl,
+    selectedCards,
+    cardSkillLevels,
+    centerSkillLevels,
+    customSkillValues,
+    customCenterSkillValues,
+    initialMental,
+  ])
 
   if (!simulationResult) {
     return null

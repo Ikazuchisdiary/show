@@ -17,7 +17,6 @@ import {
   isShareMode,
 } from '../services/localStorageService'
 import { useMusicStore } from './musicStore'
-import { trackCalculation } from '../analytics'
 
 interface ShareCardData {
   card: string
@@ -808,14 +807,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const result = simulator.simulate()
 
       set({ simulationResult: result, isSimulating: false })
-      
-      // Track calculation event
-      trackCalculation({
-        musicName: state.selectedMusic.name,
-        totalScore: result.totalScore,
-        totalVoltage: result.totalVoltage,
-        apConsumed: result.apConsumed,
-      })
     } catch (error) {
       console.error('Simulation error:', error)
       set({ isSimulating: false })
