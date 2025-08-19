@@ -90,6 +90,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     customSkillValues,
     customCenterSkillValues,
     centerActivations,
+    mentalRecoverActivations,
     setCard,
     setCardSkillLevel,
     setCenterSkillLevel,
@@ -98,6 +99,7 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
     setCustomCenterSkillValue,
     clearCustomCenterSkillValues,
     setCenterActivation,
+    setMentalRecoverActivation,
     fixedPositions,
     toggleFixedPosition,
   } = useGameStore()
@@ -588,10 +590,22 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                   if (effect.levelValues && effect.levelValues[skillLevel - 1] !== undefined) {
                     return (
                       <div className="skill-param-row">
-                        <label>メンタル回復:</label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <input
+                            type="checkbox"
+                            checked={mentalRecoverActivations[index]}
+                            onChange={(e) => setMentalRecoverActivation(index, e.target.checked)}
+                            style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                          />
+                          メンタル回復:
+                        </label>
                         <span
                           className="skill-param-value"
-                          style={{ backgroundColor: '#e8f5e9', color: '#2e7d32' }}
+                          style={{ 
+                            backgroundColor: mentalRecoverActivations[index] ? '#e8f5e9' : '#f5f5f5', 
+                            color: mentalRecoverActivations[index] ? '#2e7d32' : '#9e9e9e',
+                            textDecoration: mentalRecoverActivations[index] ? 'none' : 'line-through'
+                          }}
                         >
                           +{effect.levelValues[skillLevel - 1]}%
                         </span>
@@ -600,10 +614,22 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                   } else if (effect.value !== undefined) {
                     return (
                       <div className="skill-param-row">
-                        <label>メンタル回復:</label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <input
+                            type="checkbox"
+                            checked={mentalRecoverActivations[index]}
+                            onChange={(e) => setMentalRecoverActivation(index, e.target.checked)}
+                            style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                          />
+                          メンタル回復:
+                        </label>
                         <span
                           className="skill-param-value"
-                          style={{ backgroundColor: '#e8f5e9', color: '#2e7d32' }}
+                          style={{ 
+                            backgroundColor: mentalRecoverActivations[index] ? '#e8f5e9' : '#f5f5f5', 
+                            color: mentalRecoverActivations[index] ? '#2e7d32' : '#9e9e9e',
+                            textDecoration: mentalRecoverActivations[index] ? 'none' : 'line-through'
+                          }}
                         >
                           +{effect.value}%
                         </span>

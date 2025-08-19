@@ -6,6 +6,11 @@ export interface UpdateEntry {
 
 export const updateHistory: UpdateEntry[] = [
   {
+    version: '2.2.11',
+    date: '2025-08-19',
+    changes: ['メンタル回復効果のON/OFF切り替えチェックボックスを追加'],
+  },
+  {
     version: '2.2.10',
     date: '2025-08-19',
     changes: ['新カード「[太陽であれ！]村野さやか」を追加'],
@@ -157,4 +162,4 @@ export const updateHistory: UpdateEntry[] = [
   },
 ]
 
-export const CURRENT_VERSION = '2.2.8'
+export const CURRENT_VERSION = '2.2.11'

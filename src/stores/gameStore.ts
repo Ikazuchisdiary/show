@@ -53,6 +53,9 @@ interface GameStore {
   // Center skill/characteristic activation flags
   centerActivations: boolean[]
 
+  // Mental recover effect activation flags
+  mentalRecoverActivations: boolean[]
+
   // Selected music
   selectedMusic: Music | null
   selectedDifficulty: 'normal' | 'hard' | 'expert' | 'master'
@@ -95,6 +98,7 @@ interface GameStore {
   setCustomCenterSkillValue: (cardIndex: number, effectKey: string, value: number) => void
   clearCustomCenterSkillValues: (cardIndex: number) => void
   setCenterActivation: (index: number, active: boolean) => void
+  setMentalRecoverActivation: (index: number, active: boolean) => void
   setMusic: (music: Music | null) => void
   setDifficulty: (difficulty: 'normal' | 'hard' | 'expert' | 'master') => void
   setInitialMental: (mental: number) => void
@@ -453,6 +457,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   customSkillValues: {},
   customCenterSkillValues: {},
   centerActivations: Array(6).fill(true),
+  mentalRecoverActivations: Array(6).fill(true),
   selectedMusic: null,
   selectedDifficulty: 'master',
   initialMental: 100,
@@ -656,6 +661,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
       return { centerActivations: newActivations }
     }),
 
+  setMentalRecoverActivation: (index, active) =>
+    set((state) => {
+      const newActivations = [...state.mentalRecoverActivations]
+      newActivations[index] = active
+      return { mentalRecoverActivations: newActivations }
+    }),
+
   setMusic: (music) =>
     set((state) => {
       // カードのキーを取得する関数
@@ -795,6 +807,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         customSkillValues: state.customSkillValues,
         customCenterSkillValues: state.customCenterSkillValues,
         centerActivations: state.centerActivations,
+        mentalRecoverActivations: state.mentalRecoverActivations,
         music: state.selectedMusic,
         musicAttribute: state.selectedMusic.attribute,
         centerCharacter: state.selectedMusic.centerCharacter,

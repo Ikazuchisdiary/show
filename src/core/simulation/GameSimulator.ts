@@ -21,6 +21,7 @@ export class GameSimulator {
   private customCenterSkillValues: Record<string, Record<string, number>>
   private centerSkillLevels: number[]
   private centerActivations: boolean[]
+  private mentalRecoverActivations: boolean[]
   private currentTurnScoreGain: number = 0
   private currentTurnVoltageGain: number = 0
   private currentTurnLogs: string[] = []
@@ -36,6 +37,7 @@ export class GameSimulator {
     this.customCenterSkillValues = options.customCenterSkillValues || {}
     this.centerSkillLevels = options.centerSkillLevels || Array(6).fill(10)
     this.centerActivations = options.centerActivations || Array(6).fill(true)
+    this.mentalRecoverActivations = options.mentalRecoverActivations || Array(6).fill(true)
     this.state = this.initializeState(options)
   }
 
@@ -550,6 +552,14 @@ export class GameSimulator {
       }
 
       case 'mentalRecover': {
+        // Check if mental recover is activated for this card
+        if (!this.mentalRecoverActivations[cardIndex]) {
+          this.currentTurnLogs.push(
+            `<div class="log-action log-mental">メンタル回復: 無効化されています</div>`,
+          )
+          break
+        }
+        
         const mentalRecoverEffect = effect as MentalRecoverEffect
         let mentalRecoverValue: number
         if (customValue !== undefined) {
