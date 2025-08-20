@@ -6,6 +6,16 @@ export interface UpdateEntry {
 
 export const updateHistory: UpdateEntry[] = [
   {
+    version: '2.2.12',
+    date: '2025-08-20',
+    changes: [
+      '新楽曲「可惜夜花火」を追加',
+      '新楽曲「可惜夜花火（-2秒）」を追加',
+      '新楽曲「ブルウモーメント」を追加',
+      '新楽曲「ブルウモーメント（-2秒）」を追加',
+    ],
+  },
+  {
     version: '2.2.11',
     date: '2025-08-19',
     changes: ['メンタル回復効果のON/OFF切り替えチェックボックスを追加'],
@@ -162,4 +172,4 @@ export const updateHistory: UpdateEntry[] = [
   },
 ]
 
-export const CURRENT_VERSION = '2.2.11'
+export const CURRENT_VERSION = '2.2.12'
