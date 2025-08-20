@@ -1,6 +1,58 @@
 import { MusicData } from '../core/models/Music'
 
 const musicData: MusicData = {
+  atoshiya_hanabi: {
+    name: '可惜夜花火',
+    phases: [10, 6, 5],
+    description: 'フィーバー前: 10, フィーバー中: 6, フィーバー後: 5',
+    centerCharacter: '百生吟子',
+    attribute: 'cool',
+    combos: {
+      normal: 327,
+      hard: 506,
+      expert: 772,
+      master: 989,
+    },
+  },
+  atoshiya_hanabi_minus2: {
+    name: '可惜夜花火（-2秒）',
+    phases: [17, 10, 8],
+    description: 'フィーバー前: 17, フィーバー中: 10, フィーバー後: 8',
+    centerCharacter: '百生吟子',
+    attribute: 'cool',
+    combos: {
+      normal: 327,
+      hard: 506,
+      expert: 772,
+      master: 989,
+    },
+  },
+  blue_moment: {
+    name: 'ブルウモーメント',
+    phases: [12, 6, 4],
+    description: 'フィーバー前: 12, フィーバー中: 6, フィーバー後: 4',
+    centerCharacter: '徒町小鈴',
+    attribute: 'smile',
+    combos: {
+      normal: 203,
+      hard: 358,
+      expert: 555,
+      master: 907,
+    },
+  },
+  blue_moment_minus2: {
+    name: 'ブルウモーメント（-2秒）',
+    phases: [20, 10, 6],
+    description: 'フィーバー前: 20, フィーバー中: 10, フィーバー後: 6',
+    centerCharacter: '徒町小鈴',
+    attribute: 'smile',
+    combos: {
+      normal: 203,
+      hard: 358,
+      expert: 555,
+      master: 907,
+    },
+  },
   diamondz: {
     name: 'diamondz',
     phases: [9, 5, 4],
@@ -636,58 +688,6 @@ const musicData: MusicData = {
       hard: 630,
       expert: 829,
       master: 1138,
-    },
-  },
-  atoshiya_hanabi: {
-    name: '可惜夜花火',
-    phases: [10, 6, 5],
-    description: 'フィーバー前: 10, フィーバー中: 6, フィーバー後: 5',
-    centerCharacter: '百生吟子',
-    attribute: 'cool',
-    combos: {
-      normal: 327,
-      hard: 506,
-      expert: 772,
-      master: 989,
-    },
-  },
-  atoshiya_hanabi_minus2: {
-    name: '可惜夜花火（-2秒）',
-    phases: [17, 10, 8],
-    description: 'フィーバー前: 17, フィーバー中: 10, フィーバー後: 8',
-    centerCharacter: '百生吟子',
-    attribute: 'cool',
-    combos: {
-      normal: 327,
-      hard: 506,
-      expert: 772,
-      master: 989,
-    },
-  },
-  blue_moment: {
-    name: 'ブルウモーメント',
-    phases: [12, 6, 4],
-    description: 'フィーバー前: 12, フィーバー中: 6, フィーバー後: 4',
-    centerCharacter: '徒町小鈴',
-    attribute: 'smile',
-    combos: {
-      normal: 203,
-      hard: 358,
-      expert: 555,
-      master: 907,
-    },
-  },
-  blue_moment_minus2: {
-    name: 'ブルウモーメント（-2秒）',
-    phases: [20, 10, 6],
-    description: 'フィーバー前: 20, フィーバー中: 10, フィーバー後: 6',
-    centerCharacter: '徒町小鈴',
-    attribute: 'smile',
-    combos: {
-      normal: 203,
-      hard: 358,
-      expert: 555,
-      master: 907,
     },
   },
 }
