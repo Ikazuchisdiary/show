@@ -559,7 +559,7 @@ export class GameSimulator {
           )
           break
         }
-        
+
         const mentalRecoverEffect = effect as MentalRecoverEffect
         let mentalRecoverValue: number
         if (customValue !== undefined) {

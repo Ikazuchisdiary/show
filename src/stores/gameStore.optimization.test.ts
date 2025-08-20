@@ -232,4 +232,134 @@ describe('gameStore optimization', () => {
       alertSpy.mockRestore()
     })
   })
+
+  describe('optimization with mental recover and center skill toggle', () => {
+    const mockCardsWithEffects: Card[] = [
+      {
+        name: 'Card A',
+        displayName: 'Card A',
+        character: 'Character A',
+        shortCode: 'CA',
+        apCost: 10,
+        stats: { smile: 1000, pure: 1000, cool: 1000, mental: 100 },
+        effects: [
+          {
+            type: 'mentalRecover',
+            value: 50,
+            description: 'メンタル50回復',
+          },
+        ],
+      },
+      {
+        name: 'Card B',
+        displayName: 'Card B',
+        character: 'Character B',
+        shortCode: 'CB',
+        apCost: 10,
+        stats: { smile: 2000, pure: 2000, cool: 2000, mental: 100 },
+        effects: [],
+        centerSkill: {
+          when: 'beforeFirstTurn',
+          effects: [
+            {
+              type: 'scoreBoost',
+              value: 0.5,
+              description: 'センタースキル',
+            },
+          ],
+        },
+      },
+      {
+        name: 'Card C',
+        displayName: 'Card C',
+        character: 'Character C',
+        shortCode: 'CC',
+        apCost: 10,
+        stats: { smile: 3000, pure: 3000, cool: 3000, mental: 100 },
+        effects: [],
+      },
+    ]
+
+    it('should preserve mental recover activations when optimizing', () => {
+      const store = useGameStore.getState()
+      const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
+      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {})
+
+      // Set up cards
+      store.setCard(0, mockCardsWithEffects[0]) // Card A with mental recover
+      store.setCard(1, mockCardsWithEffects[1]) // Card B
+      store.setCard(2, mockCardsWithEffects[2]) // Card C
+      store.setMusic(mockMusic)
+
+      // Disable mental recover for Card A
+      store.setMentalRecoverActivation(0, false)
+
+      store.optimizeFormation()
+
+      // After optimization, check if the mental recover activation state is preserved
+      const state = useGameStore.getState()
+      const cardAIndex = state.selectedCards.findIndex((card) => card?.name === 'Card A')
+      expect(state.mentalRecoverActivations[cardAIndex]).toBe(false)
+
+      confirmSpy.mockRestore()
+      alertSpy.mockRestore()
+    })
+
+    it('should preserve center skill activations when optimizing', () => {
+      const store = useGameStore.getState()
+      const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
+      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {})
+
+      // Set up cards
+      store.setCard(0, mockCardsWithEffects[0]) // Card A
+      store.setCard(1, mockCardsWithEffects[1]) // Card B with center skill
+      store.setCard(2, mockCardsWithEffects[2]) // Card C
+      store.setMusic(mockMusic)
+
+      // Disable center skill for Card B
+      store.setCenterActivation(1, false)
+
+      store.optimizeFormation()
+
+      // After optimization, check if the center skill activation state is preserved
+      const state = useGameStore.getState()
+      const cardBIndex = state.selectedCards.findIndex((card) => card?.name === 'Card B')
+      expect(state.centerActivations[cardBIndex]).toBe(false)
+
+      confirmSpy.mockRestore()
+      alertSpy.mockRestore()
+    })
+
+    it('should optimize correctly with mixed activation states', () => {
+      const store = useGameStore.getState()
+      const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
+      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {})
+
+      // Set up all cards
+      store.setCard(0, mockCardsWithEffects[0]) // Card A with mental recover
+      store.setCard(1, mockCardsWithEffects[1]) // Card B with center skill
+      store.setCard(2, mockCardsWithEffects[2]) // Card C
+      store.setMusic(mockMusic)
+
+      // Set mixed activation states
+      store.setMentalRecoverActivation(0, false) // Disable mental recover for Card A
+      store.setCenterActivation(1, false) // Disable center skill for Card B
+
+      store.optimizeFormation()
+
+      // After optimization, verify activation states are preserved correctly
+      const finalState = useGameStore.getState()
+
+      // Find where each card ended up
+      const cardAIndex = finalState.selectedCards.findIndex((card) => card?.name === 'Card A')
+      const cardBIndex = finalState.selectedCards.findIndex((card) => card?.name === 'Card B')
+
+      // Verify activation states moved with their cards
+      expect(finalState.mentalRecoverActivations[cardAIndex]).toBe(false)
+      expect(finalState.centerActivations[cardBIndex]).toBe(false)
+
+      confirmSpy.mockRestore()
+      alertSpy.mockRestore()
+    })
+  })
 })

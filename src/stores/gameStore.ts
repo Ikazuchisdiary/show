@@ -928,7 +928,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // Add mental recover activations if any are disabled
     const hasDisabledMentalRecover = state.mentalRecoverActivations.some((active) => !active)
-    
+
     if (hasDisabledMentalRecover) {
       data.mentalRecoverActivations = state.mentalRecoverActivations
     }
@@ -990,7 +990,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const newCustomCenterSkillValues: Record<number, Record<string, number>> = {}
         // Default to all activated for backward compatibility
         const newCenterActivations: boolean[] = data.centerActivations || Array(6).fill(true)
-        const newMentalRecoverActivations: boolean[] = data.mentalRecoverActivations || Array(6).fill(true)
+        const newMentalRecoverActivations: boolean[] =
+          data.mentalRecoverActivations || Array(6).fill(true)
 
         data.cards.forEach((cardInfo: ShareCardData, index: number) => {
           if (index >= 6) return
@@ -1445,6 +1446,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         centerSkillLevels: state.centerSkillLevels,
         customSkillValues: state.customSkillValues,
         customCenterSkillValues: state.customCenterSkillValues,
+        centerActivations: state.centerActivations,
+        mentalRecoverActivations: state.mentalRecoverActivations,
         music: state.selectedMusic,
         musicAttribute: state.selectedMusic.attribute,
         centerCharacter: state.selectedMusic.centerCharacter,
@@ -1480,12 +1483,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
           }
         })
 
+        // Reorder centerActivations and mentalRecoverActivations based on permutation
+        const newCenterActivations = [...state.centerActivations]
+        const newMentalRecoverActivations = [...state.mentalRecoverActivations]
+        perm.forEach((originalIndex, newIndex) => {
+          newCenterActivations[newIndex] = state.centerActivations[originalIndex]
+          newMentalRecoverActivations[newIndex] = state.mentalRecoverActivations[originalIndex]
+        })
+
         const options: SimulationOptions = {
           cards: newCards,
           cardSkillLevels: newSkillLevels,
           centerSkillLevels: newCenterSkillLevels,
           customSkillValues: newCustomSkillValues,
           customCenterSkillValues: newCustomCenterSkillValues,
+          centerActivations: newCenterActivations,
+          mentalRecoverActivations: newMentalRecoverActivations,
           music: state.selectedMusic,
           musicAttribute: state.selectedMusic.attribute,
           centerCharacter: state.selectedMusic.centerCharacter,
@@ -1531,6 +1544,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
           const newCenterSkillLevels = [...state.centerSkillLevels]
           const newCustomSkillValues: Record<number, Record<string, number>> = {}
           const newCustomCenterSkillValues: Record<number, Record<string, number>> = {}
+          const newCenterActivations = [...state.centerActivations]
+          const newMentalRecoverActivations = [...state.mentalRecoverActivations]
 
           // Find the mapping from original to new positions
           bestFormation.forEach((card, newIndex) => {
@@ -1546,6 +1561,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
                   newCustomCenterSkillValues[newIndex] =
                     state.customCenterSkillValues[originalIndex]
                 }
+                newCenterActivations[newIndex] = state.centerActivations[originalIndex]
+                newMentalRecoverActivations[newIndex] =
+                  state.mentalRecoverActivations[originalIndex]
               }
             }
           })
@@ -1556,6 +1574,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
             centerSkillLevels: newCenterSkillLevels,
             customSkillValues: newCustomSkillValues,
             customCenterSkillValues: newCustomCenterSkillValues,
+            centerActivations: newCenterActivations,
+            mentalRecoverActivations: newMentalRecoverActivations,
           })
 
           // Save formation after optimization

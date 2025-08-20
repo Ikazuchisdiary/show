@@ -601,10 +601,14 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                         </label>
                         <span
                           className="skill-param-value"
-                          style={{ 
-                            backgroundColor: mentalRecoverActivations[index] ? '#e8f5e9' : '#f5f5f5', 
+                          style={{
+                            backgroundColor: mentalRecoverActivations[index]
+                              ? '#e8f5e9'
+                              : '#f5f5f5',
                             color: mentalRecoverActivations[index] ? '#2e7d32' : '#9e9e9e',
-                            textDecoration: mentalRecoverActivations[index] ? 'none' : 'line-through'
+                            textDecoration: mentalRecoverActivations[index]
+                              ? 'none'
+                              : 'line-through',
                           }}
                         >
                           +{effect.levelValues[skillLevel - 1]}%
@@ -625,10 +629,14 @@ export const CardSelector: React.FC<CardSelectorProps> = ({
                         </label>
                         <span
                           className="skill-param-value"
-                          style={{ 
-                            backgroundColor: mentalRecoverActivations[index] ? '#e8f5e9' : '#f5f5f5', 
+                          style={{
+                            backgroundColor: mentalRecoverActivations[index]
+                              ? '#e8f5e9'
+                              : '#f5f5f5',
                             color: mentalRecoverActivations[index] ? '#2e7d32' : '#9e9e9e',
-                            textDecoration: mentalRecoverActivations[index] ? 'none' : 'line-through'
+                            textDecoration: mentalRecoverActivations[index]
+                              ? 'none'
+                              : 'line-through',
                           }}
                         >
                           +{effect.value}%
